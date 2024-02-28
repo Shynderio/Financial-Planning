@@ -1,0 +1,40 @@
+Term controller
+
+	listterm ()
+	
+
+	createterm (termname, startdate, duration, plandue, reportdue)
+
+	
+	updateterm (termname, startdate, duration, plandue, reportdue)
+
+
+	startterm (termname/id)
+
+	
+	delete term (termname/id)
+
+Plan controller
+
+	listplan (role, department)	
+	
+	
+	importplan (uid, term, planname, file)
+
+	
+	reupplan (uid, term, planname, file)
+
+	
+	getplandetail (term, department)
+
+
+	getplans (term, department)
+
+
+	submitplan(term, planname, department/uid)
+
+
+	approve(term, planname, department/uid, file)
+
+	
+	
