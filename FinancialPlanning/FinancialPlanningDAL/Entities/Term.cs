@@ -24,6 +24,7 @@ namespace FinancialPlanningDAL.Entities
         public DateTime ReportDueDate { get; set; }
         public int Status { get; set; }
         [ForeignKey("CreatorId")]
+      
         public virtual User? User { get; set; }  
         public ICollection<Plan>? Plans { get; set;}
         public ICollection<Report>? Reports { get; set;}

@@ -264,13 +264,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.Department", "Department")
                         .WithMany("Plans")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Term", "Term")
                         .WithMany("Plans")
                         .HasForeignKey("TermId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Department");
@@ -283,13 +283,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.User", "User")
                         .WithMany("PlanVersions")
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Plan", "Plan")
                         .WithMany("PlanVersions")
                         .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Plan");
@@ -302,13 +302,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.Department", "Department")
                         .WithMany("Reports")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Term", "Term")
                         .WithMany("Reports")
                         .HasForeignKey("TermId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Department");
@@ -321,13 +321,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.User", "User")
                         .WithMany("ReportVersions")
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Report", "Report")
                         .WithMany("ReportVersions")
                         .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Report");
@@ -340,7 +340,7 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.User", "User")
                         .WithMany("Terms")
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -351,13 +351,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Position", "Position")
                         .WithMany("Users")
                         .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Department");
