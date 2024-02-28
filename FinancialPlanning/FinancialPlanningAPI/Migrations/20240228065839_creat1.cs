@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinancialPlanningAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class D4 : Migration
+    public partial class creat1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

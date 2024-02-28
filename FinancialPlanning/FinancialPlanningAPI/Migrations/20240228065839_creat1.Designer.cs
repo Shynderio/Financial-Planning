@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinancialPlanningAPI.Migrations
 {
-    [DbContext(typeof(FinancialPlanningDbContext))]
-    [Migration("20240228042819_D4")]
-    partial class D4
+    [DbContext(typeof(DataContext))]
+    [Migration("20240228065839_creat1")]
+    partial class creat1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
