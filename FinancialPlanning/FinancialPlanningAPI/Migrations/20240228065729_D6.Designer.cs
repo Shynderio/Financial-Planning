@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinancialPlanningAPI.Migrations
 {
-    [DbContext(typeof(FinancialPlanningDbContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20240228065729_D6")]
     partial class D6
     {
@@ -354,13 +354,13 @@ namespace FinancialPlanningAPI.Migrations
                     b.HasOne("FinancialPlanningDAL.Entities.Department", "Department")
                         .WithMany("Users")
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("FinancialPlanningDAL.Entities.Position", "Position")
                         .WithMany("Users")
                         .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Department");

@@ -1,0 +1,17 @@
+diff a/FinancialPlanning/FinancialPlanningAPI/Migrations/20240228065729_D6.Designer.cs b/FinancialPlanning/FinancialPlanningAPI/Migrations/20240228065729_D6.Designer.cs	(rejected hunks)
+@@ -354,13 +354,13 @@
+                     b.HasOne("FinancialPlanningDAL.Entities.Department", "Department")
+                         .WithMany("Users")
+                         .HasForeignKey("DepartmentId")
+-                        .OnDelete(DeleteBehavior.Cascade)
++                        .OnDelete(DeleteBehavior.Restrict)
+                         .IsRequired();
+ 
+                     b.HasOne("FinancialPlanningDAL.Entities.Position", "Position")
+                         .WithMany("Users")
+                         .HasForeignKey("PositionId")
+-                        .OnDelete(DeleteBehavior.Cascade)
++                        .OnDelete(DeleteBehavior.Restrict)
+                         .IsRequired();
+ 
+                     b.Navigation("Department");
