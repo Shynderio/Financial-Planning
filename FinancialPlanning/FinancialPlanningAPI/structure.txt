@@ -1,40 +1,42 @@
+Auth controller
+	login (username, password)
+	logout ()
+	forgotpassword (email)
+	changepassword (token)
+
+User controller
+	crud
+	listuser()
+
 Term controller
-
 	listterm ()
-	
-
-	createterm (termname, startdate, duration, plandue, reportdue)
-
-	
-	updateterm (termname, startdate, duration, plandue, reportdue)
-
-
-	startterm (termname/id)
-
-	
-	delete term (termname/id)
+	createterm ()
+	updateterm ()
+	delete term ()
+	startterm ()
 
 Plan controller
-
-	listplan (role, department)	
-	
-	
-	importplan (uid, term, planname, file)
-
-	
-	reupplan (uid, term, planname, file)
-
-	
-	getplandetail (term, department)
-
-
-	getplans (term, department)
-
-
-	submitplan(term, planname, department/uid)
-
-
+	listPlans (role, department)		
+	viewPlan (file)
+	importPlan (uid, term, planname, file)
+	reupPlan (uid, term, planname, file)
+	getPlanDetails (term, department)
+	getPlans (term, department)
+	submitPlan(term, planname, department/uid)
 	approve(term, planname, department/uid, file)
+	exportPlan(file)
 
+Report controller
+	listMonthlyReports (role, department)
+	viewReport (file)
+	importReport (uid, term, reportname, file)
+	reupPlan (uid, term, reportname, file)
 	
+	getReports (term, department, month)
+	getReportDetails (term, department, month)
+	exportReport(file)
+	deleteReports (report)
 	
+	listAnnualReports
+	getAnnualReportDetail(year)
+
