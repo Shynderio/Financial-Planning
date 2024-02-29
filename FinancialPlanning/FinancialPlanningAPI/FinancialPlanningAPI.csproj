@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FinancialPlanningBAL\FinancialPlanningBAL.csproj" />
     <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanningDAL.csproj" />
   </ItemGroup>
 
