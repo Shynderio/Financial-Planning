@@ -8,16 +8,13 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Entities
 {
-    [Table("Department")]
+    [Table("department")]
     public class Department
     {
-        [Key]
-        public Guid Id { get; set; }
-        public string DepartmentName { get; set; }=string.Empty;
+        [Key] public Guid Id { get; set; }
+        [Required] public string DepartmentName { get; set; } = string.Empty;
         public virtual ICollection<User>? Users { get; set; }
         public virtual ICollection<Plan>? Plans { get; set; }
         public virtual ICollection<Report>? Reports { get; set; }
-
-
     }
 }
