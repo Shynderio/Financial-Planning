@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FinancialPlanningDAL.Entities
 {
     [Table("Term")]
-    internal class Term
+    public class Term
     {
         [Key]
         public Guid Id { get; set; }
