@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanningDAL.Data;
+using FinancialPlanningBAL.Services;
+using FinancialPlanningBAL.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<FinancialPlanningDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
 ));
+builder.Services.AddScoped<ITermService, TermService>();
 
 var app = builder.Build();
 
