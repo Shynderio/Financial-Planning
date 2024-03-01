@@ -71,7 +71,7 @@ nav {
 /*Sidenav*/
 #sidenav {
   position: fixed;
-  background-color: #0058a5fe;
+  background-color: #040730fe;
   width: 70px;
   height: 100vh;
   padding-top: 1px;
@@ -86,19 +86,33 @@ nav {
 }
 
 #sidenav a {
-  display: block;
+  display: flex;
+  align-items: center;
   text-decoration: none;
   color: white;
-  margin: 50px 15px;
+  margin: 20px 15px;
   overflow: hidden;
   white-space: nowrap;
 }
 
+#sidenav a:first-child {
+  margin-top: 15px;
+  margin-bottom: 35px;
+  font-size: large;
+}
+
 #sidenav i {
+  display: flex;
+  height: 40px;
   width: 40px;
   margin-right: 20px;
-  font-size: xx-large;
+  font-size: medium;
   text-align: center;
+  background-color: #1D2153;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 10px;
 }
 
 /*Main*/
