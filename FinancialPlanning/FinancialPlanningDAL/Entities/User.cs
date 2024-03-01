@@ -8,28 +8,33 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Entities
 {
-    [Table("User")]
-    internal class User
+    [Table("user")]
+    public class User
     {
-        [Key]
-        public Guid Id { get; set; }
-        public string Username { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string DOB {get; set; } = string.Empty;
-        public Guid DepartmentId { get; set; }
-        public Guid PositionId { get; set; }    
-        public Guid RoleId { get; set; }    
+        [Key] public Guid Id { get; set; }
+        [Required] public string Username { get; set; } = string.Empty;
+        [Required] public string FullName { get; set; } = string.Empty;
 
-        public int Status { get; set; }
-        public string Notes { get; set; }=string.Empty;
-        [ForeignKey("DepartmentId")]
-        public virtual Department? Department { get; set; }
-        [ForeignKey("PositionId")]
-        public virtual Position? Position { get; set; }
+        [Required, DataType(DataType.EmailAddress)]
+        public string Email { get; set; } = string.Empty;
+
+        [Required, DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Required, DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Required] public string Address { get; set; } = string.Empty;
+        [Required] public string DOB { get; set; } = string.Empty;
+        [Required] public Guid DepartmentId { get; set; }
+        [Required] public Guid PositionId { get; set; }
+        [Required] public Guid RoleId { get; set; }
+
+        [Required] public int Status { get; set; }
+        public string? Notes { get; set; }
+        [ForeignKey("DepartmentId")] public virtual Department Department { get; set; } = null!;
+        [ForeignKey("PositionId")] public virtual Position Position { get; set; } = null!;
+        [ForeignKey("RoleId")] public virtual Role Role { get; set; } = null!;
         public virtual ICollection<Term>? Terms { get; set; }
         public virtual ICollection<PlanVersion>? PlanVersions { get; set; }
         public virtual ICollection<ReportVersion>? ReportVersions { get; set; }

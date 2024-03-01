@@ -8,23 +8,15 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Entities
 {
-    [Table("PlanVersion")]
-    internal class PlanVersion
+    [Table("plan_version")]
+    public class PlanVersion
     {
-        [Key]
-        public Guid Id { get; set; }
-        [Required]
-        public Guid PlanId { get; set; }
-        [Required]
-        public int Version { get; set; }
-        [Required]
-        public Guid CreatorId { get; set; }
-
-        public DateTime ImportDate { get; set; }
-        [ForeignKey("PlanId")]
-        public virtual Plan? Plan { get; set; }
-        [ForeignKey("CreatorId")]
-        public virtual User? User { get; set; }
-
+        [Key] public Guid Id { get; set; }
+        [Required] public Guid PlanId { get; set; }
+        [Required] public int Version { get; set; }
+        [Required] public Guid CreatorId { get; set; }
+        [Required] public DateTime ImportDate { get; set; }
+        [ForeignKey("PlanId")] public virtual Plan Plan { get; set; } = null!;
+        [ForeignKey("CreatorId")] public virtual User User { get; set; } = null!;
     }
 }

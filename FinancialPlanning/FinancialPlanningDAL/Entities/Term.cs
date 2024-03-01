@@ -8,27 +8,19 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Entities
 {
-    [Table("Term")]
-    internal class Term
+    [Table("term")]
+    public class Term
     {
-        [Key]
-        public Guid Id { get; set; }
-        [Required]
-        public string TermName { get; set; }=string.Empty;
-        [Required]
-        public Guid CreatorId { get; set; }
-      
-        public int Duration { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime PlanDueDate { get; set; }
-        public DateTime ReportDueDate { get; set; }
-        public int Status { get; set; }
-        [ForeignKey("CreatorId")]
-      
-        public virtual User? User { get; set; }  
-        public ICollection<Plan>? Plans { get; set;}
-        public ICollection<Report>? Reports { get; set;}
-
-
+        [Key] public Guid Id { get; set; }
+        [Required] public string TermName { get; set; } = string.Empty;
+        [Required] public Guid CreatorId { get; set; }
+        [Required] public int Duration { get; set; }
+        [Required] public DateTime StartDate { get; set; }
+        [Required] public DateTime PlanDueDate { get; set; }
+        [Required] public DateTime ReportDueDate { get; set; }
+        [Required] public int Status { get; set; }
+        [ForeignKey("CreatorId")] public virtual User User { get; set; } = null!;
+        public virtual ICollection<Plan>? Plans { get; set; }
+        public virtual ICollection<Report>? Reports { get; set; }
     }
 }

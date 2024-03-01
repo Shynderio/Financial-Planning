@@ -8,15 +8,11 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Entities
 {
-    [Table("Position")]
-    internal class Position
+    [Table("position")]
+    public class Position
     {
-        [Key]
-        public Guid Id { get; set; }
-        [Required]
-        public string PositionName { get; set; } =string.Empty;
+        [Key] public Guid Id { get; set; }
+        [Required] public string PositionName { get; set; } = string.Empty;
         public virtual ICollection<User>? Users { get; set; }
-
-
     }
 }

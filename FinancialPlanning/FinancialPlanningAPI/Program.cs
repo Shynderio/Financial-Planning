@@ -10,13 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-<<<<<<< HEAD
-builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("FinancialPlanningAPI")));
-=======
-builder.Services.AddDbContext<FinancialPlanningDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")
-));
->>>>>>> 298411f09994efce2223070292a3f021c228ea11
 
 var app = builder.Build();
 
