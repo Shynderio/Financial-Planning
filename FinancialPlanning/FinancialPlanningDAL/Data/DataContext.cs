@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanningDAL.Data
 {
-    public class FinancialPlanningDbContext : DbContext
+    public class DataContext : DbContext
     {
-        public FinancialPlanningDbContext(DbContextOptions<FinancialPlanningDbContext> options): 
+        public DataContext(DbContextOptions<DataContext> options): 
             base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
