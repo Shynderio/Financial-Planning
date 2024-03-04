@@ -1,5 +1,6 @@
 main {
-    padding: 50px;
+    padding: 30px;
+    box-shadow: none;
 }
 
 .step-title {
@@ -24,7 +25,13 @@ h7 {
 .step-title > i {
     color: #2470F8;
     font-size: xx-large;
+    padding: 10px;
+}
+
+main > div > div:nth-child(2) {
     padding: 20px;
+    border-radius: 24px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 form button {

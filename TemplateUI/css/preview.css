@@ -6,6 +6,7 @@ form input {
     display: inline !important;
     border: 0 !important;
     background-color: #ffffff00 !important;
+    width: 80% !important;
 }
 
 form label {
@@ -15,4 +16,9 @@ form label {
 
 form > div:nth-child(2) > label {
     width: 60px;
+}
+
+table {
+    text-align: center;
+    overflow: scroll;
 }
