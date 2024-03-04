@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanningDAL.Data;
-using FinancialPlanningBAL.Services;
+
 using FinancialPlanningBAL.ScheduleTasks;
 using FinancialPlanningDAL.Repositories;
+using FinancialPlanningAPI.Helpers;
+using FinancialPlanningBAL.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ITermRepository, TermRepository>();
 builder.Services.AddScoped<TermService>();
 builder.Services.AddSingleton<IHostedService, StartTerm>();
@@ -19,7 +23,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanningAPI")));
+    b => b.MigrationsAssembly("FinancialPlanningDAL")));
 
 
 var app = builder.Build();
