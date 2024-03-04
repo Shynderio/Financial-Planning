@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home | Financial Planning</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/import.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/preview.css" />
+    <script
+      src="https://kit.fontawesome.com/0d7fb5cc5d.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- User info -->
+    <header>
+      <nav id="navbar">
+        <div id="userinfo" onclick="showUserMenu(this)">
+          <i class="fa-regular fa-user"></i>
+          <div id="username">
+            <i>Hello,</i>
+            <br />
+            <b>MINHNT70</b>
+          </div>
+        </div>
+        <div id="usermenu">
+          <div class="blank"></div>
+          <a href="profile.html"
+            ><i class="fa-solid fa-arrow-right-from-bracket"></i>Profile</a
+          >
+          <a href="logout.html"><i class="fa-regular fa-id-card"></i>Logout</a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Side nav -->
+    <aside id="sidenav">
+      <a href="home.html"
+        ><i class="fa-solid fa-house"></i><b>Financial<br />Planning</b></a
+      >
+      <a href="terms.html"
+        ><i class="fa-solid fa-timeline"></i><b>Term List</b></a
+      >
+      <a href="plans.html"
+        ><i class="fa-solid fa-list-check"></i><b>Plan List</b></a
+      >
+      <a href="reports.html"
+        ><i class="fa-solid fa-file"></i><b>Report List</b></a
+      >
+    </aside>
+
+    <!-- Content -->
+    <main>
+      <div class="row">
+        <!-- Steps -->
+        <div class="col-3" id="steps">
+          <div class="step-title mb-5">
+            <div>
+              <h5>Import file</h5>
+              <h7>Please select file to import</h7>
+            </div>
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+
+          <div class="step-title mb-5">
+            <div>
+              <h5>Preview</h5>
+              <h7>Please preview the plan details before submitting</h7>
+            </div>
+            <i class="fa-regular fa-circle-check"></i>
+          </div>
+        </div>
+
+        <!-- Step content -->
+        <div class="col-9">
+          <h3 class="mb-5">Preview</h3>
+          <form class="row">
+            <div class="col-6">
+              <label for="term" class="form-label">Term</label>
+              <input
+                class="form-control"
+                type="text"
+                id="term"
+                value="Q3-2022"
+                disabled
+              />
+            </div>
+            <div class="col-6">
+              <label for="file-name" class="form-label">File</label>
+              <input
+                class="form-control"
+                type="text"
+                id="file-name"
+                value="Marketing_Q32022_Plan.xlsx"
+                disabled
+              />
+            </div>
+            <div class="col-6">
+              <label for="department" class="form-label">Department</label>
+              <input
+                class="form-control"
+                type="text"
+                id="department"
+                value="Marketing"
+                disabled
+              />
+            </div>
+          </form>
+          <!-- Data table -->
+          <table class="table">
+            <thead>
+                <th class="col">Expense</th>
+                <th class="col">Cost Type</th>
+                <th class="col">Unit Price(VND)</th>
+                <th class="col">Amount</th>
+                <th class="col">Total(VND)</th>
+                <th class="col">Project Name</th>
+                <th class="col">Supplier Name</th>
+                <th class="col">PIC</th>
+                <th class="col">Notes</th>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Navigator -->
+      <div id="navigator" class="d-grid gap-2 d-md-block">
+        <button id="back-button" class="btn">Back</button>
+        <button class="btn btn-primary">Import</button>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer></footer>
+
+    <!-- Script -->
+    <script>
+      function showUserMenu(element) {
+        var usermenu = document.getElementById("usermenu");
+        usermenu.style.maxHeight =
+          ((parseInt(
+            window.getComputedStyle(usermenu).getPropertyValue("max-height")
+          ) +
+            200) %
+            400) +
+          "px";
+        element.classList.toggle("clicked");
+      }
+    </script>
+  </body>
+</html>

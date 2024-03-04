@@ -1,0 +1,55 @@
+main {
+    padding: 50px;
+}
+
+.step-title {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.step-title > div {
+    text-align: end;
+}
+
+h5 {
+    font-weight: bold !important;
+}
+
+h7 {
+    font-weight: lighter !important;
+    color: grey;
+}
+
+.step-title > i {
+    color: #2470F8;
+    font-size: xx-large;
+    padding: 20px;
+}
+
+form button {
+    border: 2px dashed #2470F8 !important;
+    height: 250px;
+}
+
+form button > i {
+    color: #2470F8;
+    font-size: 75px;
+}
+
+#navigator {
+    float: right;
+}
+
+#navigator > button {
+    width: 150px;
+    height: 50px;
+    font-size: large;
+    font-weight: 600;
+}
+
+button#back-button {
+    color: #2470F8 !important;
+    border: 1px solid #2470F8 !important;
+    margin: 2rem !important;
+}

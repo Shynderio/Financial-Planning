@@ -1,0 +1,18 @@
+form > div {
+    white-space: nowrap;
+}
+
+form input {
+    display: inline !important;
+    border: 0 !important;
+    background-color: #ffffff00 !important;
+}
+
+form label {
+    width: 120px;
+    font-weight: bold;
+}
+
+form > div:nth-child(2) > label {
+    width: 60px;
+}
