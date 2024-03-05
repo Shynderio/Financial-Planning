@@ -24,6 +24,7 @@ namespace FinancialPlanningAPI.Controllers
         public async Task<IActionResult> LogIn(LoginModel model)
         {
             IActionResult respone = Unauthorized();
+<<<<<<< HEAD
             //mapper loginmodel to user
             var user = mapper.Map<User>(model);
 
@@ -38,6 +39,36 @@ namespace FinancialPlanningAPI.Controllers
             }
             respone = Ok(new { token = token });
             return Ok(respone);
+=======
+
+            //InValid Model
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid username or password" });
+            }
+            //mapper loginmodel to user
+            var user = mapper.Map<User>(model);
+
+                //Check acc and create token
+                var token = await authService.LoginAsync(user);
+
+                //Invalid account and returned emtry
+                if (string.IsNullOrEmpty(token))
+                {
+                    respone = BadRequest(new { message = "Invalid username or password" });
+
+                }
+                else
+                {
+                    respone = Ok(new { token = token, message = "Login successful" });
+                }
+
+
+                return Ok(respone);
+          
+           
+
+>>>>>>> UC01-Login
         }
        
 
