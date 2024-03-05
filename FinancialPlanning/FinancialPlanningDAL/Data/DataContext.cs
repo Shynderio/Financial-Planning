@@ -40,6 +40,6 @@ namespace FinancialPlanningDAL.Data
         internal DbSet<Report>? Reports { get; set; }
         internal DbSet<ReportVersion>? ReportVersions { get; set; }
         internal DbSet<User>? Users { get; set; }
-        internal DbSet<Role>? Roles { get; set; }   
+        internal DbSet<Role> Roles { get; set; }   
     }
 }

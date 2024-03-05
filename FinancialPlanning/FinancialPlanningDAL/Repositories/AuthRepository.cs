@@ -13,38 +13,37 @@ namespace FinancialPlanningDAL.Repositories
     public class AuthRepository : IAuthRepository
     {
         private readonly DataContext context;
-    
+
         public AuthRepository(DataContext context)
         {
             this.context = context;
-          
+
         }
         public async Task<User> IsValidUser(string email, string password)
         {
-         
-         var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email && u.Password == password);
-                return user;
-         
-          
-          
+            var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email && u.Password == password);
+
+            return user;
         }
         public async Task<string> GetRoleUser(string email)
         {
-            var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
-            if (user != null)
+            if (context.Users != null)
             {
-                var role = await context.Roles.SingleOrDefaultAsync(r => r.Id == user.RoleId);
-                if (role != null)
+                var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email);
+                if (user != null)
                 {
-                    return role.RoleName;
+                    var role = await context.Roles.SingleOrDefaultAsync(r => r.Id == user.RoleId);
+                    if (role != null)
+                    {
+                        return role.RoleName;
+                    }
                 }
             }
-
 
             return "";
 
         }
 
-        
+
     }
 }

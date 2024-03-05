@@ -15,30 +15,31 @@ namespace FinancialPlanningAPI.Controllers
     {
         private readonly AuthService authService;
         private readonly IMapper mapper;
-        public AuthController(AuthService authService, IMapper mapper) {
-        this.authService = authService;
+        public AuthController(AuthService authService, IMapper mapper)
+        {
+            this.authService = authService;
             this.mapper = mapper;
         }
         [HttpPost("Login")]
         public async Task<IActionResult> LogIn(LoginModel model)
         {
-            var user = mapper.Map<User>(model); 
+            IActionResult respone = Unauthorized();
+            //mapper loginmodel to user
+            var user = mapper.Map<User>(model);
 
-            var result = await authService.LoginAsync(user);
+            //Check acc and create token
+            var token = await authService.LoginAsync(user);
 
-            if (string.IsNullOrEmpty(result))
+            //Invalid account and returned emtry
+            if (string.IsNullOrEmpty(token))
             {
-                return Unauthorized();
+                respone = BadRequest(new { message = "Invalid username or password" });
+              
             }
-
-            return Ok(result);
+            respone = Ok(new { token = token });
+            return Ok(respone);
         }
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Check()
-        {
-            return Ok();
-        }
+       
 
     }
 }
