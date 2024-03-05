@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanningDAL.Data;
-
-using FinancialPlanningBAL.ScheduleTasks;
 using FinancialPlanningDAL.Repositories;
 using FinancialPlanningAPI.Helpers;
 using FinancialPlanningBAL.Services;
+using FinancialPlanningBAL.ScheduleTasks;
 
 
 var builder = WebApplication.CreateBuilder(args);

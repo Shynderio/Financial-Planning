@@ -12,7 +12,7 @@ public class CreateTermModel
     public Guid CreatorId { get; set; }
 
     [Required(ErrorMessage = "Duration is required")]
-    [Range(1, 3, ErrorMessage = "Duration must be set to 1, 2, or 3")]
+    [RegularExpression(@"^[1,3,6]$", ErrorMessage = "Duration must be set to 1, 3, or 6")]
     public int Duration { get; set; }
 
     [Required(ErrorMessage = "Start date is required")]
