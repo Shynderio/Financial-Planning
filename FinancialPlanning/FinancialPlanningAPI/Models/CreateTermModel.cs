@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace FinancialPlanningAPI.ViewModels;
+namespace FinancialPlanningAPI.Models;
 public class CreateTermModel
 {
     [Required(ErrorMessage = "Term name is required")]

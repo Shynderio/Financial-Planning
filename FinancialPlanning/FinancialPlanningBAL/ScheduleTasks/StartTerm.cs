@@ -31,7 +31,7 @@ namespace FinancialPlanningBAL.ScheduleTasks
                 {
                     // Start the term
                     System.Console.WriteLine("Starting term: " + term.TermName);
-                    await termService.StartTerm(term);
+                    await termService.StartTerm(term.Id);
                 }
            
         }

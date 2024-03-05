@@ -30,36 +30,51 @@ namespace FinancialPlanningBAL.Services
             return startingTerms;
         }
 
-        public async Task StartTerm(Term term)
+        public async Task StartTerm(Guid id)
         {
-            if (term.Status != 1)
-            {
-                throw new Exception("Term is not in the correct status to be started");
-            }
-            else
+            var term = await _termRepository.GetTermById(id);
+            if (term != null)
             {
                 term.Status = 2;
                 await _termRepository.UpdateTerm(term);
+            }
+            else
+            {
+                throw new ArgumentException("Term not found with the specified ID");
             }
         }
 
         public async Task CreateTerm(Term term)
         {
             term.Status = 1;
-            await _termRepository.CreateTerm(term);
+            var endDate = term.StartDate.AddMonths(term.Duration);
+            if (endDate < term.ReportDueDate){
+                throw new ArgumentException("Report due date cannot be after the end date");
+            } else
+            if (endDate < term.PlanDueDate){
+                throw new ArgumentException("Plan due date cannot be after the end date");
+            } else
+                await _termRepository.CreateTerm(term);
         }
 
         public async Task UpdateTerm(Term term)
         {
-            var existingTerm = await _termRepository.GetTermById(term.Id);
+            var existingTerm = await _termRepository.GetTermById(term.Id) ?? throw new ArgumentException("Term not found with the specified ID");
 
-            if (existingTerm == null)
+            var Status = existingTerm.Status;
+            if (Status == 1)
             {
-                throw new ArgumentException("Term not found with the specified ID");
+                existingTerm.TermName = term.TermName;
+                existingTerm.CreatorId = term.CreatorId;
+                existingTerm.Duration = term.Duration;
+                existingTerm.StartDate = term.StartDate;
+                existingTerm.PlanDueDate = term.PlanDueDate;
+                existingTerm.ReportDueDate = term.ReportDueDate;
+                await _termRepository.UpdateTerm(term);
             }
             else
             {
-                await _termRepository.UpdateTerm(term);
+                throw new ArgumentException("Term cannot be updated as it is not in the new status");
             }
         }
 
@@ -73,6 +88,25 @@ namespace FinancialPlanningBAL.Services
             else
             {
                 throw new ArgumentException("Term not found with the specified ID");
+            }
+        }
+
+        public async Task<IEnumerable<Term>> GetAllTerms()
+        {
+            return await _termRepository.GetAllTerms();
+        }
+
+        public async Task CloseTerms()
+        {
+            IEnumerable<Term> terms = await _termRepository.GetAllTerms();
+            foreach (var term in terms)
+            {
+                var endDate = term.StartDate.AddMonths(term.Duration);
+                if (endDate <= DateTime.Now && term.Status == 2)
+                {
+                    term.Status = 3;
+                    await _termRepository.UpdateTerm(term);
+                }
             }
         }
     }
