@@ -19,14 +19,15 @@ namespace FinancialPlanningBAL.Services
         public async Task<IEnumerable<Term>> GetStartingTerms()
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
+            List<Term> startingTerms = new List<Term>();
             foreach (var term in terms)
             {
                 if (term.StartDate >= DateTime.Now.AddDays(-7) && term.Status == 1)
                 {
-                    terms = terms.Append(term);
+                    startingTerms.Add(term);
                 }
             }
-            return terms;
+            return startingTerms;
         }
 
         public async Task StartTerm(Term term)
@@ -50,7 +51,16 @@ namespace FinancialPlanningBAL.Services
 
         public async Task UpdateTerm(Term term)
         {
-            await _termRepository.UpdateTerm(term);
+            var existingTerm = await _termRepository.GetTermById(term.Id);
+
+            if (existingTerm == null)
+            {
+                throw new ArgumentException("Term not found with the specified ID");
+            }
+            else
+            {
+                await _termRepository.UpdateTerm(term);
+            }
         }
 
         public async Task DeleteTerm(Guid id)
