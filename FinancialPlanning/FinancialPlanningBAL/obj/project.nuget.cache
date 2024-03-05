@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "v2HUrhJFnpmKZ10dmUuitqcXpt7UMyA5Fh0HkYFtc8XZfinNmh4QFWNBeV2zR9vxPIfWlpwDB3qGlICZjK/ogg==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\HP\\Documents\\financial-planning\\FinancialPlanning\\FinancialPlanningBAL\\FinancialPlanningBAL.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\HP\\Documents\\financial-planning\\FinancialPlanning\\FinancialPlanningDAL\\FinancialPlanningDAL.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\HP\\Documents\\financial-planning\\FinancialPlanning\\FinancialPlanningDAL\\FinancialPlanningDAL.csproj",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
+}
