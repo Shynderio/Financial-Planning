@@ -8,17 +8,20 @@
     </div>
     <form >
       <div class="mb-3 position-relative">
-        <input type="text" class="form-control" placeholder="Địa chỉ Email" name="email" [(ngModel)]="loginModel.email" />        
+        <input type="text" class="form-control" placeholder="Địa chỉ Email" name="email" [formControl]="emailFormControl" />        
           <i class="fa-solid fa-user"></i>
         </div>
-    
+      
+         <!-- Error email -->
         <div class="mb-3 position-relative">
-          <input type="password" class="form-control" placeholder="Mật khẩu" name="password" [(ngModel)]="loginModel.password" />
+          <input type="password" class="form-control" placeholder="Mật khẩu" name="password" [(ngModel)]="loginModel.password" required/>
           <i class="fa-solid fa-lock"></i>
-        </div>          
-      <a class="mb-3 float-end" href="#">Forgot password</a><br />
+        </div>    
+      
+      <a class="mb-3 float-end" href="#">Forgot password</a><br /> 
       <div class="d-grid gap-2">
         <button type="button" (click)="login()" class="btn btn-primary">Log in</button>
       </div>
     </form>
+    <p class="text-danger">{{ errorMessage }}</p>
   </main>

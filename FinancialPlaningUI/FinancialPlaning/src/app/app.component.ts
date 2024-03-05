@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -12,8 +12,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     RouterOutlet,
     LoginComponent,
- 
-    CommonModule
+    CommonModule,
+    ReactiveFormsModule
     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
