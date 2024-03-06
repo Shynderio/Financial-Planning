@@ -9,4 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanningDAL.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.305.30" />
+    <PackageReference Include="ExcelDataReader" Version="3.6.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
+  </ItemGroup>
 </Project>
