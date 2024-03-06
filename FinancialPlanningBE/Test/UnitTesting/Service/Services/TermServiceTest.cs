@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using FinancialPlanningBAL.Services;
-using FinancialPlanningDAL.Entities;
-using FinancialPlanningDAL.Repositories;
+using FinancialPlanning.Service.Services;
+using FinancialPlanning.Data.Entities;
+using FinancialPlanning.Data.Repositories;
 using Moq;
 using Xunit;
 
-namespace TestProject.BAL.Services
+namespace TestProject.Service.Services
 {
     public class TermServiceTests
     {

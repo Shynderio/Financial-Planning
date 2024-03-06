@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FinancialPlanningBAL.BackgroundServices
+namespace FinancialPlanning.Service.BackgroundServices
 {
     public abstract class ScopedProcessor : BackgroundService
     {

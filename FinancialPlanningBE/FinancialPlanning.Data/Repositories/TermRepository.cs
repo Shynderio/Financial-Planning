@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using FinancialPlanningDAL.Entities;
-using FinancialPlanningDAL.Data;
+using FinancialPlanning.Data.Entities;
+using FinancialPlanning.Data.Data;
 
-namespace FinancialPlanningDAL.Repositories
+namespace FinancialPlanning.Data.Repositories
 {
     public class TermRepository : ITermRepository
     {

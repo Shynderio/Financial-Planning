@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks; // Add this namespace
-using FinancialPlanningDAL.Entities;
-using FinancialPlanningDAL.Repositories;
+using FinancialPlanning.Data.Entities;
+using FinancialPlanning.Data.Repositories;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-namespace FinancialPlanningBAL.Services
+namespace FinancialPlanning.Service.Services
 {
     public class TermService
     {

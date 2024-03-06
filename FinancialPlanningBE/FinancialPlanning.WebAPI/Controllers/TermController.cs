@@ -1,10 +1,10 @@
 using AutoMapper;
-using FinancialPlanningAPI.Models;
-using FinancialPlanningBAL.Services;
-using FinancialPlanningDAL.Entities;
+using FinancialPlanning.WebAPI.Models;
+using FinancialPlanning.Service.Services;
+using FinancialPlanning.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinancialPlanningAPI.Controllers
+namespace FinancialPlanning.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

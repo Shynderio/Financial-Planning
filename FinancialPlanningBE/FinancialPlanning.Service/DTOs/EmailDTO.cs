@@ -1,4 +1,4 @@
-namespace FinancialPlanningBAL.DTOs
+namespace FinancialPlanning.Service.DTOs
 {
     public class EmailDTO
     {

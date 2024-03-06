@@ -1,12 +1,12 @@
 
 
 
-using FinancialPlanningBAL.BackgroundServices;
-using FinancialPlanningBAL.Services;
+using FinancialPlanning.Service.BackgroundServices;
+using FinancialPlanning.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FinancialPlanningBAL.ScheduleTasks
+namespace FinancialPlanning.Service.ScheduleTasks
 {
     public class StartTerm : ScheduledProcessor
     {

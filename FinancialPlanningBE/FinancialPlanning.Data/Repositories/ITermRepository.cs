@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FinancialPlanningDAL.Entities;
+using FinancialPlanning.Data.Entities;
 
-namespace FinancialPlanningDAL.Repositories
+namespace FinancialPlanning.Data.Repositories
 {
     public interface ITermRepository
     {

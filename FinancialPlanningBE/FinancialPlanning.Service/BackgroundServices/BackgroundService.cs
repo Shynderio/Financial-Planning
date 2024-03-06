@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Hosting;
-namespace FinancialPlanningBAL.BackgroundServices
+namespace FinancialPlanning.Service.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService
     {

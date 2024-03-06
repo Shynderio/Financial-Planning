@@ -1,9 +1,9 @@
 
-using FinancialPlanningBAL.DTOs;
-using FinancialPlanningBAL.Services;
+using FinancialPlanning.Service.DTOs;
+using FinancialPlanning.Service.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FinancialPlanningAPI.Controllers
+namespace FinancialPlanning.WebAPI.Controllers
 {
     public class EmailController : ControllerBase
     {

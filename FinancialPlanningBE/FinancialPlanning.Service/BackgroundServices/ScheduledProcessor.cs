@@ -3,7 +3,7 @@ using System.Diagnostics;
 using NCrontab;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FinancialPlanningBAL.BackgroundServices
+namespace FinancialPlanning.Service.BackgroundServices
 {
     public abstract class ScheduledProcessor : ScopedProcessor
     {

@@ -1,12 +1,12 @@
 
 using System.Net.Mail;
-using FinancialPlanningBAL.DTOs;
+using FinancialPlanning.Service.DTOs;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
 
-namespace FinancialPlanningBAL.Services
+namespace FinancialPlanning.Service.Services
 {
     public class EmailService
     {
