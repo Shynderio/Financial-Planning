@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FinancialPlanningDAL.Data;
+using FinancialPlanning.Data.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanningAPI")));
+    b => b.MigrationsAssembly("FinancialPlanning.WebAPI")));
 
 var app = builder.Build();
 

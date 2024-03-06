@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialPlanningDAL.Entities
+namespace FinancialPlanning.Data.Entities
 {
     [Table("report")]
     public class Report
