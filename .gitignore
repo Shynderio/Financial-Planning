@@ -36,3 +36,5 @@ Desktop.ini
 .DS_Store
 .fake
 # FinancialPlanning
+.vscode/
+# FinancialPlaningUI
