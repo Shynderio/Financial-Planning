@@ -1,3 +1,7 @@
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
+using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanningDAL.Data;
 
@@ -13,6 +17,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("FinancialPlanningAPI")));
+
+builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
+{
+    Credentials = new BasicAWSCredentials(builder.Configuration["AWS:AccessKey"], builder.Configuration["AWS:SecretKey"]),
+    Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
+});
 
 var app = builder.Build();
 
