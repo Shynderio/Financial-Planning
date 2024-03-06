@@ -3,7 +3,7 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
-using FinancialPlanningDAL.Data;
+using FinancialPlanning.Data.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanningAPI")));
+    b => b.MigrationsAssembly("FinancialPlanning.WebAPI")));
 
 builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
 {

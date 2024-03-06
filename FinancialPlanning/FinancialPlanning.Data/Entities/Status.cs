@@ -1,4 +1,4 @@
-namespace FinancialPlanningDAL.Entities;
+namespace FinancialPlanning.Data.Entities;
 
 public enum Status
 {

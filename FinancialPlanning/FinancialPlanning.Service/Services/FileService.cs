@@ -2,11 +2,11 @@ using System.Globalization;
 using Amazon.S3;
 using Amazon.S3.Model;
 using ExcelDataReader;
-using FinancialPlanningDAL.Entities;
+using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FinancialPlanningBAL.Services;
+namespace FinancialPlanning.Service.Services;
 
 public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {

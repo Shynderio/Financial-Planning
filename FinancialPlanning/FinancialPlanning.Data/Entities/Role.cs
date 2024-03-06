@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FinancialPlanningDAL.Entities
+namespace FinancialPlanning.Data.Entities
 {
     [Table("role")]
     public class Role

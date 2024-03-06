@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinancialPlanningBAL\FinancialPlanningBAL.csproj" />
-    <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanningDAL.csproj" />
+    <ProjectReference Include="..\FinancialPlanning.Service\FinancialPlanning.Service.csproj" />
+    <ProjectReference Include="..\FinancialPlanning.Data\FinancialPlanning.Data.csproj" />
   </ItemGroup>
 
 </Project>
