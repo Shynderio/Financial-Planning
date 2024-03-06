@@ -1,16 +1,22 @@
 using System.Globalization;
 using Amazon.S3;
 using Amazon.S3.Model;
-using ExcelDataReader;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
 public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
     private const int MaxSize = 500 * 1024 * 1024; //500MB
+
+    private static readonly string[] TemplatePath =
+    [
+        @"FinancialPlanning.Service/Template/Financial Plan_Template.xlsx",
+        @"FinancialPlanning.Service/Template/Monthly Expense Report_Template.xlsx"
+    ];
 
     private readonly string[][] _header =
     [
@@ -54,7 +60,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     {
         if (!CheckFileValidation(fileStream, documentType))
         {
-            throw new ArgumentException("File is invalid!");
+            throw new ArgumentException(
+                "The file uploaded doesn’t meet the requirement. Please use download the file template and try again.");
         }
 
         var request = new PutObjectRequest
@@ -86,41 +93,39 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             return false;
         }
 
-        using var excelDataReader = ExcelReaderFactory.CreateReader(fileStream);
-        using var dataSet = excelDataReader.AsDataSet();
-
+        using var package = new ExcelPackage(fileStream);
         //check file has sheet
-        if (dataSet.Tables.Count == 0) return false;
+        if (package.Workbook.Worksheets.Count == 0) return false;
 
         //check file has data
-        var table = dataSet.Tables[0];
-        if (table.Rows.Count < 3) return false;
+        var worksheet = package.Workbook.Worksheets[0];
+        var numOfRows = worksheet.Dimension.Rows;
+        if (numOfRows < 3) return false;
 
         //check number of column is sufficient
-        var headerRow = table.Rows[1];
-        var numOfColumns = _header[documentType].Length;
-        if (headerRow.ItemArray.Length != numOfColumns) return false;
+        var numOfColumns = worksheet.Dimension.Columns;
+        if (numOfColumns != _header[documentType].Length) return false;
 
         //check cell content is not null and has valid format
-        var numOfRows = table.Rows.Count;
-        for (var i = 0; i < numOfColumns; i++)
+        for (var i = 1; i <= numOfColumns; i++)
         {
-            if (!table.Rows[1].ItemArray[i]!.ToString()!.Trim().Equals(_header[documentType][i])) return false;
+            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(_header[documentType][i])) return false;
 
-            for (var j = 2; j < numOfRows; j++)
+            for (var j = 3; j <= numOfRows; j++)
             {
-                var cellContext = table.Rows[j].ItemArray[i]?.ToString()?.Trim();
+                var cellContext = worksheet.Cells[j, i].Value?.ToString()?.Trim();
                 if (cellContext.IsNullOrEmpty()) return false;
 
                 switch (i)
                 {
-                    case 0:
+                    case 1:
                         if (!DateTime.TryParseExact(cellContext!, "dd/MM/yyyy", null, DateTimeStyles.None, out _))
                             return false;
                         break;
-                    case 5:
                     case 6:
-                    case 9:
+                    case 7:
+                    case 8 when documentType != 0:
+                    case 10 when documentType == 0:
                         if (!decimal.TryParse(cellContext!, NumberStyles.Number, null, out _))
                             return false;
                         break;
@@ -129,11 +134,11 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         }
 
         //check TotalAmount = UnitPrice * Amount
-        for (var i = 2; i < numOfRows; i++)
+        for (var i = 3; i < numOfRows; i++)
         {
-            var unitPrice = decimal.Parse(table.Rows[i].ItemArray[5]!.ToString()!);
-            var amount = decimal.Parse(table.Rows[i].ItemArray[6]!.ToString()!);
-            var totalAmount = decimal.Parse(table.Rows[i].ItemArray[9]!.ToString()!);
+            var unitPrice = decimal.Parse(worksheet.Cells[i, 6].Value.ToString()!);
+            var amount = decimal.Parse(worksheet.Cells[i, 7].Value.ToString()!);
+            var totalAmount = decimal.Parse(worksheet.Cells[i, documentType != 0 ? 8 : 10].Value.ToString()!);
             if (totalAmount != unitPrice * amount)
                 return false;
         }
@@ -156,35 +161,68 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             throw new ArgumentException("File is invalid!");
         }
 
-        using var excelDataReader = ExcelReaderFactory.CreateReader(fileStream);
-        using var dataSet = excelDataReader.AsDataSet();
-
         var expenses = new List<Expense>();
-        var table = dataSet.Tables[0];
-        for (var i = 2; i < table.Rows.Count; i++)
+        using var package = new ExcelPackage(fileStream);
+        var worksheet = package.Workbook.Worksheets[0];
+        for (var i = 3; i <= worksheet.Dimension.Rows; i++)
         {
-            var row = table.Rows[i];
             expenses.Add(new Expense
             {
-                No = i - 1,
-                Date = DateTime.Parse(row.ItemArray[0]!.ToString()!.Trim()),
-                Term = row.ItemArray[1]!.ToString()!.Trim(),
-                Department = row.ItemArray[2]!.ToString()!.Trim(),
-                ExpenseName = row.ItemArray[3]!.ToString()!.Trim(),
-                CostType = row.ItemArray[4]!.ToString()!.Trim(),
-                UnitPrice = decimal.Parse(row.ItemArray[5]!.ToString()!.Trim()),
-                Amount = decimal.Parse(row.ItemArray[6]!.ToString()!.Trim()),
-                Currency = row.ItemArray[7]!.ToString()!.Trim(),
-                ExchangeRate = double.Parse(row.ItemArray[8]!.ToString()!.Trim()),
-                TotalAmount = decimal.Parse(row.ItemArray[9]!.ToString()!.Trim()),
-                ProjectName = row.ItemArray[10]!.ToString()!.Trim(),
-                SupplierName = row.ItemArray[11]!.ToString()!.Trim(),
-                PIC = row.ItemArray[12]!.ToString()!.Trim(),
-                Note = row.ItemArray[13]?.ToString()?.Trim(),
-                Status = Enum.Parse<Status>(row.ItemArray[14]!.ToString()!.Trim())
+                No = i - 2,
+                Date = DateTime.Parse(worksheet.Cells[i, 1].Value.ToString()!.Trim()),
+                Term = worksheet.Cells[i, 2].Value.ToString()!.Trim(),
+                Department = worksheet.Cells[i, 3].Value.ToString()!.Trim(),
+                ExpenseName = worksheet.Cells[i, 4].Value.ToString()!.Trim(),
+                CostType = worksheet.Cells[i, 5].Value.ToString()!.Trim(),
+                UnitPrice = decimal.Parse(worksheet.Cells[i, 6].Value.ToString()!.Trim()),
+                Amount = decimal.Parse(worksheet.Cells[i, 7].Value.ToString()!.Trim()),
+                Currency = documentType == 0 ? worksheet.Cells[i, 8].Value.ToString()!.Trim() : null,
+                ExchangeRate = documentType == 0 ? double.Parse(worksheet.Cells[i, 9].Value.ToString()!.Trim()) : null,
+                TotalAmount = decimal.Parse(worksheet.Cells[i, 10].Value.ToString()!.Trim()),
+                ProjectName = worksheet.Cells[i, 12].Value.ToString()!.Trim(),
+                SupplierName = worksheet.Cells[i, 13].Value.ToString()!.Trim(),
+                PIC = worksheet.Cells[i, 14].Value.ToString()!.Trim(),
+                Note = worksheet.Cells[i, 15].Value.ToString()?.Trim()
             });
         }
 
         return expenses;
+    }
+
+    public async Task<Stream> ConvertListToExcel(List<Expense> expenses, byte documentType)
+    {
+        //Write list of expenses to ExcelPackage
+        using var package = new ExcelPackage(new FileInfo(TemplatePath[documentType]));
+        var worksheet = package.Workbook.Worksheets[0];
+        foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
+        {
+            worksheet.Cells[index + 2, 1].Value = expense.Date;
+            worksheet.Cells[index + 2, 2].Value = expense.Term;
+            worksheet.Cells[index + 2, 3].Value = expense.Department;
+            worksheet.Cells[index + 2, 4].Value = expense.ExpenseName;
+            worksheet.Cells[index + 2, 5].Value = expense.CostType;
+            worksheet.Cells[index + 2, 6].Value = expense.UnitPrice;
+            worksheet.Cells[index + 2, 7].Value = expense.Amount;
+
+            //if document is plan
+            if (documentType == 0)
+            {
+                worksheet.Cells[index + 2, 8].Value = expense.Currency;
+                worksheet.Cells[index + 2, 9].Value = expense.ExchangeRate;
+            }
+
+            worksheet.Cells[index + 2, 10].Value = expense.TotalAmount;
+            worksheet.Cells[index + 2, 12].Value = expense.ProjectName;
+            worksheet.Cells[index + 2, 13].Value = expense.SupplierName;
+            worksheet.Cells[index + 2, 14].Value = expense.PIC;
+            worksheet.Cells[index + 2, 15].Value = expense.Note;
+        }
+
+        //Convert ExcelPackage to Stream
+        var memoryStream = new MemoryStream();
+        await package.SaveAsAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        return memoryStream;
     }
 }
