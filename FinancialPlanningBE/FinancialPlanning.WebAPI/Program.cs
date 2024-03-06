@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using FinancialPlanningDAL.Data;
-using FinancialPlanningDAL.Repositories;
-using FinancialPlanningAPI.Helpers;
-using FinancialPlanningBAL.Services;
-using FinancialPlanningBAL.ScheduleTasks;
+using FinancialPlanning.Data.Data;
+using FinancialPlanning.Data.Repositories;
+using FinancialPlanning.WebAPI.Helpers;
+using FinancialPlanning.Service.Services;
+using FinancialPlanning.Service.ScheduleTasks;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanningDAL")));
+    b => b.MigrationsAssembly("FinancialPlanning.Data")));
 
 
 var app = builder.Build();

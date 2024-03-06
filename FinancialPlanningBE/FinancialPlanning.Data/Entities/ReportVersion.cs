@@ -6,17 +6,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinancialPlanningDAL.Entities
+namespace FinancialPlanning.Data.Entities
 {
-    [Table("plan_version")]
-    public class PlanVersion
+    [Table("report_version")]
+    public class ReportVersion
     {
         [Key] public Guid Id { get; set; }
-        [Required] public Guid PlanId { get; set; }
+        [Required] public Guid ReportId { get; set; }
         [Required] public int Version { get; set; }
-        [Required] public Guid CreatorId { get; set; }
         [Required] public DateTime ImportDate { get; set; }
-        [ForeignKey("PlanId")] public virtual Plan Plan { get; set; } = null!;
+        [Required] public Guid CreatorId { get; set; }
+        [ForeignKey("ReportId")] public virtual Report Report { get; set; } = null!;
         [ForeignKey("CreatorId")] public virtual User User { get; set; } = null!;
     }
 }

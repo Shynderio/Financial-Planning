@@ -15,7 +15,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanningDAL.csproj" />
     <!-- <ProjectReference Include="..\FinancialPlanningAPI\FinancialPlanningAPI.csproj" /> -->
+    <ProjectReference Include="..\FinancialPlanning.Data\FinancialPlanning.Data.csproj" />
   </ItemGroup>
 </Project>
