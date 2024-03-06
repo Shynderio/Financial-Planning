@@ -1,0 +1,49 @@
+nav {
+    float: right;
+    cursor: pointer;
+    margin: 10px 30px;
+}
+#sidenav {
+    position: fixed;
+    background-color: #040730fe;
+    width: 70px;
+    height: 100vh;
+    padding-top: 1px;
+    transition: 0.5s;
+    z-index: 1;
+    opacity: 80%;
+  }
+#sidenav:hover {
+    width: 200px;
+    transition: 0.5s;
+  }
+
+#sidenav a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    margin: 20px 15px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#sidenav a:first-child {
+    margin-top: 15px;
+    margin-bottom: 35px;
+    font-size: large;
+}
+
+#sidenav i {
+    display: flex;
+    height: 40px;
+    width: 40px;
+    margin-right: 20px;
+    font-size: medium;
+    text-align: center;
+    background-color: #1d2153;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+}
