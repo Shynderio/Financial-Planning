@@ -28,7 +28,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             //InValid Model
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Invalid username or password" });
+                return BadRequest(new { message = "Invalid username or password!" });
             }
             //mapper loginmodel to user
             var user = mapper.Map<User>(model);
