@@ -1,2 +1,3 @@
-<app-login> </app-login>
-<router-outlet />
+<app-header *ngIf="logged"></app-header>
+<app-sidenav *ngIf="logged"></app-sidenav>
+<router-outlet/>

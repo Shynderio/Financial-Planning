@@ -1,0 +1,68 @@
+<main>
+    <!-- Document info -->
+    <h1>
+        Create Term
+    </h1>
+    <div class="doc-info mb-5">
+        <form class="row">
+            <div class="col-6">
+                <h4>
+                    <label for="term-name" class="form-label">Term name</label>
+                </h4>
+                <input class="form-control" type="text" id="plan-name" value="Term name" />
+            </div>
+            <div class="col-6">
+                <h4>
+                    <label for="start-date" class="form-label">Start date</label>
+                </h4>
+                <input class="form-control" type="date" id="start-date" value="02/10/2022" />
+            </div>
+            <div class="col-6">
+                <h4>
+                    <label for="duration" class="form-label">Duration</label>
+                </h4>
+                <select class="form-control" id="duration" name="selectedDuration">
+                    <option value="1_month">1 Month</option>
+                    <option value="quarter">Quarter</option>
+                    <option value="half_year">Half Year</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <h4>
+                    <label for="end-date" class="form-label">End date</label>
+                </h4>
+                <input class="form-control" type="date" id="end-date" value="02/10/2022" disabled />
+            </div>
+            <div class="col-6">
+                <h4>
+                    <label for="plan-due-date" class="form-label">Plan due date</label>
+                </h4>
+                <input class="form-control" type="date" id="plan-due-date" value="02/10/2022" />
+            </div>
+            <div class="col-6">
+                <h4>
+                    <label for="report-due-date" class="form-label">Report due date</label>
+                </h4>
+                <input class="form-control" type="date" id="report-due-date" value="02/10/2022" />
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-6"></div>
+        <div class="col-6">
+            <div class="row">
+                <div class="col-6">
+                    <button class="btn btn-primary btn-block" type="submit">Create</button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-secondary btn-block" type="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<footer>
+    <!-- Your footer content goes here -->
+</footer>

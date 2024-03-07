@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { response } from 'express';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
+import { AppComponent } from '../../app.component';
 
 
 
@@ -31,7 +32,10 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private http: HttpClient,
-    private router: Router) { }
+    private router: Router,
+    private appComponent: AppComponent) { 
+      this.appComponent.logged = false;
+    }
    
 
   login(): void {
