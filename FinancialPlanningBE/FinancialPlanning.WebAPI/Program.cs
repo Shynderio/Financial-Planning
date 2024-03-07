@@ -4,6 +4,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanning.Data.Data;
+using FinancialPlanning.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
     Credentials = new BasicAWSCredentials(builder.Configuration["AWS:AccessKey"], builder.Configuration["AWS:SecretKey"]),
     Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
 });
+
+builder.Services.AddScoped<FileService>();
 
 var app = builder.Build();
 
