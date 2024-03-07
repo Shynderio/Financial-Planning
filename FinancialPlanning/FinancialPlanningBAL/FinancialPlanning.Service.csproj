@@ -7,6 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanningDAL.csproj" />
+    <ProjectReference Include="..\FinancialPlanningDAL\FinancialPlanning.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using FinancialPlanningAPI.Models;
+using FinancialPlanning.WebAPI.Models;
 using FinancialPlanningDAL.Entities;
 
-namespace FinancialPlanningAPI.Helpers
+namespace FinancialPlanning.WebAPI.Helpers
 {
     public class MappingProfile : Profile
     {

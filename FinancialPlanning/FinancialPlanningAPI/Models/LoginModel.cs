@@ -1,4 +1,4 @@
-﻿namespace FinancialPlanningAPI.Models
+﻿namespace FinancialPlanning.WebAPI.Models
 {
     public class LoginModel
     {

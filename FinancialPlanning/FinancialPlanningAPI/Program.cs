@@ -7,7 +7,7 @@ using System.Text;
 using FinancialPlanningBAL;
 using FinancialPlanningDAL.Repositories;
 using AutoMapper;
-using FinancialPlanningAPI.Helpers;
+using FinancialPlanning.WebAPI.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
