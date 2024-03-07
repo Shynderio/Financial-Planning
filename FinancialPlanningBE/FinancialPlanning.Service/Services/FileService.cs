@@ -30,23 +30,16 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         ]
     ];
 
-    public async Task<string> GetFile(string key)
+    public async Task<string> GetFileAsync(string key)
     {
-        try
+        var request = new GetPreSignedUrlRequest
         {
-            var request = new GetPreSignedUrlRequest
-            {
-                BucketName = configuration["AWS:BucketName"],
-                Key = key,
-                Expires = DateTime.UtcNow.AddMinutes(15)
-            };
+            BucketName = configuration["AWS:BucketName"],
+            Key = key,
+            Expires = DateTime.UtcNow.AddMinutes(15)
+        };
 
-            return await s3Client.GetPreSignedURLAsync(request);
-        }
-        catch (AmazonS3Exception)
-        {
-            throw new ArgumentException("File does not exist!");
-        }
+        return await s3Client.GetPreSignedURLAsync(request);
     }
 
     /*
@@ -56,14 +49,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    public async Task UploadPlan(string key, FileStream fileStream, byte documentType)
+    public async Task UploadPlanAsync(string key, FileStream fileStream)
     {
-        if (!CheckFileValidation(fileStream, documentType))
-        {
-            throw new ArgumentException(
-                "The file uploaded doesn’t meet the requirement. Please use download the file template and try again.");
-        }
-
         var request = new PutObjectRequest
         {
             BucketName = configuration["AWS:BucketName"],
@@ -82,7 +69,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    private bool CheckFileValidation(FileStream fileStream, byte documentType)
+    public bool ValidateFile(FileStream fileStream, byte documentType)
     {
         string[] validExtension = [".xls", ".xlsx", ".csv"];
 
@@ -155,12 +142,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      */
     public List<Expense> ConvertExcelToList(FileStream fileStream, byte documentType)
     {
-        //check file is valid
-        if (!CheckFileValidation(fileStream, documentType))
-        {
-            throw new ArgumentException("File is invalid!");
-        }
-
         var expenses = new List<Expense>();
         using var package = new ExcelPackage(fileStream);
         var worksheet = package.Workbook.Worksheets[0];
@@ -189,7 +170,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         return expenses;
     }
 
-    public async Task<Stream> ConvertListToExcel(List<Expense> expenses, byte documentType)
+    public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
         using var package = new ExcelPackage(new FileInfo(TemplatePath[documentType]));
