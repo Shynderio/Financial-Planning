@@ -14,8 +14,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
     private static readonly string[] TemplatePath =
     [
-        @"FinancialPlanning.Service/Template/Financial Plan_Template.xlsx",
-        @"FinancialPlanning.Service/Template/Monthly Expense Report_Template.xlsx"
+        @"..\..\..\..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
+        @"..\..\..\..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
     ];
 
     private readonly string[][] _header =
@@ -80,33 +80,41 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             return false;
         }
 
-        using var package = new ExcelPackage(fileStream);
-        //check file has sheet
-        if (package.Workbook.Worksheets.Count == 0) return false;
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(fileStream);
+        package = RemoveEmptyRow(package);
 
-        //check file has data
         var worksheet = package.Workbook.Worksheets[0];
-        var numOfRows = worksheet.Dimension.Rows;
-        if (numOfRows < 3) return false;
+        var numOfRows = worksheet.Dimension?.Rows ?? 0;
 
         //check number of column is sufficient
-        var numOfColumns = worksheet.Dimension.Columns;
-        if (numOfColumns != _header[documentType].Length) return false;
+        var numOfColumns = worksheet.Dimension?.Columns ?? 0;
+        if (numOfColumns != _header[documentType].Length)
+            return false;
+
+        //remove empty row (all cell in row is empty)
+
+        //check file has data
+        if (numOfRows < 3)
+            return false;
 
         //check cell content is not null and has valid format
         for (var i = 1; i <= numOfColumns; i++)
         {
-            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(_header[documentType][i])) return false;
+            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(_header[documentType][i - 1]))
+                return false;
 
             for (var j = 3; j <= numOfRows; j++)
             {
                 var cellContext = worksheet.Cells[j, i].Value?.ToString()?.Trim();
-                if (cellContext.IsNullOrEmpty()) return false;
+                if ((documentType == 0 ? i != 11 && i != 15 : i != 12) && cellContext.IsNullOrEmpty())
+                    return false;
 
                 switch (i)
                 {
                     case 1:
-                        if (!DateTime.TryParseExact(cellContext!, "dd/MM/yyyy", null, DateTimeStyles.None, out _))
+                        if (!DateTime.TryParseExact(cellContext!, ["dd/MM/yyyy", "dd/MM/yyyy hh:mm:ss tt"], null,
+                                DateTimeStyles.None, out _))
                             return false;
                         break;
                     case 6:
@@ -143,7 +151,11 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     public List<Expense> ConvertExcelToList(FileStream fileStream, byte documentType)
     {
         var expenses = new List<Expense>();
-        using var package = new ExcelPackage(fileStream);
+
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(fileStream);
+        package = RemoveEmptyRow(package);
+
         var worksheet = package.Workbook.Worksheets[0];
         for (var i = 3; i <= worksheet.Dimension.Rows; i++)
         {
@@ -158,12 +170,14 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                 UnitPrice = decimal.Parse(worksheet.Cells[i, 6].Value.ToString()!.Trim()),
                 Amount = decimal.Parse(worksheet.Cells[i, 7].Value.ToString()!.Trim()),
                 Currency = documentType == 0 ? worksheet.Cells[i, 8].Value.ToString()!.Trim() : null,
-                ExchangeRate = documentType == 0 ? double.Parse(worksheet.Cells[i, 9].Value.ToString()!.Trim()) : null,
-                TotalAmount = decimal.Parse(worksheet.Cells[i, 10].Value.ToString()!.Trim()),
-                ProjectName = worksheet.Cells[i, 12].Value.ToString()!.Trim(),
-                SupplierName = worksheet.Cells[i, 13].Value.ToString()!.Trim(),
-                PIC = worksheet.Cells[i, 14].Value.ToString()!.Trim(),
-                Note = worksheet.Cells[i, 15].Value.ToString()?.Trim()
+                ExchangeRate = documentType == 0
+                    ? double.Parse(worksheet.Cells[i, 9].Value.ToString()!.Trim(), CultureInfo.InvariantCulture)
+                    : null,
+                TotalAmount = decimal.Parse(worksheet.Cells[i, 10 - documentType * 2].Value.ToString()!.Trim()),
+                ProjectName = worksheet.Cells[i, 12 - documentType * 3].Value.ToString()!.Trim(),
+                SupplierName = worksheet.Cells[i, 13 - documentType * 3].Value.ToString()!.Trim(),
+                PIC = worksheet.Cells[i, 14 - documentType * 3].Value.ToString()!.Trim(),
+                Note = worksheet.Cells[i, 15 - documentType * 3].Value?.ToString()?.Trim()
             });
         }
 
@@ -173,7 +187,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
-        using var package = new ExcelPackage(new FileInfo(TemplatePath[documentType]));
+        using var package =
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), TemplatePath[documentType])));
         var worksheet = package.Workbook.Worksheets[0];
         foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
         {
@@ -192,11 +207,11 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                 worksheet.Cells[index + 2, 9].Value = expense.ExchangeRate;
             }
 
-            worksheet.Cells[index + 2, 10].Value = expense.TotalAmount;
-            worksheet.Cells[index + 2, 12].Value = expense.ProjectName;
-            worksheet.Cells[index + 2, 13].Value = expense.SupplierName;
-            worksheet.Cells[index + 2, 14].Value = expense.PIC;
-            worksheet.Cells[index + 2, 15].Value = expense.Note;
+            worksheet.Cells[index + 2, 10 - documentType * 2].Value = expense.TotalAmount;
+            worksheet.Cells[index + 2, 12 - documentType * 3].Value = expense.ProjectName;
+            worksheet.Cells[index + 2, 13 - documentType * 3].Value = expense.SupplierName;
+            worksheet.Cells[index + 2, 14 - documentType * 3].Value = expense.PIC;
+            worksheet.Cells[index + 2, 15 - documentType * 3].Value = expense.Note;
         }
 
         //Convert ExcelPackage to Stream
@@ -205,5 +220,29 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         memoryStream.Seek(0, SeekOrigin.Begin);
 
         return memoryStream;
+    }
+
+    private ExcelPackage RemoveEmptyRow(ExcelPackage package)
+    {
+        var worksheet = package.Workbook.Worksheets[0];
+
+        for (var i = 1; i <= (worksheet.Dimension?.Rows ?? 0); i++)
+        {
+            var isEmptyRow = true;
+
+            for (var j = 1; j <= (worksheet.Dimension?.Columns ?? 0); j++)
+                if (!string.IsNullOrEmpty(worksheet.Cells[i, j].Value?.ToString()?.Trim()))
+                {
+                    isEmptyRow = false;
+                    break;
+                }
+
+            if (!isEmptyRow) continue;
+            worksheet.DeleteRow(i--);
+        }
+
+        package.Save();
+
+        return package;
     }
 }
