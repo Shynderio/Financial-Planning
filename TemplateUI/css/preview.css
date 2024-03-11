@@ -1,0 +1,21 @@
+form > div {
+    white-space: nowrap;
+}
+
+form input, form select{
+    display: inline !important;
+    border: 0 !important;
+    background-color: #ffffff00 !important;
+    width: 65% !important;
+}
+
+form label {
+    width: 30% !important;
+    font-weight: bold;
+    display: inline-block;
+}
+
+table {
+    text-align: center;
+    overflow: scroll;
+}

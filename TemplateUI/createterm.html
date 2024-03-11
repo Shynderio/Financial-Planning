@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home | Financial Planning</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/createterm.css" />
+    <link rel="stylesheet" type="text/css" href="css/preview.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <script src="https://kit.fontawesome.com/0d7fb5cc5d.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <!-- User info -->
+    <header>
+        <nav id="navbar">
+            <div id="userinfo" onclick="showUserMenu(this)">
+                <i class="fa-regular fa-user"></i>
+                <div id="username">
+                    <i>Hello,</i>
+                    <br />
+                    <b>MINHNT70</b>
+                </div>
+            </div>
+            <div id="usermenu">
+                <div class="blank"></div>
+                <a href="profile.html"><i class="fa-solid fa-arrow-right-from-bracket"></i>Profile</a>
+                <a href="logout.html"><i class="fa-regular fa-id-card"></i>Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Side nav -->
+    <aside id="sidenav">
+        <a href="home.html"><i class="fa-solid fa-house"></i><b>Financial<br />Planning</b></a>
+        <a href="terms.html"><i class="fa-solid fa-timeline"></i><b>Term List</b></a>
+        <a href="plans.html"><i class="fa-solid fa-list-check"></i><b>Plan List</b></a>
+        <a href="reports.html"><i class="fa-solid fa-file"></i><b>Report List</b></a>
+    </aside>
+
+    <!-- Detail -->
+    <main>
+        <!-- Document info -->
+        <div class="doc-info mb-5">
+            <form class="row">
+                <div class="col-6">
+                    <label for="term-name" class="form-label">Term name</label>
+                    <input class="form-control" type="text" id="plan-name" value="Term name" />
+                </div>
+                <div class="col-6">
+                    <label for="start-date" class="form-label">Start date</label>
+                    <input class="form-control" type="date" id="start-date" value="02/10/2022" />
+                </div>
+                <div class="col-6">
+                    <label for="duration" class="form-label">Duration</label>
+                    <select class="form-control" id="duration" [(ngModel)]="selectedDuration" name="selectedDuration">
+                        <option value="1_month">1 Month</option>
+                        <option value="quarter">Quarter</option>
+                        <option value="half_year">Half Year</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label for="end-date" class="form-label">End date</label>
+                    <input class="form-control" type="date" id="end-date" value="02/10/2022" disabled />
+                </div>
+                <div class="col-6">
+                    <label for="plan-due-date" class="form-label">Plan due date</label>
+                    <input class="form-control" type="date" id="plan-due-date" value="02/10/2022"/>
+                </div>
+                <div class="col-6">
+                    <label for="report-due-date" class="form-label">Report due date</label>
+                    <input class="form-control" type="date" id="report-due-date" value="02/10/2022"/>
+                </div>
+            </form>
+        </div>
+
+    </main>
+    <footer></footer>
+    <script>
+        function showUserMenu(element) {
+            var usermenu = document.getElementById("usermenu");
+            usermenu.style.maxHeight =
+                ((parseInt(
+                    window.getComputedStyle(usermenu).getPropertyValue("max-height")
+                ) +
+                    200) %
+                    400) +
+                "px";
+            element.classList.toggle("clicked");
+        }
+    </script>
+</body>
+
+</html>
