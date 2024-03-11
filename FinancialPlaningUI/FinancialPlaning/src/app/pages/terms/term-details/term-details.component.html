@@ -1,1 +1,46 @@
-<p>term-details works!</p>
+<main>
+    <h1>Term details</h1>
+    <div class="doc-info mb-5">
+        <form [formGroup]="termForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-6">
+                    <h4><label for="term-name" class="form-label">Term name</label></h4>
+                    <input class="form-control" type="text" id="term-name" formControlName="termName" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="start-date" class="form-label">Start date</label></h4>
+                    <input class="form-control" type="date" id="start-date" formControlName="startDate" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="duration" class="form-label">Duration</label></h4>
+                    <select class="form-control" id="duration" formControlName="duration">
+                        <option value="1_month">1 Month</option>
+                        <option value="quarter">Quarter</option>
+                        <option value="half_year">Half Year</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <h4><label for="end-date" class="form-label">End date</label></h4>
+                    <input class="form-control" type="date" id="end-date" formControlName="endDate" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="plan-due-date" class="form-label">Plan due date</label></h4>
+                    <input class="form-control" type="date" id="plan-due-date" formControlName="planDueDate" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="report-due-date" class="form-label">Report due date</label></h4>
+                    <input class="form-control" type="date" id="report-due-date" formControlName="reportDueDate"/>
+                </div>
+            </div>
+            <!-- <div class="row mt-4">
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Create</button>
+                    <button class="btn btn-secondary" type="button" (click)="onCancel()">Cancel</button>
+                </div>
+            </div> -->
+        </form>
+    </div>
+</main>
+<footer>
+    <!-- Your footer content goes here -->
+</footer>

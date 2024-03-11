@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  username = 'MINHNT70';
+  username = 'Bạn';
   userMenuMaxHeight = '0px';
 
   showUserMenu() {

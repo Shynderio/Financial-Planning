@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,7 +19,9 @@ import { SidenavComponent } from "./components/sidenav/sidenav.component";
         CommonModule,
         ReactiveFormsModule,
         HeaderComponent,
-        SidenavComponent
+        SidenavComponent,
+        RouterModule,
+        
     ]
 })
 export class AppComponent {
