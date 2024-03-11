@@ -1,14 +1,8 @@
-﻿using FinancialPlanningDAL.Data;
-using FinancialPlanningDAL.Entities;
+﻿using FinancialPlanning.Data.Data;
+using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FinancialPlanningDAL.Repositories
+namespace FinancialPlanning.Data.Repositories
 {
     public class AuthRepository : IAuthRepository
     {

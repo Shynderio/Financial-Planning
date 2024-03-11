@@ -1,12 +1,10 @@
 ﻿using FinancialPlanning.WebAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FinancialPlanningDAL.Entities;
-using FinancialPlanningBAL;
-using Microsoft.AspNetCore.Authentication;
+using FinancialPlanning.Data.Entities;
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Authorization;
+using FinancialPlanning.Service.Services;
+
 namespace FinancialPlanning.WebAPI.Controllers
 {
     [Route("api/[controller]")]

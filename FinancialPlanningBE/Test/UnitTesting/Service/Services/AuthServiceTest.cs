@@ -1,18 +1,11 @@
-﻿using FinancialPlanningBAL;
-using FinancialPlanningDAL.Entities;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Moq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using FinancialPlanning.Service.Services;
+using Microsoft.Extensions.Configuration;
+using Moq;
 
-namespace Test.UnitTesting.Service
+namespace Test.UnitTesting.Service.Services
 {
     public class AuthServiceTest
     {

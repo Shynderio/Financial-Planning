@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using FinancialPlanning.Data.Repositories;
-using FinancialPlanningDAL.Entities;
+using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FinancialPlanningBAL
+namespace FinancialPlanning.Service.Services
 {
     public class AuthService
     {
