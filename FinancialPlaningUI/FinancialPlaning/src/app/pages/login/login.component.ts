@@ -32,7 +32,10 @@ export class LoginComponent {
     private router: Router,
     private formBuilder: FormBuilder,
     private renderer: Renderer2, private el: ElementRef
-  ) { }
+  ) { 
+
+    // localStorage.clear();
+  }
   
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -59,13 +62,16 @@ export class LoginComponent {
 
         //login ok 
         if (response.statusCode == 200) {
-
+          
           //Save token 
           const token = response?.value?.token;
           localStorage.setItem('token', token)
-       
+          
+          // logged
+          
           //Go to home page
           this.router.navigate(['/home']);
+
 
         }else{
           this.loginClicked = false;

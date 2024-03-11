@@ -13,4 +13,12 @@ export class AuthService {
     return this.http.post("https://localhost:7270/api/Auth/Login", model);
   }
 
+  IsLoggedIn(){
+    if (typeof localStorage !== 'undefined') {
+      // Safe to use localStorage here
+      // return false
+      return localStorage.getItem('token')!=null;
+    }
+    return false
+  }
 }

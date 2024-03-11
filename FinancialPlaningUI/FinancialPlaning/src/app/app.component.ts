@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from "./components/header/header.component";
 import { SidenavComponent } from "./components/sidenav/sidenav.component";
+import { AuthService } from './services/auth.service';
 
 @Component({
     selector: 'app-root',
@@ -21,10 +22,13 @@ import { SidenavComponent } from "./components/sidenav/sidenav.component";
         HeaderComponent,
         SidenavComponent,
         RouterModule,
-        
+        HttpClientModule
     ]
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged = true; // Default value, assuming header is shown by default
+  logged ;
+  constructor(private authService: AuthService) {
+    this.logged = this.authService.IsLoggedIn();
+  }
 }
