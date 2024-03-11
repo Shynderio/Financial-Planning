@@ -19,7 +19,7 @@ namespace FinancialPlanning.Service.Services
         public async Task<IEnumerable<Term>> GetStartingTerms()
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
-            List<Term> startingTerms = new List<Term>();
+            List<Term> startingTerms = [];
             foreach (var term in terms)
             {
                 if (term.StartDate >= DateTime.Now.AddDays(-7) && term.Status == 1)
@@ -30,6 +30,10 @@ namespace FinancialPlanning.Service.Services
             return startingTerms;
         }
 
+        public async Task<Term> GetTermById(Guid id)
+        {
+            return await _termRepository.GetTermById(id);
+        }
         public async Task StartTerm(Guid id)
         {
             var term = await _termRepository.GetTermById(id);
