@@ -7,6 +7,10 @@ using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.WebAPI.Helpers;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.ScheduleTasks;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,19 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("FinancialPlanning.Data")));
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
+{
+    Credentials = new BasicAWSCredentials(builder.Configuration["AWS:AccessKey"], builder.Configuration["AWS:SecretKey"]),
+    Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
+});
+
+builder.Services.AddScoped<FileService>();
 
 var app = builder.Build();
 
