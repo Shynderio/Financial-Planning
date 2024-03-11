@@ -8,14 +8,9 @@ using FinancialPlanning.Data.Data;
 
 namespace FinancialPlanning.Data.Repositories
 {
-    public class TermRepository : ITermRepository
+    public class TermRepository(DataContext context) : ITermRepository
     {
-        private readonly DataContext _context;
-
-        public TermRepository(DataContext context)
-        {
-            _context = context;
-        }
+        private readonly DataContext _context = context;
 
         public async Task<Guid> CreateTerm(Term term)
         {
@@ -38,19 +33,22 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<Term> GetTermById(Guid id)
         {
-            var term = await _context.Terms!.FindAsync(id);
-            if (term == null)
-            {
-                throw new Exception("Term not found");
-            }
-
+            var term = await _context.Terms!.FindAsync(id) ?? throw new Exception("Term not found");
             return term;
         }
 
-        public Task UpdateTerm(Term term)
+        public async Task UpdateTerm(Term term)
         {
-            _context.Terms!.Update(term);
-            return _context.SaveChangesAsync(); 
+            var existingTerm = await _context.Terms!.FindAsync(term.Id) ?? throw new Exception("Term not found");
+            // Update the properties of the existing term entity with the values from the provided term object
+            existingTerm.TermName = term.TermName;
+            existingTerm.CreatorId = term.CreatorId;
+            existingTerm.Duration = term.Duration;
+            existingTerm.StartDate = term.StartDate;
+            existingTerm.PlanDueDate = term.PlanDueDate;
+            existingTerm.ReportDueDate = term.ReportDueDate;
+
+            await _context.SaveChangesAsync();
         }
 
 
