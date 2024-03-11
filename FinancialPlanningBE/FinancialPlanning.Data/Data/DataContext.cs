@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,14 +32,14 @@ namespace FinancialPlanning.Data.Data
 
             base.OnModelCreating(modelBuilder);
         }
-        internal DbSet<Term>? Terms { get; set; }
-        internal DbSet<Department>? Departments { get; set; }
-        internal DbSet<Plan>? Plans { get; set; }
-        internal DbSet<Position>? Positions { get; set; }
-        internal DbSet<PlanVersion>? PlanVersions { get; set; }
-        internal DbSet<Report>? Reports { get; set; }
-        internal DbSet<ReportVersion>? ReportVersions { get; set; }
-        internal DbSet<User>? Users { get; set; }
-
+        public DbSet<Term>? Terms { get; set; }
+        public DbSet<Department>? Departments { get; set; }
+        public DbSet<Plan>? Plans { get; set; }
+        public DbSet<Position>? Positions { get; set; }
+        public DbSet<PlanVersion>? PlanVersions { get; set; }
+        public DbSet<Report>? Reports { get; set; }
+        public DbSet<ReportVersion>? ReportVersions { get; set; }
+        public DbSet<User>? Users { get; set; }
+        public DbSet<Role> Roles { get; set; }   
     }
 }
