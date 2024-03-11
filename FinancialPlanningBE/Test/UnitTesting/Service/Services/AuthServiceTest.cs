@@ -1,6 +1,5 @@
 ﻿using FinancialPlanningBAL;
 using FinancialPlanningDAL.Entities;
-using FinancialPlanningDAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -8,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using FinancialPlanningDAL.Repositories;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using FinancialPlanning.Data.Repositories;
 
 namespace Test.UnitTesting.Service
 {

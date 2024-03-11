@@ -5,9 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using FinancialPlanning.Data.Repositories;
 using FinancialPlanningDAL.Entities;
-
-using FinancialPlanningDAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
