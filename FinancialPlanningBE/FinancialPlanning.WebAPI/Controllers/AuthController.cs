@@ -1,9 +1,8 @@
-﻿using FinancialPlanning.WebAPI.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using FinancialPlanning.Data.Entities;
 using AutoMapper;
 using FinancialPlanning.Service.Services;
+using FinancialPlanning.WebAPI.Models.User;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {

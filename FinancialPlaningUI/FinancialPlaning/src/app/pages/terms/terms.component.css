@@ -1,25 +1,55 @@
 main {
-    box-shadow: none;
-    padding: 30px;
+  position: absolute;
+  height: 100vh;
+  width: calc(100vw - 100px);
+  max-height: 100vh;
+  max-width: calc(100vw - 100px);
+  left: 80px;
+  padding: 30px;
+  background-color: #070F2B;
 }
 
-main > div {
-    border-radius: 24px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    padding: 20px;
+.container {
+  position: relative;
 }
-main {
-    position: absolute;
-    height: calc(100vh - 120px);
-    width: calc(100vw - 100px);
-    max-height: calc(100vh - 120px);
-    max-width: calc(100vw - 100px);
-    border-radius: 20px;
-    top: 100px;
-    left: 80px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  
+
+h6 {
+  font-size: smaller;
+}
+
+div:has(#page-title) {
+  display: flex;
+}
+
+button {
+  background: #535C91;
+  border: none;
+}
+
+#create-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+#create-button > button {
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+#create-button i {
+  margin-right: 10px;
+}
+
+#status-filter {
+    border-bottom: 1px solid #9290C3;
+}
+
+#status-filter > button {
+    padding: 10px;
+    background-color: #070F2B;
+    color: #9290C3;
+    width: 125px;
+}
