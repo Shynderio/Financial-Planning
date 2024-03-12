@@ -2,15 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginModel } from '../models/loginModel.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient) { }
+  // http = inject(HttpClient);
+  constructor(private http: HttpClient) {
+   }
   
   login(model: LoginModel): Observable<any> {
-    return this.http.post("https://localhost:7270/api/Auth/Login", model);
+    return this.http.post(environment.apiUrl + '/Auth/Login', model);
   }
 
   IsLoggedIn(){

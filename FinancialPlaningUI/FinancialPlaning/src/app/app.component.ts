@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
@@ -20,13 +20,13 @@ import { AuthService } from './services/auth.service';
         ReactiveFormsModule,
         SidenavComponent,
         RouterModule,
-        HttpClientModule
+        // HttpClientModule
     ]
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged ;
-  constructor(private authService: AuthService) {
-    this.logged = this.authService.IsLoggedIn();
-  }
+  logged = false;
+  // constructor(private authService: AuthService) {
+  //   this.logged = this.authService.IsLoggedIn();
+  // }
 }
