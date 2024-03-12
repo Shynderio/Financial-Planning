@@ -38,6 +38,13 @@ export class LoginComponent {
   }
   
   ngOnInit(): void {
+
+    //check Islogged
+    if(this.authService.IsLoggedIn()){
+      this.router.navigate(['/home']);  
+      
+    }
+ 
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -46,6 +53,7 @@ export class LoginComponent {
     this.renderer.addClass(this.el.nativeElement, 'backgroundLogin');
   }
  
+
   //Login 
   login(): void {
     
@@ -54,21 +62,17 @@ export class LoginComponent {
       this.loginClicked = true;
       return;
     }
-
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
         console.log(response); // Log response to the console
        
-
         //login ok 
         if (response.statusCode == 200) {
           
           //Save token 
           const token = response?.value?.token;
           localStorage.setItem('token', token)
-          
-          // logged
-          
+
           //Go to home page
           this.router.navigate(['/home']);
 
