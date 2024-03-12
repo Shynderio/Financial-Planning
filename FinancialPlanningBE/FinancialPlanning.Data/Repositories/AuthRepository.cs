@@ -19,6 +19,7 @@ namespace FinancialPlanning.Data.Repositories
 
             return user;
         }
+
         public async Task<string> GetRoleUser(string email)
         {
             if (context.Users != null)
@@ -29,15 +30,32 @@ namespace FinancialPlanning.Data.Repositories
                     var role = await context.Roles.SingleOrDefaultAsync(r => r.Id == user.RoleId);
                     if (role != null)
                     {
+
                         return role.RoleName;
                     }
                 }
             }
 
             return "";
-
         }
 
+
+
+        //Get name of department
+        public async Task<string> GetDepartmentByUser(User user)
+        {
+            if (context.Users != null)
+            {
+                var department = await context.Departments.SingleOrDefaultAsync(d => d.Id == user.DepartmentId);
+                if (department != null)
+                {
+
+                    return department.DepartmentName;
+                }
+            }
+
+            return "";
+        }
 
     }
 }

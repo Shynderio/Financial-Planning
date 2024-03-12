@@ -35,7 +35,9 @@ namespace FinancialPlanning.Service.Services
                 //Get role of user
                 var userRole = await authRepository.GetRoleUser(user.Email);
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole.ToString()));
-
+                //Add departmentName claim
+                var departmentname = await authRepository.GetDepartmentByUser(user);
+                authClaims.Add(new Claim("departmentName", departmentname));
                 var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
                 //Create token
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -55,8 +57,25 @@ namespace FinancialPlanning.Service.Services
 
             return string.Empty;
 
-
-
         }
+
+        //Get id from token
+        public string GetUserFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            if (jwtToken != null && jwtToken.Claims != null)
+            {
+                var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (userIdClaim != null)
+                {
+                    return userIdClaim.Value;
+                }
+            }
+
+            return null;
+        }
+
     }
 }

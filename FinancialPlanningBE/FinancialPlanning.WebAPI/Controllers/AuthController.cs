@@ -26,7 +26,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             //InValid Model
             if (!ModelState.IsValid)
             {
-                return BadRequest(new { message = "Invalid username or password!" });
+                return BadRequest();
             }
             //mapper loginmodel to user
             var user = mapper.Map<User>(model);
@@ -37,19 +37,14 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Invalid account and returned emtry
                 if (string.IsNullOrEmpty(token))
                 {
-                    respone = BadRequest(new { message = "Invalid username or password" });
-
+                    respone = BadRequest();
                 }
                 else
                 {
-                    respone = Ok(new { token = token, message = "Login successful" });
+                    respone = Ok(new { token = token);
                 }
 
-
                 return Ok(respone);
-          
-           
-
         }
        
 
