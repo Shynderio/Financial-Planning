@@ -8,13 +8,13 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  // http = inject(HttpClient);
-  constructor(private http: HttpClient) {
-   }
+  private apiUrl = environment.apiUrl+'/Auth';
+  constructor(private http: HttpClient) { }
   
   login(model: LoginModel): Observable<any> {
-    return this.http.post(environment.apiUrl + '/Auth/Login', model);
+    return this.http.post(this.apiUrl+'/Login', model);
   }
+
 
   IsLoggedIn(){
     if (typeof localStorage !== 'undefined') {
@@ -24,4 +24,10 @@ export class AuthService {
     }
     return false
   }
+
+  logout(): void{
+      localStorage.removeItem('token');
+     return;
+  }
+  
 }
