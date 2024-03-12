@@ -5,6 +5,7 @@ using FinancialPlanning.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -16,6 +17,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly TermService _termService = termService ?? throw new ArgumentNullException(nameof(termService));
 
         [HttpPost]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> CreateTerm(CreateTermModel termModel)
         {
             if (ModelState.IsValid)
@@ -29,6 +31,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id}/start")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> StartTerm(Guid id)
         {
             await _termService.StartTerm(id);
@@ -36,6 +39,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetTermById(Guid id)
         {
             var term = await _termService.GetTermById(id);
@@ -43,6 +47,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("allTerms")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAllTerms()
         {
             var terms = await _termService.GetAllTerms();
@@ -50,6 +55,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id}/update")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> UpdateTerm(Guid id, CreateTermModel termModel)
         {
             if (ModelState.IsValid)
@@ -64,6 +70,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeleteTerm(Guid id)
         {
             await _termService.DeleteTerm(id);
