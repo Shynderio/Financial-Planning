@@ -1,8 +1,42 @@
 <main>
-  <a routerLink="/create-term">Create Term</a>
-  <!-- <a routerLink="/edit-term">Edit Term</a> -->
-  <a [routerLink]="['/term-details', termId]">Term Details</a>
-
+  <div class="container mb-4">
+    <div id="page-title">
+      <h3><b>Terms</b></h3>
+      <h6>View all terms</h6>
+    </div>
+    <a routerLink="/create-term" id="create-button"><button><i class="fa-solid fa-plus"></i> Create</button></a>
+  </div>
+  <div id="status-filter" class="mb-4">
+    <button>All Statuses</button>
+    <button>New</button>
+    <button>In-Progress</button>
+    <button>Closed</button>
+  </div>
+  <input type="text" placeholder="Search for Terms" />
+  <table>
+    <tr>
+      <th>Term</th>
+      <th>Start date</th>
+      <th>End date</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    <div *ngFor="let term of getPaginatedItems()">
+      <tr>
+        <td>{{ term.TermName }}</td>
+        <td>{{ term.StartDate }}</td>
+        <td>{{ term.EndDate }}</td>
+        <td>{{ term.Status }}</td>
+        <td>
+          <a [routerLink]="['/term-details', termId]"><i class="fa-regular fa-eye"></i></a>
+          <i class="fa-regular fa-pen-to-square"></i>
+          <i class="fa-regular fa-trash-can"></i>
+        </td>
+      </tr>
+    </div>
+  </table>
+  <mat-paginator [length]="termList.length" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  </mat-paginator>
 </main>
 <footer>
   <!-- Your footer content goes here -->

@@ -5,7 +5,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HeaderComponent } from "./components/header/header.component";
 import { SidenavComponent } from "./components/sidenav/sidenav.component";
 import { AuthService } from './services/auth.service';
 
@@ -19,7 +18,6 @@ import { AuthService } from './services/auth.service';
         LoginComponent,
         CommonModule,
         ReactiveFormsModule,
-        HeaderComponent,
         SidenavComponent,
         RouterModule,
         HttpClientModule
