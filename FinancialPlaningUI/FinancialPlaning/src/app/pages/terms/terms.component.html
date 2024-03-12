@@ -21,7 +21,7 @@
       <th>Status</th>
       <th>Action</th>
     </tr>
-    <div *ngFor="let term of getPaginatedItems()">
+    <!-- <div *ngFor="let term of getPaginatedItems()">
       <tr>
         <td>{{ term.TermName }}</td>
         <td>{{ term.StartDate }}</td>
@@ -33,7 +33,7 @@
           <i class="fa-regular fa-trash-can"></i>
         </td>
       </tr>
-    </div>
+    </div> -->
   </table>
   <mat-paginator [length]="termList.length" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
   </mat-paginator>
