@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace FinancialPlanning.Data.Repositories
 {
-    public interface IReportRepository
+    public interface IDepartmentRepository
     {
-        public Task<List<Report>> GetAllReports();
-        public Task<List<Report>> GetReportsByDepartId();
-
+        public Task<string?> GetDepartmentIdByEmail(string email);
+        public Task<string> GetDepartmentNameByUser(User user);
     }
 }

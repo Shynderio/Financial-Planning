@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using FinancialPlanning.Data.Entities;
 using AutoMapper;
 using FinancialPlanning.Service.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -41,12 +44,23 @@ namespace FinancialPlanning.WebAPI.Controllers
                 }
                 else
                 {
-                    respone = Ok(new { token = token);
+                    respone = Ok(new { token = token });
                 }
 
                 return Ok(respone);
         }
-       
+
+        [HttpGet]
+        [Authorize(Roles = "FinancialStaff, Accountant")]
+        public async Task<IActionResult> Test()
+        {
+            IActionResult respone = Unauthorized();
+            respone = Ok(new { mess = "ok" });
+
+            return Ok(respone);
+        }
+
+
 
     }
 }

@@ -13,9 +13,9 @@ namespace FinancialPlanning.Data.Repositories
             this.context = context;
 
         }
-        public async Task<User> IsValidUser(string email, string password)
+        public async Task<User?> IsValidUser(string email, string password)
         {
-            var user = await context.Users.SingleOrDefaultAsync(u => u.Email == email && u.Password == password);
+            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email && u.Password == password);
 
             return user;
         }
@@ -39,23 +39,7 @@ namespace FinancialPlanning.Data.Repositories
             return "";
         }
 
-
-
-        //Get name of department
-        public async Task<string> GetDepartmentByUser(User user)
-        {
-            if (context.Users != null)
-            {
-                var department = await context.Departments.SingleOrDefaultAsync(d => d.Id == user.DepartmentId);
-                if (department != null)
-                {
-
-                    return department.DepartmentName;
-                }
-            }
-
-            return "";
-        }
+      
 
     }
 }

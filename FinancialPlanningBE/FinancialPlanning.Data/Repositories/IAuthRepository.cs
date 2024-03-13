@@ -6,6 +6,6 @@ namespace FinancialPlanning.Data.Repositories
     {
         public Task<User> IsValidUser(string email, string password);
         public  Task<String> GetRoleUser(string email);
-        public Task<string> GetDepartmentByUser(User user);
+       
     }
 }

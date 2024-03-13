@@ -10,7 +10,7 @@ export class AuthService {
   constructor(private http: HttpClient) { }
   
   login(model: LoginModel): Observable<any> {
-    return this.http.post("https://localhost:7270/api/Auth/Login", model);
+    return this.http.post("http://localhost:5085/api/Auth/Login", model);
   }
 
   IsLoggedIn(){
@@ -21,4 +21,10 @@ export class AuthService {
     }
     return false
   }
+  logout(): void{
+    localStorage.removeItem('token');
+   return;
+}
+
+
 }

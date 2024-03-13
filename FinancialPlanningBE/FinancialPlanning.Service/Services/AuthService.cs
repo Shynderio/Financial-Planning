@@ -11,11 +11,14 @@ namespace FinancialPlanning.Service.Services
     public class AuthService
     {
         private readonly IAuthRepository authRepository;
+        private readonly IDepartmentRepository depRepository;
+
         private readonly IConfiguration configuration;
-        public AuthService(IAuthRepository authRepository, IConfiguration configuration)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IDepartmentRepository depRepository)
         {
             this.authRepository = authRepository;
             this.configuration = configuration;
+            this.depRepository = depRepository;
         }
 
         public async Task<string> LoginAsync(User userMapper)
@@ -30,15 +33,19 @@ namespace FinancialPlanning.Service.Services
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("username",user.Username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
                 //Get role of user
                 var userRole = await authRepository.GetRoleUser(user.Email);
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole.ToString()));
+
                 //Add departmentName claim
-                var departmentname = await authRepository.GetDepartmentByUser(user);
+                var departmentname = await depRepository.GetDepartmentNameByUser(user);
                 authClaims.Add(new Claim("departmentName", departmentname));
+
                 var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+              
                 //Create token
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -56,26 +63,8 @@ namespace FinancialPlanning.Service.Services
             }
 
             return string.Empty;
-
         }
 
-        //Get id from token
-        public string GetUserFromToken(string token)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-            if (jwtToken != null && jwtToken.Claims != null)
-            {
-                var userIdClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-                if (userIdClaim != null)
-                {
-                    return userIdClaim.Value;
-                }
-            }
-
-            return null;
-        }
-
+       
     }
 }

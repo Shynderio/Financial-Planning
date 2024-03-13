@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using FinancialPlanning.Service.Services;
+using FinancialPlanning.Service.Token;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,15 +14,19 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly AuthService _authService;
         private readonly IMapper _mapper;
         private readonly ReportService _reportService;
-        public ReportController(AuthService authService, IMapper mapper, ReportService reportService)
+        private readonly TokenService _tokenService;
+
+        public ReportController(AuthService authService, IMapper mapper, ReportService reportService,TokenService tokenService)
         {
             _authService = authService;
             _mapper = mapper;
             _reportService = reportService;
+            _tokenService = tokenService;
         }
 
         // Phương thức để lấy danh sách báo cáo của user
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetListReport()
         {
             try
@@ -29,7 +35,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
                 // Lấy user email từ JWT token
-                var useremail = _authService.GetUserFromToken(token);
+                var useremail = _tokenService.GetEmailFromToken(token);
 
                 // Lấy danh sách báo cáo của user từ cơ sở dữ liệu
                 var reports = await _reportService.GetReportsByEmail(useremail);
@@ -41,8 +47,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
 
-            // Trả về một giá trị mặc định nếu không có lỗi xảy ra
-            return BadRequest();
+          
         }
 
     }
