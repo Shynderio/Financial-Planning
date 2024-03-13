@@ -15,8 +15,8 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object);
+            var mockEmailService = new Mock<EmailService>();
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
 
             var user = new User
             {
@@ -49,8 +49,9 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
+             var mockEmailService = new Mock<EmailService>();
 
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object);
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
 
             var user = new User
             {
@@ -75,8 +76,8 @@ namespace Test.UnitTesting.Service.Services
             // Arrange
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object);
+             var mockEmailService = new Mock<EmailService>();
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
 
             var user = new User
             {

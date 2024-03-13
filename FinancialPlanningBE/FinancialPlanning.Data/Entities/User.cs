@@ -29,7 +29,7 @@ namespace FinancialPlanning.Data.Entities
         [Required] public Guid DepartmentId { get; set; }
         [Required] public Guid PositionId { get; set; }
         [Required] public Guid RoleId { get; set; }
-
+        public string? Token { get; set; }
         [Required] public int Status { get; set; }
         public string? Notes { get; set; }
         [ForeignKey("DepartmentId")] public virtual Department Department { get; set; } = null!;
