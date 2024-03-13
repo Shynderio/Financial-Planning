@@ -4,10 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 import { CreateTermModel } from '../../../models/term.model';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-create-term',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './create-term.component.html',
   styleUrl: './create-term.component.css'
 })
@@ -174,8 +175,9 @@ export class CreateTermComponent implements OnInit {
   }
 
   onCancel(): void {
-    // Handle cancel action
-    console.log('Cancel');
+    // Reset form and navigate back to terms page
+    // this.termForm.reset(); // Resetting the form
+    // this.router.navigate(['/terms']); // Navigate back to terms page
   }
 
 }

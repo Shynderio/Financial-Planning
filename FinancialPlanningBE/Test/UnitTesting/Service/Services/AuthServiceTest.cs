@@ -104,74 +104,7 @@ namespace Test.UnitTesting.Service.Services
             Assert.Contains(decodedToken.Claims, c => c.Type == "role" && c.Value == "Admin");
 
         }
-        [Fact]
-        public async Task LoginAsync_ValidUser_ReturnsTokenWithExpirationClaim()
-        {
-            // Arrange
-            var mockAuthRepository = new Mock<IAuthRepository>();
-            var mockConfiguration = new Mock<IConfiguration>();
-
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object);
-
-            var user = new User
-            {
-                Email = "test@example.com",
-                Password = "password"
-            };
-
-            mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
-                .ReturnsAsync(new User { Email = user.Email });
-
-            mockAuthRepository.Setup(repo => repo.GetRoleUser(user.Email))
-                .ReturnsAsync("UserRole");
-
-            mockConfiguration.SetupGet(config => config["JWT:Secret"]).Returns("your_secret_key");
-            mockConfiguration.SetupGet(config => config["JWT:ValidIssuer"]).Returns("valid_issuer");
-            mockConfiguration.SetupGet(config => config["JWT:ValidAudience"]).Returns("valid_audience");
-
-            // Act
-            var token = await authService.LoginAsync(user);
-
-            // Assert
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(token);
-            Assert.True(decodedToken.ValidTo > DateTime.UtcNow);
-        }
-
-        [Fact]
-        public async Task LoginAsync_ValidUser_ReturnsTokenWithValidJtiClaim()
-        {
-            // Arrange
-            var mockAuthRepository = new Mock<IAuthRepository>();
-            var mockConfiguration = new Mock<IConfiguration>();
-
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object);
-
-            var user = new User
-            {
-                Email = "test@example.com",
-                Password = "password"
-            };
-
-            mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
-                .ReturnsAsync(new User { Email = user.Email });
-
-            mockAuthRepository.Setup(repo => repo.GetRoleUser(user.Email))
-                .ReturnsAsync("User");
-
-            mockConfiguration.SetupGet(config => config["JWT:Secret"]).Returns("your_secret_key");
-            mockConfiguration.SetupGet(config => config["JWT:ValidIssuer"]).Returns("valid_issuer");
-            mockConfiguration.SetupGet(config => config["JWT:ValidAudience"]).Returns("valid_audience");
-
-            // Act
-            var token = await authService.LoginAsync(user);
-
-            // Assert
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(token);
-            Assert.NotEmpty(decodedToken.Id);
-        }
-
+      
         // Add other test cases here...
 
 

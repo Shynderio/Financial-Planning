@@ -4,6 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CreateTermModel } from '../../../models/term.model';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { switchMap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -14,28 +17,30 @@ import { CommonModule } from '@angular/common';
 export class EditTermComponent implements OnInit {
   termForm: FormGroup;
   termService: TermService;
-  constructor(private fb: FormBuilder, termService: TermService) {
-    this.termForm = this.fb.group({
-      term: ['']
-    });
+  termId: string = '8E0A048B-2AC4-489B-9FF6-03EFD4B80005';
+  constructor(
+    private fb: FormBuilder, 
+    termService: TermService,
+    private router: Router,
+    private route: ActivatedRoute,) {
     this.termService = termService;
-  }
-  ngOnInit() {
     this.termForm = this.fb.group({
       termName: ['', Validators.required],
       startDate: ['', Validators.required],
       duration: ['1_month', Validators.required],
       endDate: [{ value: '', disabled: true }],
-      planDueDate: ['', [Validators.required, this.planDueDateValidator]],
-      reportDueDate: ['', [Validators.required, this.reportDueDateValidator]]
+      planDueDate: ['', [Validators.required]],
+      reportDueDate: ['', [Validators.required]]
     });
-
-    this.termForm.get('startDate')?.valueChanges.subscribe(() => {
-      this.updateEndDate();
-    });
-
-    this.termForm.get('duration')?.valueChanges.subscribe(() => {
-      this.updateEndDate();
+  }
+  ngOnInit() {
+    this.termService.getTerm(this.termId).subscribe({
+      next: (data) => {
+        console.log(data); // Log the response data
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      }
     });
   }
 
