@@ -25,8 +25,8 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged = false;
-  // constructor(private authService: AuthService) {
-  //   this.logged = this.authService.IsLoggedIn();
-  // }
+  logged ;
+  constructor(private authService: AuthService) {
+    this.logged = this.authService.IsLoggedIn();
+  }
 }

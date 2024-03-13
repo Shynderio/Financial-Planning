@@ -13,7 +13,7 @@
     <button>Closed</button>
   </div>
   <input type="text" placeholder="Search for Terms" />
-  <table>
+  <!-- <table> -->
     <tr>
       <th>Term</th>
       <th>Start date</th>
@@ -21,20 +21,20 @@
       <th>Status</th>
       <th>Action</th>
     </tr>
-    <!-- <div *ngFor="let term of getPaginatedItems()">
+    <div *ngFor="let term of getPaginatedItems()">
       <tr>
         <td>{{ term.TermName }}</td>
         <td>{{ term.StartDate }}</td>
         <td>{{ term.EndDate }}</td>
         <td>{{ term.Status }}</td>
         <td>
-          <a [routerLink]="['/term-details', termId]"><i class="fa-regular fa-eye"></i></a>
+          <a [routerLink]="['/term-details', term.id]"><i class="fa-regular fa-eye"></i></a>
           <i class="fa-regular fa-pen-to-square"></i>
           <i class="fa-regular fa-trash-can"></i>
         </td>
       </tr>
-    </div> -->
-  </table>
+    </div>
+  <!-- </table> -->
   <mat-paginator [length]="termList.length" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
   </mat-paginator>
 </main>

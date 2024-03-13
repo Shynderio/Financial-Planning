@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms'
 import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
-// import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { report } from 'process';
 
 @Component({
   selector: 'app-edit-term',
@@ -18,6 +18,11 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class TermDetailsComponent implements OnInit {
   termForm: FormGroup;
 
+  durationReverseMap: { [key: number]: string } = {
+    1: '1_month',
+    3: 'quarter',
+    6: 'half_year'
+  };
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -48,12 +53,15 @@ export class TermDetailsComponent implements OnInit {
         // Assuming termDetails contains the required data
         this.termForm.patchValue({
           termName: termDetails.termName,
-          startDate: termDetails.startDate,
-          duration: termDetails.duration,
-          endDate: termDetails.endDate,
-          planDueDate: termDetails.planDueDate,
-          reportDueDate: termDetails.reportDueDate
+          startDate: termDetails.startDate.slice(0, 10),
+          duration: this.durationReverseMap[termDetails.duration],
+
+          endDate: '',
+
+          planDueDate: termDetails.planDueDate.slice(0, 10),
+          reportDueDate: termDetails.reportDueDate.slice(0, 10),
         });
+        console.log(termDetails);
       },
       error => {
         // Handle error
@@ -61,6 +69,7 @@ export class TermDetailsComponent implements OnInit {
       }
     );
   }
+  
 
   onSubmit() {
     // Handle form submission if needed
