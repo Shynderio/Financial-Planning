@@ -6,9 +6,9 @@
   <a routerLink="/plans"> <i class="fa-solid fa-list-check"></i>Plan List</a>
   <a routerLink="/reports"> <i class="fa-regular fa-file"></i>Report List</a>
   <div id="account">
-  
+   
     <i class="fa-regular fa-user"></i>
-    <div>Abc Xyz<br /><span id="role">Admin</span></div>
+    <div>{{ username }}<br /><span id="role">Admin</span></div>
     <a id="logout" (click)="logout()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i>
     </a>

@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl,FormBuilder,AbstractControl } from '@angular/forms';
 import { HomeComponent } from '../../pages/home/home.component';
+import { jwtDecode } from 'jwt-decode';
 
 
 @Component({
@@ -30,5 +31,18 @@ export class SidenavComponent {
     this.router.navigateByUrl('/login');
     }
   }
-  ngOnInit(): void {}
+  username: string | undefined;
+ 
+  ngOnInit(): void {
+    //Get username
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        this.username = decodedToken.username;
+       
+      }
+    }
+    
+  }
 }
