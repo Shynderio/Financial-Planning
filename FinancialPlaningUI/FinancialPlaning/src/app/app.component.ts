@@ -22,12 +22,13 @@ import { AuthService } from './services/auth.service';
         RouterModule,
         
         RouterLink
+        // HttpClientModule
     ]
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged ;
-  constructor(private authService: AuthService) {
-    this.logged = this.authService.IsLoggedIn();
-  }
+  logged = false;
+  // constructor(private authService: AuthService) {
+  //   this.logged = this.authService.IsLoggedIn();
+  // }
 }
