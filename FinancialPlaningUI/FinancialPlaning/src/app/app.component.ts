@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidenavComponent } from "./components/sidenav/sidenav.component";
 import { AuthService } from './services/auth.service';
 
+
 @Component({
     selector: 'app-root',
     standalone: true,
@@ -27,8 +28,14 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged ;
+ logged = false;
   constructor(private authService: AuthService) {
+   
+  }
+  ngOnInit(): void {
     this.logged = this.authService.IsLoggedIn();
   }
+
+  
+
 }

@@ -14,8 +14,7 @@ export class AuthService {
   login(model: LoginModel): Observable<any> {
     return this.http.post(this.apiUrl+'/Login', model);
   }
-
-
+  
   IsLoggedIn(){
     if (typeof localStorage !== 'undefined') {
       // Safe to use localStorage here
