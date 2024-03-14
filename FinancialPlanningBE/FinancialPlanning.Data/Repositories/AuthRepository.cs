@@ -19,6 +19,7 @@ namespace FinancialPlanning.Data.Repositories
 
             return user;
         }
+
         public async Task<string> GetRoleUser(string email)
         {
             if (context.Users != null)
@@ -29,13 +30,13 @@ namespace FinancialPlanning.Data.Repositories
                     var role = await context.Roles.SingleOrDefaultAsync(r => r.Id == user.RoleId);
                     if (role != null)
                     {
+
                         return role.RoleName;
                     }
                 }
             }
 
             return "";
-
         }
 
         public async Task ResetPassword(User user)

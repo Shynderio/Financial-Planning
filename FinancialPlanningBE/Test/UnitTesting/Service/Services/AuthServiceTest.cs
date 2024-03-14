@@ -15,23 +15,27 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
+            var mockDepartRepository = new Mock<IDepartmentRepository>();
             var mockEmailService = new Mock<EmailService>();
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object, mockDepartRepository.Object);
 
             var user = new User
             {
-                Email = "email1@example.com",
-                Password = "password1"
+                Email = "fianci@email.com",
+                Password = "123"
             };
 
             var userRole = "Admin";
-           
+            var departmentName = "IT";
+
 
             mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
                 .ReturnsAsync(new User { Email = user.Email });
 
             mockAuthRepository.Setup(repo => repo.GetRoleUser(user.Email))
                 .ReturnsAsync(userRole);
+            mockDepartRepository.Setup(repo => repo.GetDepartmentNameByUser(user))
+                .ReturnsAsync(departmentName);
 
             mockConfiguration.SetupGet(config => config["JWT:Secret"]).Returns("ThisIsASecretKeyThatYouWillNeverKnow!2#4%6&8(0");
             mockConfiguration.SetupGet(config => config["JWT:ValidIssuer"]).Returns("https://localhost:7270");
@@ -49,18 +53,21 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-             var mockEmailService = new Mock<EmailService>();
 
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+            var mockDepartRepository = new Mock<IDepartmentRepository>();
+
+            var mockEmailService = new Mock<EmailService>();
+
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object, mockDepartRepository.Object);
 
             var user = new User
             {
-                Email = "email2@example",
-                Password = "password2"
+                Email = "fianci@email.com",
+                Password = "123123"
             };
 
             mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
-                .ReturnsAsync((User)null);
+                .ReturnsAsync((User)null!);
 
             // Act
             var token = await authService.LoginAsync(user);
@@ -76,21 +83,25 @@ namespace Test.UnitTesting.Service.Services
             // Arrange
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-             var mockEmailService = new Mock<EmailService>();
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+
+            var mockDepartRepository = new Mock<IDepartmentRepository>();
+            var mockEmailService = new Mock<EmailService>();
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object, mockDepartRepository.Object);
 
             var user = new User
             {
-                Email = "email1@example.com",
-                Password = "password1"
+                Email = "fianci@email.com",
+                Password = "123"
             };
+            var departmentName = "IT";
 
             mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
                 .ReturnsAsync(new User { Email = user.Email });
 
             mockAuthRepository.Setup(repo => repo.GetRoleUser(user.Email))
                 .ReturnsAsync("Admin");
-
+            mockDepartRepository.Setup(repo => repo.GetDepartmentNameByUser(user))
+               .ReturnsAsync(departmentName);
             mockConfiguration.SetupGet(config => config["JWT:Secret"]).Returns("ThisIsASecretKeyThatYouWillNeverKnow!2#4%6&8(0");
             mockConfiguration.SetupGet(config => config["JWT:ValidIssuer"]).Returns("https://localhost:7270");
             mockConfiguration.SetupGet(config => config["JWT:ValidAudience"]).Returns("User");
@@ -107,7 +118,5 @@ namespace Test.UnitTesting.Service.Services
         }
       
         // Add other test cases here...
-
-
     }
 }
