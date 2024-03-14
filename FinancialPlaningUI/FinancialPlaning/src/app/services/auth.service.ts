@@ -12,7 +12,11 @@ export class AuthService {
   constructor(private http: HttpClient) { }
   
   login(model: LoginModel): Observable<any> {
+<<<<<<< HEAD
+    return this.http.post("http://localhost:5085/api/Auth/Login", model);
+=======
     return this.http.post(this.apiUrl+'/Login', model);
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
   }
   
   IsLoggedIn(){
@@ -23,10 +27,19 @@ export class AuthService {
     }
     return false
   }
+<<<<<<< HEAD
+  logout(): void{
+    localStorage.removeItem('token');
+   return;
+}
+
+
+=======
 
   logout(): void{
       localStorage.removeItem('token');
      return;
   }
   
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
 }

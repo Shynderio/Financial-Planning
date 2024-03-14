@@ -13,6 +13,8 @@ namespace FinancialPlanning.Service.Services
     {
         private readonly EmailService _emailService;
         private readonly IAuthRepository authRepository;
+        private readonly IDepartmentRepository depRepository;
+
         private readonly IConfiguration configuration;
         public AuthService(IAuthRepository authRepository, IConfiguration configuration, EmailService emailService)
         {
@@ -84,13 +86,19 @@ namespace FinancialPlanning.Service.Services
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("username",user.Username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
                 //Get role of user
                 var userRole = await authRepository.GetRoleUser(user.Email);
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole.ToString()));
 
-                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!));
+                //Add departmentName claim
+                var departmentname = await depRepository.GetDepartmentNameByUser(user);
+                authClaims.Add(new Claim("departmentName", departmentname));
+
+                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+              
                 //Create token
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -108,9 +116,6 @@ namespace FinancialPlanning.Service.Services
             }
 
             return string.Empty;
-
-
-
         }
 
     }

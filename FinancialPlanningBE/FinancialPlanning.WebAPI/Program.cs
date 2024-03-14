@@ -16,18 +16,33 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
+using FinancialPlanning.Service.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<ITermRepository, TermRepository>();
-builder.Services.AddScoped<TermService>();
 builder.Services.AddSingleton<IHostedService, StartTerm>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//AddScoped Repository
+builder.Services.AddScoped<ITermRepository, TermRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+
+////AddScoped Service
+builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<TermService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<FileService>();
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -78,15 +93,6 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-//AddScoped
-
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<FileService>();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
-
 // 
 builder.Services.AddAuthentication(options =>
 {
@@ -97,6 +103,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
+#pragma warning disable CS8604 // Possible null reference argument.
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -105,6 +112,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
+
 });
 
 var app = builder.Build();
