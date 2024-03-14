@@ -1,8 +1,6 @@
-import { Component, OnInit, inject, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { SidenavComponent } from '../../components/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
-import { HttpClient} from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import {
   MatPaginator,
   MatPaginatorModule,
@@ -12,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
+import { TermService } from '../../services/term.service';
 
 @Component({
   selector: 'app-terms',
@@ -21,7 +20,6 @@ import { MatTableModule } from '@angular/material/table';
   imports: [
     SidenavComponent,
     RouterLink,
-    // HttpClientModule,
     MatPaginatorModule,
     MatFormFieldModule,
     MatIconModule,
@@ -30,16 +28,15 @@ import { MatTableModule } from '@angular/material/table';
   ],
 })
 export class TermsComponent implements OnInit {
-  httpClient = inject(HttpClient);
   termList: any = [];
 
-  pageSize = 10;
-  pageIndex = 0;
+  statusOption: string = 'All';
+  searchValue: string = '';
 
-  searchValue = '';
-  searchForm = this.fb.nonNullable.group({
-    searchValue: '',
-  });
+  listSize: number = 0;
+  pageSize = 7;
+  pageIndex = 0;
+  dataSource: any = [];
 
   columnHeaders: string[] = [
     'term',
@@ -49,7 +46,11 @@ export class TermsComponent implements OnInit {
     'action',
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private termService: TermService,
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -58,14 +59,11 @@ export class TermsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   fetchData() {
-    this.httpClient
-      .get(environment.apiUrl + '/term/all')
-      .subscribe((data: any) => {
-        console.log(data);
-        this.termList = data;
-      });
-    
-    // this.httpClient.get(environment.apiUrl + '/term/' + '6E32ABB0-827C-4EAB-B51A-7A2A52E51438').subscribe({});
+    this.termService.getAllTerms().subscribe((data: any) => {
+      console.log(data);
+      this.termList = data;
+      this.dataSource = this.getPaginatedItems();
+    });
   }
 
   onPageChange(event: PageEvent) {
@@ -74,10 +72,34 @@ export class TermsComponent implements OnInit {
 
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
-    return this.termList.slice(startIndex, startIndex + this.pageSize);
+    let filteredList = this.termList.filter(
+      (data: any) =>
+        data.termName.toLowerCase().includes(this.searchValue) &&
+        (this.statusOption === 'All' || data.status === this.statusOption)
+    );
+    this.listSize = filteredList.length;
+    return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
-  onSearchSubmit() {
-    this.searchValue = this.searchForm.value.searchValue ?? '';
+  changeSearchText(event: Event) {
+    let target = event.target as HTMLInputElement;
+    this.searchValue = target.value.trim();
+    this.pageIndex = 0;
+    this.dataSource = this.getPaginatedItems();
+  }
+
+  changeStatusFilter(event: Event) {
+    let target = event.target as HTMLElement;
+    let statusOptions =
+      this.elementRef.nativeElement.querySelector('#status-filter');
+
+    for (let button of statusOptions.querySelectorAll('button')) {
+      button.classList.remove('chosen');
+    }
+    target.classList.add('chosen');
+
+    this.statusOption = target.innerHTML;
+    this.pageIndex = 0;
+    this.dataSource = this.getPaginatedItems();
   }
 }

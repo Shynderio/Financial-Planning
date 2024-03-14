@@ -52,6 +52,7 @@ button {
   background-color: #070f2b;
   color: #9290c3;
   width: 125px;
+  font-size: small;
 }
 
 #status-filter > .chosen {
