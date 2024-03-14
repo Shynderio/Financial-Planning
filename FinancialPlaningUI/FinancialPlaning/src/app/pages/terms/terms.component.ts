@@ -2,6 +2,14 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { SidenavComponent } from '../../components/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
 import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import {
   MatPaginator,
   MatPaginatorModule,
   PageEvent,
@@ -11,6 +19,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { TermService } from '../../services/term.service';
+import { jwtDecode } from 'jwt-decode';
+import { of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-terms',
@@ -29,6 +40,8 @@ import { TermService } from '../../services/term.service';
 })
 export class TermsComponent implements OnInit {
   termList: any = [];
+
+  role: string = '';
 
   statusOption: string = 'All';
   searchValue: string = '';
@@ -49,25 +62,36 @@ export class TermsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private termService: TermService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.fetchData();
+
+    //Get role
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        this.role = decodedToken.role;
+      }
+    }
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   fetchData() {
     this.termService.getAllTerms().subscribe((data: any) => {
-      console.log(data);
       this.termList = data;
       this.dataSource = this.getPaginatedItems();
+      console.log('Fetch data');
     });
   }
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
+    this.dataSource = this.getPaginatedItems();
   }
 
   getPaginatedItems() {
@@ -89,6 +113,7 @@ export class TermsComponent implements OnInit {
   }
 
   changeStatusFilter(event: Event) {
+    //Toggle class 'chosen' of status filter button
     let target = event.target as HTMLElement;
     let statusOptions =
       this.elementRef.nativeElement.querySelector('#status-filter');
@@ -102,4 +127,36 @@ export class TermsComponent implements OnInit {
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
+
+  openDeleteDialog(id: string) {
+    const deleteDialog = this.dialog.open(DeleteTermDialog, {
+      width: '400px',
+    });
+
+    deleteDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'deleted') {
+            return this.termService.deleteTerm(id);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe(() => {
+        this.fetchData();
+      });
+  }
+}
+
+@Component({
+  selector: 'app-delete-term',
+  standalone: true,
+  templateUrl: './delete-term/delete-term.component.html',
+  styleUrls: ['./delete-term/delete-term.component.css'],
+  imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+})
+export class DeleteTermDialog {
+  constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
 }

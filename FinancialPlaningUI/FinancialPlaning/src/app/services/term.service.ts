@@ -28,7 +28,7 @@ export class TermService {
 
   updateTerm(termId: string, term: CreateTermModel): Observable<any> {
     term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';
-    return this.http.put(this.apiUrl + '/update' + termId, term);
+    return this.http.put(this.apiUrl + '/update/' + termId, term);
   }
 
   getTerm(termId: string): Observable<any> {
