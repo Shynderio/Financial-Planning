@@ -28,10 +28,14 @@ export class SidenavComponent {
   logout() {
     if (confirm('Are you sure you want to logout?')) {
     this.authService.logout();
-    this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/login').then(() => {
+      window.location.reload();
+    });;
+    
     }
   }
   username: string | undefined;
+  role: string | undefined;
  
   ngOnInit(): void {
     //Get username
@@ -40,7 +44,7 @@ export class SidenavComponent {
       if (token) {
         const decodedToken: any = jwtDecode(token);
         this.username = decodedToken.username;
-       
+       this.role = decodedToken.role;
       }
     }
     
