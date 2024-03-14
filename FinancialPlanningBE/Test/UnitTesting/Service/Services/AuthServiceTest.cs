@@ -25,7 +25,7 @@ namespace Test.UnitTesting.Service.Services
             };
 
             var userRole = "Admin";
-           
+
 
             mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
                 .ReturnsAsync(new User { Email = user.Email });
@@ -49,7 +49,7 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-             var mockEmailService = new Mock<EmailService>();
+            var mockEmailService = new Mock<EmailService>();
 
             var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
 
@@ -76,7 +76,7 @@ namespace Test.UnitTesting.Service.Services
             // Arrange
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
-             var mockEmailService = new Mock<EmailService>();
+            var mockEmailService = new Mock<EmailService>();
             var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
 
             var user = new User
@@ -105,8 +105,26 @@ namespace Test.UnitTesting.Service.Services
             Assert.Contains(decodedToken.Claims, c => c.Type == "role" && c.Value == "Admin");
 
         }
-      
-        // Add other test cases here...
+
+        // [Fact]
+        // public async Task ValidateToken_TokenNotFound_ThrowsException()
+        // {
+        //     // Arrange
+        //     string email = "test@example.com";
+        //     string token = "invalidToken";
+
+        //     var authRepositoryMock = new Mock<IAuthRepository>();
+        //     authRepositoryMock.Setup(repo => repo.GetToken(email)).ReturnsAsync((string)null!);
+
+        //     var validator = new TokenValidator(authRepositoryMock.Object, null);
+
+        //     // Act
+        //     async Task Act() => await validator.ValidateToken(email, token);
+
+        //     // Assert
+        //     await Assert.ThrowsAsync<Exception>(Act);
+        // }
+
 
 
     }
