@@ -22,7 +22,7 @@ import { AuthService } from './services/auth.service';
         HeaderComponent,
         SidenavComponent,
         RouterModule,
-        HttpClientModule
+       
     ]
 })
 export class AppComponent {

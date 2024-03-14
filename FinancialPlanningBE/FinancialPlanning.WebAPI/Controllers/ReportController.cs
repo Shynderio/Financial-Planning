@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
+using FinancialPlanning.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using FinancialPlanning.WebAPI.Models;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -25,7 +29,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         // Phương thức để lấy danh sách báo cáo của user
-        [HttpGet]
+        [HttpGet("reports")]
         [Authorize]
         public async Task<IActionResult> GetListReport()
         {
@@ -40,7 +44,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Lấy danh sách báo cáo của user từ cơ sở dữ liệu
                 var reports = await _reportService.GetReportsByEmail(useremail);
 
-                return Ok(reports);
+                var result = _mapper.Map<List<ReportViewModel>>(reports);
+
+                return Ok(result);
+               
             }
             catch (Exception ex)
             {

@@ -32,19 +32,20 @@ namespace FinancialPlanning.Service.Services
             {
                 //Get departmentId
                 var departID_raw = await _departmentRepository.GetDepartmentIdByEmail(email);
-              
-                //Get report by DepartmentId
                
+                //Get report by DepartmentId
+
                var reports =  await _reportRepository.GetReportsByDepartId();
                 return reports;
             }
-            else
-            {
-                //If role is accountant - getAll
-                var reports = await _reportRepository.GetAllReports();
-                return reports;
-            }
-           
+            return new List<Report>();
+            //else
+            //{
+            //    //If role is accountant - getAll
+            //    var reports = await _reportRepository.GetAllReports();     
+            //       return reports;
+            //}
+
         }
 
     }
