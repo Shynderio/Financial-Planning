@@ -2,6 +2,14 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { SidenavComponent } from '../../components/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
 import {
+  MatDialog,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogTitle,
+  MatDialogContent,
+} from '@angular/material/dialog';
+import {
   MatPaginator,
   MatPaginatorModule,
   PageEvent,
@@ -12,6 +20,8 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { TermService } from '../../services/term.service';
 import { jwtDecode } from 'jwt-decode';
+import { of } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-terms',
@@ -52,7 +62,8 @@ export class TermsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private termService: TermService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -64,7 +75,6 @@ export class TermsComponent implements OnInit {
       if (token) {
         const decodedToken: any = jwtDecode(token);
         this.role = decodedToken.role;
-        console.log(this.role);
       }
     }
   }
@@ -73,14 +83,15 @@ export class TermsComponent implements OnInit {
 
   fetchData() {
     this.termService.getAllTerms().subscribe((data: any) => {
-      console.log(data);
       this.termList = data;
       this.dataSource = this.getPaginatedItems();
+      console.log('Fetch data');
     });
   }
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
+    this.dataSource = this.getPaginatedItems();
   }
 
   getPaginatedItems() {
@@ -116,4 +127,36 @@ export class TermsComponent implements OnInit {
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
+
+  openDeleteDialog(id: string) {
+    const deleteDialog = this.dialog.open(DeleteTermDialog, {
+      width: '400px',
+    });
+
+    deleteDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'deleted') {
+            return this.termService.deleteTerm(id);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe(() => {
+        this.fetchData();
+      });
+  }
+}
+
+@Component({
+  selector: 'app-delete-term',
+  standalone: true,
+  templateUrl: './delete-term/delete-term.component.html',
+  styleUrls: ['./delete-term/delete-term.component.css'],
+  imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+})
+export class DeleteTermDialog {
+  constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
 }
