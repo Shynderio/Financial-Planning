@@ -20,5 +20,12 @@ namespace FinancialPlanning.Data.Entities
         [ForeignKey("Department")] public Guid DepartmentId { get; set; }
         public virtual Department Department { get; set; } = null!;
         public virtual ICollection<ReportVersion>? ReportVersions { get; set; }
+
+        public int? GetMaxVersion()
+        {
+            if (this.ReportVersions == null) return 1;
+            else return this.ReportVersions.OrderByDescending(rv => rv.Version).FirstOrDefault()?.Version;
+
+        }
     }
 }

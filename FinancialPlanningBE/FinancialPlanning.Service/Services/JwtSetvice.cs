@@ -19,9 +19,9 @@ public class JwtService(string secretKey, string issuer)
         var token = new JwtSecurityToken(
             _issuer,
             _issuer,
-            new[] {
+            [
                 new Claim(ClaimTypes.Name, username)
-            },
+            ],
             expires: DateTime.Now.AddMinutes(expireMinutes),
             signingCredentials: credentials
         );
@@ -71,6 +71,7 @@ public class JwtService(string secretKey, string issuer)
             return true; // Invalid token, consider it expired
 
         var expiryTimeUnix = long.Parse(jwtToken.Claims.First(claim => claim.Type == "exp").Value);
+        Console.WriteLine(expiryTimeUnix);
         var expiryTime = DateTimeOffset.FromUnixTimeSeconds(expiryTimeUnix).DateTime;
 
         return expiryTime <= DateTime.UtcNow;

@@ -66,7 +66,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
         console.log(response); // Log response to the console
-       
+        console.log("statuscode: ", response.statusCode); // Log response to the console
         //login ok 
         if (response.statusCode == 200) {
           
