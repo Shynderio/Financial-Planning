@@ -16,11 +16,12 @@ namespace FinancialPlanning.Service.Services
         private readonly IDepartmentRepository depRepository;
 
         private readonly IConfiguration configuration;
-        public AuthService(IAuthRepository authRepository, IConfiguration configuration, EmailService emailService)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, EmailService emailService, IDepartmentRepository depRepository)
         {
             this.authRepository = authRepository;
             this.configuration = configuration;
             _emailService = emailService;
+            this.depRepository = depRepository;
         }
 
         public async Task ValidateToken(string email, string token)
@@ -97,7 +98,7 @@ namespace FinancialPlanning.Service.Services
                 var departmentname = await depRepository.GetDepartmentNameByUser(user);
                 authClaims.Add(new Claim("departmentName", departmentname));
 
-                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+                var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!));
               
                 //Create token
                 var tokenDescriptor = new SecurityTokenDescriptor

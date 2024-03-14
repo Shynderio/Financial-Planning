@@ -24,7 +24,7 @@ namespace FinancialPlanning.Data.Repositories
             var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                var department = await context.Departments!.SingleOrDefaultAsync(d => d.Id == user.DepartmentId);
+                var department = await context.Departments!.SingleOrDefaultAsync(d => d.Id == user!.DepartmentId);
 
                 return department!.Id.ToString();
             }

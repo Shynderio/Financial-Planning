@@ -34,10 +34,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return BadRequest();
             }
             //mapper loginmodel to user
-            var user = mapper.Map<User>(model);
+            var user = _mapper.Map<User>(model);
 
                 //Check acc and create token
-                var token = await authService.LoginAsync(user);
+                var token = await _authService.LoginAsync(user);
 
                 //Invalid account and returned emtry
                 if (string.IsNullOrEmpty(token))
@@ -52,15 +52,6 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return Ok(respone);
         }
         
-        [HttpGet]
-        [Authorize(Roles = "FinancialStaff, Accountant")]
-        public async Task<IActionResult> Test()
-        {
-            IActionResult respone = Unauthorized();
-            respone = Ok(new { mess = "ok" });
-
-            return Ok(respone);
-        }
        
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(string email)

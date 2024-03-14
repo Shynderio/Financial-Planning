@@ -6,9 +6,6 @@ using FinancialPlanning.WebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using FinancialPlanning.WebAPI.Models;
-
 namespace FinancialPlanning.WebAPI.Controllers
 {
     [Route("api/[controller]")]

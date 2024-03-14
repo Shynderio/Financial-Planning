@@ -67,7 +67,7 @@ namespace Test.UnitTesting.Service.Services
             };
 
             mockAuthRepository.Setup(repo => repo.IsValidUser(user.Email, user.Password))
-                .ReturnsAsync((User)null);
+                .ReturnsAsync((User)null!);
 
             // Act
             var token = await authService.LoginAsync(user);

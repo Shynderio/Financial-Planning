@@ -25,7 +25,7 @@ namespace FinancialPlanning.Service.Token
                 }
             }
 
-            return null;
+            return string.Empty;
         }
        
     }

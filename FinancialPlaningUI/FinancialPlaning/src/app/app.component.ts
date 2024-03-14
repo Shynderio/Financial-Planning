@@ -21,11 +21,7 @@ import { AuthService } from './services/auth.service';
         ReactiveFormsModule,
         SidenavComponent,
         RouterModule,
-<<<<<<< HEAD
        
-=======
-        // HttpClientModule
->>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
     ]
 })
 export class AppComponent {
