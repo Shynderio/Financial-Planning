@@ -22,7 +22,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startingTerms = [];
             foreach (var term in terms)
             {
-                if (term.StartDate >= DateTime.Now.AddDays(-7) && term.Status == 1)
+                if (term.StartDate >= DateTime.Now.AddDays(-7) && term.Status == 0)
                 {
                     startingTerms.Add(term);
                 }
@@ -39,7 +39,7 @@ namespace FinancialPlanning.Service.Services
             var term = await _termRepository.GetTermById(id);
             if (term != null)
             {
-                term.Status = 2;
+                term.Status = 1;
                 await _termRepository.UpdateTerm(term);
             }
             else
@@ -50,7 +50,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task CreateTerm(Term term)
         {
-            term.Status = 1;
+            term.Status = 0;
             var endDate = term.StartDate.AddMonths(term.Duration);
             if (endDate < term.ReportDueDate){
                 throw new ArgumentException("Report due date cannot be after the end date");
@@ -106,7 +106,7 @@ namespace FinancialPlanning.Service.Services
             foreach (var term in terms)
             {
                 var endDate = term.StartDate.AddMonths(term.Duration);
-                if (endDate <= DateTime.Now && term.Status == 2)
+                if (endDate <= DateTime.Now && term.Status == 1)
                 {
                     term.Status = 3;
                     await _termRepository.UpdateTerm(term);
