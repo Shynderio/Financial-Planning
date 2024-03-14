@@ -48,26 +48,28 @@ export class TermDetailsComponent implements OnInit {
   }
 
   loadTermDetails(termId: string): void {
-    this.termService.getTerm(termId).subscribe(
-      (termDetails: any) => {
+    // debugger;
+    this.termService.getTerm(termId).subscribe({
+      next: (termDetails: any) => {
         // Assuming termDetails contains the required data
         this.termForm.patchValue({
           termName: termDetails.termName,
           startDate: termDetails.startDate.slice(0, 10),
           duration: this.durationReverseMap[termDetails.duration],
-
+    
           endDate: '',
-
+    
           planDueDate: termDetails.planDueDate.slice(0, 10),
           reportDueDate: termDetails.reportDueDate.slice(0, 10),
         });
         console.log(termDetails);
       },
-      error => {
+      error: (error: any) => {
         // Handle error
         console.error('Error fetching term details:', error);
       }
-    );
+    });
+    
   }
   
 

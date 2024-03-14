@@ -10,30 +10,26 @@ import { AuthService } from './services/auth.service';
 
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css',
-    imports: [
-        RouterOutlet,
-        LoginComponent,
-        CommonModule,
-        ReactiveFormsModule,
-        SidenavComponent,
-        RouterModule,
-        // HttpClientModule
-    ]
+  selector: 'app-root',
+  standalone: true,
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+  imports: [
+    RouterOutlet,
+    LoginComponent,
+    CommonModule,
+    ReactiveFormsModule,
+    SidenavComponent,
+    RouterModule,
+    // HttpClientModule
+  ]
 })
 export class AppComponent {
   title = 'FinancialPlaning';
- logged = false;
+  logged = false;
   constructor(private authService: AuthService) {
-   
   }
   ngOnInit(): void {
     this.logged = this.authService.IsLoggedIn();
   }
-
-  
-
 }
