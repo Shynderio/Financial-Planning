@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { TermService } from '../../services/term.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-terms',
@@ -29,6 +30,8 @@ import { TermService } from '../../services/term.service';
 })
 export class TermsComponent implements OnInit {
   termList: any = [];
+
+  role: string = '';
 
   statusOption: string = 'All';
   searchValue: string = '';
@@ -54,6 +57,16 @@ export class TermsComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchData();
+
+    //Get role
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        this.role = decodedToken.role;
+        console.log(this.role);
+      }
+    }
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -89,6 +102,7 @@ export class TermsComponent implements OnInit {
   }
 
   changeStatusFilter(event: Event) {
+    //Toggle class 'chosen' of status filter button
     let target = event.target as HTMLElement;
     let statusOptions =
       this.elementRef.nativeElement.querySelector('#status-filter');
