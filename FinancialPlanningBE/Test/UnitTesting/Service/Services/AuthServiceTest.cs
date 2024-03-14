@@ -15,8 +15,13 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
+<<<<<<< HEAD
             var mockDepartRepository = new Mock<IDepartmentRepository>();
             var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockDepartRepository.Object);
+=======
+            var mockEmailService = new Mock<EmailService>();
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
 
             var user = new User
             {
@@ -52,8 +57,14 @@ namespace Test.UnitTesting.Service.Services
         {
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
+<<<<<<< HEAD
             var mockDepartRepository = new Mock<IDepartmentRepository>();
             var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockDepartRepository.Object);
+=======
+             var mockEmailService = new Mock<EmailService>();
+
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
 
             var user = new User
             {
@@ -78,8 +89,13 @@ namespace Test.UnitTesting.Service.Services
             // Arrange
             var mockAuthRepository = new Mock<IAuthRepository>();
             var mockConfiguration = new Mock<IConfiguration>();
+<<<<<<< HEAD
             var mockDepartRepository = new Mock<IDepartmentRepository>();
             var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockDepartRepository.Object);
+=======
+             var mockEmailService = new Mock<EmailService>();
+            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object);
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
 
             var user = new User
             {
@@ -109,5 +125,12 @@ namespace Test.UnitTesting.Service.Services
             Assert.Contains(decodedToken.Claims, c => c.Type == "role" && c.Value == "Admin");
 
         }
+<<<<<<< HEAD
+=======
+      
+        // Add other test cases here...
+
+
+>>>>>>> a1e43e29ea81e0482a78b5d3ca8a230de947bed4
     }
 }

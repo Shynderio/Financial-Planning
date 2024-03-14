@@ -1,49 +1,81 @@
-nav {
-    float: right;
-    cursor: pointer;
-    margin: 10px 30px;
-}
 #sidenav {
-    position: fixed;
-    background-color: #040730fe;
-    width: 70px;
-    height: 100vh;
-    padding-top: 1px;
-    transition: 0.5s;
-    z-index: 1;
-    opacity: 80%;
-  }
+  position: fixed;
+  background: #1B1A55;
+  width: 70px;
+  height: 100vh;
+  padding-top: 1px;
+  transition: 0.5s;
+  z-index: 1;
+  opacity: 99%;
+  overflow: hidden;
+}
 #sidenav:hover {
-    width: 200px;
-    transition: 0.5s;
-  }
+  width: 200px;
+  transition: 0.5s;
+}
 
 #sidenav a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    margin: 20px 15px;
-    overflow: hidden;
-    white-space: nowrap;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: white;
+  margin: 20px 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: small;
 }
 
-#sidenav a:first-child {
-    margin-top: 15px;
-    margin-bottom: 35px;
-    font-size: large;
+#sidenav > a:first-child {
+  margin-top: 15px;
+  margin-bottom: 35px;
+  font-size: large;
 }
 
 #sidenav i {
-    display: flex;
-    height: 40px;
-    width: 40px;
-    margin-right: 20px;
-    font-size: medium;
-    text-align: center;
-    background-color: #1d2153;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 10px;
+  display: flex;
+  height: 30px;
+  width: 30px;
+  margin-right: 20px;
+  text-align: center;
+  background-color: #535C91;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 10px;
+}
+
+#account {
+  display: flex;
+  position: absolute;
+  bottom: 0px;
+  background-color: #282d74;
+  border-top-left-radius: 40px;
+}
+
+#account > a {
+  margin: 10px 15px 5px 15px;
+}
+
+#account > a > div {
+  min-width: 45px;
+  max-width: 45px;
+}
+
+#account > a > i {
+  font-size: large;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+}
+
+#role {
+  text-transform: uppercase;
+  color: grey;
+  font-size: xx-small;
+  font-weight: bold;
+}
+
+#logout > i {
+  font-size: medium !important;
+  background-color: #ffffff00;
 }

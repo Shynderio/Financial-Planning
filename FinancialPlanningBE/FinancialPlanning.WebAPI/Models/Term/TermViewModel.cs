@@ -1,7 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FinancialPlanning.WebAPI.Models
+namespace FinancialPlanning.WebAPI.Models.Term
 {
     public class TermViewModel(Guid id, string termName, Guid creatorId, int duration, DateTime startDate, DateTime planDueDate, DateTime reportDueDate, int status)
     {

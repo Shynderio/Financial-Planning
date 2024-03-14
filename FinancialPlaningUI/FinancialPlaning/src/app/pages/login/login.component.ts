@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl,FormBuilder,AbstractControl } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 
 
 
@@ -25,19 +26,27 @@ export class LoginComponent {
   errorMessage ='';
   loginForm!: FormGroup;
   loginClicked = false;
+  looged = false;
 
   constructor(
     private authService: AuthService,
     private http: HttpClient,
     private router: Router,
     private formBuilder: FormBuilder,
-    private renderer: Renderer2, private el: ElementRef
+    private renderer: Renderer2, private el: ElementRef,
+    private cookieService: CookieService
   ) { 
 
     // localStorage.clear();
   }
   
   ngOnInit(): void {
+
+    // check Islogged
+    if(this.authService.IsLoggedIn()){
+      this.router.navigate(['/home']);       
+    }
+ 
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -54,39 +63,38 @@ export class LoginComponent {
       this.loginClicked = true;
       return;
     }
-
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
         console.log(response); // Log response to the console
        
-
         //login ok 
         if (response.statusCode == 200) {
           
           //Save token 
           const token = response?.value?.token;
-          localStorage.setItem('token', token)
-          
-          // logged
-          
-          //Go to home page
-          this.router.navigate(['/home']);
+          localStorage.setItem('token',token);
+          // this.cookieService.set('token', token , {
+          //   expires: 60*60*24*3 // Expires in 1 hour
+          // });
 
+          //Go to home page
+          this.router.navigateByUrl('/home').then(() => {
+            window.location.reload();
+          });;;
+         
 
         }else{
           this.loginClicked = false;
           this.errorMessage = 'Either email address or password is incorrect. Please try again';
-          console.log(this.errorMessage);
-          
+          console.log(this.errorMessage);          
         }
 
       },
-      error: (error) => {
-      
+      error: (error) => {    
         console.error(error); // Log error to the console
-
       }
     });
   }
+
 }
 

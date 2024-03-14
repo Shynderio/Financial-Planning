@@ -5,20 +5,73 @@ using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using FinancialPlanning.Service.DTOs;
 
 namespace FinancialPlanning.Service.Services
 {
     public class AuthService
     {
+        private readonly EmailService _emailService;
         private readonly IAuthRepository authRepository;
         private readonly IDepartmentRepository depRepository;
 
         private readonly IConfiguration configuration;
-        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IDepartmentRepository depRepository)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, EmailService emailService)
         {
             this.authRepository = authRepository;
             this.configuration = configuration;
-            this.depRepository = depRepository;
+            _emailService = emailService;
+        }
+
+        public async Task ValidateToken(string email, string token)
+        {
+            var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
+            if (tokenFromDb != token)
+            {
+                throw new Exception("Invalid token");
+            }
+            
+            if (JwtService.IsTokenExpired(token))
+            {
+                throw new Exception("Token expired");
+            }
+        }
+
+        public async Task ResetPassword(User user)
+        {
+            // Validate token
+            var token = user.Token ?? throw new Exception("Token not found");
+            await ValidateToken(user.Email, token);
+            user.Token = null;
+            // If token is valid, proceed with password reset
+            await authRepository.ResetPassword(user);
+        }
+
+        public string GenerateToken(string email)
+        {
+            var JwtService = new JwtService(configuration["JWT:Secret"]!, configuration["JWT:ValidIssuer"]!);
+            string token = JwtService.GenerateToken(email);
+            authRepository.SetToken(email, token);
+            return token;
+        }
+
+        public void SendResetPasswordEmail(string userEmail, string resetToken)
+        {
+            var resetUrl = $"http://localhost:4200/forgotpassword?token={resetToken}";
+
+            var email = new EmailDTO
+            {
+                To = userEmail,
+                Subject = "Password Reset",
+                Body = $"Click <a href=\"{resetUrl}\">here</a> to reset your password."
+            };
+
+            _emailService.SendEmail(email);
+        }
+
+        public async Task<bool> IsUser(string email)
+        {
+            return await authRepository.IsUser(email);
         }
 
         public async Task<string> LoginAsync(User userMapper)
@@ -65,6 +118,5 @@ namespace FinancialPlanning.Service.Services
             return string.Empty;
         }
 
-       
     }
 }

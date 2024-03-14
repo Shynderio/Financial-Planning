@@ -4,6 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CreateTermModel } from '../../../models/term.model';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TermViewModel } from '../../../models/termview.model';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -13,30 +15,60 @@ import { CommonModule } from '@angular/common';
 })
 export class EditTermComponent implements OnInit {
   termForm: FormGroup;
-  termService: TermService;
-  constructor(private fb: FormBuilder, termService: TermService) {
+  // termService: TermService;
+  termId: string = '';
+  durationMap: { [key: string]: number } = {
+    '1_month': 1,
+    'quarter': 3,
+    'half_year': 6
+  };
+  durationReverseMap: { [key: number]: string } = {
+    1: '1_month',
+    3: 'quarter',
+    6: 'half_year'
+  };
+  constructor(
+    private fb: FormBuilder, 
+    private termService: TermService,
+    private route: ActivatedRoute,
+    private router: Router) {
+    this.termService = termService; 
     this.termForm = this.fb.group({
       term: ['']
     });
-    this.termService = termService;
   }
   ngOnInit() {
+    this.termId = this.route.snapshot.params['id'];
     this.termForm = this.fb.group({
       termName: ['', Validators.required],
       startDate: ['', Validators.required],
-      duration: ['1_month', Validators.required],
+      duration: ['', Validators.required],
       endDate: [{ value: '', disabled: true }],
       planDueDate: ['', [Validators.required, this.planDueDateValidator]],
       reportDueDate: ['', [Validators.required, this.reportDueDateValidator]]
     });
+    this.termService.getTerm(this.termId).subscribe(
+      (termData: TermViewModel) => {
+        this.populateForm(termData);
+        console.log(termData);
+      },
+      (error) => {
+        console.error('Error fetching term details:', error);
+      }
+    );
+    // this.updateEndDate();
+  }
 
-    this.termForm.get('startDate')?.valueChanges.subscribe(() => {
-      this.updateEndDate();
+  populateForm(termData: TermViewModel): void {
+    this.termForm.patchValue({
+      termName: termData.termName.slice(0, 10),
+      startDate: termData.startDate.slice(0, 10),
+      duration: this.durationReverseMap[termData.duration],
+      planDueDate: termData.planDueDate.slice(0, 10),
+      reportDueDate: termData.reportDueDate.slice(0, 10),
+      // Populate other form controls
     });
-
-    this.termForm.get('duration')?.valueChanges.subscribe(() => {
-      this.updateEndDate();
-    });
+    // this.updateEndDate();
   }
 
   updateEndDate(): void {
@@ -45,27 +77,9 @@ export class EditTermComponent implements OnInit {
     const endDateControl = this.termForm.get('endDate');
     if (startDateControl && startDateControl.valid && durationControl && durationControl.valid && endDateControl) {
       const startDate = new Date(startDateControl.value);
-      const duration = durationControl.value;
-      let monthsToAdd: number;
-
-      switch (duration) {
-        case '1_month':
-          monthsToAdd = 1;
-          break;
-        case 'quarter':
-          monthsToAdd = 3;
-          break;
-        case 'half_year':
-          monthsToAdd = 6;
-          break;
-        default:
-          monthsToAdd = 0; // Default to 0 if duration is not recognized
-          break;
-      }
-
+      let monthsToAdd = this.durationMap[durationControl.value];
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + monthsToAdd);
-
       endDateControl.setValue(this.formatDate(endDate));
     }
   }
@@ -122,13 +136,9 @@ export class EditTermComponent implements OnInit {
   }
 
   editTerm() {
-    const durationMap: { [key: string]: number } = {
-      '1_month': 1,
-      'quarter': 3,
-      'half_year': 6
-    };
+    
     const durationValue = this.termForm.get('duration')?.value;
-    const duration = durationMap[durationValue];
+    const duration = this.durationMap[durationValue];
     const termData = new CreateTermModel({
       termName: this.termForm.get('termName')?.value,
       creatorId: '', // You need to set the creatorId
