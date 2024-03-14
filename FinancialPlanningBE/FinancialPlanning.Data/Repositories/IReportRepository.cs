@@ -10,7 +10,7 @@ namespace FinancialPlanning.Data.Repositories
     public interface IReportRepository
     {
         public Task<List<Report>> GetAllReports();
-        public Task<List<Report>> GetReportsByDepartId();
+        public Task<List<Report>> GetReportsByDepartId(Guid departId);
 
     }
 }
