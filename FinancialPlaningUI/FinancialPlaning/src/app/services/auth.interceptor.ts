@@ -1,5 +1,5 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-
+ 
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   // const localStorage = document.defaultView?.localStorage;
   if (typeof localStorage !== 'undefined') {
@@ -10,6 +10,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
       },
     });
   }
-  console.log(request);
+  console.log("my message: ", request);
+ 
   return next(request);
 };
