@@ -3,30 +3,41 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginModel } from '../models/loginModel.model';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl+'/Auth';
-  constructor(private http: HttpClient) { }
-  
+  private apiUrl = environment.apiUrl + '/Auth';
+  constructor(
+    private http: HttpClient,
+
+  ) { }
+
   login(model: LoginModel): Observable<any> {
-    return this.http.post(this.apiUrl+'/Login', model);
-  }
-  
-  IsLoggedIn(){
-    if (typeof localStorage !== 'undefined') {
-      // Safe to use localStorage here
-      // return false
-      return localStorage.getItem('token')!=null;
-    }
-    return false
+    return this.http.post(this.apiUrl + '/Login', model);
   }
 
-  logout(): void{
-      localStorage.removeItem('token');
-     return;
+  IsLoggedIn() {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        const expirationTime = decodedToken.exp; 
+        console.log(expirationTime);
+        const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại
+        console.log(currentTime <= expirationTime)
+        return currentTime <= expirationTime;
+    }
+    return false;
   }
-  
+  return false;
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
+    return;
+  }
+
 }

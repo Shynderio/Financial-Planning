@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl,FormBuilder,AbstractControl } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
+import { Console } from 'console';
 
 
 
@@ -44,6 +45,7 @@ export class LoginComponent {
 
     // check Islogged
     if(this.authService.IsLoggedIn()){
+      console.log(this.authService.IsLoggedIn()); 
       this.router.navigate(['/home']);       
     }
  
@@ -73,9 +75,7 @@ export class LoginComponent {
           //Save token 
           const token = response?.value?.token;
           localStorage.setItem('token',token);
-          // this.cookieService.set('token', token , {
-          //   expires: 60*60*24*3 // Expires in 1 hour
-          // });
+         
 
           //Go to home page
           this.router.navigateByUrl('/home').then(() => {

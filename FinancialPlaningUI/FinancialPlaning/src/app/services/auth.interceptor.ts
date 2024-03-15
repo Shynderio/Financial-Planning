@@ -1,6 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
+import { catchError, throwError } from 'rxjs';
+
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
+  
   if (typeof localStorage !== 'undefined') {
     const token = localStorage.getItem('token') ?? '';
     request = request.clone({
@@ -8,8 +11,11 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
         Authorization: token ? `Bearer ${token}` : '',
       },
     });
+    console.log('Local storage is available');
+  } else{
+    console.log('Local storage is not available');
   }
   console.log("my message: ", request);
-
   return next(request);
+ 
 };
