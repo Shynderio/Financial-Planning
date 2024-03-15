@@ -28,5 +28,22 @@ namespace FinancialPlanning.Service.Services
                 throw new InvalidOperationException("An error occurred while validating the plan file.", ex);
             }
         }
+
+        public List<Expense> GetExpenses(FileStream fileStream)
+        {
+            try
+            {
+                // Convert the file to a list of expenses using FileService
+                var expenses = _fileService.ConvertExcelToList(fileStream, documentType: 0);
+
+                return expenses;
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                throw new InvalidOperationException("An error occurred while importing the plan file.", ex);
+            }
+        }
+
     }
 }
