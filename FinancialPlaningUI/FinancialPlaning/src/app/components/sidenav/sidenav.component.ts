@@ -1,11 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Renderer2, model } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LoginModel } from '../../models/loginModel.model';
 import { AuthService } from '../../services/auth.service';
-// import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
-import { FormGroup, FormControl,FormBuilder,AbstractControl } from '@angular/forms';
 import { HomeComponent } from '../../pages/home/home.component';
 import { jwtDecode } from 'jwt-decode';
 
@@ -47,6 +42,5 @@ export class SidenavComponent {
        this.role = decodedToken.role;
       }
     }
-    
   }
 }

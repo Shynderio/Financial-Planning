@@ -9,7 +9,7 @@ namespace FinancialPlanning.Data.Repositories
 {
     public interface IDepartmentRepository
     {
-        public Task<string?> GetDepartmentIdByEmail(string email);
+        public Task<string> GetDepartmentIdByEmail(string email);
         public Task<string> GetDepartmentNameByUser(User user);
     }
 }

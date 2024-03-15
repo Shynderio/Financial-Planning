@@ -1,16 +1,34 @@
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { jwtDecode } from 'jwt-decode';
 
-export class AuthInterceptor implements HttpInterceptor {
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+import { catchError, throwError } from 'rxjs';
+
+export const authInterceptor: HttpInterceptorFn = (request, next) => {
+  
+  if (typeof localStorage !== 'undefined') {
     const token = localStorage.getItem('token') ?? '';
-    console.log(`Request is on its way to ${request.url} with token ${token}`);
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      const expirationTime = decodedToken.exp;      
+      const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại
+      console.log(currentTime <= expirationTime);
+      if(currentTime >= expirationTime){
+        alert("Login session expired. Please log in again!");
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+    }
     request = request.clone({
       setHeaders: {
         Authorization: token ? `Bearer ${token}` : '',
       },
     });
-
-    return next.handle(request);
+    
+    console.log('Local storage is available');
+  } else{
+    console.log('Local storage is not available');
   }
-}
+  console.log("my message: ", request);
+  return next(request);
+ 
+};

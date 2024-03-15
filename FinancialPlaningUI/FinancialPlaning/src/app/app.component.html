@@ -1,2 +1,6 @@
-<app-sidenav  *ngIf="logged"></app-sidenav>
-<router-outlet/>
+
+<ng-container *ngIf="logged">
+    <app-sidenav></app-sidenav>
+</ng-container>
+
+<router-outlet></router-outlet>
