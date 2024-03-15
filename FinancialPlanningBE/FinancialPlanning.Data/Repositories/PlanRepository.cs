@@ -49,7 +49,7 @@ namespace FinancialPlanning.Data.Repositories
             }
 
             // Sử dụng termId hoặc departmentId (nếu có) để truy vấn danh sách các kế hoạch từ cơ sở dữ liệu
-            var query = _dbContext.Plans.AsQueryable();
+            var query = _dbContext.Plans!.AsQueryable();
 
                 if (termId != null)
                 {
