@@ -10,7 +10,8 @@ import { CreateTermModel } from '../models/term.model';
 
 export class TermService {
   private apiUrl = environment.apiUrl + '/Term';
-  constructor(private http: HttpClient) {} // Correct injection through
+  constructor(private http: HttpClient) {
+  } // Correct injection through
 
   createTerm(term: CreateTermModel): Observable<any> {
     term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';

@@ -9,8 +9,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
         Authorization: token ? `Bearer ${token}` : '',
       },
     });
+    console.log('Local storage is available');
+  } else{
+    console.log('Local storage is not available');
   }
-  console.log("my message: ", request);
  
   return next(request);
 };
