@@ -11,6 +11,7 @@ namespace FinancialPlanning.WebAPI.Models
         [Required] public int Month { get; set; }
         [Required] public int Status { get; set; }
         [Required] public string TermName { get; set; } = null!;
+        [Required] public DateTime UpdateDate { get; set; }
         [Required] public string DepartmentName { get; set; } = null!;
         [Required] public string Version { get; set; } = null!;
         

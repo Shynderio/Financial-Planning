@@ -6,7 +6,7 @@ import { TermsComponent } from './pages/terms/terms.component';
 import { CreateTermComponent } from './pages/terms/create-term/create-term.component';
 import { EditTermComponent } from './pages/terms/edit-term/edit-term.component';
 import { TermDetailsComponent } from './pages/terms/term-details/term-details.component';
-import { ListReportComponent } from './pages/list-report/list-report.component';
+import { ListReportComponent } from './pages/report/list-report/list-report.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
