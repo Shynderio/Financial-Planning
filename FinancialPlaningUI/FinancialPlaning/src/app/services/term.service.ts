@@ -10,7 +10,8 @@ import { CreateTermModel } from '../models/term.model';
 
 export class TermService {
   private apiUrl = environment.apiUrl + '/Term';
-  constructor(private http: HttpClient) {} // Correct injection through
+  constructor(private http: HttpClient) {
+  } // Correct injection through
 
   createTerm(term: CreateTermModel): Observable<any> {
     term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';
@@ -28,7 +29,7 @@ export class TermService {
 
   updateTerm(termId: string, term: CreateTermModel): Observable<any> {
     term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';
-    return this.http.put(this.apiUrl + '/update' + termId, term);
+    return this.http.put(this.apiUrl + '/update/' + termId, term);
   }
 
   getTerm(termId: string): Observable<any> {
