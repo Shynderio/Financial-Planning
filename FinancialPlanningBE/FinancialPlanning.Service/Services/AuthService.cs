@@ -105,7 +105,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     Issuer = configuration["JWT:ValidIssuer"],
                     Audience = configuration["JWT:ValidAudience"],
-                    Expires = DateTime.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddSeconds(30),
                     Subject = new ClaimsIdentity(authClaims),
                     SigningCredentials = new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
                 };

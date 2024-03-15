@@ -6,14 +6,20 @@ import { CreateTermComponent } from './pages/terms/create-term/create-term.compo
 import { EditTermComponent } from './pages/terms/edit-term/edit-term.component';
 import { TermDetailsComponent } from './pages/terms/term-details/term-details.component';
 import { ListReportComponent } from './pages/report/list-report/list-report.component';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { AuthGuard } from './services/auth.guard';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
     { path: 'login', component: LoginComponent},
-    { path: 'home', component: HomeComponent},
-    { path: 'terms', component: TermsComponent},
-    { path: 'create-term', component: CreateTermComponent },
-    { path: 'edit-term/:id', component: EditTermComponent },
-    { path: 'term-details/:id', component: TermDetailsComponent },
-    { path: 'reports', component: ListReportComponent },
+    { path: '', component: SidenavComponent, canActivate: [AuthGuard]},
+        { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+        { path: 'terms', component: TermsComponent, canActivate: [AuthGuard]},
+        { path: 'create-term', component: CreateTermComponent, canActivate: [AuthGuard] },
+        { path: 'edit-term/:id', component: EditTermComponent, canActivate: [AuthGuard] },
+        { path: 'term-details/:id', component: TermDetailsComponent, canActivate: [AuthGuard] },
+        { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
+   
+
+   
 ];

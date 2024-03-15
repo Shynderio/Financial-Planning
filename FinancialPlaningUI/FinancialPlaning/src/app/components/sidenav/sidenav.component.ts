@@ -42,6 +42,5 @@ export class SidenavComponent {
        this.role = decodedToken.role;
       }
     }
-    
   }
 }
