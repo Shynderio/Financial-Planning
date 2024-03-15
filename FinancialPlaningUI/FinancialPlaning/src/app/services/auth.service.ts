@@ -28,9 +28,13 @@ export class AuthService {
         console.log(expirationTime);
         const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại
         console.log(currentTime <= expirationTime)
+        // if(currentTime > expirationTime){
+        //   const token = localStorage.removeItem('token');
+        //   window.location.href = '/login';
+        // }
         return currentTime <= expirationTime;
     }
-    return false;
+   
   }
   return false;
   }

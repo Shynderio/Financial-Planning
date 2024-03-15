@@ -15,6 +15,7 @@ namespace FinancialPlanning.Data.Entities
         [Required] public string ReportName { get; set; } = string.Empty;
         [Required] public int Month { get; set; }
         [Required] public int Status { get; set; }
+        [Required] public DateTime UpdateDate { get; set; }
         [ForeignKey("Term")] public Guid TermId { get; set; }
         public virtual Term Term { get; set; } = null!;
         [ForeignKey("Department")] public Guid DepartmentId { get; set; }
