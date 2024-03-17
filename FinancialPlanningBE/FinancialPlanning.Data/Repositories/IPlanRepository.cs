@@ -1,10 +1,4 @@
 ﻿using FinancialPlanning.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -35,7 +29,7 @@ namespace FinancialPlanning.Data.Repositories
 
         // Retrieve details of a financial plan based on term and department.
 
-        public Task<Plan> GetPlanDetails(Guid termId, string department,int version );
+        public Task<Plan> GetPlanDetails(Guid termId, string department, int version);
 
 
         // Retrieve a list of financial plans based on term and department for Function Search
@@ -56,6 +50,10 @@ namespace FinancialPlanning.Data.Repositories
         // Export a financial plan to a file.
 
         public Task<bool> ExportPlan(string file);
+        public Task<Plan> GetPlanById(Guid id);
+        public Task<Guid> CreatePlan(Plan plan);
+        public Task UpdatePlan(Plan plan);
+        public Task DeletePlan(Plan plan);
     }
 
 }
