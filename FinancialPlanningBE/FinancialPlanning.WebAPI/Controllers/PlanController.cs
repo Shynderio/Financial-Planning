@@ -22,7 +22,34 @@ namespace FinancialPlanning.WebAPI.Controllers
         //     }
         //     return Ok();
         // }
-    
 
+
+        [HttpGet("search")]
+        public IActionResult SearchPlans(string keyword, Guid? departmentId, int? status)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return BadRequest(new { Message = "Please enter keyword", ErrorCode = "ME010" });
+            }
+            /*
+            IQueryable<Plan> query = _context.Plans;
+
+            if (departmentId.HasValue)
+            {
+                query = query.Where(p => p.DepartmentId == departmentId);
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(p => p.Status == status);
+            }
+
+            var searchResult = query.ToList();
+            */
+            return Ok();
+        }
     }
+
+
+
 }

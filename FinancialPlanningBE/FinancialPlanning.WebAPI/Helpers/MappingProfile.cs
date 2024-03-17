@@ -39,6 +39,21 @@ namespace FinancialPlanning.WebAPI.Helpers
       .ForMember(dest => dest.ReportName, opt => opt.MapFrom(src => src.ReportName))
       .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Month))
       .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+            // Map plan 
+            CreateMap<Plan, ListPlanModel>()
+                            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                            .ForMember(dest => dest.PlanName, opt => opt.MapFrom(src => src.PlanName))
+                            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                            .ForMember(dest => dest.TermId, opt => opt.MapFrom(src => src.TermId))
+                            .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId));
+
+            CreateMap<ListPlanModel, Plan>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PlanName, opt => opt.MapFrom(src => src.PlanName))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.TermId, opt => opt.MapFrom(src => src.TermId))
+                .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId));
+
 
 
 

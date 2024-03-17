@@ -32,6 +32,9 @@ builder.Services.AddScoped<ITermRepository, TermRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+
 
 ////AddScoped Service
 builder.Services.AddScoped<ReportService>();
