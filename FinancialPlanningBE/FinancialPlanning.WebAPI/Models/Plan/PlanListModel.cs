@@ -2,7 +2,7 @@
 
 namespace FinancialPlanning.WebAPI.Models.Plan
 {
-    public class CreatePlanModel
+    public class PlanListModel
     {
         [Required] public Guid Id { get; set; }
         [Required] public string PlanName { get; set; } = string.Empty;
