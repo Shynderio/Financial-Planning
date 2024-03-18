@@ -1,0 +1,51 @@
+/* plans.component.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-form {
+    margin-bottom: 20px;
+  }
+  
+  .filter-form label {
+    margin-right: 10px;
+  }
+  
+  .filter-form input,
+  .filter-form select,
+  .filter-form button {
+    padding: 8px;
+    margin-right: 10px;
+  }
+  
+  .plan-list table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .plan-list th,
+  .plan-list td {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .plan-list th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .no-plans {
+    margin-top: 20px;
+    font-style: italic;
+    color: #888;
+  }
+  

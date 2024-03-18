@@ -1,1 +1,58 @@
-<p>plans works!</p>
+<!-- plans.component.html -->
+
+<div class="container">
+    <h1>Financial Plans</h1>
+    
+    <!-- Filter form -->
+    <form class="filter-form">
+      <label for="keyword">Keyword:</label>
+      <input type="text" id="keyword" name="keyword" [(ngModel)]="keyword">
+      
+      <label for="department">Department:</label>
+      <select id="department" name="department" [(ngModel)]="department">
+        <option value="">All</option>
+        <!-- Loop through department options -->
+        <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+      </select>
+      
+      <label for="status">Status:</label>
+      <select id="status" name="status" [(ngModel)]="status">
+        <option value="">All</option>
+        <!-- Loop through status options -->
+        <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
+      </select>
+      
+      <button type="button" (click)="loadFinancialPlans()">Search</button>
+    </form>
+    
+    <!-- Plan list -->
+    <div class="plan-list" *ngIf="plans.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Plan</th>
+            <th>Term</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Version</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop through plans -->
+          <tr *ngFor="let plan of plans; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ plan.Plan }}</td>
+            <td>{{ plan.Term }}</td>
+            <td>{{ plan.Department }}</td>
+            <td>{{ plan.Status }}</td>
+            <td>{{ plan.Version }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="no-plans" *ngIf="plans.length === 0">
+      No plans found.
+    </div>
+  </div>
+  
