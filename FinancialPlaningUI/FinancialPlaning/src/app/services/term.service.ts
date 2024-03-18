@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { CreateTermModel } from '../models/term.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class TermService {
   private apiUrl = environment.apiUrl + '/Term';
   constructor(private http: HttpClient) {} // Correct injection through
@@ -22,8 +22,19 @@ export class TermService {
     return this.http.get(this.apiUrl + '/all');
   }
 
-  deleteTerm(termId: string): Observable<any> {
-    return this.http.delete(this.apiUrl + '/' + termId);
+  deleteTerm(termId: string): Observable<number> {
+    return this.http
+      .delete(this.apiUrl + '/' + termId, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
   }
 
   updateTerm(termId: string, term: CreateTermModel): Observable<any> {

@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
@@ -10,14 +15,14 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './create-term.component.html',
-  styleUrl: './create-term.component.css'
+  styleUrl: './create-term.component.css',
 })
 export class CreateTermComponent implements OnInit {
   termForm: FormGroup;
   termService: TermService;
   constructor(private fb: FormBuilder, termService: TermService) {
     this.termForm = this.fb.group({
-      term: ['']
+      term: [''],
     });
     this.termService = termService;
   }
@@ -28,7 +33,7 @@ export class CreateTermComponent implements OnInit {
       duration: ['1_month', Validators.required],
       endDate: [{ value: '', disabled: true }],
       planDueDate: ['', [Validators.required, this.planDueDateValidator]],
-      reportDueDate: ['', [Validators.required, this.reportDueDateValidator]]
+      reportDueDate: ['', [Validators.required, this.reportDueDateValidator]],
     });
 
     this.termForm.get('startDate')?.valueChanges.subscribe(() => {
@@ -44,7 +49,13 @@ export class CreateTermComponent implements OnInit {
     const startDateControl = this.termForm.get('startDate');
     const durationControl = this.termForm.get('duration');
     const endDateControl = this.termForm.get('endDate');
-    if (startDateControl && startDateControl.valid && durationControl && durationControl.valid && endDateControl) {
+    if (
+      startDateControl &&
+      startDateControl.valid &&
+      durationControl &&
+      durationControl.valid &&
+      endDateControl
+    ) {
       const startDate = new Date(startDateControl.value);
       const duration = durationControl.value;
       let monthsToAdd: number;
@@ -76,7 +87,7 @@ export class CreateTermComponent implements OnInit {
     const startDate = new Date(control?.parent?.controls.startDate.value);
 
     if (isNaN(planDueDate.getTime()) || planDueDate < startDate) {
-      return { 'invalidPlanDueDate': true };
+      return { invalidPlanDueDate: true };
     }
     return null;
   }
@@ -98,8 +109,12 @@ export class CreateTermComponent implements OnInit {
     const startDate = new Date(control?.parent?.controls.startDate.value);
     const endDate = new Date(control?.parent?.controls.endDate.value);
 
-    if (isNaN(reportDueDate.getTime()) || reportDueDate < startDate || reportDueDate > endDate) {
-      return { 'invalidReportDueDate': true };
+    if (
+      isNaN(reportDueDate.getTime()) ||
+      reportDueDate < startDate ||
+      reportDueDate > endDate
+    ) {
+      return { invalidReportDueDate: true };
     }
     return null;
   }
@@ -115,18 +130,19 @@ export class CreateTermComponent implements OnInit {
       }
     }
     return '';
-
   }
 
   formatDate(date: Date): string {
-    return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    return `${date.getFullYear()}-${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
   }
 
   createTerm() {
     const durationMap: { [key: string]: number } = {
       '1_month': 1,
-      'quarter': 3,
-      'half_year': 6
+      quarter: 3,
+      half_year: 6,
     };
     const durationValue = this.termForm.get('duration')?.value;
     const duration = durationMap[durationValue];
@@ -136,7 +152,7 @@ export class CreateTermComponent implements OnInit {
       duration: duration,
       startDate: this.termForm.get('startDate')?.value,
       planDueDate: this.termForm.get('planDueDate')?.value,
-      reportDueDate: this.termForm.get('reportDueDate')?.value
+      reportDueDate: this.termForm.get('reportDueDate')?.value,
     });
     this.termService.createTerm(termData).subscribe((response) => {
       console.log(response);
@@ -167,7 +183,6 @@ export class CreateTermComponent implements OnInit {
       console.log(this.termForm.value);
       // Call the service to create the term
       this.createTerm();
-
     } else {
       // Mark all fields as touched to trigger validation messages
       this.termForm.markAllAsTouched();
@@ -179,5 +194,4 @@ export class CreateTermComponent implements OnInit {
     // this.termForm.reset(); // Resetting the form
     // this.router.navigate(['/terms']); // Navigate back to terms page
   }
-
 }
