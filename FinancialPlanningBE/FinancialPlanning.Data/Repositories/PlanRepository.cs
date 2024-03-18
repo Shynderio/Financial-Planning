@@ -50,6 +50,11 @@ namespace FinancialPlanning.Data.Repositories
 
         }
 
+        public Task<List<Plan>> GetPlanByDepartId()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Plan> GetPlanById(Guid id)
         {
 
@@ -96,6 +101,11 @@ namespace FinancialPlanning.Data.Repositories
 
 
         public Task<bool> ReupPlan(string uid, Guid termId, string planName, string file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SavePlan(Plan plan, Guid creatorId)
         {
             throw new NotImplementedException();
         }
