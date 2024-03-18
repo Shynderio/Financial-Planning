@@ -6,10 +6,10 @@ import { ReportService } from '../../../services/report.service';
   standalone: true,
   imports: [],
   templateUrl: './list-report.component.html',
-  styleUrl: './list-report.component.css'
+  styleUrl: './list-report.component.css',
 })
 export class ListReportComponent {
-  constructor(private reportService: ReportService) { }
+  constructor(private reportService: ReportService) {}
 
   ngOnInit(): void {
     this.getListReport();
@@ -19,7 +19,7 @@ export class ListReportComponent {
     this.reportService.getListReport().subscribe({
       next: (response: any) => {
         console.log(response); // Log response to the console
-      }}
-    );
+      },
+    });
   }
 }
