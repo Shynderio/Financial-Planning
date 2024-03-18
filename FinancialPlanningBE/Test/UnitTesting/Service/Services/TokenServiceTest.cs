@@ -29,7 +29,5 @@ namespace Test.UnitTesting.Service.Services
             // Assert
             Assert.Equal("fianci@email.com", email);
         }
-
-      
     }
 }

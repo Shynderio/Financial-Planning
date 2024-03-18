@@ -1,6 +1,6 @@
 using AutoMapper;
 using FinancialPlanning.Data.Entities;
-using FinancialPlanning.WebAPI.Models;
+using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.User;
 

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { Component, ElementRef, Renderer2, model } from '@angular/core';
+import { AuthService } from '../../services/auth/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { HomeComponent } from '../../pages/home/home.component';
 import { jwtDecode } from 'jwt-decode';

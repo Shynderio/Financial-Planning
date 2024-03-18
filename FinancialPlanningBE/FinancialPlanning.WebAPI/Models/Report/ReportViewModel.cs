@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace FinancialPlanning.WebAPI.Models
+namespace FinancialPlanning.WebAPI.Models.Report
 {
     public class ReportViewModel
     {
@@ -14,6 +14,6 @@ namespace FinancialPlanning.WebAPI.Models
         [Required] public DateTime UpdateDate { get; set; }
         [Required] public string DepartmentName { get; set; } = null!;
         [Required] public string Version { get; set; } = null!;
-        
+
     }
 }

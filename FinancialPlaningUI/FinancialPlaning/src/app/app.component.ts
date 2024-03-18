@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { SidenavComponent } from './components/sidenav/sidenav.component';
-import { AuthService } from './services/auth.service';
+import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SidenavComponent } from "./components/sidenav/sidenav.component";
+import { AuthService } from './services/auth/auth.service';
+
 
 @Component({
   selector: 'app-root',
