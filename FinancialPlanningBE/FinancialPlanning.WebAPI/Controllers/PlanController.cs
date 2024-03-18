@@ -45,12 +45,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             return BadRequest(new { error = "Invalid model state!" });
         }
 
-
-
-
-
-
-
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeletePlan(Guid id)
@@ -61,8 +55,8 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan
         [Authorize(Roles = "FinancialStaff")]
-        [HttpPost("import")]
-        public async Task<ActionResult<List<Expense>>> Import(IFormFile file, string user)
+        [HttpPost("Import")]
+        public ActionResult<List<Expense>> Import(IFormFile file, Guid uid, Guid termId)
         {
             try
             {
@@ -72,6 +66,12 @@ namespace FinancialPlanning.WebAPI.Controllers
                     return BadRequest("No file uploaded");
                 }
 
+                // Check if the file name is valid
+                if (!_planService.ValidFileName(Path.GetFileNameWithoutExtension(file.FileName), uid, termId))
+                {
+                    return BadRequest("Invalid file name");
+                }
+
                 // Generate a unique filename using GUID and original file extension
                 var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
@@ -79,7 +79,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var tempFilePath = Path.Combine("Resources", "ExcelFiles", tempFileName);
                 using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
                 {
-                    await file.CopyToAsync(fileStream);
+                    file.CopyTo(fileStream);
                 }
 
                 // Convert the file
@@ -130,6 +130,21 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while importing the plan file.");
             }
         }
-    }
 
+        [HttpPost("Upload")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
+        {
+            try
+            {
+                await _planService.SavePlan(expenses, termId, uid);
+                return Ok(new { message = "Plan uploaded successfully!" });
+            }
+            catch (Exception)
+            {
+                // Log the exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the plan file.");
+            }
+        }
+    }
 }
