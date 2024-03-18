@@ -76,6 +76,7 @@ export class TermsComponent implements OnInit {
         this.fetchData();
       }
     }
+   
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

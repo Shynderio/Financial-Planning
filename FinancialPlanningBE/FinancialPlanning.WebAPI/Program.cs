@@ -57,7 +57,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanning.Data")));
+    b => b.MigrationsAssembly("FinancialPlanning.WebAPI")));
 
 
 
