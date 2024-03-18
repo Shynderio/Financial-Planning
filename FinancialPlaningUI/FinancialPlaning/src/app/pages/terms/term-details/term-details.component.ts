@@ -41,12 +41,12 @@ export class TermDetailsComponent implements OnInit {
 
 
   ngOnInit(): void {
-    if (typeof localStorage !== 'undefined') {
+
     this.route.params.subscribe(params => {
       const termId = params['id']; // Assuming 'id' is the parameter name
       this.loadTermDetails(termId);
-    });
     }
+    );
   }
 
   loadTermDetails(termId: string): void {

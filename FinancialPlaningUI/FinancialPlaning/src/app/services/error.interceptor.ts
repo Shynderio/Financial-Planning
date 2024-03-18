@@ -10,20 +10,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     }
     if([401].includes(error.status)){     
       console.log('Unauthrized request');
-      const token = localStorage.getItem('token');
-      if (token) {
-        const decodedToken: any = jwtDecode(token);
-        const expirationTime = decodedToken.exp;      
-        const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại
-        console.log(currentTime <= expirationTime);
-        if(currentTime >= expirationTime){
-          alert("Login session expired. Please log in again!");
-          localStorage.removeItem('token');
-          window.location.href = '/login';
-        }
-
-    }
-  }
+      const token = localStorage.getItem('token');  
+      if(token==null){
+        window.location.href = '/login';
+      }
+   }
     return throwError(() => error);
   }));
 };

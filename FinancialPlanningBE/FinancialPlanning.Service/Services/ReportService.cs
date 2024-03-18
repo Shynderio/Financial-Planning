@@ -32,8 +32,8 @@ namespace FinancialPlanning.Service.Services
             {
                 //Get departmentId
                 var departID_raw = await _departmentRepository.GetDepartmentIdByEmail(email);
-
-                string src = departID_raw;
+                Console.WriteLine(departID_raw.ToString());
+                string src = departID_raw.ToString();
                 Guid departId = Guid.Parse(src);
                 //Get report by DepartmentId
                 var reports =  await _reportRepository.GetReportsByDepartId(departId);

@@ -6,7 +6,7 @@ import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from
 })
 export class AuthGuard implements CanActivate {
   constructor(private router: Router) {}
-
+  
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     // Check if localStorage is defined
     if (typeof localStorage !== 'undefined') {
