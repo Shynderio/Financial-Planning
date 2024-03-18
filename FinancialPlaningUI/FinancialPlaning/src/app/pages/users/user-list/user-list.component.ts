@@ -55,7 +55,6 @@ export class UserListComponent implements OnInit {
   filterUsers() {
     // Reset with a copy
     this.userList = this.originalUserList.slice();
-
     //  Apply filtering based on roleName
     if (this.selectedRole) {
       this.userList = this.userList.filter(user => user.roleName === this.selectedRole);
