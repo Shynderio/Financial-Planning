@@ -35,8 +35,9 @@ export class LoginComponent {
 
   ngOnInit(): void {
     // check Islogged
-    if (this.authService.IsLoggedIn()) {
-      this.router.navigate(['/home']);
+    if(this.authService.IsLoggedIn()){
+      console.log(this.authService.IsLoggedIn()); 
+      this.router.navigate(['/home']);       
     }
 
     this.loginForm = this.formBuilder.group({
@@ -62,11 +63,8 @@ export class LoginComponent {
         if (response.statusCode == 200) {
           //Save token
           const token = response?.value?.token;
-          localStorage.setItem('token', token);
-          // this.cookieService.set('token', token , {
-          //   expires: 60*60*24*3 // Expires in 1 hour
-          // });
-
+          localStorage.setItem('token',token);
+         
           //Go to home page
           this.router.navigateByUrl('/home').then(() => {
             window.location.reload();

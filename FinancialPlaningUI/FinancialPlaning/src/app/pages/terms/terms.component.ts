@@ -75,16 +75,16 @@ export class TermsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchData();
-
     //Get role
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('token') ?? '';
       if (token) {
         const decodedToken: any = jwtDecode(token);
         this.role = decodedToken.role;
+        this.fetchData();
       }
     }
+   
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;

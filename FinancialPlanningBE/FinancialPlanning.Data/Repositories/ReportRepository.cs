@@ -39,6 +39,8 @@ namespace FinancialPlanning.Data.Repositories
         {
             var reports = await context.Reports!
                 .Where(r => r.DepartmentId == departId)
+                 .OrderBy(r => r.Status) // order by status
+                .ThenByDescending(r => r.UpdateDate)
                 .Include(t => t.ReportVersions)
                 .Include(t => t.Term)
                 .Include(t => t.Department)

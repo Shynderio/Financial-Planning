@@ -27,7 +27,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // Phương thức để lấy danh sách báo cáo của user
         [HttpGet("reports")]
-        [Authorize]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetListReport()
         {
             try
