@@ -29,7 +29,10 @@ namespace FinancialPlanning.Data.Repositories
         //Get list user
         public async Task<List<User>> GetAllUsers()
         {
-            return await _context.Users!.ToListAsync();
+            return await _context.Users!
+                .Include(u => u.Department)
+                .Include(u => u.Position)
+                .Include(u => u.Role).ToListAsync();
         }
 
         // Update user

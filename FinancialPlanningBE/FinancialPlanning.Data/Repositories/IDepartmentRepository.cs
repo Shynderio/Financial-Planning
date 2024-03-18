@@ -11,5 +11,6 @@ namespace FinancialPlanning.Data.Repositories
     {
         public Task<string> GetDepartmentIdByEmail(string email);
         public Task<string> GetDepartmentNameByUser(User user);
+        public Task<List<Department>> GetAllDepartments();
     }
 }

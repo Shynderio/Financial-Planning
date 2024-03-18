@@ -35,6 +35,8 @@ builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 
 
 ////AddScoped Service
@@ -45,6 +47,9 @@ builder.Services.AddScoped<TermService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<PositionService>();
 
 
 

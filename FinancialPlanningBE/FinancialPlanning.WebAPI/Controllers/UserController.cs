@@ -2,7 +2,6 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Service.Services;
-using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
