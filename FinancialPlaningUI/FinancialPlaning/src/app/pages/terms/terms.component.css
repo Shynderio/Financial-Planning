@@ -115,3 +115,29 @@ td {
   background-color: #535c91;
   color: white;
 }
+
+::ng-deep .success .mdc-snackbar__label::before {
+  font-family: "Font Awesome 6 free"; 
+	font-weight: 400;
+  content: '\f058';
+}
+
+::ng-deep .success .mdc-snackbar__label {
+  color: #16ff00 !important;
+}
+
+::ng-deep .fail .mdc-snackbar__label::before {
+  font-family: "Font Awesome 6 free"; 
+	font-weight: 400;
+  content: '\f057';
+}
+
+::ng-deep .fail .mdc-snackbar__label {
+  color: #ff204e !important;
+}
+
+::ng-deep .mdc-snackbar__label {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}

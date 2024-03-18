@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { report } from 'process';
+import { Router, ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-edit-term',
