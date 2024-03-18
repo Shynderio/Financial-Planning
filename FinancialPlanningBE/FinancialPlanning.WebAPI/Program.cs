@@ -32,14 +32,20 @@ builder.Services.AddScoped<ITermRepository, TermRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+
 
 ////AddScoped Service
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<TermService>();
+builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<PlanService>();
+
 
 
 
@@ -53,6 +59,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("FinancialPlanning.Data")));
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
