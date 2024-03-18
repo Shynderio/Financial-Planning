@@ -1,5 +1,6 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -7,46 +8,80 @@ namespace FinancialPlanning.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController : ControllerBase
+    public class PlanController(PlanService planService) : ControllerBase
     {
-        private readonly PlanService _planService;
+        private readonly PlanService _planService = planService;
 
-        public PlanController(PlanService planService)
-        {
-            _planService = planService ?? throw new ArgumentNullException(nameof(planService));
-        }
         // POST: api/plan
+        [Authorize(Roles = "FinancialStaff")]
         [HttpPost("import")]
-        public async Task<ActionResult<List<Expense>>> Import(IFormFile file, String user)
+        public async Task<ActionResult<List<Expense>>> Import(IFormFile file, string user)
         {
-            if (file == null)
-            {
-                return BadRequest("No file uploaded");
-            }
             try
             {
-                // Save the uploaded file to a temporary location
-                var filePath = Path.GetTempFileName();
-                using var stream = new FileStream(filePath, FileMode.Create);
-                await file.CopyToAsync(stream);
-
-                // Validate the file using PlanService
-                if (!_planService.ValidatePlanFileAsync(stream))
+                // Check if a file is uploaded
+                if (file == null || file.Length == 0)
                 {
-                    return BadRequest("Invalid file");
+                    return BadRequest("No file uploaded");
                 }
 
-                // Convert the file to a list of expenses using PlanService
-                var expenses = _planService.GetExpenses(stream);
+                // Generate a unique filename using GUID and original file extension
+                var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+                // Save the uploaded file to the temporary directory
+                var tempFilePath = Path.Combine("Resources", "ExcelFiles", tempFileName);
+                using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                // Convert the file
+                string convertedFilePath;
+                try
+                {
+                    convertedFilePath = _planService.ConvertFile(tempFileName);
+                }
+                catch
+                {
+                    // Delete the temporary file if conversion fails
+                    System.IO.File.Delete(tempFilePath);
+                    return BadRequest("Failed to convert");
+                }
+
+                // Validate the file
+                bool isValid;
+                using (var openfileStream = new FileStream(convertedFilePath, FileMode.Open))
+                {
+                    isValid = _planService.ValidatePlanFileAsync(openfileStream);
+                }
+
+                if (!isValid)
+                {
+                    // Delete the temporary file if validation fails
+                    System.IO.File.Delete(convertedFilePath);
+                    System.IO.File.Delete(tempFilePath);
+                    return BadRequest("Invalid file format");
+                }
+
+                // Get expenses
+                List<Expense> expenses;
+                using (var openfileStream = new FileStream(convertedFilePath, FileMode.Open))
+                {
+                    expenses = _planService.GetExpenses(openfileStream);
+                }
+
+                // Delete temporary files
+                System.IO.File.Delete(convertedFilePath);
+                System.IO.File.Delete(tempFilePath);
 
                 return Ok(expenses);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                // Log the exception
+                // It's generally not a good practice to return detailed exception messages to clients
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while importing the plan file.");
             }
         }
-
-
     }
 }

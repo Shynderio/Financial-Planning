@@ -11,5 +11,6 @@ namespace FinancialPlanning.Data.Repositories
     {
         public Task<List<Plan>> GetAllPlans();
         public Task<List<Plan>> GetPlanByDepartId();
+        public Task SavePlan(Plan plan, Guid creatorId);
     }
 }
