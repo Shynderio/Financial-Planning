@@ -4,7 +4,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { jwtDecode } from 'jwt-decode';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -80,11 +80,20 @@ export class ListReportComponent {
   //Get report
   fetchData() {
     this.reportService.getListReport().subscribe((data: any) => {
-      this.reports = data;
-      this.dataSource = data;
+      this.reports = data.reports;
+      this.dataSource = this.getPaginatedItems();
       console.log(data);
     });
   }
-
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.dataSource = this.getPaginatedItems();
+  }
+  getPaginatedItems() {
+    const startIndex = this.pageIndex * this.pageSize;
+    let filteredList = this.reports;
+    this.listSize = filteredList.length;
+    return filteredList.slice(startIndex, startIndex + this.pageSize);
+  }
 
 }

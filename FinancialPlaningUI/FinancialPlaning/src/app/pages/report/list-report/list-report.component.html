@@ -4,6 +4,12 @@
       <h3><b> Monthly Reports</b></h3>
       <h6>View all Monthly Reports</h6>
     </div>
+    <a routerLink="/create-term" id="create-button" >
+      <button><i class="fa-solid fa-plus"></i> Import</button>
+    </a>
+    <a routerLink="/create-term" id="create-button">
+      <button><i class="fa-solid fa-plus"></i> Export</button>
+    </a>
   </div>
   <div class="mb-4">
     <form class="searchBar">
@@ -60,4 +66,6 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  </mat-paginator>
 </main>

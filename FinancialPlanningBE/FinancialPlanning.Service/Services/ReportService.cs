@@ -48,7 +48,7 @@ namespace FinancialPlanning.Service.Services
 
         }
 
-        public async Task<IEnumerable<Department>> GetAllDepartment()
+        public async Task<List<Department>> GetAllDepartment()
         {
             return await _departmentRepository.GetAllDepartment();
         }
