@@ -87,6 +87,7 @@ namespace FinancialPlanning.Service.Services
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("userId", user.Id.ToString()),
                     new Claim("username",user.Username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
@@ -105,7 +106,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     Issuer = configuration["JWT:ValidIssuer"],
                     Audience = configuration["JWT:ValidAudience"],
-                    Expires = DateTime.UtcNow.AddSeconds(30),
+                    Expires = DateTime.UtcNow.AddDays(30),
                     Subject = new ClaimsIdentity(authClaims),
                     SigningCredentials = new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
                 };
