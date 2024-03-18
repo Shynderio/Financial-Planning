@@ -9,12 +9,15 @@ namespace FinancialPlanning.Service.Services
     {
         private readonly FileService _fileService;
         private readonly IPlanRepository _planRepository;
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly ITermRepository _termService;
 
-        public PlanService(IPlanRepository planRepository, FileService fileService)
+        public PlanService(IPlanRepository planRepository, FileService fileService, IDepartmentRepository departmentRepository, ITermRepository termRepository)
         {
             _planRepository = planRepository ?? throw new ArgumentNullException(nameof(planRepository));
             _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-            _planRepository = planRepository ?? throw new ArgumentNullException(nameof(planRepository));
+            _departmentRepository = departmentRepository ?? throw new ArgumentNullException(nameof(departmentRepository));
+            _termService = termRepository ?? throw new ArgumentNullException(nameof(termRepository));
         }
 
         public bool ValidatePlanFileAsync(FileStream fileStream)
@@ -22,8 +25,9 @@ namespace FinancialPlanning.Service.Services
             // Validate the file using FileService
             try
             {
-                // Assuming plan documents have document type 0
                 return _fileService.ValidateFile(fileStream, documentType: 0);
+                // Assuming plan documents have document type 0
+                // return _fileService.ValidateFile(fileStream, documentType: 0);
             }
             catch (Exception ex)
             {
@@ -132,20 +136,45 @@ namespace FinancialPlanning.Service.Services
                 throw new InvalidOperationException("An error occurred while importing the plan file.", ex);
             }
         }
-    
-        public async Task SavePlan(Term term, Guid creatorId)
+
+        public bool ValidFileName(string fileName, Guid uid, Guid termId)
+        {
+            // User = _userRepository.GetUserByUsername(username);
+            var departmment = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
+            var term = _termService.GetTermById(termId).TermName;
+
+            var validName = departmment + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
+            return fileName.Equals(validName);
+        }
+
+        public async Task SavePlan(List<Expense> expenses, Guid termId, Guid uid)
         {
             // Save the plan using PlanRepository
             try
             {
+                var department = _departmentRepository.GetDepartmentByUid(uid);
                 Plan plan = new()
                 {
-                    TermId = term.Id,
-                    DepartmentId = Guid.Parse("9F1EB9E2-C15B-4E5B-A2D1-6CD3D783CE73"),
-                    // Status = 0,
-                    // PlanVersions = new List<PlanVersion>()
+                    PlanName = "Plan",
+                    DepartmentId = department,
+                    TermId = termId,
                 };
-                await _planRepository.SavePlan(plan, creatorId);
+
+                using (var version = _planRepository.SavePlan(plan, uid)){
+                    var filename = "Term1" + "/" + "HR" + "/Plan/" + "version_" + version.Result + ".xlsx";
+                    Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+                    // Create a FileStream from the MemoryStream
+                    // using (var fileStream = new FileStream(filename, FileMode.Create))
+                    // {
+                    //     await excelFileStream.CopyToAsync(fileStream);
+                    // }
+                    // Reset position of the memory stream
+                    excelFileStream.Position = 0;
+                    // Upload the file to AWS S3
+                    await _fileService.UploadPlanAsync(filename, excelFileStream);
+                }
+
+                // Convert list of expenses to Excel file
             }
             catch (Exception ex)
             {

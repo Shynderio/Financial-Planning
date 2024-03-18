@@ -15,8 +15,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
     private static readonly string[] TemplatePath =
     [
-        @"..\..\..\..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
-        @"..\..\..\..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
+        @"..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
+        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
     ];
 
     private readonly string[][] _header =
@@ -50,7 +50,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    public async Task UploadPlanAsync(string key, FileStream fileStream)
+    public async Task UploadPlanAsync(string key, Stream fileStream)
     {
         var request = new PutObjectRequest
         {
@@ -188,6 +188,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
             new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), TemplatePath[documentType])));
         var worksheet = package.Workbook.Worksheets[0];

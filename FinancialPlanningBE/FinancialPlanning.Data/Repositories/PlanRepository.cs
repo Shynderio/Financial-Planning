@@ -79,13 +79,12 @@ namespace FinancialPlanning.Data.Repositories
 
         }
 
-        public async Task SavePlan(Plan plan, Guid creatorId)
+        public async Task<int> SavePlan(Plan plan, Guid creatorId)
         {
             var existingPlan = await _context.Plans!.FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
-
             if (existingPlan != null)
             {
-                var newVersion = existingPlan.PlanVersions.Max(pv => pv.Version) + 1;
+                var newVersion = _context.PlanVersions!.Count(pv => pv.PlanId == existingPlan.Id) + 1;
                 var planVersion = new PlanVersion
                 {
                     Id = Guid.NewGuid(),
@@ -96,6 +95,8 @@ namespace FinancialPlanning.Data.Repositories
                 };
 
                 _context.PlanVersions!.Add(planVersion);
+                _context.SaveChanges();
+                return newVersion;
             }
             else
             {
@@ -115,9 +116,10 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.Plans!.Add(plan);
                 _context.PlanVersions!.Add(planVersion);
+
+                await _context.SaveChangesAsync();
+                return 1;
             }
-            
-            await _context.SaveChangesAsync();
         }
 
         public Task<Plan> ViewPlan(string file)
