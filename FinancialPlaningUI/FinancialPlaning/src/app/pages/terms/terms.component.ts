@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
+  Inject,
 } from '@angular/core';
 import { SidenavComponent } from '../../components/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
@@ -22,6 +23,7 @@ import {
   PageEvent,
 } from '@angular/material/paginator';
 import {
+  MAT_SNACK_BAR_DATA,
   MatSnackBar,
   MatSnackBarModule,
 } from '@angular/material/snack-bar';
@@ -43,7 +45,7 @@ import { concatMap } from 'rxjs/operators';
     MatPaginatorModule,
     MatIconModule,
     MatTableModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
 })
 export class TermsComponent implements OnInit {
@@ -84,7 +86,6 @@ export class TermsComponent implements OnInit {
         this.fetchData();
       }
     }
-   
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -154,9 +155,15 @@ export class TermsComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
-          
-          panelClass: ['success'],
+        this.messageBar.openFromComponent(MessageBarTerm, {
+          duration: 5000,
+          data: {
+            httpStatusCode: response,
+            message:
+              response == 200
+                ? 'Term deleted successfully'
+                : 'Failed to delete term',
+          },
         });
         this.pageIndex = 0;
         this.fetchData();
@@ -173,4 +180,19 @@ export class TermsComponent implements OnInit {
 })
 export class DeleteTermDialog {
   constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
+}
+
+@Component({
+  selector: 'message-bar-term',
+  standalone: true,
+  templateUrl: './message-bar-term.component.html',
+  styles: `
+    i {
+      margin-right: 5px;
+    }
+  `,
+  imports: [CommonModule],
+})
+export class MessageBarTerm {
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 }
