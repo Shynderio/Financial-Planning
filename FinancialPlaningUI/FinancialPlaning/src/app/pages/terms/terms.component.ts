@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { SidenavComponent } from '../../components/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
 import {
@@ -9,14 +15,16 @@ import {
   MatDialogTitle,
   MatDialogContent,
 } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import {
   MatPaginator,
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  MatSnackBar,
+  MatSnackBarModule,
+} from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { TermService } from '../../services/term.service';
 import { jwtDecode } from 'jwt-decode';
@@ -29,13 +37,13 @@ import { concatMap } from 'rxjs/operators';
   templateUrl: './terms.component.html',
   styleUrl: './terms.component.css',
   imports: [
+    CommonModule,
     SidenavComponent,
     RouterLink,
     MatPaginatorModule,
-    MatFormFieldModule,
     MatIconModule,
-    ReactiveFormsModule,
     MatTableModule,
+    MatSnackBarModule
   ],
 })
 export class TermsComponent implements OnInit {
@@ -60,10 +68,10 @@ export class TermsComponent implements OnInit {
   ];
 
   constructor(
-    private fb: FormBuilder,
     private termService: TermService,
     private elementRef: ElementRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private messageBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -131,27 +139,33 @@ export class TermsComponent implements OnInit {
   openDeleteDialog(id: string) {
     const deleteDialog = this.dialog.open(DeleteTermDialog, {
       width: '400px',
+      height: '250px',
     });
 
     deleteDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'deleted') {
+          if (result === 'delete') {
             return this.termService.deleteTerm(id);
           } else {
             return of(null);
           }
         })
       )
-      .subscribe(() => {
+      .subscribe((response) => {
+        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
+          
+          panelClass: ['success'],
+        });
+        this.pageIndex = 0;
         this.fetchData();
       });
   }
 }
 
 @Component({
-  selector: 'app-delete-term',
+  selector: 'delete-term',
   standalone: true,
   templateUrl: './delete-term/delete-term.component.html',
   styleUrls: ['./delete-term/delete-term.component.css'],
