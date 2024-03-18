@@ -155,24 +155,20 @@ namespace FinancialPlanning.Service.Services
                 var department = _departmentRepository.GetDepartmentByUid(uid);
                 Plan plan = new()
                 {
-                    PlanName = "Plan",
+                    PlanName = string.Empty,
                     DepartmentId = department,
                     TermId = termId,
                 };
 
-                using (var version = _planRepository.SavePlan(plan, uid)){
-                    var filename = "Term1" + "/" + "HR" + "/Plan/" + "version_" + version.Result + ".xlsx";
-                    Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
-                    // Create a FileStream from the MemoryStream
-                    // using (var fileStream = new FileStream(filename, FileMode.Create))
-                    // {
-                    //     await excelFileStream.CopyToAsync(fileStream);
-                    // }
-                    // Reset position of the memory stream
-                    excelFileStream.Position = 0;
-                    // Upload the file to AWS S3
-                    await _fileService.UploadPlanAsync(filename, excelFileStream);
-                }
+                using var saveplan = _planRepository.SavePlan(plan, uid);
+                var Result = saveplan.Result;
+                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + (Result.PlanVersions.Count + 1) + ".xlsx");
+                // Convert list of expenses to Excel file                        
+                Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+                // Reset position of the memory stream
+                excelFileStream.Position = 0;
+                // Upload the file to AWS S3
+                await _fileService.UploadPlanAsync(filename, excelFileStream);
 
                 // Convert list of expenses to Excel file
             }

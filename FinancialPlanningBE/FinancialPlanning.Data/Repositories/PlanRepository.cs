@@ -79,9 +79,12 @@ namespace FinancialPlanning.Data.Repositories
 
         }
 
-        public async Task<int> SavePlan(Plan plan, Guid creatorId)
+        public async Task<Plan> SavePlan(Plan plan, Guid creatorId)
         {
-            var existingPlan = await _context.Plans!.FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
+            var existingPlan = await _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
             if (existingPlan != null)
             {
                 var newVersion = _context.PlanVersions!.Count(pv => pv.PlanId == existingPlan.Id) + 1;
@@ -96,7 +99,8 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.PlanVersions!.Add(planVersion);
                 _context.SaveChanges();
-                return newVersion;
+                
+                return existingPlan;
             }
             else
             {
@@ -118,7 +122,10 @@ namespace FinancialPlanning.Data.Repositories
                 _context.PlanVersions!.Add(planVersion);
 
                 await _context.SaveChangesAsync();
-                return 1;
+
+                return _context.Plans!
+                    .Include(p => p.Term)
+                    .Include(p => p.Department).FirstOrDefault(p => p.Id == plan.Id)!;
             }
         }
 
