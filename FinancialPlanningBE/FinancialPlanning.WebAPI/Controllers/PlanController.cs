@@ -2,9 +2,7 @@ using AutoMapper;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using Microsoft.AspNetCore.Authorization;
-using FinancialPlanning.Service.Services;
 using FinancialPlanning.WebAPI.Models.Plan;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -60,13 +58,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             await _planService.DeletePlan(id);
             return Ok(new { message = $"Plan with id {id} deleted successfully!" });
         }
-    }
-
-
-
-    public class PlanController(PlanService planService) : ControllerBase
-    {
-        private readonly PlanService _planService = planService;
 
         // POST: api/plan
         [Authorize(Roles = "FinancialStaff")]
@@ -140,4 +131,5 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
     }
+
 }
