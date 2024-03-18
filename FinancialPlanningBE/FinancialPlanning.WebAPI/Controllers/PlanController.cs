@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
+using static FinancialPlanning.Data.Repositories.PlanRepository;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -14,6 +17,47 @@ namespace FinancialPlanning.WebAPI.Controllers
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
+
+       
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlanViewModel>>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
+                var plans = await _planService.GetFinancialPlans(keyword, department, status);
+
+                // Project the results into FinancialPlanDto
+                var result = plans.Select((p, index) => new PlanViewModel
+                {
+                    No = index + 1,
+                    Plan = p.PlanName,
+                    Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
+                    Department = p.Department?.DepartmentName ?? "Unknown", // Check if p.Department is not null before accessing its properties
+                    Status = GetPlanStatusString(p.Status),
+                    Version = p.PlanVersions.Any() ? p.PlanVersions.Max(v => v.Version) : 0 // Check if PlanVersions has any elements before calling Max()
+                }).ToList();
+
+                return result;
+            
+        }
+
+        private string GetPlanStatusString(int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "Denied";
+                case 1:
+                    return "New";
+                case 2:
+                    return "Waiting for Approval";
+                case 3:
+                    return "Approved";
+                case 4:
+                    return "Closed";
+                default:
+                    return string.Empty; 
+            }
+        }
+
 
         [HttpGet("Planlist")]
         [Authorize(Roles = "Accountant, FinancialStaff")]

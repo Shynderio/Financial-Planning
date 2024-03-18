@@ -47,6 +47,7 @@ namespace FinancialPlanning.Service.Services
             }
             return startingPlans;
         }
+        
 
         public async Task<Plan> GetPlanById(Guid id)
         {
@@ -58,6 +59,14 @@ namespace FinancialPlanning.Service.Services
         {
             await _planRepository.CreatePlan(plan);
         }
+
+        public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
+          return  await _planRepository.GetFinancialPlans(keyword, department, status);   
+        }
+
+
+
 
         public async Task UpdatePlan(Plan plan)
         {
