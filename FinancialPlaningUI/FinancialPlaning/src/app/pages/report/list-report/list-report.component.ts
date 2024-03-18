@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-list-report',
@@ -22,6 +23,7 @@ import { RouterLink } from '@angular/router';
     MatIconModule,
     ReactiveFormsModule,
     MatTableModule,
+    MatSelectModule
   ],
 })
 export class ListReportComponent {
@@ -37,9 +39,19 @@ export class ListReportComponent {
 
   role: string = '';
   departmentName: string = '';
-  dataSource: MatTableDataSource<Report>;
+  dataSource: any = [];
   reports: any = [];
- 
+
+  searchValue: string = '';
+
+  terms: any = [];
+  selectedTerm = "All";
+
+  departments: any = [];
+  selectedDepartment = "All";
+
+  selectstatus = "All";
+  quarters: any[] = [];
 
   listSize: number = 0;
   pageSize = 7;
@@ -61,26 +73,21 @@ export class ListReportComponent {
         this.role = decodedToken.role;
         this.departmentName = decodedToken.departmentName;
         console.log(this.departmentName);
-        console.log('aa');
         this.fetchData();
       }
     }
-  }
+   this.getQuaters();
 
-  // getListReport(): void {
-  //   this.reportService.getListReport().subscribe({
-  //     next: (response: any) => {
-  //       console.log(response); // Log response to the console
-  //        this.dataSource = response;
-  //     }}
-  //   );
-  // }
+  }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   //Get report
   fetchData() {
     this.reportService.getListReport().subscribe((data: any) => {
       this.reports = data.reports;
+      this.terms = data.terms;
+      this.departments = data.departments;
+
       this.dataSource = this.getPaginatedItems();
       console.log(data);
     });
@@ -91,9 +98,63 @@ export class ListReportComponent {
   }
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
-    let filteredList = this.reports;
+    let filteredList = this.reports.filter(
+      (data: any) =>
+        data.reportName.toLowerCase().includes(this.searchValue)
+        && (this.selectedDepartment == data.departmentName || this.selectedDepartment == "All")
+        && (this.selectedTerm == data.termName || this.selectedTerm == "All")
+        && (this.selectstatus == data.status || this.selectstatus == "All")
+    );
+
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
+  changeSearchText(event: Event) {
+    let target = event.target as HTMLInputElement;
+    this.searchValue = target.value.trim();
+    this.pageIndex = 0;
+    this.dataSource = this.getPaginatedItems();
+  }
+
+  //Select Department
+  onDepartmentSelected(event: any): void {
+    console.log(event.value);
+    this.selectedDepartment = event.value;
+    this.dataSource = this.getPaginatedItems();
+  }
+  //Select Term
+  onTermSelected(event: any): void {
+    console.log(event.value);
+    this.selectedTerm = event.value;
+    this.dataSource = this.getPaginatedItems();
+  }
+  //Select Quater
+  onQuarterSelected(event: any): void {
+    const selectedQuarterId = event.value;
+    console.log('Selected quarter ID:', selectedQuarterId);
+    this.dataSource = this.getPaginatedItems();
+
+  }
+  //Select status
+  onStatusSelected(event: any): void {
+   this.selectstatus = event.value;
+    
+    this.dataSource = this.getPaginatedItems();
+  }
+ //Get list quarter
+ getQuaters(){
+  const currentDate = new Date();
+ const currentYear = currentDate.getFullYear();
+ const currentQuarter = Math.floor((currentDate.getMonth() / 3)) + 1;
+
+ // Lặp từ năm trước đến năm tiếp theo và từ quý 1 đến quý 4
+ for (let year = currentYear - 2; year <= currentYear + 1; year++) {
+   for (let quarter = 1; quarter <= 4; quarter++) {
+     // Thêm vào mảng
+     this.quarters.push({ id: `${year}-Q${quarter}`, name: `Q${quarter} ${year}` });
+   }
+ }
+ }
+ 
 
 }
