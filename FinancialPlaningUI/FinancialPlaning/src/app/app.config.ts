@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient} from '@angular/common/http';
-import { authInterceptor } from './services/auth.interceptor';
+import { authInterceptor } from './services/auth/auth.interceptor';
 import { errorInterceptor } from './services/error.interceptor';
 
 export const appConfig: ApplicationConfig = {

@@ -38,7 +38,14 @@ namespace FinancialPlanning.Data.Repositories
 
             return "";
         }
+        // Get all department
+        public async Task<List<Department>> GetAllDepartment()
+        {
+            return await context.Departments!.ToListAsync();
+        
+        }
 
-     
+
+
     }
 }

@@ -23,7 +23,7 @@ namespace FinancialPlanning.Service.Services
             _departmentRepository = departmentRepository;
         }
 
-        public async Task<List<Report>> GetReportsByEmail(string email)
+        public async Task<IEnumerable<Report>> GetReportsByEmail(string email)
         {
             var role = await _authRepository.GetRoleUser(email);
 
@@ -46,6 +46,11 @@ namespace FinancialPlanning.Service.Services
                 return reports;
             }
 
+        }
+
+        public async Task<IEnumerable<Department>> GetAllDepartment()
+        {
+            return await _departmentRepository.GetAllDepartment();
         }
 
     }

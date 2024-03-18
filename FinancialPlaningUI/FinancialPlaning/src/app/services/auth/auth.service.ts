@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginModel } from '../models/loginModel.model';
-import { environment } from '../../environments/environment';
+import { LoginModel } from '../../models/loginModel.model';
+import { environment } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -24,14 +24,12 @@ export class AuthService {
       const token = localStorage.getItem('token');
       if (token) {
         const decodedToken: any = jwtDecode(token);
-        const expirationTime = decodedToken.exp; 
-        console.log(expirationTime);
-        const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại
-        console.log(currentTime <= expirationTime)
-        // if(currentTime > expirationTime){
-        //   const token = localStorage.removeItem('token');
-        //   window.location.href = '/login';
-        // }
+        const expirationTime = decodedToken.exp;  
+        const currentTime = Math.floor(Date.now() / 1000); // Thời điểm hiện tại  
+        if(currentTime > expirationTime){
+          const token = localStorage.removeItem('token');
+          window.location.href = '/login';
+        }
         return currentTime <= expirationTime;
     }
    
