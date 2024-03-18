@@ -39,5 +39,10 @@ namespace FinancialPlanning.Service.Services
         {
             await _userrepository.AddNewUser(user);
         }
+        //Update user status
+        public async Task updateUserStatus(Guid id, int status)
+        {
+            await _userrepository.UpdateUserStatus(id, status);
+        }
     }
 }

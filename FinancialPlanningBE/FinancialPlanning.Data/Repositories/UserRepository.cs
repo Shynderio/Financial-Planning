@@ -160,6 +160,7 @@ namespace FinancialPlanning.Data.Repositories
             return hashedPassword;
         }
 
+        //Get user by Id
         public async Task<User> GetUserById(Guid id)
         {
             var user = await _context.Users!
@@ -178,6 +179,20 @@ namespace FinancialPlanning.Data.Repositories
 
             return user;
         }
+
+        //Update user status
+        public async Task UpdateUserStatus(Guid id, int status)
+        {
+            var user = await _context.Users!.FindAsync(id);
+
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+            user.Status = status;
+            await _context.SaveChangesAsync();
+        }
+
 
     }
 }

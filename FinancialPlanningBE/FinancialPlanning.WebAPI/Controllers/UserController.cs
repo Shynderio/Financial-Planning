@@ -37,7 +37,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewUser(AddUserModel userModel)
         {
-            
+
             var user = _mapper.Map<User>(userModel);
             await _userService.AddNewUser(user);
             return Ok(user);
@@ -51,6 +51,20 @@ namespace FinancialPlanning.WebAPI.Controllers
             user.Id = id;
             await _userService.UpdateUser(id, user);
             return Ok(new { message = $"User with id {id} updated successfully!" });
+        }
+        // Update status User
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateUserStatus(Guid id, int status)
+        {
+            try
+            {
+                await _userService.updateUserStatus(id, status);
+                return Ok(new { message = $"User with id {id} updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error updating user with id {id}: {ex.Message}" });
+            }
         }
 
     }

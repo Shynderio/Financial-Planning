@@ -14,5 +14,6 @@ namespace FinancialPlanning.Data.Repositories
         public Task UpdateUser(Guid id, User user);
         public Task<List<User>> GetAllUsers();
         public Task<User> GetUserById(Guid id);
+        public Task UpdateUserStatus(Guid id, int status);
     }
 }
