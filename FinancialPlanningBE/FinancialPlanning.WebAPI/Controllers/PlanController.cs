@@ -32,7 +32,6 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Accountant")]
         [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
         public async Task<IActionResult> CreatePlan(PlanListModel planModel)
         {
