@@ -23,7 +23,7 @@
 
         <div class="form-group">
             <label for="dob">DOB: </label>
-            <input type="date" formControlName="dob" name="dob" id="dob" required />
+            <input type="date" formControlName="dob"  name="dob" id="dob" required />
 
             <div *ngIf="addUserF['controls']['dob'].dirty && addUserF['controls']['dob'].errors">
                 <small *ngIf="addUserF['controls']['dob'].errors['required']">Please choose date</small>

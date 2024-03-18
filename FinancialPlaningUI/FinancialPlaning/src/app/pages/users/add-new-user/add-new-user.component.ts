@@ -8,11 +8,12 @@ import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
 import { AddUser } from '../../../models/adduser.model';
 import { UserService } from '../../../services/user.service';
+import { DateValueAccessor, DateValueAccessorModule } from 'angular-date-value-accessor';
 
 @Component({
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule, DateValueAccessorModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
@@ -173,6 +174,7 @@ export class AddNewUserComponent implements OnInit {
     if(this.isEdit){
       this.httpService.editUser(this.userId, user).subscribe(() =>{
         console.log('success');
+        this.toastr.success('Updated user successful', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
       });
     }else{
