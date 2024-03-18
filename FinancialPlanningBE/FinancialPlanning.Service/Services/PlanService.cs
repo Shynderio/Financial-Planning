@@ -3,8 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
-using FinancialPlanning.Data.Repositories;
-using FinancialPlanning.Service.Services;
 namespace FinancialPlanning.Service.Services
 {
     public class PlanService
