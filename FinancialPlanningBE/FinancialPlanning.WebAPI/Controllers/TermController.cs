@@ -1,10 +1,11 @@
 using AutoMapper;
-using FinancialPlanning.WebAPI.Models;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using FinancialPlanning.WebAPI.Models.Term;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -16,6 +17,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly TermService _termService = termService ?? throw new ArgumentNullException(nameof(termService));
 
         [HttpPost]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> CreateTerm(CreateTermModel termModel)
         {
             if (ModelState.IsValid)
@@ -28,28 +30,33 @@ namespace FinancialPlanning.WebAPI.Controllers
             return BadRequest(new { error = "Invalid model state!" });
         }
 
-        [HttpPut("{id}/start")]
+        [HttpPut("start/{id:guid}")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> StartTerm(Guid id)
         {
             await _termService.StartTerm(id);
             return Ok(new { message = "Term started successfully!" });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetTermById(Guid id)
         {
             var term = await _termService.GetTermById(id);
             return Ok(term);
         }
 
-        [HttpGet("allTerms")]
+        [HttpGet("all")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAllTerms()
         {
             var terms = await _termService.GetAllTerms();
-            return Ok(terms);
+            var termListModels = terms.Select(t => _mapper.Map<TermListModel>(t)).ToList();
+            return Ok(termListModels);
         }
 
-        [HttpPut("{id}/update")]
+        [HttpPut("update/{id:guid}")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> UpdateTerm(Guid id, CreateTermModel termModel)
         {
             if (ModelState.IsValid)
@@ -63,7 +70,8 @@ namespace FinancialPlanning.WebAPI.Controllers
             return BadRequest(new { error = "Invalid model state!" });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeleteTerm(Guid id)
         {
             await _termService.DeleteTerm(id);

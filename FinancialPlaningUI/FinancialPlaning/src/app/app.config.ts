@@ -1,18 +1,20 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { withFetch, withInterceptors } from '@angular/common/http';
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { HttpClient, HttpClientModule, withFetch } from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient} from '@angular/common/http';
-import { Provider } from '@angular/core';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { authInterceptor } from './services/auth/auth.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { errorInterceptor } from './services/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    importProvidersFrom(HttpClientModule),
-    provideRouter(routes),  
-    // [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
+    provideHttpClient(withInterceptors([authInterceptor,errorInterceptor])),
     provideHttpClient(withFetch()), 
-    provideClientHydration()]
+    provideClientHydration(),
+    provideRouter(routes),
+    provideAnimationsAsync()
+  ],
+    
 };

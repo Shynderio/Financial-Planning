@@ -1,5 +1,6 @@
-<app-header *ngIf="logged"></app-header>
-<app-sidenav *ngIf="logged"></app-sidenav>
-<!-- Navigate to <a routerLink="/@Angular">Bruh</a> -->
 
-<router-outlet/>
+<ng-container *ngIf="logged">
+    <app-sidenav></app-sidenav>
+</ng-container>
+
+<router-outlet></router-outlet>

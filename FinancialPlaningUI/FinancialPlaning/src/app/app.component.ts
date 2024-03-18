@@ -1,30 +1,32 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './pages/login/login.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HeaderComponent } from "./components/header/header.component";
 import { SidenavComponent } from "./components/sidenav/sidenav.component";
+import { AuthService } from './services/auth/auth.service';
+
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.css',
-    imports: [
-        RouterOutlet,
-        LoginComponent,
-        CommonModule,
-        ReactiveFormsModule,
-        HeaderComponent,
-        SidenavComponent,
-        RouterModule,
-        
-    ]
+  selector: 'app-root',
+  standalone: true,
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+  imports: [
+    RouterOutlet,
+    LoginComponent,
+    ReactiveFormsModule,
+    SidenavComponent,
+    RouterModule,
+    CommonModule
+  ],
 })
 export class AppComponent {
   title = 'FinancialPlaning';
-  logged = true; // Default value, assuming header is shown by default
+  logged = false;
+  constructor(private authService: AuthService) {}
+  ngOnInit(): void {
+    this.logged = this.authService.IsLoggedIn();
+  }
 }

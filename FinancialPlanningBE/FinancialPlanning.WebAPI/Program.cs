@@ -16,18 +16,39 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
+using FinancialPlanning.Service.Token;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<ITermRepository, TermRepository>();
-builder.Services.AddScoped<TermService>();
 builder.Services.AddSingleton<IHostedService, StartTerm>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//AddScoped Repository
+builder.Services.AddScoped<ITermRepository, TermRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+
+
+////AddScoped Service
+builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<TermService>();
+builder.Services.AddScoped<PlanService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<PlanService>();
+
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -38,6 +59,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
     b => b.MigrationsAssembly("FinancialPlanning.Data")));
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -73,19 +96,10 @@ builder.Services.AddSwaggerGen(option =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
-
-//AddScoped
-
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<FileService>();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
 
 // 
 builder.Services.AddAuthentication(options =>
@@ -97,14 +111,16 @@ builder.Services.AddAuthentication(options =>
 {
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
+#pragma warning disable CS8604 // Possible null reference argument.
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:ValidAudience"],
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
+
 });
 
 var app = builder.Build();
