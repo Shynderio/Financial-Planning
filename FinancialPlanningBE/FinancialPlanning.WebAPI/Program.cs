@@ -17,6 +17,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
 using FinancialPlanning.Service.Token;
+using FluentAssertions.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,9 @@ builder.Services.AddScoped<ITermRepository, TermRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+
 
 ////AddScoped Service
 builder.Services.AddScoped<ReportService>();
@@ -40,6 +44,7 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<TermService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<UserService>();
 
 
 
