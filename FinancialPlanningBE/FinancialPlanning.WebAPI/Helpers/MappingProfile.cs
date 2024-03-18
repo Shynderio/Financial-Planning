@@ -1,5 +1,6 @@
 using AutoMapper;
 using FinancialPlanning.Data.Entities;
+using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models;
 using FinancialPlanning.WebAPI.Models.Plan;
 using FinancialPlanning.WebAPI.Models.Report;
@@ -22,9 +23,10 @@ namespace FinancialPlanning.WebAPI.Helpers
                             : string.Empty));
             CreateMap<Term, TermViewModel>().ReverseMap();
             CreateMap<CreateTermModel, Term>();
+
             CreateMap<LoginModel, User>()
           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
+          .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
             CreateMap<ResetPasswordModel, User>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
@@ -40,7 +42,11 @@ namespace FinancialPlanning.WebAPI.Helpers
            .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
            .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
 
-            // map reportViewModel to  Report
+
+            //Map department
+            CreateMap<Department, DepartmentViewModel>();
+            CreateMap<DepartmentViewModel, Department>();
+
             CreateMap<ReportViewModel, Report>()
       .ForMember(dest => dest.ReportName, opt => opt.MapFrom(src => src.ReportName))
       .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Month))
@@ -59,6 +65,7 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 .ForMember(dest => dest.TermId, opt => opt.MapFrom(src => src.TermId))
                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId));
+
 
 
 
