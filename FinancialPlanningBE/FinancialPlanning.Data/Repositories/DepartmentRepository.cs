@@ -18,6 +18,12 @@ namespace FinancialPlanning.Data.Repositories
             this.context = context;
 
         }
+        // Get list departments
+        public async Task<List<Department>> GetAllDepartments()
+        {
+            return await context.Departments!.ToListAsync();
+        }
+
         //Get DepartmentId by email
         public async Task<string> GetDepartmentIdByEmail(string email)
         {

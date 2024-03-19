@@ -2,7 +2,9 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
+using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.Report;
+using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,16 +43,19 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var useremail = _tokenService.GetEmailFromToken(token);   // Get user email from JWT token
 
                 var reports = await _reportService.GetReportsByEmail(useremail); // Get list reports          
-                var departments = _reportService.GetAllDepartment();    //Get all department
-                var terms = _termService.GetAllTerms();   //Get all term
+                var departments = await _reportService.GetAllDepartment();    //Get all department
+                var terms = await _termService.GetAllTerms();   //Get all term
 
-                //Mapper List report and reportViewModel
+                //Mapper model
                 var reportViewModels = _mapper.Map<List<ReportViewModel>>(reports);
+                var termListModels = terms.Select(t => _mapper.Map<TermListModel>(t)).ToList();
+                var departmentViewModel = _mapper.Map<List<DepartmentViewModel>>(departments);
 
                 var result = new
                 { 
-                   
-                    Terms = terms
+                   Reports = reportViewModels,
+                   Terms = termListModels,
+                   Departments = departmentViewModel
                 };
 
                 return Ok(result);
@@ -62,6 +67,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
 
           
+        }
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> DeleteReport(Guid id)
+        {
+            await _reportService.DeleteReport(id);
+            return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
 
     }
