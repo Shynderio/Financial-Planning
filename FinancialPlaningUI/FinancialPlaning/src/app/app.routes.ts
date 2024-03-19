@@ -26,9 +26,7 @@ export const routes: Routes = [
     { path: 'edit-term/:id', component: EditTermComponent, canActivate: [AccountantGuard] },
     { path: 'term-details/:id', component: TermDetailsComponent, canActivate: [AuthGuard] },
     { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
-        { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
-
-   
+    { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },
     { path: 'edit-user/:id', component: AddNewUserComponent },
