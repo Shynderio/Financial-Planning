@@ -15,7 +15,7 @@ namespace FinancialPlanning.Data.Repositories
         }
         public async Task<User> IsValidUser(string email, string password)
         {
-            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email && u.Password == password) ?? throw new Exception("Invalid username or password");
+            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email && u.Password == password && u.Status==1) ?? throw new Exception("Invalid username or password");
 
             return user;
         }
