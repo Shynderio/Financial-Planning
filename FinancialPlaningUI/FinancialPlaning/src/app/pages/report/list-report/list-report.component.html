@@ -20,7 +20,7 @@
     </form>
     <!-- Department -->
 
-    <mat-form-field  [hidden]="role == 'Admin'">
+    <mat-form-field  [hidden]="role == 'FinancialStaff'">
 
       <mat-label style="color: white; ">Department</mat-label>
       <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
@@ -45,9 +45,9 @@
     <mat-form-field>
       <mat-label style="color: white;">Quarter</mat-label>
       <mat-select value="All" (selectionChange)="onQuarterSelected($event)">
-        <mat-option [value]="">All</mat-option>
+        <mat-option value="All">All</mat-option>
         @for (quarter of quarters; track quarter) {
-        <mat-option [value]="quarter.id">{{quarter.name}}</mat-option>
+        <mat-option [value]="quarter">{{quarter}}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -103,10 +103,10 @@
     <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let element">
-        <a [routerLink]="[ '/term-details/', element.id ]"><mat-icon>visibility</mat-icon></a>
+        <a [routerLink]="[ '/report-details/', element.id ]"><mat-icon>visibility</mat-icon></a>
 
         <a
-          [hidden]="(role == 'Accountant' && element.departmentName!= departmentName) || element.status == '2'"><mat-icon>delete</mat-icon></a>
+          [hidden]="(role == 'Accountant' && element.departmentName!= departmentName) || element.status == '2'"  (click)="openDeleteDialog(element.id)"><mat-icon>delete</mat-icon></a>
       </td>
     </ng-container>
 

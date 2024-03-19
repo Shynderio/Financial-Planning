@@ -35,8 +35,10 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token));
 
             // map report to  ReportViewModel
-            CreateMap<Report, ReportViewModel>()
-                .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
+            CreateMap<Report, ReportViewModel>()         
+           .ForMember(dest => dest.TermName, opt => opt.MapFrom(src => src.Term.TermName))         
+           .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
+           .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
 
             // map reportViewModel to  Report
             CreateMap<ReportViewModel, Report>();
@@ -49,8 +51,8 @@ namespace FinancialPlanning.WebAPI.Helpers
       .ForMember(dest => dest.ReportName, opt => opt.MapFrom(src => src.ReportName))
       .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Month))
       .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
             // Map plan 
-            CreateMap<Plan, PlanListModel>();
 
             CreateMap<PlanListModel, Plan>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -65,18 +67,36 @@ namespace FinancialPlanning.WebAPI.Helpers
             .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
-            CreateMap<PlanViewModel, Plan>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Id sẽ được sinh ra tự động bởi cơ sở dữ liệu
-                .ForMember(dest => dest.PlanName, opt => opt.MapFrom(src => src.Plan))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => int.Parse(src.Status)))
-                .ForMember(dest => dest.TermId, opt => opt.Ignore()) // TermId và DepartmentId sẽ được đặt từ mã định danh trong PlanViewModel
-                .ForMember(dest => dest.DepartmentId, opt => opt.Ignore())
-                .ForPath(dest => dest.Term.TermName, opt => opt.MapFrom(src => src.Term))
-                .ForPath(dest => dest.Department.DepartmentName, opt => opt.MapFrom(src => src.Department));
 
 
 
 
+            //map User to userModel
+            CreateMap<User, UserModel>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                 .ForMember(dest => dest.DOB, opt => opt.MapFrom(src => src.DOB))
+                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                 .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
+                 .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.PositionName))
+                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+
+            //map User to AddUserModel
+            CreateMap<User, AddUserModel>()
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Username))
+                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                 .ForMember(dest => dest.DOB, opt => opt.MapFrom(src => src.DOB))
+                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
+                 .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
+                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
+                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
+                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
         }
     }

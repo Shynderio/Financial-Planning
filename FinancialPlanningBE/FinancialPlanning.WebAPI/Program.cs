@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +7,6 @@ using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.WebAPI.Helpers;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.ScheduleTasks;
-using AutoMapper;
 using Amazon;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
@@ -32,6 +28,10 @@ builder.Services.AddScoped<ITermRepository, TermRepository>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 
 
@@ -44,15 +44,16 @@ builder.Services.AddScoped<TermService>();
 builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
-// builder.Services.AddScoped<PlanService>();
-
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<PositionService>();
 
 
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder => builder.WithOrigins("http://localhost:4200")
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });

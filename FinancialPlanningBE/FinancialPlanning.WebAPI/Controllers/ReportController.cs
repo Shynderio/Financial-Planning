@@ -68,6 +68,13 @@ namespace FinancialPlanning.WebAPI.Controllers
 
           
         }
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> DeleteReport(Guid id)
+        {
+            await _reportService.DeleteReport(id);
+            return Ok(new { message = $"Report with id {id} deleted successfully!" });
+        }
 
     }
 }
