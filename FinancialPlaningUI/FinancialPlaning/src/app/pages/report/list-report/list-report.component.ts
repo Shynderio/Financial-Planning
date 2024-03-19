@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-list-report',
@@ -23,6 +24,7 @@ import { of } from 'rxjs';
     MatPaginatorModule,
     MatFormFieldModule,
     MatIconModule,
+    CommonModule,
     ReactiveFormsModule,
     MatTableModule,
     MatSelectModule
@@ -217,7 +219,7 @@ export class ListReportComponent {
 }
 
 @Component({
-  selector: 'delete-term',
+  selector: 'delete-report',
   standalone: true,
   templateUrl: '../delete-report/delete-report.component.html',
   styleUrls: ['../delete-report/delete-report.component.css'],
