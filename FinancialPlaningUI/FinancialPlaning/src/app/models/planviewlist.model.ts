@@ -1,23 +1,19 @@
-export interface Plan {
-        id: string;
-        planName: string;
+export class Plan {
+        no: string;
+        plan: string;
         term: string;
         department: string;
         status: string;
         version: number;
-}
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AppRoutingModule } from './app-routing.module';
+        user: any; // You might want to define a UserViewModel here if needed
 
-@NgModule({
-  imports: [
-    CommonModule,
-    AppRoutingModule
-  ],
-  exports: [
-    CommonModule,
-    AppRoutingModule
-  ]
-})
-export class CoreModule { }
+  constructor(data: any = {}) {
+    this.no = data.no || '';
+    this.plan = data.plan || '';
+    this.term = data.term || 0;
+    this.department = data.department || '';
+    this.version = data.version || 0;
+    this.status = data.status || 0;
+    this.user = data.user || null;
+  }
+}
