@@ -118,5 +118,19 @@ namespace FinancialPlanning.Service.Services
                 }
             }
         }
+
+        public async Task<IEnumerable<Term>> GetStartedTerms()
+        {
+            IEnumerable<Term> terms = await _termRepository.GetAllTerms();
+            List<Term> startedTerms = [];
+            foreach (var term in terms)
+            {
+                if (term.Status == 2)
+                {
+                    startedTerms.Add(term);
+                }
+            }
+            return startedTerms;
+        }
     }
 }
