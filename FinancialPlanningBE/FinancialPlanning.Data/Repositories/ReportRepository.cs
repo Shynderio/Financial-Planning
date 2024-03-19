@@ -26,6 +26,9 @@ namespace FinancialPlanning.Data.Repositories
             if (context.Reports!=null)
             {
              reports = await context.Reports
+                    .Where(r => r.Status > 0)
+                 .OrderBy(r => r.Status) // order by status
+                .ThenByDescending(r => r.UpdateDate)
                 .Include(t => t.ReportVersions)
                 .Include(t => t.Term)
                 .Include(t => t.Department).ToListAsync();          
@@ -38,7 +41,7 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<List<Report>> GetReportsByDepartId(Guid departId)
         {
             var reports = await context.Reports!
-                .Where(r => r.DepartmentId == departId)
+                .Where(r => r.DepartmentId == departId && r.Status>0)
                  .OrderBy(r => r.Status) // order by status
                 .ThenByDescending(r => r.UpdateDate)
                 .Include(t => t.ReportVersions)
@@ -48,6 +51,29 @@ namespace FinancialPlanning.Data.Repositories
     
             return reports;
         }
+        //Delete report
+        public async Task DeleteReport(Report report)
+        {
+             context.Reports!.Remove(report);
+            await context.SaveChangesAsync();
+        }
 
+        //Delete report Version
+        public async Task DeleteReportVersions(IEnumerable<ReportVersion> reportVersions)
+        {
+            foreach (var reportVersion in reportVersions)
+            {
+                context.ReportVersions!.Remove(reportVersion);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<Report> GetReportById(Guid id)
+        {
+            var report = await context.Reports!
+         .Include(t => t.ReportVersions)
+         .FirstOrDefaultAsync(t => t.Id == id) ?? throw new Exception("Report not found");
+            return report;
+        }
     }
 }

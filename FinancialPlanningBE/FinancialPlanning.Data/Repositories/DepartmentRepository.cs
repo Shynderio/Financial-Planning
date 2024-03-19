@@ -27,9 +27,10 @@ namespace FinancialPlanning.Data.Repositories
         //Get DepartmentId by email
         public async Task<string> GetDepartmentIdByEmail(string email)
         {
-            var user = context.Users!.FirstOrDefault(x => x.Email == email); 
-            return user.DepartmentId.ToString();
+            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email);
+            return user!.DepartmentId.ToString();
         }
+
         
 
         //Get name of department
@@ -44,7 +45,41 @@ namespace FinancialPlanning.Data.Repositories
 
             return "";
         }
+        // Get all department
+        public async Task<List<Department>> GetAllDepartment()
+        {
+            return await context.Departments!.ToListAsync();
+        
+        }
 
-     
+        // public Task<Department> GetDepartmentByUserName(string username)
+        // {
+        //     var department = (from user in context.Users
+        //                       where user.Username == username
+        //                       select user.Department).FirstOrDefault();
+        //     return Task.FromResult(department)!;
+        // }
+
+        public Department GetDepartmentByUserName(string username)
+        {
+            var department = (from user in context.Users
+                              where user.Username == username
+                              select user.Department).FirstOrDefault();
+            return department!;
+        }
+
+        public Guid GetDepartmentByUid(Guid id)
+        {
+            var department = context.Users!.FirstOrDefault(x => x.Id == id)!.DepartmentId;
+            return department;
+        }
+
+        public Department GetDepartmentByUserId(Guid id)
+        {
+            var department = (from user in context.Users
+                              where user.Id == id
+                              select user.Department).FirstOrDefault();
+            return department!;
+        }
     }
 }

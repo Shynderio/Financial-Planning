@@ -47,7 +47,7 @@ namespace TestProject.Service.Services
             // Arrange
             var mockRepository = new Mock<ITermRepository>();
             var termService = new TermService(mockRepository.Object);
-            mockRepository.Setup(repo => repo.GetTermById(_testTerm.Id)).ReturnsAsync(_testTerm);
+            mockRepository.Setup(repo => repo.GetTermByIdAsync(_testTerm.Id)).ReturnsAsync(_testTerm);
             // Act
             await termService.StartTerm(_testTerm.Id);
 
@@ -137,7 +137,7 @@ namespace TestProject.Service.Services
             var termService = new TermService(mockRepository.Object);
             var nonExistentTerm = new Term { Id = Guid.NewGuid(), TermName = "Non-Existent Term" };
 
-            mockRepository.Setup(repo => repo.GetTermById(nonExistentTerm.Id)).ReturnsAsync((Term)null!);
+            mockRepository.Setup(repo => repo.GetTermByIdAsync(nonExistentTerm.Id)).ReturnsAsync((Term)null!);
             // Returning null as the term doesn't exist
 
             // Act and Assert
@@ -153,13 +153,13 @@ namespace TestProject.Service.Services
             var termToUpdate = new Term { Id = Guid.NewGuid(), TermName = "Existing Term", Status = 1};
             var updatedTerm = new Term { Id = termToUpdate.Id, TermName = "Updated Term" };
 
-            mockRepository.Setup(repo => repo.GetTermById(termToUpdate.Id)).ReturnsAsync(termToUpdate);
+            mockRepository.Setup(repo => repo.GetTermByIdAsync(termToUpdate.Id)).ReturnsAsync(termToUpdate);
 
             // Act
             await termService.UpdateTerm(updatedTerm);
 
             // Assert
-            mockRepository.Verify(repo => repo.GetTermById(updatedTerm.Id), Times.Once);
+            mockRepository.Verify(repo => repo.GetTermByIdAsync(updatedTerm.Id), Times.Once);
             mockRepository.Verify(repo => repo.UpdateTerm(updatedTerm), Times.Once);
         }
 
@@ -172,7 +172,7 @@ namespace TestProject.Service.Services
             var id = Guid.NewGuid();
             var termToDelete = new Term { Id = id };
 
-            mockRepository.Setup(repo => repo.GetTermById(id)).ReturnsAsync(termToDelete);
+            mockRepository.Setup(repo => repo.GetTermByIdAsync(id)).ReturnsAsync(termToDelete);
 
             // Act
             await termService.DeleteTerm(id);
@@ -189,7 +189,7 @@ namespace TestProject.Service.Services
             var termService = new TermService(mockRepository.Object);
             var id = Guid.NewGuid();
 
-            mockRepository.Setup(repo => repo.GetTermById(id)).ReturnsAsync((Term)null!);
+            mockRepository.Setup(repo => repo.GetTermByIdAsync(id)).ReturnsAsync((Term)null!);
             
             // Act and Assert
             await Assert.ThrowsAsync<ArgumentException>(() => termService.DeleteTerm(id));

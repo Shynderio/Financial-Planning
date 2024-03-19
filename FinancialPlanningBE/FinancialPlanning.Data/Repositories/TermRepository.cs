@@ -31,10 +31,16 @@ namespace FinancialPlanning.Data.Repositories
             return await _context.Terms!.ToListAsync();
         }
 
-        public async Task<Term> GetTermById(Guid id)
+        public async Task<Term> GetTermByIdAsync(Guid id)
         {
-            var term = await _context.Terms!.FindAsync(id) ?? throw new Exception("Term not found");
+             var term = await _context.Terms!.FindAsync(id) ?? throw new Exception("Term not found");
             return term;
+
+        }
+
+        public Term GetTermById(Guid id)
+        {
+            return _context.Terms!.Find(id) ?? throw new Exception("Term not found");
         }
 
         public async Task UpdateTerm(Term term)

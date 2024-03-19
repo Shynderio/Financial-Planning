@@ -42,7 +42,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetTermById(Guid id)
         {
-            var term = await _termService.GetTermById(id);
+            var term = await _termService.GetTermByIdAsync(id);
             return Ok(term);
         }
 
