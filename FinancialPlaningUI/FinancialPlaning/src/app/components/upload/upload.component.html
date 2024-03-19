@@ -1,12 +1,30 @@
+
 <div class="wrapper">
-  <header>File Upload</header>
-  <form (click)="onClick()">
-    <input class="file-input" type="file" name="file" hidden (change)="onFileChange($event)">
-    <label for="fileInput">
-      <i class="fa-solid fa-cloud-arrow-up"></i>
-      <p>Browse File to Upload</p>
-    </label>
+  
+  <form action="#" (click)="onClick()">
+    <input type="file" class="file-input" (change)="onChange($event)" hidden />
+    <!-- <input class="file-input" type="file" name="file" hidden> -->
+    <i class="fas fa-cloud-upload-alt"></i>
+    <p>Browse File to Upload</p>
   </form>
-  <section class="progress-area"></section>
-  <section class="uploaded-area"></section>
+</div>
+
+<div *ngIf="file">
+  <section class="file-info">
+    File details:
+    <ul>
+      <li>Name: {{file.name}}</li>
+      <li>Type: {{file.type}}</li>
+      <li>Size: {{file.size}} bytes</li>
+    </ul>
+  </section>
+
+  <button (click)="onUpload()">Upload the file</button>
+
+  <section [ngSwitch]="status">
+    <p *ngSwitchCase="'uploading'">⏳ Uploading...</p>
+    <p *ngSwitchCase="'success'">✅ Done!</p>
+    <p *ngSwitchCase="'fail'">❌ Error!</p>
+    <p *ngSwitchDefault>😶 Waiting to upload...</p>
+  </section>
 </div>
