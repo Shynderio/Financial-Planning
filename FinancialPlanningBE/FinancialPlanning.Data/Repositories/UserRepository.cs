@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FinancialPlanning.Data.Data;
+﻿using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,13 +14,11 @@ namespace FinancialPlanning.Data.Repositories
     {
         private readonly DataContext _context;
         private readonly IEmailRepository _emailRepository;
-        private readonly IMapper _mapper;
 
-        public UserRepository(DataContext context, IEmailRepository emailRepository, IMapper mapper)
+        public UserRepository(DataContext context, IEmailRepository emailRepository)
         {
             _context = context;
             _emailRepository = emailRepository;
-            _mapper = mapper;
         }
 
 

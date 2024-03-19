@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,14 +7,12 @@ using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.WebAPI.Helpers;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.ScheduleTasks;
-using AutoMapper;
 using Amazon;
 using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
 using FinancialPlanning.Service.Token;
-using FluentAssertions.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +45,6 @@ builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<DepartmentService>();
 builder.Services.AddScoped<RoleService>();
 builder.Services.AddScoped<PositionService>();
 
@@ -59,7 +53,7 @@ builder.Services.AddScoped<PositionService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        builder => builder.WithOrigins("http://localhost:4200")
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
