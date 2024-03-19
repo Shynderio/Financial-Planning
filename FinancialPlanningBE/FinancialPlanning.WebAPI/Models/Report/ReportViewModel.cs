@@ -8,7 +8,7 @@ namespace FinancialPlanning.WebAPI.Models.Report
     {
         public Guid Id { get; set; }
         [Required] public string ReportName { get; set; } = string.Empty;
-        [Required] public int Month { get; set; }
+        [Required] public string Month { get; set; } = string.Empty;
         [Required] public int Status { get; set; }
         [Required] public string TermName { get; set; } = null!;
         [Required] public DateTime UpdateDate { get; set; }

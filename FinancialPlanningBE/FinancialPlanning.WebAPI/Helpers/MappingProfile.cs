@@ -1,5 +1,6 @@
 using AutoMapper;
 using FinancialPlanning.Data.Entities;
+using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models;
 using FinancialPlanning.WebAPI.Models.Plan;
 using FinancialPlanning.WebAPI.Models.Report;
@@ -25,16 +26,29 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<LoginModel, User>();
             CreateMap<ResetPasswordModel, User>();
 
-            // map report to  ReportViewModel
-            CreateMap<Report, ReportViewModel>()
-                .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
 
-            // map reportViewModel to  Report
-            CreateMap<ReportViewModel, Report>();
+            // map report to  ReportViewModel
+            CreateMap<Report, ReportViewModel>()         
+           .ForMember(dest => dest.TermName, opt => opt.MapFrom(src => src.Term.TermName))         
+           .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
+           .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
+
+
+
+            //Map department
+            CreateMap<Department, DepartmentViewModel>();
+            CreateMap<DepartmentViewModel, Department>();
+
+            CreateMap<ReportViewModel, Report>()
+      .ForMember(dest => dest.ReportName, opt => opt.MapFrom(src => src.ReportName))
+      .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.Month))
+      .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
             // Map plan 
             CreateMap<Plan, PlanListModel>();
 
             CreateMap<PlanListModel, Plan>();
+
 
 
 

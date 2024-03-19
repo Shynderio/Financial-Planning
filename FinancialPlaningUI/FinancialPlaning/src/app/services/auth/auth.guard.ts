@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
         // check token is exp
         if (currentTime > expirationTime) {
           localStorage.removeItem('token');
-       window.location.href='/login';
+          this.router.navigateByUrl('/login');  
           return false;
         } else {
           return true;
@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       }
     }
 
-    this.router.navigateByUrl('/login');
+    // this.router.navigateByUrl('/login');  
     return false;
   }
 }

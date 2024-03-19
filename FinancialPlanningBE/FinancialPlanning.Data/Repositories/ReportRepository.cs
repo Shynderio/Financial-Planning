@@ -51,6 +51,17 @@ namespace FinancialPlanning.Data.Repositories
     
             return reports;
         }
+        //Delete report
+        public async Task DeleteReport(Report report)
+        {
+             context.Reports!.Remove(report);
+            await context.SaveChangesAsync();
+        }
 
+        public async Task<Report> GetReportById(Guid id)
+        {
+            var report  = await context.Reports!.FindAsync(id) ?? throw new Exception("Report not found");
+            return report;
+        }
     }
 }
