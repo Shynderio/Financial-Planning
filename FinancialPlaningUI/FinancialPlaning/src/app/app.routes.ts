@@ -10,8 +10,8 @@ import { ListReportComponent } from './pages/report/list-report/list-report.comp
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { AuthGuard } from './services/auth/auth.guard';
 import { AccountantGuard } from './services/auth/accountant.guard';
-import { UploadComponent } from './components/upload/upload.component';
-import { ImportPlanComponent } from './pages/plan/import-plan/import-plan.component';
+// import { UploadComponent } from './components/upload/upload.component';
+import { ImportPlanComponent } from './pages/plans/import-plan/import-plan.component';
 import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
 import { PlansComponent } from './pages/plans/plans.component';
