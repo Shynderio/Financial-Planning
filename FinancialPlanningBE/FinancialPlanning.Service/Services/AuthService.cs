@@ -87,6 +87,7 @@ namespace FinancialPlanning.Service.Services
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("userId", user.Id.ToString()),
                     new Claim("username",user.Username),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };

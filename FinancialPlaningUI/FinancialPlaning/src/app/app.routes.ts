@@ -10,28 +10,21 @@ import { ListReportComponent } from './pages/report/list-report/list-report.comp
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { AuthGuard } from './services/auth/auth.guard';
 import { AccountantGuard } from './services/auth/accountant.guard';
+import { UserListComponent } from './pages/users/user-list/user-list.component';
+import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: '', component: SidenavComponent, canActivate: [AuthGuard] },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'terms', component: TermsComponent, canActivate: [AuthGuard] },
-  {
-    path: 'create-term',
-    component: CreateTermComponent,
-    canActivate: [AccountantGuard],
-  },
-  {
-    path: 'edit-term/:id',
-    component: EditTermComponent,
-    canActivate: [AccountantGuard],
-  },
-  {
-    path: 'term-details/:id',
-    component: TermDetailsComponent,
-    canActivate: [AccountantGuard],
-  },
-  { path: 'reports', component: ListReportComponent, canActivate: [AuthGuard] },
+    { path:'',redirectTo:'login',pathMatch:'full'},
+    { path: 'login', component: LoginComponent},    
+    { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: '', component: SidenavComponent, canActivate: [AuthGuard]},
+    { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+    { path: 'terms', component: TermsComponent, canActivate: [AuthGuard]},
+    { path: 'create-term', component: CreateTermComponent, canActivate: [ AccountantGuard] },
+    { path: 'edit-term/:id', component: EditTermComponent, canActivate: [AccountantGuard] },
+    { path: 'term-details/:id', component: TermDetailsComponent, canActivate: [AccountantGuard] },
+    { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
+    { path: 'user-list', component: UserListComponent },
+    { path: 'add-user', component: AddNewUserComponent },
+    { path: 'edit-user/:id', component: AddNewUserComponent },
 ];

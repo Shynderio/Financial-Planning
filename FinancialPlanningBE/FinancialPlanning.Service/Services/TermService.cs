@@ -30,13 +30,18 @@ namespace FinancialPlanning.Service.Services
             return startingTerms;
         }
 
-        public async Task<Term> GetTermById(Guid id)
+        public async Task<Term> GetTermByIdAsync(Guid id)
         {
-            return await _termRepository.GetTermById(id);
+            return await _termRepository.GetTermByIdAsync(id);
+        }
+
+        public Term GetTermById(Guid id)
+        {
+            return _termRepository.GetTermById(id);
         }
         public async Task StartTerm(Guid id)
         {
-            var term = await _termRepository.GetTermById(id);
+            var term = await _termRepository.GetTermByIdAsync(id);
             if (term != null)
             {
                 term.Status = 1;
@@ -63,7 +68,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task UpdateTerm(Term term)
         {
-            var existingTerm = await _termRepository.GetTermById(term.Id) ?? throw new ArgumentException("Term not found with the specified ID");
+            var existingTerm = await _termRepository.GetTermByIdAsync(term.Id) ?? throw new ArgumentException("Term not found with the specified ID");
 
             var Status = existingTerm.Status;
             if (Status == 1)
@@ -84,7 +89,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task DeleteTerm(Guid id)
         {
-            var termToDelete = await _termRepository.GetTermById(id);
+            var termToDelete = await _termRepository.GetTermByIdAsync(id);
             if (termToDelete != null)
             {
                 await _termRepository.DeleteTerm(termToDelete);

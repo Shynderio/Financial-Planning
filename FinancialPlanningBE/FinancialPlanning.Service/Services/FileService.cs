@@ -1,6 +1,7 @@
 using System.Globalization;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Aspose.Cells;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -14,8 +15,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
     private static readonly string[] TemplatePath =
     [
-        @"..\..\..\..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
-        @"..\..\..\..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
+        @"..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
+        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
     ];
 
     private readonly string[][] _header =
@@ -49,7 +50,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    public async Task UploadPlanAsync(string key, FileStream fileStream)
+    public async Task UploadPlanAsync(string key, Stream fileStream)
     {
         var request = new PutObjectRequest
         {
@@ -61,7 +62,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
         await s3Client.PutObjectAsync(request);
     }
-
     /*
      * documentType:
      * {
@@ -71,6 +71,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      */
     public bool ValidateFile(FileStream fileStream, byte documentType)
     {
+        Console.WriteLine(fileStream.Name);
         string[] validExtension = [".xls", ".xlsx", ".csv"];
 
         //check file is not empty, not bigger than 500MB and has valid extension
@@ -79,8 +80,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         {
             return false;
         }
-
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
         var package = new ExcelPackage(fileStream);
         package = RemoveEmptyRow(package);
 
@@ -121,7 +122,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                     case 7:
                     case 8 when documentType != 0:
                     case 10 when documentType == 0:
-                        if (!decimal.TryParse(cellContext!, NumberStyles.Number, null, out _))
+                        if (!decimal.TryParse(cellContext!, NumberStyles.Currency, null, out _))
                             return false;
                         break;
                 }
@@ -187,6 +188,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
             new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), TemplatePath[documentType])));
         var worksheet = package.Workbook.Worksheets[0];
@@ -245,4 +247,42 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
         return package;
     }
+
+
+    public string ConvertCsvToExcel(string fileName)
+    {
+
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" + fileName);
+
+        // Load file to workbook
+        Workbook workbook;
+        if (Path.GetExtension(fileName) == ".csv")
+        {
+            var loadOption = new TxtLoadOptions(LoadFormat.Csv)
+            {
+                Separator = ';', // Data in CSV file is separated by semicolon
+                ConvertDateTimeData = false // Do not convert date time to numeric
+            };
+            workbook = new Workbook(filePath, loadOption);
+        }
+        else
+        {
+            workbook = new Workbook(filePath);
+        }
+
+        filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" +  Path.GetFileNameWithoutExtension(fileName) + ".xlsx");
+        // Convert to xlsx
+        using var memoryStream = new MemoryStream();
+        workbook.Save(memoryStream, SaveFormat.Xlsx);
+
+        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
+        memoryStream.WriteTo(fileStream);
+        
+        memoryStream.Close();
+        // fileStream.Seek(0, SeekOrigin.Begin);
+
+        return filePath;
+    }
+
 }

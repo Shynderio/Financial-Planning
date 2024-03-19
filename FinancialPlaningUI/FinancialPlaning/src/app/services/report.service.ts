@@ -1,17 +1,32 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import { Report } from '../models/report.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
+  private apiUrl = environment.apiUrl + '/Report';
   constructor(private http: HttpClient) { }
   getListReport(): Observable<any> {
-    return this.http.get<any>('http://localhost:5085/api/Report/reports');
+    return this.http.get<any>(this.apiUrl+'/reports');
   }
-  getReports(): Observable<Report[]> {
-    return this.http.get<Report[]>('http://localhost:5085/api/Report/reports');
+ 
+  deleteReport(reportId: string): Observable<number> {
+    return this.http
+      .delete(this.apiUrl + '/' + reportId, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
   }
+
 }

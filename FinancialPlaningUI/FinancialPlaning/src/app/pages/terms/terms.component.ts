@@ -120,7 +120,7 @@ export class TermsComponent implements OnInit {
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
-
+  
   changeStatusFilter(event: Event) {
     //Toggle class 'chosen' of status filter button
     let target = event.target as HTMLElement;
