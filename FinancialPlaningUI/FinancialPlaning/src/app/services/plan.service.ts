@@ -1,18 +1,41 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlanService {
-  private apiUrl = 'api/Plan/Planlist'; // Đường dẫn tới API
+  private apiUrl = environment.apiUrl + '/Plan';
+
 
   constructor(private http: HttpClient) { }
 
-  getFinancialPlans(keyword: string, department: string, status: string): Observable<Plan[]> {
-    // Gọi API để lấy danh sách kế hoạch tài chính dựa trên các tham số đầu vào
-    return this.http.get<Plan[]>(`${this.apiUrl}`);
+  getFinancialPlans(keyword: string = '', department: string = '', status: string = ''): Observable<Plan[]> {
+    // Tạo các tham số query
+    let params = new HttpParams();
+    if (keyword) {
+      params = params.set('keyword', keyword);
+    }
+    if (department) {
+      params = params.set('department', department);
+    }
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    // Thực hiện gọi HTTP GET đến API endpoint
+    return this.http.get<Plan[]>(`${this.apiUrl}`, { params });
   }
+  getAllTerms(): Observable<any> {
+    return this.http.get(this.apiUrl);
+  }
+
 }

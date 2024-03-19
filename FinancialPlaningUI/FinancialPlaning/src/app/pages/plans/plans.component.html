@@ -1,58 +1,59 @@
-<!-- plans.component.html -->
-
-<div class="container">
-    <h1>Financial Plans</h1>
-    
-    <!-- Filter form -->
-    <form class="filter-form">
-      <label for="keyword">Keyword:</label>
-      <input type="text" id="keyword" name="keyword" [(ngModel)]="keyword">
-      
-      <label for="department">Department:</label>
-      <select id="department" name="department" [(ngModel)]="department">
-        <option value="">All</option>
-        <!-- Loop through department options -->
-        <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-      </select>
-      
-      <label for="status">Status:</label>
-      <select id="status" name="status" [(ngModel)]="status">
-        <option value="">All</option>
-        <!-- Loop through status options -->
-        <option *ngFor="let stat of statuses" [value]="stat">{{ stat }}</option>
-      </select>
-      
-      <button type="button" (click)="loadFinancialPlans()">Search</button>
+<main>
+  <div class="container mb-4">
+    <div id="page-title">
+      <h3><b>Financial Plans</b></h3>
+      <h6>Plan List</h6>
+    </div>
+    <a routerLink="" id="create-button" >
+      <button><i class="fa-solid fa-plus"></i> Import</button>
+    </a>
+  </div>
+  <div class="mb-4">
+    <form class="searchBar">
+      <input type="text" placeholder="Search for plans"  />
+      <i class="fa-solid fa-search"></i>
     </form>
     
-    <!-- Plan list -->
-    <div class="plan-list" *ngIf="plans.length > 0">
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Plan</th>
-            <th>Term</th>
-            <th>Department</th>
-            <th>Status</th>
-            <th>Version</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Loop through plans -->
-          <tr *ngFor="let plan of plans; let i = index">
-            <td>{{ i + 1 }}</td>
-            <td>{{ plan.Plan }}</td>
-            <td>{{ plan.Term }}</td>
-            <td>{{ plan.Department }}</td>
-            <td>{{ plan.Status }}</td>
-            <td>{{ plan.Version }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="no-plans" *ngIf="plans.length === 0">
-      No plans found.
-    </div>
   </div>
-  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="no">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let plan"> {{ plan.no }} </td>
+    </ng-container>
+    <ng-container matColumnDef="plan">
+      <th mat-header-cell *matHeaderCellDef>Plan</th>
+      <td mat-cell *matCellDef="let plan">{{plan.plan}}</td>
+    </ng-container>
+    <ng-container matColumnDef="term">
+      <th mat-header-cell *matHeaderCellDef>Term</th>
+      <td mat-cell *matCellDef="let plan">{{plan.term}}</td>
+    </ng-container>
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef>Department</th>
+      <td mat-cell *matCellDef="let plan">{{plan.department}}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="version">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let plan">V{{plan.version}}</td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let plan">{{plan.status}}</td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let plan">
+        <a><mat-icon>visibility</mat-icon></a>
+        <a ><mat-icon>edit</mat-icon></a>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnHeaders;"></tr>
+  </table>
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  </mat-paginator>
+</main>
+<footer>
+  <!-- Your footer content goes here -->
+</footer>
