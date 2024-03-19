@@ -52,6 +52,7 @@ namespace FinancialPlanning.Service.Services
             var reportToDelete = await _reportRepository.GetReportById(id);
             if (reportToDelete != null)
             {
+                await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
                 await _reportRepository.DeleteReport(reportToDelete);
             }
             else

@@ -100,7 +100,7 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public async Task<List<Term>> GetAllTerms()
+        public async Task<IEnumerable<Term>> GetAllTerms()
         {
             return await _termRepository.GetAllTerms();
         }
