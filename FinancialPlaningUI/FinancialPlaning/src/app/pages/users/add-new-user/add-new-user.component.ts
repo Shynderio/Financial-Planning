@@ -8,12 +8,10 @@ import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
 import { AddUser } from '../../../models/adduser.model';
 import { UserService } from '../../../services/user.service';
-import { DateValueAccessor, DateValueAccessorModule } from 'angular-date-value-accessor';
 
 @Component({
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule, DateValueAccessorModule],
   imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
