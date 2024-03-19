@@ -9,6 +9,8 @@ import { ListReportComponent } from './pages/report/list-report/list-report.comp
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { AuthGuard } from './services/auth/auth.guard';
 import { AccountanGuard } from './services/auth/accountan.guard';
+import { UserListComponent } from './pages/users/user-list/user-list.component';
+import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -20,7 +22,7 @@ export const routes: Routes = [
         { path: 'edit-term/:id', component: EditTermComponent, canActivate: [AccountanGuard] },
         { path: 'term-details/:id', component: TermDetailsComponent, canActivate: [AccountanGuard] },
         { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
-   
-
-   
+        { path: 'user-list', component: UserListComponent },
+        { path: 'add-user', component: AddNewUserComponent },
+        { path: 'edit-user/:id', component: AddNewUserComponent },
 ];
