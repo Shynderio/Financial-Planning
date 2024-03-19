@@ -1,0 +1,12 @@
+<div class="wrapper">
+  <header>File Upload</header>
+  <form (click)="onClick()">
+    <input class="file-input" type="file" name="file" hidden (change)="onFileChange($event)">
+    <label for="fileInput">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <p>Browse File to Upload</p>
+    </label>
+  </form>
+  <section class="progress-area"></section>
+  <section class="uploaded-area"></section>
+</div>

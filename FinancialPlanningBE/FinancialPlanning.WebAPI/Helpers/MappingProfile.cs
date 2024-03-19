@@ -35,7 +35,7 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<Plan, PlanListModel>();
 
             CreateMap<PlanListModel, Plan>();
-            
+            CreateMap<Term, SelectTermModel>();
 
 
             
