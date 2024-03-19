@@ -88,13 +88,6 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             return BadRequest(new { error = "Invalid model state!" });
         }
-
-
-
-
-
-
-
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeletePlan(Guid id)
