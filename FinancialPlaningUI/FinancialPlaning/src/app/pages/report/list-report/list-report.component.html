@@ -20,7 +20,7 @@
     </form>
     <!-- Department -->
 
-    <mat-form-field  [hidden]="role == 'Admin'">
+    <mat-form-field  [hidden]="role == 'FinancialStaff'">
 
       <mat-label style="color: white; ">Department</mat-label>
       <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
@@ -45,9 +45,9 @@
     <mat-form-field>
       <mat-label style="color: white;">Quarter</mat-label>
       <mat-select value="All" (selectionChange)="onQuarterSelected($event)">
-        <mat-option [value]="">All</mat-option>
+        <mat-option value="All">All</mat-option>
         @for (quarter of quarters; track quarter) {
-        <mat-option [value]="quarter.id">{{quarter.name}}</mat-option>
+        <mat-option [value]="quarter">{{quarter}}</mat-option>
         }
       </mat-select>
     </mat-form-field>

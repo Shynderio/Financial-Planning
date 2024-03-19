@@ -12,13 +12,12 @@ namespace FinancialPlanning.Service.Services
     public class ReportService
     {
         private readonly IReportRepository _reportRepository;
-        private readonly IConfiguration configuration;
         private readonly IAuthRepository _authRepository;
         private readonly IDepartmentRepository _departmentRepository;
-        public ReportService(IReportRepository reportRepository, IConfiguration configuration, IAuthRepository authRepository, IDepartmentRepository departmentRepository)
+
+        public ReportService(IReportRepository reportRepository, IAuthRepository authRepository, IDepartmentRepository departmentRepository)
         {
-            _reportRepository = reportRepository;
-            this.configuration = configuration;
+            _reportRepository = reportRepository;  
             _authRepository = authRepository;
             _departmentRepository = departmentRepository;
         }
@@ -48,10 +47,24 @@ namespace FinancialPlanning.Service.Services
 
         }
 
-        public async Task<List<Department>> GetAllDepartment()
+        public async Task DeleteReport(Guid id)
+        {
+            var reportToDelete = await _reportRepository.GetReportById(id);
+            if (reportToDelete != null)
+            {
+                await _reportRepository.DeleteReport(reportToDelete);
+            }
+            else
+            {
+                throw new ArgumentException("Report not found with the specified ID");
+            }
+        }
+        public async Task<IEnumerable<Department>> GetAllDepartment()
         {
             return await _departmentRepository.GetAllDepartment();
         }
+
+
 
     }
 }

@@ -11,6 +11,9 @@ namespace FinancialPlanning.Data.Repositories
     {
         public Task<List<Report>> GetAllReports();
         public Task<List<Report>> GetReportsByDepartId(Guid departId);
+        public Task DeleteReport(Report report);
+        public Task<Report> GetReportById(Guid id);
+        
 
     }
 }

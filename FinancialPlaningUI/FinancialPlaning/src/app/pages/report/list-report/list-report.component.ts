@@ -51,7 +51,9 @@ export class ListReportComponent {
   selectedDepartment = "All";
 
   selectstatus = "All";
+
   quarters: any[] = [];
+  selectedQuarter = "All";
 
   listSize: number = 0;
   pageSize = 7;
@@ -76,7 +78,7 @@ export class ListReportComponent {
         this.fetchData();
       }
     }
-   this.getQuaters();
+   this.getQuarters();
 
   }
 
@@ -105,6 +107,21 @@ export class ListReportComponent {
         && (this.selectedTerm == data.termName || this.selectedTerm == "All")
         && (this.selectstatus == data.status || this.selectstatus == "All")
     );
+  // // Lấy thông tin về quý được chọn từ select
+if(this.selectedQuarter!= "All"){
+   const selectedQuarter = this.selectedQuarter.split(' ');
+    const selectedQuarterNumber = parseInt(selectedQuarter[0].substring(1));
+    const selectedQuarterYear = parseInt(selectedQuarter[1]);
+
+    filteredList = filteredList.filter((report: any) => {
+      const [monthName, year] = report.month.split(' ');
+      const monthIndex = new Date(Date.parse(`${monthName} 1, ${year}`)).getMonth() + 1;
+      const quarterNumber = Math.ceil(monthIndex / 3);
+      return quarterNumber === selectedQuarterNumber && parseInt(year) === selectedQuarterYear;
+    });
+}
+   
+  
 
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
@@ -130,8 +147,8 @@ export class ListReportComponent {
   }
   //Select Quater
   onQuarterSelected(event: any): void {
-    const selectedQuarterId = event.value;
-    console.log('Selected quarter ID:', selectedQuarterId);
+    this.selectedQuarter =  event.value;
+    console.log('Selected quarter ID:', this.selectedQuarter);
     this.dataSource = this.getPaginatedItems();
 
   }
@@ -142,7 +159,7 @@ export class ListReportComponent {
     this.dataSource = this.getPaginatedItems();
   }
  //Get list quarter
- getQuaters(){
+ getQuarters(){
   const currentDate = new Date();
  const currentYear = currentDate.getFullYear();
  const currentQuarter = Math.floor((currentDate.getMonth() / 3)) + 1;
@@ -151,10 +168,10 @@ export class ListReportComponent {
  for (let year = currentYear - 2; year <= currentYear + 1; year++) {
    for (let quarter = 1; quarter <= 4; quarter++) {
      // Thêm vào mảng
-     this.quarters.push({ id: `${year}-Q${quarter}`, name: `Q${quarter} ${year}` });
+     this.quarters.push(`Q${quarter} ${year}` );
    }
  }
  }
- 
+
 
 }
