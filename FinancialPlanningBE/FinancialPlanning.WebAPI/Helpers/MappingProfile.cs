@@ -66,9 +66,9 @@ namespace FinancialPlanning.WebAPI.Helpers
             .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
             .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            CreateMap<Term, SelectTermModel>();
 
-
-
+            
 
 
             //map User to userModel
