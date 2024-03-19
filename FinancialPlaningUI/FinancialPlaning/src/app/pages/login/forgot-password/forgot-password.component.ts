@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import {
   FormControl,
   FormGroupDirective,
@@ -14,6 +14,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export class EmailErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(
@@ -21,7 +23,11 @@ export class EmailErrorStateMatcher implements ErrorStateMatcher {
     form: FormGroupDirective | NgForm | null
   ): boolean {
     const isSmmubitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSmmubitted));
+    return !!(
+      control &&
+      control.invalid &&
+      (control.dirty || control.touched || isSmmubitted)
+    );
   }
 }
 
@@ -48,4 +54,46 @@ export class ForgotPasswordComponent {
   ]);
 
   matcher = new EmailErrorStateMatcher();
+
+  constructor(
+    private authService: AuthService,
+    private messageBar: MatSnackBar,
+    private elementRef: ElementRef,
+  ) {}
+
+  onSubmit() {
+    this.elementRef.nativeElement.querySelector('button').disabled = true;
+    if (this.emailFormControl.value === null) {
+      return;
+    }
+    this.authService
+      .forgotPassword(this.emailFormControl.value!)
+      .subscribe(response => {
+        if (response == 200) {
+          this.messageBar.open(
+            "We've sent an email with the link to reset your password.",
+            undefined,
+            {
+              duration: 500000,
+              panelClass: ['messageBar', 'successMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            }
+          );
+        } else {
+          this.messageBar.open(
+            'The email address doesn’t exist. Please try again.',
+            undefined,
+            {
+              duration: 5000,
+              panelClass: ['messageBar', 'failMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            }
+          );
+        }
+        this.elementRef.nativeElement.querySelector('button').disabled = false;
+        console.log(response);
+      });
+  }
 }
