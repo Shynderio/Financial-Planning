@@ -193,6 +193,17 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteUser(Guid id)
+        {
+            var user = await _context.Users!.FindAsync (id);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+            _context.Users!.Remove(user);
+            await _context.SaveChangesAsync();
+        }
+
 
     }
 }

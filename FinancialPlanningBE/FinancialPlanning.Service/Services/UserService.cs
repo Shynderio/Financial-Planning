@@ -44,5 +44,10 @@ namespace FinancialPlanning.Service.Services
         {
             await _userrepository.UpdateUserStatus(id, status);
         }
+        //Delete user
+        public async Task DeleteUser(Guid id)
+        {
+            await _userrepository.DeleteUser(id);
+        }
     }
 }
