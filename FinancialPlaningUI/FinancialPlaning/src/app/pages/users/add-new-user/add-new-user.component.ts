@@ -14,6 +14,7 @@ import { DateValueAccessor, DateValueAccessorModule } from 'angular-date-value-a
   selector: 'app-add-new-user',
   standalone: true,
   imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule, DateValueAccessorModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
