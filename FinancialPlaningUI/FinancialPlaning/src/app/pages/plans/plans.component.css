@@ -26,35 +26,46 @@ button {
   border: none;
 }
 
-
-.abc {
+#create-button {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
 }
 
-.abc button {
+#create-button > button {
   color: white;
   padding: 10px 20px;
   border-radius: 10px;
+}
+
+#create-button i {
   margin-right: 10px;
 }
 
-.abc i {
-  margin-right: 10px;
+#status-filter {
+  border-bottom: 1px solid #1b1a55;
 }
 
+#status-filter > button {
+  padding: 10px;
+  background-color: #070f2b;
+  color: #9290c3;
+  width: 125px;
+  font-size: small;
+}
 
+#status-filter > .chosen {
+  border-bottom: 4px solid #9290c3;
+  color: white;
+}
 
 .searchBar {
   position: relative;
- display: inline;
 }
 
 .searchBar input[type="text"] {
-  width: 40%;
-
+  width: 50%;
   line-height: 2.5;
   padding: 0px 35px;
   border: 1px solid #9290c3;
@@ -105,41 +116,28 @@ td {
   color: white;
 }
 
-::ng-deep .mat-mdc ::ng-deep .mat-mdc-form-field {
-  height: 50px;
+::ng-deep .success .mdc-snackbar__label::before {
+  font-family: "Font Awesome 6 free"; 
+	font-weight: 400;
+  content: '\f058';
 }
 
-::ng-deep  .mat-mdc-text-field-wrapper{
-  margin-top: 20px !important;
+::ng-deep .success .mdc-snackbar__label {
+  color: #16ff00 !important;
 }
 
-::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled){
-  background-color: #070f2b  !important;
-  border: 1px solid #9290c3;
-  border-radius: 10px;
-  
+::ng-deep .fail .mdc-snackbar__label::before {
+  font-family: "Font Awesome 6 free"; 
+	font-weight: 400;
+  content: '\f057';
 }
 
-::ng-deep .mat-mdc-select-arrow {
-  color: white !important;
+::ng-deep .fail .mdc-snackbar__label {
+  color: #ff204e !important;
 }
 
-::ng-deep .mat-mdc-form-field-infix {
- 
-  width: 100px !important;
-}
-
-::ng-deep .mdc-text-field--filled .mdc-floating-label {
- 
-  font-size: 14px !important;
-  
-}
-::ng-deep  .mat-mdc-select {
-  color: white !important;
-  font-size: 14px !important;
-}
-::ng-deep .mat-mdc-form-field {
- 
-  margin-left: 30px;
-
+::ng-deep .mdc-snackbar__label {
+  display: inline-block;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
 }

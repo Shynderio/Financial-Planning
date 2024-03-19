@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
+using static FinancialPlanning.Data.Repositories.PlanRepository;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -14,6 +17,47 @@ namespace FinancialPlanning.WebAPI.Controllers
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
+
+       
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlanViewModel>>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
+                var plans = await _planService.GetFinancialPlans(keyword, department, status);
+
+                // Project the results into FinancialPlanDto
+                var result = plans.Select((p, index) => new PlanViewModel
+                {
+                    No = index + 1,
+                    Plan = p.PlanName,
+                    Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
+                    Department = p.Department?.DepartmentName ?? "Unknown", // Check if p.Department is not null before accessing its properties
+                    Status = GetPlanStatusString(p.Status),
+                    Version = p.PlanVersions.Any() ? p.PlanVersions.Max(v => v.Version) : 0 // Check if PlanVersions has any elements before calling Max()
+                }).ToList();
+
+                return result;
+            
+        }
+
+        private string GetPlanStatusString(int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "Denied";
+                case 1:
+                    return "New";
+                case 2:
+                    return "Waiting for Approval";
+                case 3:
+                    return "Approved";
+                case 4:
+                    return "Closed";
+                default:
+                    return string.Empty; 
+            }
+        }
+
 
         [HttpGet("Planlist")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -44,7 +88,6 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             return BadRequest(new { error = "Invalid model state!" });
         }
-
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeletePlan(Guid id)
@@ -55,8 +98,8 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan
         [Authorize(Roles = "FinancialStaff")]
-        [HttpPost("Import")]
-        public ActionResult<List<Expense>> Import(IFormFile file, Guid uid, Guid termId)
+        [HttpPost("import")]
+        public async Task<ActionResult<List<Expense>>> Import(IFormFile file, string user)
         {
             try
             {
@@ -66,12 +109,6 @@ namespace FinancialPlanning.WebAPI.Controllers
                     return BadRequest("No file uploaded");
                 }
 
-                // Check if the file name is valid
-                if (!_planService.ValidFileName(Path.GetFileNameWithoutExtension(file.FileName), uid, termId))
-                {
-                    return BadRequest("Invalid file name");
-                }
-
                 // Generate a unique filename using GUID and original file extension
                 var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
@@ -79,7 +116,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var tempFilePath = Path.Combine("Resources", "ExcelFiles", tempFileName);
                 using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
                 {
-                    file.CopyTo(fileStream);
+                    await file.CopyToAsync(fileStream);
                 }
 
                 // Convert the file
@@ -130,21 +167,6 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while importing the plan file.");
             }
         }
-
-        [HttpPost("Upload")]
-        [Authorize(Roles = "FinancialStaff")]
-        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
-        {
-            try
-            {
-                await _planService.SavePlan(expenses, termId, uid);
-                return Ok(new { message = "Plan uploaded successfully!" });
-            }
-            catch (Exception)
-            {
-                // Log the exception
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the plan file.");
-            }
-        }
     }
+
 }

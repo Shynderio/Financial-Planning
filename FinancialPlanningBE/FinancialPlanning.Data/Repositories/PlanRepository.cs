@@ -169,5 +169,48 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public static class PlanStatus
+        {
+            public const int Denied = 0;
+            public const int New = 1;
+            public const int WaitingForApproval = 2;
+            public const int Approved = 3;
+            public const int Closed = 4;
+        }
+        public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+    {
+
+        IQueryable<Plan> plans = _context.Plans!
+            .Include(p => p.Term)
+            .Include(p => p.Department)
+            .Include(p => p.PlanVersions);
+
+        // Lọc kế hoạch tài chính dựa trên từ khóa, phòng ban và trạng thái
+        if (!string.IsNullOrEmpty(keyword))
+            plans = plans.Where(p => p.PlanName.ToLower().Contains(keyword.ToLower()));
+
+        if (!string.IsNullOrEmpty(department))
+            plans = plans.Where(p => p.Department.DepartmentName.ToLower() == department.ToLower());
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            plans = status switch
+            {
+                "Denied" => plans.Where(p => p.Status == PlanStatus.Denied),
+                "New" => plans.Where(p => p.Status == PlanStatus.New),
+                "Waiting for Approval" => plans.Where(p => p.Status == PlanStatus.WaitingForApproval),
+                "Approved" => plans.Where(p => p.Status == PlanStatus.Approved),
+                "Closed" => plans.Where(p => p.Status == PlanStatus.Closed),
+                _ => plans,
+            };
+        }
+
+        // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
+        plans = plans.OrderByDescending(p => p.Status)
+                     .ThenBy(p => p.Term.StartDate);
+
+        return await plans.ToListAsync();
     }
+}
+    
 }
