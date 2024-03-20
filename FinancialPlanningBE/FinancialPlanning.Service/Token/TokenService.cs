@@ -14,15 +14,12 @@ namespace FinancialPlanning.Service.Token
         public string GetEmailFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
 
-            if (jwtToken != null)
+            if (tokenHandler.ReadToken(token) is not JwtSecurityToken jwtToken) return string.Empty;
+            var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "email");
+            if (emailClaim != null)
             {
-                var emailClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "email");
-                if (emailClaim != null)
-                {
-                    return emailClaim.Value;
-                }
+                return emailClaim.Value;
             }
 
             return string.Empty;

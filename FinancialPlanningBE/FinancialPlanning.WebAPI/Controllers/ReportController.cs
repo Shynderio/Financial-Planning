@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
-using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
+
 namespace FinancialPlanning.WebAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -26,17 +23,14 @@ namespace FinancialPlanning.WebAPI.Controllers
         public ReportController(AuthService authService, IMapper mapper,
             ReportService reportService, TokenService tokenService, TermService termService,
             FileService fileService
-            )
+        )
         {
-
             _authService = authService;
             _mapper = mapper;
             _reportService = reportService;
             _tokenService = tokenService;
             _termService = termService;
             _fileService = fileService;
-
-
         }
 
         // Phương thức để lấy danh sách báo cáo của user
@@ -44,16 +38,15 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetListReport()
         {
-
             try
             {
-                // get token ffrom authorization header
-                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                var useremail = _tokenService.GetEmailFromToken(token);   // Get user email from JWT token
+                // get token from authorization header
+                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+                var useremail = _tokenService.GetEmailFromToken(token); // Get user email from JWT token
 
                 var reports = await _reportService.GetReportsByEmail(useremail); // Get list reports          
-                var departments = await _reportService.GetAllDepartment();    //Get all department
-                var terms = await _termService.GetAllTerms();   //Get all term
+                var departments = await _reportService.GetAllDepartment(); //Get all department
+                var terms = await _termService.GetAllTerms(); //Get all term
 
                 //Mapper model
                 var reportViewModels = _mapper.Map<List<ReportViewModel>>(reports);
@@ -68,15 +61,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 };
 
                 return Ok(result);
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-
-
         }
+
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeleteReport(Guid id)
@@ -87,11 +78,9 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetURL")]
-        public async Task<IActionResult> GetUrlFile(string key)
+        public IActionResult GetUrlFile(string key)
         {
-           
-            var url = BCrypt.Net.BCrypt.HashPassword("123");
-            return Ok(url);
+            return Ok();
         }
 
 
@@ -118,6 +107,5 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error downloading file: {ex.Message}");
             }
         }
-
     }
 }

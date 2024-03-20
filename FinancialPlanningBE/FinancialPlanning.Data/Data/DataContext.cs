@@ -1,9 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FinancialPlanning.Data.Entities;
 
 namespace FinancialPlanning.Data.Data
@@ -14,8 +9,7 @@ namespace FinancialPlanning.Data.Data
             base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            if (modelBuilder == null)
-                throw new ArgumentNullException("modelBuilder");
+            ArgumentNullException.ThrowIfNull(modelBuilder);
 
             // for the other conventions, we do a metadata model loop
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -25,7 +19,7 @@ namespace FinancialPlanning.Data.Data
 
                 // equivalent of modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
                 entityType.GetForeignKeys()
-                    .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade)
+                    .Where(fk => fk is { IsOwnership: false, DeleteBehavior: DeleteBehavior.Cascade })
                     .ToList()
                     .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
             }
@@ -40,6 +34,6 @@ namespace FinancialPlanning.Data.Data
         public DbSet<Report>? Reports { get; set; }
         public DbSet<ReportVersion>? ReportVersions { get; set; }
         public DbSet<User>? Users { get; set; }
-        public DbSet<Role> Roles { get; set; }   
+        public DbSet<Role>? Roles { get; set; }   
     }
 }

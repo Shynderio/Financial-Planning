@@ -43,7 +43,7 @@ namespace FinancialPlanning.Data.Repositories
                 return department.DepartmentName;
             }
 
-            return "";
+            return string.Empty;
         }
         // Get all department
         public async Task<List<Department>> GetAllDepartment()
