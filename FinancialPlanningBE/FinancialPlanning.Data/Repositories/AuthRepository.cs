@@ -18,8 +18,12 @@ namespace FinancialPlanning.Data.Repositories
         {
             var user = await _context.Users!.SingleOrDefaultAsync(u =>
                 u.Email == email && u.Password == password && u.Status == (int)UserStatus.Active);
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                return user;
+            }
 
-            return user;
+            return null;
         }
 
         public async Task<string> GetRoleUser(string email)

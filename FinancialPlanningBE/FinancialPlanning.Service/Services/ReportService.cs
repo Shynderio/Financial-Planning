@@ -61,10 +61,11 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
-        public async Task<string> GetFile(string key)
+        public async Task<string> GetFileByName(string key)
         {
             return await _fileService.GetFileAsync(key);
         }
+
 
 
     }

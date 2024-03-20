@@ -78,10 +78,9 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetURL")]
-        public async Task<IActionResult> GetUrlFile(string key)
+        public IActionResult GetUrlFile(string key)
         {
-            var url = await _reportService.GetFile(key);
-            return Ok(url);
+            return Ok();
         }
 
 
@@ -90,9 +89,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                string url = await _reportService.GetFile(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files",
-                    "Financial Plan_Template.xlsx");
+                string url = await _reportService.GetFileByName(key);
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
 
                 bool result = await _fileService.DownloadFile(url, savePath);
                 if (result)
