@@ -13,11 +13,22 @@ namespace FinancialPlanning.Data.Repositories
             this.context = context;
 
         }
-        public async Task<User> IsValidUser(string email, string password)
+        public async Task<User?> IsValidUser(string email, string password)
         {
-            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email && u.Password == password && u.Status==1) ?? throw new Exception("Invalid username or password");
+            try
+            {
+             var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email && u.Status == 1);
 
-            return user;
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                return user;
+            }
+            }
+            catch
+            {
+                return null;
+            }
+            return null;
         }
 
         public async Task<string> GetRoleUser(string email)

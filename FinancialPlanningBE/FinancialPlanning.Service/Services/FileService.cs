@@ -289,8 +289,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
     //DownloadFile from Url
     public async Task<bool> DownloadFile(string url, string savePath)
     {
-        // Ki?m tra xem URL có ?úng ??nh d?ng không
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
+        //Check if the url is in the correct format
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && uriResult != null)
         {
             return false;
         }

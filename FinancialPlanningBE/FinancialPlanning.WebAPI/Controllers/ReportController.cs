@@ -89,7 +89,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Route("GetURL")]
         public async Task<IActionResult> GetUrlFile(string key)
         {
-            var url = _reportService.GetFile(key);
+           
+            var url = BCrypt.Net.BCrypt.HashPassword("123");
             return Ok(url);
         }
 
@@ -99,7 +100,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                string url = await _reportService.GetFile(key);
+                string url = await _reportService.GetFileByName(key);
                 var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
 
                 bool result = await _fileService.DownloadFile(url, savePath);
