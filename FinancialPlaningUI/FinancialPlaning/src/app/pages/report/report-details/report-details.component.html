@@ -2,7 +2,7 @@
     <div class="container mb-4">
         <div id="page-title">
           <h3><b> Monthly Reports</b></h3>
-          <h6>View all Monthly Reports</h6>
+          <h6>Report Details</h6>
         </div>
         <div class="abc">
           <a routerLink="/create-term" class="create-button" >
@@ -12,6 +12,15 @@
             <button> Export</button>
           </a>
         </div>
+    </div>
+    <div *ngIf="report" class="mb-4">
+        <h6>Report: {{report.reportName}}</h6>
+        <h6>Term: {{report.termName}}</h6>
+        <h6>Month: {{report.month}}</h6>
+        <h6>Department: {{report.departmentName}}</h6>
+        <h6>Status: {{report.status}}</h6>
+        <h6>Version: {{report.version}}</h6>
+
     </div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" >
 
