@@ -11,16 +11,24 @@ namespace FinancialPlanning.Service.Services
     public class UserService
     {
         private readonly IUserRepository _userrepository;
+        private readonly IDepartmentRepository _departmentrepository;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository , IDepartmentRepository departmentRepository)
         {
             _userrepository = userRepository;
+            _departmentrepository = departmentRepository;
         }
         //Get all user
         public async Task<List<User>> GetAllUsers()
         {
             var result = await _userrepository.GetAllUsers();
             return result;
+        }
+
+        //Get all department
+        public async Task<List<Department>> GetAllDepartment()
+        {
+            return await _departmentrepository.GetAllDepartment();
         }
         //Get user by Id
         public async Task<User> GetUserById(Guid id)
