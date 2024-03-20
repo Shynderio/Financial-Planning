@@ -72,6 +72,8 @@ namespace FinancialPlanning.Data.Repositories
         {
             var report = await context.Reports!
          .Include(t => t.ReportVersions)
+         .Include(t => t.Term)
+         .Include(t => t.Department)
          .FirstOrDefaultAsync(t => t.Id == id) ?? throw new Exception("Report not found");
             return report;
         }

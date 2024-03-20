@@ -10,6 +10,7 @@ import { environment } from '../../environments/environment';
 export class ReportService {
   private apiUrl = environment.apiUrl + '/Report';
   constructor(private http: HttpClient) { }
+
   getListReport(): Observable<any> {
     return this.http.get<any>(this.apiUrl+'/reports');
   }
@@ -28,5 +29,11 @@ export class ReportService {
         })
       );
   }
+
+  getReport(reportId: string): Observable<any> {
+    return this.http.get(this.apiUrl + '/' + reportId);
+  }
+
+
 
 }

@@ -72,6 +72,12 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.GetFileAsync(key);
         }
 
+        public async Task<Report> GetReportById(Guid id)
+        {
+            var report = await _reportRepository.GetReportById(id);
+            return report;
+        }
+
 
 
     }

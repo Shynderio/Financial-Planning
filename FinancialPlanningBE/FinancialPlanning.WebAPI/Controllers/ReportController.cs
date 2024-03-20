@@ -90,41 +90,59 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Route("GetURL")]
         public async Task<IActionResult> GetUrlFile(string key)
         {
-           
-            var url = BCrypt.Net.BCrypt.HashPassword("123");
-            return Ok(url);
+
+
+            return Ok();
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> DownloadFileFromUrlAsync(string key)
+        [HttpGet("{id:guid}")]
+        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> DownloadFileFromUrlAsync(Guid id)
         {
             try
             {
-                string url = await _reportService.GetFileByName(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template1.xlsx");
+              var report = await _reportService.GetReportById(id);
+                //string reportName = report.ReportName;
+                string reportName = "CorrectPlan";
+                string url = await _reportService.GetFileByName(reportName+ ".xlsx");
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", reportName+ ".xlsx");
 
-                bool result = await _fileService.DownloadFile(url, savePath);
-                if (result)
+                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
+                //download file sucessfull 
+                if (isDownLoad)
                 {
-                    // Tải file thành công, tiến hành chuyển đổi Excel thành danh sách Expense
+                    // conver file to list expense
                     using (var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read))
                     {
-                        List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
-                        return Ok(expenses);
-                        // Xử lý danh sách expenses
-                    }
+                        try
+                        {
+                            List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                            var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                            var result = new
+                            {
+                                Reports = reportViewModel,
+                                Expenses= expenses
+                               
+                            };
 
-                 
+                            return Ok(result);
+                        }
+                        catch
+                        {
+                            return BadRequest("Failed to convert");
+                        }
+                    }
                 }
                 else
                 {
                     return BadRequest("Failed to download file");
                 }
             }
+            //error when download
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error downloading file: {ex.Message}");
+                return StatusCode(500, $"Error : {ex.Message}");
             }
         }
 
