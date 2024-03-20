@@ -26,7 +26,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> LogIn(LoginModel model)
         {
-            IActionResult respone = Unauthorized();
+            IActionResult respone;
 
             //InValid Model
             if (!ModelState.IsValid)

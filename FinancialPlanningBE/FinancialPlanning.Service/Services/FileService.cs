@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net.Http;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Aspose.Cells;
@@ -9,7 +10,7 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpClient _httpClient)
 {
     private const int MaxSize = 500 * 1024 * 1024; //500MB
 
@@ -285,4 +286,33 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         return filePath;
     }
 
+    //DownloadFile from Url
+    public async Task<bool> DownloadFile(string url, string savePath)
+    {
+        // Ki?m tra xem URL có ?úng ??nh d?ng không
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
+        {
+            return false;
+        }
+
+        try
+        {
+            using (HttpResponseMessage response = await _httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
+            {
+                response.EnsureSuccessStatusCode();
+
+                using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
+                    stream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                {
+                    await contentStream.CopyToAsync(stream);
+                }
+            }
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

@@ -62,7 +62,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     b => b.MigrationsAssembly("FinancialPlanning.Data")));
 
 
-
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
