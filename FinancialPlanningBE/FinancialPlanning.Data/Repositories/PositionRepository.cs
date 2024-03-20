@@ -1,26 +1,21 @@
 ﻿using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.Data.Repositories
 {
     public class PositionRepository : IPositionRepository
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
 
         public PositionRepository(DataContext context)
         {
-            this.context = context;
+            this._context = context;
 
         }
-        public async Task<List<Position>> GetAllPositons()
+        public async Task<List<Position>> GetAllPositions()
         {
-            return await context.Positions!.ToListAsync();
+            return await _context.Positions!.ToListAsync();
         }
     }
 }

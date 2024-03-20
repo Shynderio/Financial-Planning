@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -35,7 +34,7 @@ public class JwtService(string secretKey, string issuer)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            if (tokenHandler.ReadToken(token) is not JwtSecurityToken jwtToken)
+            if (tokenHandler.ReadToken(token) is not JwtSecurityToken)
                 return null;
 
             var validationParameters = new TokenValidationParameters
@@ -62,6 +61,7 @@ public class JwtService(string secretKey, string issuer)
             return null;
         }
     }
+
 
     public static bool IsTokenExpired(string token)
     {

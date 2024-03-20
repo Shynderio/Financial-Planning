@@ -3,6 +3,7 @@ using System.Net.Http;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Aspose.Cells;
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,27 +11,9 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpClient _httpClient)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpClient httpClient)
 {
-    private const int MaxSize = 500 * 1024 * 1024; //500MB
-
-    private static readonly string[] TemplatePath =
-    [
-        @"..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
-        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
-    ];
-
-    private readonly string[][] _header =
-    [
-        [
-            "DATE", "TERM", "DEPARTMENT", "EXPENSE", "COST TYPE", "UNIT PRICE", "AMOUNT", "Currency", "Exchange rate",
-            "TOTAL", "", "PROJECT NAME", "SUPPLIER NAME", "PIC", "NOTE"
-        ],
-        [
-            "DATE", "TERM", "DEPARTMENT", "EXPENSE", "COST TYPE", "UNIT PRICE", "AMOUNT", "TOTAL", "PROJECT NAME",
-            "SUPPLIER NAME", "PIC", "NOTE"
-        ]
-    ];
+    
 
     public async Task<string> GetFileAsync(string key)
     {
@@ -76,7 +59,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
         string[] validExtension = [".xls", ".xlsx", ".csv"];
 
         //check file is not empty, not bigger than 500MB and has valid extension
-        if (fileStream.Length == 0 || fileStream.Length > MaxSize ||
+        if (fileStream.Length == 0 || fileStream.Length > Constants.MaxFileSize ||
             !validExtension.Contains(Path.GetExtension(fileStream.Name).ToLower()))
         {
             return false;
@@ -91,7 +74,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
 
         //check number of column is sufficient
         var numOfColumns = worksheet.Dimension?.Columns ?? 0;
-        if (numOfColumns != _header[documentType].Length)
+        if (numOfColumns != Constants.TemplateHeader[documentType].Length)
             return false;
 
         //remove empty row (all cell in row is empty)
@@ -103,7 +86,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
         //check cell content is not null and has valid format
         for (var i = 1; i <= numOfColumns; i++)
         {
-            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(_header[documentType][i - 1]))
+            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(Constants.TemplateHeader[documentType][i - 1]))
                 return false;
 
             for (var j = 3; j <= numOfRows; j++)
@@ -191,7 +174,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
-            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), TemplatePath[documentType])));
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), Constants.TemplatePath[documentType])));
         var worksheet = package.Workbook.Worksheets[0];
         foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
         {
@@ -289,15 +272,15 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
     //DownloadFile from Url
     public async Task<bool> DownloadFile(string url, string savePath)
     {
-        // Ki?m tra xem URL có ?úng ??nh d?ng không
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
+        //Check if the url is in the correct format
+        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && uriResult != null)
         {
             return false;
         }
 
         try
         {
-            using (HttpResponseMessage response = await _httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
+            using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
             {
                 response.EnsureSuccessStatusCode();
 

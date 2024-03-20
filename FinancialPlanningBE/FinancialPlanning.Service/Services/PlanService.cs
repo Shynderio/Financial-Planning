@@ -1,6 +1,4 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 namespace FinancialPlanning.Service.Services
@@ -50,9 +48,8 @@ namespace FinancialPlanning.Service.Services
             }
             return startingPlans;
         }
-        
 
-        public async Task<Plan> GetPlanById(Guid id)
+        public async Task<Plan?> GetPlanById(Guid id)
         {
             return await _planRepository.GetPlanById(id);
         }
@@ -67,16 +64,13 @@ namespace FinancialPlanning.Service.Services
         {
           return  await _planRepository.GetFinancialPlans(keyword, department, status);   
         }
-
-
-
-
+        
         public async Task UpdatePlan(Plan plan)
         {
             var existingPlan = await _planRepository.GetPlanById(plan.Id) ?? throw new ArgumentException("Plan not found with the specified ID");
 
-            var Status = existingPlan.Status;
-            if (Status == 1)
+            var status = existingPlan.Status;
+            if (status == (int)PlanStatus.New)
             {
                 existingPlan.PlanName = plan.PlanName;
                 existingPlan.PlanVersions = plan.PlanVersions;
@@ -114,7 +108,7 @@ namespace FinancialPlanning.Service.Services
             IEnumerable<Plan> plans = await _planRepository.GetAllPlans();
         }
 
-        public string ConvertFile(String fileName)
+        public string ConvertFile(string fileName)
         {
             // Convert the file to a list of expenses using FileService
             try
@@ -147,10 +141,10 @@ namespace FinancialPlanning.Service.Services
 
         public bool ValidFileName(string fileName, Guid uid, Guid termId)
         {
-            var departmment = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
+            var department = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
             var term = _termService.GetTermById(termId).TermName;
 
-            var validName = departmment + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
+            var validName = department + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
             return fileName.Equals(validName);
         }
 
@@ -164,12 +158,12 @@ namespace FinancialPlanning.Service.Services
                 {
                     PlanName = string.Empty,
                     DepartmentId = department,
-                    TermId = termId,
+                    TermId = termId
                 };
 
                 using var saveplan = _planRepository.SavePlan(plan, uid);
-                var Result = saveplan.Result;
-                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + Result.PlanVersions.Count + ".xlsx");
+                var result = saveplan.Result;
+                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, "Plan", "version_" + result.PlanVersions.Count + ".xlsx");
                 // Convert list of expenses to Excel file                        
                 Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                 // Reset position of the memory stream

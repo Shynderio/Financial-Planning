@@ -1,6 +1,3 @@
-
-
-
 using FinancialPlanning.Service.BackgroundServices;
 using FinancialPlanning.Service.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +21,6 @@ namespace FinancialPlanning.Service.ScheduleTasks
             var termService = serviceProvider.GetRequiredService<TermService>();
 
             var terms = await termService.GetStartingTerms();
-            if (terms == null)
-            {
-                return;
-            }
 
             foreach (var term in terms)
             {

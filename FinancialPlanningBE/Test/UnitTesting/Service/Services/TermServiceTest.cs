@@ -1,12 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using FinancialPlanning.Service.Services;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using FinancialPlanning.Service.Services;
 using Moq;
-using Xunit;
 
-namespace TestProject.Service.Services
+namespace Test.UnitTesting.Service.Services
 {
     public class TermServiceTests
     {
@@ -37,8 +34,9 @@ namespace TestProject.Service.Services
             var result = await termService.GetStartingTerms();
 
             // Assert
-            Assert.Contains(startingTerm, result);
-            Assert.DoesNotContain(result, term => term.Id == endingTerm.Id);
+            var collection = result.ToList();
+            Assert.Contains(startingTerm, collection);
+            Assert.DoesNotContain(collection, term => term.Id == endingTerm.Id);
         }
 
         [Fact]

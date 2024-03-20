@@ -58,7 +58,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                await _userService.updateUserStatus(id, status);
+                await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
             }
             catch (Exception ex)
