@@ -1,74 +1,149 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { SearchListUserPipe } from './search-list-user.pipe';
-import { UserModel } from '../../../models/user.model';
-
-
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
+import { Component, OnInit, inject } from "@angular/core";
+import { HttpClientModule } from "@angular/common/http";
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { UserModel } from "../../../models/user.model";
+import { UserService } from "../../../services/user.service";
+import { SearchListUserPipe } from "./search-list-user.pipe";
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.css',
-  imports: [RouterLink,CommonModule, RouterOutlet, HttpClientModule, FormsModule, SearchListUserPipe, NgxPaginationModule]
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatPaginatorModule,
+    FormsModule,
+    HttpClientModule,
+    RouterOutlet,
+    SearchListUserPipe,
+    MatTableModule,
+    MatIconModule
+  ],
 })
 export class UserListComponent implements OnInit {
   userList: UserModel[] = [];
-  router = inject(Router);
-
-  // To store unfiltered user data
   originalUserList: UserModel[] = [];
-
-  // Define roles array to store list of roles
-  roles: string[] = [];
-
+  router = inject(Router);
   selectedRole: string = '';
+  roles: string[] = [];
+  searchValue: string = '';
+  dataSource: any = [];
+  nextId: number = 1;
+  columnHeaders: string[] = [
+    'index',
+    'username',
+    'email',
+    'department',
+    'position',
+    'action',
+  ];
+  pageIndex = 0;
+  pageSize = 5; // Change to 5 for 5 records per page
+  listSize = 0;
 
-  searchQuery = '';
-
-  //basic page
-  p = 1;
-
-  httpClient = inject(HttpClient);
-
-  //Get list users
-  getListUsers(): void {
-    this.httpClient.get('http://localhost:5085/api/User').subscribe((data: any) => {
-      this.userList = data;
-
-      // Save original data for resetting
-      this.originalUserList = data;
-
-      console.log(this.userList);
-
-      // Populate roles array with unique role names from userList
-      this.roles = Array.from(new Set(data.map((user: UserModel) => user.roleName)));
-    });
-  }
-
-
-  //Filter user by role
-  filterUsers() {
-    // Reset with a copy
-    this.userList = this.originalUserList.slice();
-    //  Apply filtering based on roleName
-    if (this.selectedRole) {
-      this.userList = this.userList.filter(user => user.roleName === this.selectedRole);
-    }
-  }
+  constructor(private httpService: UserService) { }
 
   ngOnInit(): void {
     this.getListUsers();
   }
+  generateId(): number {
+    return this.nextId++;
+  }
 
-  edit(id:string){
+
+  getListUsers(): void {
+    this.httpService.getAllUser().subscribe((data: any) => {
+      this.userList = data;
+      this.originalUserList = data;
+      this.roles = Array.from(new Set(data.map((user: UserModel) => user.roleName)));
+      this.getPaginatedItems();
+    });
+  }
+
+  filterUsers(): void {
+    // Filter based on selected role and search input
+    let filteredList = this.originalUserList;
+  
+    // Apply role filter
+    if (this.selectedRole) {
+      filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
+    }
+  
+    // Apply search filter
+    if (this.searchValue) {
+      filteredList = filteredList.filter(user =>
+        user.username.toLowerCase().includes(this.searchValue.toLowerCase())
+      );
+    }
+  
+    this.userList = filteredList;
+    this.getPaginatedItems();
+  }
+  search(): void {
+    // Filter based on selected role and search input
+    let filteredList = this.originalUserList;
+  
+    // Apply role filter
+    if (this.selectedRole) {
+      filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
+    }
+  
+    // Apply search filter
+    if (this.searchValue) {
+      filteredList = filteredList.filter(user =>
+        user.username.toLowerCase().includes(this.searchValue.toLowerCase())
+      );
+    }
+  
+    this.userList = filteredList;
+    this.getPaginatedItems();
+  }
+  
+  // Remove onSearchChange() method
+  
+  // Remove (input)="onSearchChange()" from HTML
+  
+  
+  
+
+
+
+  edit(id: string) {
     console.log(id);
-    this.router.navigateByUrl("/edit-user/"+id)
+    this.router.navigateByUrl("/edit-user/" + id)
+  }
+
+  getPaginatedItems(): void {
+    const startIndex = this.pageIndex * this.pageSize;
+    this.listSize = this.userList.length;
+    this.dataSource = this.userList.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  // onSearchChange(): void {
+  //   // Apply search only on originalUserList
+  //   let filteredList = this.originalUserList;
+  //   if (this.searchValue) {
+  //     filteredList = filteredList.filter(user =>
+  //       user.username.toLowerCase().includes(this.searchValue.toLowerCase())
+  //     );
+  //   }
+  //   this.userList = filteredList;
+  //   this.getPaginatedItems();
+  // }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.getPaginatedItems();
   }
 }
-
-

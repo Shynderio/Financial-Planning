@@ -23,7 +23,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             var userListModels = users.Select(u => _mapper.Map<UserModel>(u)).ToList();
             return Ok(userListModels);
         }
-
         //Get user by id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
@@ -58,7 +57,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                await _userService.updateUserStatus(id, status);
+                await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
             }
             catch (Exception ex)
@@ -78,6 +77,21 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Error delete user with id {id}: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("AllDepartments")] 
+        public async Task<ActionResult<List<Department>>> GetAllDepartments()
+        {
+            try
+            {
+                var departments = await _userService.GetAllDepartment();
+                return Ok(departments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 

@@ -20,27 +20,26 @@ public class Expense
 
     public override bool Equals(object? obj)
     {
-        if (obj is not Expense)
+        if (obj is not Expense expense)
         {
             return false;
         }
 
-        Expense other = (Expense)obj;
-        return No == other.No &&
-               Date == other.Date &&
-               Term == other.Term &&
-               Department == other.Department &&
-               ExpenseName == other.ExpenseName &&
-               CostType == other.CostType &&
-               UnitPrice == other.UnitPrice &&
-               Amount == other.Amount &&
-               Currency == other.Currency &&
-               Nullable.Equals(ExchangeRate, other.ExchangeRate) &&
-               TotalAmount == other.TotalAmount &&
-               ProjectName == other.ProjectName &&
-               SupplierName == other.SupplierName &&
-               PIC == other.PIC &&
-               Note == other.Note;
+        return No == expense.No &&
+               Date == expense.Date &&
+               Term == expense.Term &&
+               Department == expense.Department &&
+               ExpenseName == expense.ExpenseName &&
+               CostType == expense.CostType &&
+               UnitPrice == expense.UnitPrice &&
+               Amount == expense.Amount &&
+               Currency == expense.Currency &&
+               Nullable.Equals(ExchangeRate, expense.ExchangeRate) &&
+               TotalAmount == expense.TotalAmount &&
+               ProjectName == expense.ProjectName &&
+               SupplierName == expense.SupplierName &&
+               PIC == expense.PIC &&
+               Note == expense.Note;
     }
 
     public override int GetHashCode()

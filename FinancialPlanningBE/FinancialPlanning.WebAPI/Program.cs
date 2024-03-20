@@ -45,8 +45,6 @@ builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<PositionService>();
 
 
 
@@ -62,7 +60,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     b => b.MigrationsAssembly("FinancialPlanning.Data")));
 
 
-
+builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
