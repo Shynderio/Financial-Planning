@@ -121,7 +121,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                             var reportViewModel = _mapper.Map<ReportViewModel>(report);
                             var result = new
                             {
-                                Reports = reportViewModel,
+                                Report = reportViewModel,
                                 Expenses= expenses
                                
                             };
