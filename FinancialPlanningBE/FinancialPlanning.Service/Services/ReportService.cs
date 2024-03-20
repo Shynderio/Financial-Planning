@@ -14,10 +14,12 @@ namespace FinancialPlanning.Service.Services
         private readonly IReportRepository _reportRepository;
         private readonly IAuthRepository _authRepository;
         private readonly IDepartmentRepository _departmentRepository;
-
-        public ReportService(IReportRepository reportRepository, IAuthRepository authRepository, IDepartmentRepository departmentRepository)
+        private readonly FileService _fileService;
+        public ReportService(IReportRepository reportRepository,
+         IAuthRepository authRepository, IDepartmentRepository departmentRepository,FileService fileService)
         {
             _reportRepository = reportRepository;  
+            _fileService = fileService;
             _authRepository = authRepository;
             _departmentRepository = departmentRepository;
         }
@@ -65,6 +67,10 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
+        public async Task<string> GetFile(string key)
+        {
+            return await _fileService.GetFileAsync(key);
+        }
 
 
     }

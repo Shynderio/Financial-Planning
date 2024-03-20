@@ -5,6 +5,7 @@ using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
+using System.Net.Http;
 using Xunit.Abstractions;
 
 namespace Test.UnitTesting.Service.Services;
@@ -13,6 +14,7 @@ public class FileServiceTests
 {
     private readonly IConfiguration _configuration;
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly HttpClient _httpClient;
 
     public FileServiceTests(ITestOutputHelper testOutputHelper)
     {
@@ -37,7 +39,7 @@ public class FileServiceTests
         // Arrange
         var s3Client = new AmazonS3Client(_configuration["AWS:AccessKey"], _configuration["AWS:SecretKey"],
             Amazon.RegionEndpoint.GetBySystemName(_configuration["AWS:Region"]));
-        var fileService = new FileService(s3Client, _configuration);
+        var fileService = new FileService(s3Client, _configuration, _httpClient);
 
         var expectedRequest = new GetPreSignedUrlRequest
         {
@@ -65,8 +67,9 @@ public class FileServiceTests
 
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
+        var mockHttpClient = new Mock<HttpClient>();
 
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object);
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object,mockHttpClient.Object);
 
         var key = @"Test\" + fileName;
 
@@ -122,7 +125,8 @@ public class FileServiceTests
 
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object);
+        var mockHttpClient = new Mock<HttpClient>();
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object,mockHttpClient.Object );
 
         // Act
         var actualResult = fileService.ValidateFile(fileStream, documentType);
@@ -227,7 +231,7 @@ public class FileServiceTests
         var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
         var mockS3Client = new Mock<IAmazonS3>();
-        var fileService = new FileService(mockS3Client.Object, _configuration);
+        var fileService = new FileService(mockS3Client.Object, _configuration,_httpClient);
 
         // Act
         var actualResult = fileService.ConvertExcelToList(fileStream, documentType);
@@ -244,7 +248,8 @@ public class FileServiceTests
         // Arrange
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object);
+        var mockHttpClient = new Mock<HttpClient>();
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object, mockHttpClient.Object);
         
         // Act
         var stream = await fileService.ConvertListToExcelAsync(expenses, documentType);
