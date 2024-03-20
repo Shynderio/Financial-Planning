@@ -25,9 +25,8 @@ namespace FinancialPlanning.Service.Services
             // Validate the file using FileService
             try
             {
-                return _fileService.ValidateFile(fileStream, documentType: 0);
                 // Assuming plan documents have document type 0
-                // return _fileService.ValidateFile(fileStream, documentType: 0);
+                return _fileService.ValidateFile(fileStream, documentType: 0);
             }
             catch (Exception ex)
             {
@@ -148,7 +147,6 @@ namespace FinancialPlanning.Service.Services
 
         public bool ValidFileName(string fileName, Guid uid, Guid termId)
         {
-            // User = _userRepository.GetUserByUsername(username);
             var departmment = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
             var term = _termService.GetTermById(termId).TermName;
 
@@ -171,13 +169,13 @@ namespace FinancialPlanning.Service.Services
 
                 using var saveplan = _planRepository.SavePlan(plan, uid);
                 var Result = saveplan.Result;
-                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + (Result.PlanVersions.Count + 1) + ".xlsx");
+                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + Result.PlanVersions.Count + ".xlsx");
                 // Convert list of expenses to Excel file                        
                 Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                 // Reset position of the memory stream
                 excelFileStream.Position = 0;
                 // Upload the file to AWS S3
-                await _fileService.UploadPlanAsync(filename, excelFileStream);
+                await _fileService.UploadPlanAsync(filename.Replace('\\', '/'), excelFileStream);
 
                 // Convert list of expenses to Excel file
             }

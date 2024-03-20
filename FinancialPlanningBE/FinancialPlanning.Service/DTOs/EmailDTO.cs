@@ -1,6 +1,6 @@
 namespace FinancialPlanning.Service.DTOs
 {
-    public class EmailDTO
+    public class EmailDto
     {
         public string To { get; set; } = null!;
         public string Subject { get; set; } = null!;

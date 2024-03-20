@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics;
 using NCrontab;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,11 +6,11 @@ namespace FinancialPlanning.Service.BackgroundServices
     public abstract class ScheduledProcessor : ScopedProcessor
     {
         // Add properties and fields here
-        private CrontabSchedule _schedule;
+        private readonly CrontabSchedule _schedule;
         private DateTime _nextRun;
         protected abstract string Schedule { get; }
 
-        public ScheduledProcessor(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
+        protected ScheduledProcessor(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule);
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);

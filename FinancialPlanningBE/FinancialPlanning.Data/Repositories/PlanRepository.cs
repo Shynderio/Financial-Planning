@@ -84,6 +84,7 @@ namespace FinancialPlanning.Data.Repositories
             var existingPlan = await _context.Plans!
                 .Include(p => p.Term)
                 .Include(p => p.Department)
+                .Include(p => p.PlanVersions)
                 .FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
             if (existingPlan != null)
             {
@@ -99,7 +100,7 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.PlanVersions!.Add(planVersion);
                 _context.SaveChanges();
-                
+
                 return existingPlan;
             }
             else
@@ -185,39 +186,39 @@ namespace FinancialPlanning.Data.Repositories
             public const int Closed = 4;
         }
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
-    {
-
-        IQueryable<Plan> plans = _context.Plans!
-            .Include(p => p.Term)
-            .Include(p => p.Department)
-            .Include(p => p.PlanVersions);
-
-        // Lọc kế hoạch tài chính dựa trên từ khóa, phòng ban và trạng thái
-        if (!string.IsNullOrEmpty(keyword))
-            plans = plans.Where(p => p.PlanName.ToLower().Contains(keyword.ToLower()));
-
-        if (!string.IsNullOrEmpty(department))
-            plans = plans.Where(p => p.Department.DepartmentName.ToLower() == department.ToLower());
-
-        if (!string.IsNullOrEmpty(status))
         {
-            plans = status switch
+
+            IQueryable<Plan> plans = _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions);
+
+            // Lọc kế hoạch tài chính dựa trên từ khóa, phòng ban và trạng thái
+            if (!string.IsNullOrEmpty(keyword))
+                plans = plans.Where(p => p.PlanName.ToLower().Contains(keyword.ToLower()));
+
+            if (!string.IsNullOrEmpty(department))
+                plans = plans.Where(p => p.Department.DepartmentName.ToLower() == department.ToLower());
+
+            if (!string.IsNullOrEmpty(status))
             {
-                "Denied" => plans.Where(p => p.Status == PlanStatus.Denied),
-                "New" => plans.Where(p => p.Status == PlanStatus.New),
-                "Waiting for Approval" => plans.Where(p => p.Status == PlanStatus.WaitingForApproval),
-                "Approved" => plans.Where(p => p.Status == PlanStatus.Approved),
-                "Closed" => plans.Where(p => p.Status == PlanStatus.Closed),
-                _ => plans,
-            };
+                plans = status switch
+                {
+                    "Denied" => plans.Where(p => p.Status == PlanStatus.Denied),
+                    "New" => plans.Where(p => p.Status == PlanStatus.New),
+                    "Waiting for Approval" => plans.Where(p => p.Status == PlanStatus.WaitingForApproval),
+                    "Approved" => plans.Where(p => p.Status == PlanStatus.Approved),
+                    "Closed" => plans.Where(p => p.Status == PlanStatus.Closed),
+                    _ => plans,
+                };
+            }
+
+            // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
+            plans = plans.OrderByDescending(p => p.Status)
+                         .ThenBy(p => p.Term.StartDate);
+
+            return await plans.ToListAsync();
         }
-
-        // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
-        plans = plans.OrderByDescending(p => p.Status)
-                     .ThenBy(p => p.Term.StartDate);
-
-        return await plans.ToListAsync();
     }
-}
-    
+
 }

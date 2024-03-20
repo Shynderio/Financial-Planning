@@ -167,6 +167,23 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while importing the plan file.");
             }
         }
+    
+        [HttpPost("Upload")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
+        {
+            try
+            {
+                await _planService.SavePlan(expenses, termId, uid);
+                return Ok(new { message = "Plan uploaded successfully!" });
+            }
+            catch (Exception)
+            {
+                // Log the exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while uploading the plan file.");
+            }
+        }
+
     }
 
 }

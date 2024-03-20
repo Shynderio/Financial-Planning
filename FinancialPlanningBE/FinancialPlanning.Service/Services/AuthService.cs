@@ -60,7 +60,7 @@ namespace FinancialPlanning.Service.Services
         {
             var resetUrl = $"http://localhost:4200/forgotpassword?token={resetToken}";
 
-            var email = new EmailDTO
+            var email = new EmailDto
             {
                 To = userEmail,
                 Subject = "Password Reset",

@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FinancialPlanning.Service.BackgroundServices
@@ -9,7 +6,7 @@ namespace FinancialPlanning.Service.BackgroundServices
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ScopedProcessor(IServiceScopeFactory serviceScopeFactory) : base()
+        protected ScopedProcessor(IServiceScopeFactory serviceScopeFactory) : base()
         {
             _serviceScopeFactory = serviceScopeFactory;
         }

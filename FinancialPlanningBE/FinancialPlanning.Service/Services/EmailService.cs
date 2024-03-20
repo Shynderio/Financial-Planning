@@ -16,7 +16,7 @@ namespace FinancialPlanning.Service.Services
             _config = config;
         }
         
-        public void SendEmail(EmailDTO request)
+        public void SendEmail(EmailDto request)
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_config["EmailSettings:Email"]));

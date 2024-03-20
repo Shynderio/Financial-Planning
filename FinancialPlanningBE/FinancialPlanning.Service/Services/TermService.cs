@@ -41,15 +41,12 @@ namespace FinancialPlanning.Service.Services
         }
         public async Task StartTerm(Guid id)
         {
-            var term = await _termRepository.GetTermByIdAsync(id);
-            if (term != null)
-            {
+            try {
+                var term = await _termRepository.GetTermByIdAsync(id);
                 term.Status = 1;
                 await _termRepository.UpdateTerm(term);
-            }
-            else
-            {
-                throw new ArgumentException("Term not found with the specified ID");
+            } catch (Exception e){
+                Console.WriteLine(e);
             }
         }
 
@@ -57,13 +54,18 @@ namespace FinancialPlanning.Service.Services
         {
             term.Status = 0;
             var endDate = term.StartDate.AddMonths(term.Duration);
-            if (endDate < term.ReportDueDate){
+            if (endDate < term.ReportDueDate)
+            {
                 throw new ArgumentException("Report due date cannot be after the end date");
-            } else
-            if (endDate < term.PlanDueDate){
+            }
+            else if (endDate < term.PlanDueDate)
+            {
                 throw new ArgumentException("Plan due date cannot be after the end date");
-            } else
+            }
+            else
+            {
                 await _termRepository.CreateTerm(term);
+            }
         }
 
         public async Task UpdateTerm(Term term)
@@ -89,15 +91,13 @@ namespace FinancialPlanning.Service.Services
 
         public async Task DeleteTerm(Guid id)
         {
-            var termToDelete = await _termRepository.GetTermByIdAsync(id);
-            if (termToDelete != null)
-            {
+            try {
+                var termToDelete = await _termRepository.GetTermByIdAsync(id);
                 await _termRepository.DeleteTerm(termToDelete);
+            } catch (Exception e){
+                Console.WriteLine(e);
             }
-            else
-            {
-                throw new ArgumentException("Term not found with the specified ID");
-            }
+
         }
 
         public async Task<IEnumerable<Term>> GetAllTerms()
