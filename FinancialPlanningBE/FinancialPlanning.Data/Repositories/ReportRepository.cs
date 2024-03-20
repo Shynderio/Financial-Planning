@@ -42,7 +42,7 @@ namespace FinancialPlanning.Data.Repositories
         {
             var reports = await context.Reports!
                 .Where(r => r.DepartmentId == departId && r.Status>0)
-                 .OrderBy(r => r.Status) // order by status
+                .OrderBy(r => r.Status) // order by status
                 .ThenByDescending(r => r.UpdateDate)
                 .Include(t => t.ReportVersions)
                 .Include(t => t.Term)
@@ -76,6 +76,16 @@ namespace FinancialPlanning.Data.Repositories
          .Include(t => t.Department)
          .FirstOrDefaultAsync(t => t.Id == id) ?? throw new Exception("Report not found");
             return report;
+        }
+
+        //Get list reportVersions 
+        public async Task<List<ReportVersion>> GetReportVersionsByReportID(Guid reportId)
+        {
+           var reportVersions = await context.ReportVersions!
+                .Where(r => r.ReportId == reportId)
+                .OrderByDescending(r => r.Version)
+                .Include(r => r.User).ToListAsync();
+            return reportVersions;
         }
     }
 }

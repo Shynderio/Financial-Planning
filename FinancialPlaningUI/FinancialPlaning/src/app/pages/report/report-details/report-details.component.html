@@ -19,7 +19,11 @@
         <h6>Month: {{report.month}}</h6>
         <h6>Department: {{report.departmentName}}</h6>
         <h6>Status: {{report.status}}</h6>
-        <h6>Version: {{report.version}}</h6>
+
+        <h6>Uploaded by: {{uploadedBy}}</h6>
+        <h6>Report Dure Date: {{report.reportDureDate}}</h6>
+        <h6>Date: {{report.updateDate}}</h6>
+        <h6>Version: v.{{report.version}}</h6>
 
     </div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" >

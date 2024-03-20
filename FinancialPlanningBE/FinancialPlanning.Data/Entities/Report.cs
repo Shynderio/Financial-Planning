@@ -28,5 +28,6 @@ namespace FinancialPlanning.Data.Entities
             else return this.ReportVersions.OrderByDescending(rv => rv.Version).FirstOrDefault()?.Version;
 
         }
+     
     }
 }

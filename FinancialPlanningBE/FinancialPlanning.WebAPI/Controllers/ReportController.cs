@@ -86,15 +86,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
 
-        [HttpGet]
-        [Route("GetURL")]
-        public async Task<IActionResult> GetUrlFile(string key)
-        {
-
-
-            return Ok();
-        }
-
+        
 
         [HttpGet("{id:guid}")]
         //[Authorize(Roles = "Accountant, FinancialStaff")]
@@ -103,6 +95,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
               var report = await _reportService.GetReportById(id);
+              var reportVersions = await _reportService.GetReportVersionsAsync(id);
                 //string reportName = report.ReportName;
                 string reportName = "CorrectPlan";
                 string url = await _reportService.GetFileByName(reportName+ ".xlsx");
@@ -118,12 +111,19 @@ namespace FinancialPlanning.WebAPI.Controllers
                         try
                         {
                             List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                            //mapper
                             var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                            var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
+                            // Get the name of the user who uploaded the file
+                            var firstReportVersion = reportVersionModel.FirstOrDefault();
+                            var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+                            
                             var result = new
                             {
                                 Report = reportViewModel,
-                                Expenses= expenses
-                               
+                                Expenses = expenses,
+                                ReportVersion = reportVersionModel,
+                                UploadedBy = uploadedBy
                             };
 
                             return Ok(result);

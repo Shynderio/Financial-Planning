@@ -14,8 +14,8 @@ namespace FinancialPlanning.Data.Repositories
         public Task DeleteReport(Report report);
         public Task DeleteReportVersions(IEnumerable<ReportVersion> reportVersions);
         public Task<Report> GetReportById(Guid id);
+        public Task<List<ReportVersion>> GetReportVersionsByReportID(Guid reportId);
 
-      
 
     }
 }

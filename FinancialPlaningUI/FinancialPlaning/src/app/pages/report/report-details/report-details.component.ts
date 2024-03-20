@@ -19,13 +19,15 @@ import { CommonModule } from '@angular/common';
 export class ReportDetailsComponent {
 
   displayedColumns: string[] = [
-   'No','Expense','CostType','Unit Price (VND)','Total',
-   'Amount','Project name','Supplier name',
+   'No','Expense','CostType','Unit Price (VND)','Amount',
+   'Total','Project name','Supplier name',
    'PIC','Notes'
   ];
 
   dataSource: any = [];
   report : any;
+  reportVersions : any;
+  uploadedBy : any;
 
    constructor(
     private reportService:ReportService,
@@ -41,7 +43,7 @@ export class ReportDetailsComponent {
       this.getReport(reportId);
     }
     );
-    
+   
    }
 
    getReport(reportId: string){
@@ -49,6 +51,8 @@ export class ReportDetailsComponent {
 
       this.dataSource =data.expenses;
       this.report = data.report;
+      this.reportVersions = data.reportVersions;  
+      this.uploadedBy = data.uploadedBy;
       console.log(data);
       
     });
