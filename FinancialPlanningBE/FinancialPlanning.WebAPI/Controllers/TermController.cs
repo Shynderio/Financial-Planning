@@ -69,5 +69,14 @@ namespace FinancialPlanning.WebAPI.Controllers
             await _termService.DeleteTerm(id);
             return Ok(new { message = $"Term with id {id} deleted successfully!" });
         }
+
+        [HttpGet("started")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetStartedTerms()
+        {
+            var terms = await _termService.GetStartedTerms();
+            var selectTermModels = _mapper.Map<List<SelectTermModel>>(terms);
+            return Ok(selectTermModels);
+        }
     }
 }

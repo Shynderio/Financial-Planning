@@ -6,7 +6,6 @@ using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using FinancialPlanning.Service.DTOs;
-using static System.Security.Claims.ClaimTypes;
 
 namespace FinancialPlanning.Service.Services
 {
@@ -27,26 +26,40 @@ namespace FinancialPlanning.Service.Services
 
         private async Task ValidateToken(string email, string token)
         {
-            var tokenFromDb = await _authRepository.GetToken(email) ?? throw new Exception("Token not found");
-            if (tokenFromDb != token)
-            {
-                throw new Exception("Invalid token");
-            }
-            
+            var JwtService = new JwtService(configuration["JWT:Secret"]!, configuration["JWT:ValidIssuer"]!);
+
             if (JwtService.IsTokenExpired(token))
             {
                 throw new Exception("Token expired");
             }
+            var principal = JwtService.GetPrincipal(token) ?? throw new Exception("Invalid token");
+            var emailClaim = principal.FindFirst(ClaimTypes.Email) ?? throw new Exception("Email claim not found in token");
+
+            var email = emailClaim.Value;
+
+            var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
+
+            // var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
+            if (tokenFromDb != token)
+            {
+                throw new Exception("Invalid token");
+            }
+
+            return email;
         }
 
         public async Task ResetPassword(User user)
         {
             // Validate token
             var token = user.Token ?? throw new Exception("Token not found");
-            await ValidateToken(user.Email, token);
-            user.Token = null;
-            // If token is valid, proceed with password reset
-            await _authRepository.ResetPassword(user);
+            try {
+                var email = await ValidateToken(token);
+                user.Email = email;
+                // If token is valid, proceed with password reset
+                await authRepository.ResetPassword(user);
+            } catch (Exception e) {
+                throw new Exception(e.Message);
+            }
         }
 
         public string GenerateToken(string email)
@@ -61,7 +74,7 @@ namespace FinancialPlanning.Service.Services
         {
             var resetUrl = $"http://localhost:4200/reset-password?token={resetToken}";
 
-            var email = new EmailDTO
+            var email = new EmailDto
             {
                 To = userEmail,
                 Subject = "Password Reset",

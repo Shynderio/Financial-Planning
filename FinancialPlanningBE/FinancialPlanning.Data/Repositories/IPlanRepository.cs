@@ -6,7 +6,8 @@ namespace FinancialPlanning.Data.Repositories
     // Interface for managing financial plans.
     public interface IPlanRepository
     {
-
+        
+        public Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "");
         public Task<List<Plan>> GetAllPlans();
         public Task<List<Plan>> GetPlanByDepartId(Guid departmentID);
         //------------
@@ -54,7 +55,9 @@ namespace FinancialPlanning.Data.Repositories
         public Task<Guid> CreatePlan(Plan plan);
         public Task UpdatePlan(Plan plan);
         public Task DeletePlan(Plan plan);
-        public Task<int> SavePlan(Plan plan, Guid creatorId);
+        public Task<Plan> SavePlan(Plan plan, Guid creatorId);
+
+        
     }
 
 }

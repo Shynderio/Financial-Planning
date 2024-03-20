@@ -5,13 +5,20 @@ namespace FinancialPlanning.Service.BackgroundServices
     public abstract class BackgroundService : IHostedService
     {
         private Task? _executingTask;
-        private readonly CancellationTokenSource _stoppingCts = new();
-
+        private CancellationTokenSource? _stoppingCts;
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _executingTask = ExecuteAsync(_stoppingCts.Token);
+            using (_stoppingCts = new CancellationTokenSource())
+            {
+                _executingTask = ExecuteAsync(_stoppingCts.Token);
 
-            return _executingTask.IsCompleted ? _executingTask : Task.CompletedTask;
+                if (_executingTask.IsCompleted)
+                {
+                    return _executingTask;
+                }
+
+                return Task.CompletedTask;
+            }
         }
 
         public virtual async Task StopAsync(CancellationToken cancellationToken)
@@ -23,7 +30,7 @@ namespace FinancialPlanning.Service.BackgroundServices
 
             try
             {
-                await _stoppingCts.CancelAsync();
+                _stoppingCts?.Cancel();
             }
             finally
             {

@@ -10,7 +10,7 @@ public class JwtService(string secretKey, string issuer)
     private readonly string _secretKey = secretKey;
     private readonly string _issuer = issuer;
 
-    public string GenerateToken(string username, int expireMinutes = 30)
+    public string GenerateToken(string email, int expireMinutes = 30)
     {
         var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
@@ -19,7 +19,7 @@ public class JwtService(string secretKey, string issuer)
             _issuer,
             _issuer,
             [
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Email, email)
             ],
             expires: DateTime.Now.AddMinutes(expireMinutes),
             signingCredentials: credentials

@@ -10,7 +10,7 @@ namespace FinancialPlanning.Service.BackgroundServices
         private DateTime _nextRun;
         protected abstract string Schedule { get; }
 
-        public ScheduledProcessor(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
+        protected ScheduledProcessor(IServiceScopeFactory serviceScopeFactory) : base(serviceScopeFactory)
         {
             _schedule = CrontabSchedule.Parse(Schedule);
             _nextRun = _schedule.GetNextOccurrence(DateTime.Now);

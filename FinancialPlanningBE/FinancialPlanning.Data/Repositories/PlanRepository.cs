@@ -71,9 +71,13 @@ namespace FinancialPlanning.Data.Repositories
 
         }
 
-        public async Task<int> SavePlan(Plan plan, Guid creatorId)
+        public async Task<Plan> SavePlan(Plan plan, Guid creatorId)
         {
-            var existingPlan = await _context.Plans!.FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
+            var existingPlan = await _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions)
+                .FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
             if (existingPlan != null)
             {
                 var newVersion = _context.PlanVersions!.Count(pv => pv.PlanId == existingPlan.Id) + 1;
@@ -88,7 +92,8 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.PlanVersions!.Add(planVersion);
                 await _context.SaveChangesAsync();
-                return newVersion;
+                
+                return existingPlan;
             }
             else
             {
@@ -110,7 +115,10 @@ namespace FinancialPlanning.Data.Repositories
                 _context.PlanVersions!.Add(planVersion);
 
                 await _context.SaveChangesAsync();
-                return 1;
+
+                return _context.Plans!
+                    .Include(p => p.Term)
+                    .Include(p => p.Department).FirstOrDefault(p => p.Id == plan.Id)!;
             }
         }
 
@@ -160,6 +168,38 @@ namespace FinancialPlanning.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
+        
+        public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
 
+            IQueryable<Plan> plans = _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions);
+
+            // Lọc kế hoạch tài chính dựa trên từ khóa, phòng ban và trạng thái
+            if (!string.IsNullOrEmpty(keyword))
+                plans = plans.Where(p => p.PlanName.Contains(keyword, StringComparison.CurrentCultureIgnoreCase));
+
+            if (!string.IsNullOrEmpty(department))
+                plans = plans.Where(p => string.Equals(p.Department.DepartmentName.ToLower(), department.ToLower(),
+                    StringComparison.Ordinal));
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                plans = status switch
+                {
+                    "New" => plans.Where(p => p.Status == (int)PlanStatus.New),
+                    "Waiting for Approval" => plans.Where(p => p.Status == (int)PlanStatus.WaitingForApproval),
+                    "Approved" => plans.Where(p => p.Status == (int)PlanStatus.Approved),
+                    _ => plans,
+                };
+            }
+
+            // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
+            plans = plans.OrderByDescending(p => p.Status)
+                         .ThenBy(p => p.Term.StartDate);
+
+            return await plans.ToListAsync();
+        }
     }
-}

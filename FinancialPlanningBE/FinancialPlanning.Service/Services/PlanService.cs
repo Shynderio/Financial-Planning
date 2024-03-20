@@ -23,9 +23,8 @@ namespace FinancialPlanning.Service.Services
             // Validate the file using FileService
             try
             {
-                return _fileService.ValidateFile(fileStream, documentType: 0);
                 // Assuming plan documents have document type 0
-                // return _fileService.ValidateFile(fileStream, documentType: 0);
+                return _fileService.ValidateFile(fileStream, documentType: 0);
             }
             catch (Exception ex)
             {
@@ -61,6 +60,11 @@ namespace FinancialPlanning.Service.Services
             await _planRepository.CreatePlan(plan);
         }
 
+        public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
+          return  await _planRepository.GetFinancialPlans(keyword, department, status);   
+        }
+        
         public async Task UpdatePlan(Plan plan)
         {
             var existingPlan = await _planRepository.GetPlanById(plan.Id) ?? throw new ArgumentException("Plan not found with the specified ID");
@@ -137,7 +141,6 @@ namespace FinancialPlanning.Service.Services
 
         public bool ValidFileName(string fileName, Guid uid, Guid termId)
         {
-            // User = _userRepository.GetUserByUsername(username);
             var departmment = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
             var term = _termService.GetTermById(termId).TermName;
 
@@ -153,24 +156,20 @@ namespace FinancialPlanning.Service.Services
                 var department = _departmentRepository.GetDepartmentByUid(uid);
                 Plan plan = new()
                 {
-                    PlanName = "Plan",
+                    PlanName = string.Empty,
                     DepartmentId = department,
                     TermId = termId
                 };
 
-                using (var version = _planRepository.SavePlan(plan, uid)){
-                    var filename = "Term1" + "/" + "HR" + "/Plan/" + "version_" + version.Result + ".xlsx";
-                    var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
-                    // Create a FileStream from the MemoryStream
-                    // using (var fileStream = new FileStream(filename, FileMode.Create))
-                    // {
-                    //     await excelFileStream.CopyToAsync(fileStream);
-                    // }
-                    // Reset position of the memory stream
-                    excelFileStream.Position = 0;
-                    // Upload the file to AWS S3
-                    await _fileService.UploadPlanAsync(filename, excelFileStream);
-                }
+                using var saveplan = _planRepository.SavePlan(plan, uid);
+                var Result = saveplan.Result;
+                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + Result.PlanVersions.Count + ".xlsx");
+                // Convert list of expenses to Excel file                        
+                Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+                // Reset position of the memory stream
+                excelFileStream.Position = 0;
+                // Upload the file to AWS S3
+                await _fileService.UploadPlanAsync(filename.Replace('\\', '/'), excelFileStream);
 
                 // Convert list of expenses to Excel file
             }

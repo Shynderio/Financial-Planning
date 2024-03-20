@@ -64,7 +64,7 @@
     </mat-form-field>
 
   </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" [hidden]="dataSource.length==0">
 
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef> No. </th>
@@ -110,10 +110,13 @@
       </td>
     </ng-container>
 
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
   </table>
-  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  <div *ngIf="dataSource.length==0" class="emtry-data-message">
+    No items match your credentials, please try again.
+  </div>
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0">
   </mat-paginator>
 </main>

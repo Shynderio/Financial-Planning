@@ -54,7 +54,8 @@ namespace FinancialPlanning.Service.Services
         {
             term.Status = (int)TermStatus.New;
             var endDate = term.StartDate.AddMonths(term.Duration);
-            if (endDate < term.ReportDueDate){
+            if (endDate < term.ReportDueDate)
+            {
                 throw new ArgumentException("Report due date cannot be after the end date");
             }
 
@@ -114,6 +115,20 @@ namespace FinancialPlanning.Service.Services
                 term.Status = (int)TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
             }
+        }
+
+        public async Task<IEnumerable<Term>> GetStartedTerms()
+        {
+            IEnumerable<Term> terms = await _termRepository.GetAllTerms();
+            List<Term> startedTerms = [];
+            foreach (var term in terms)
+            {
+                if (term.Status == (int)TermStatus.InProgress)
+                {
+                    startedTerms.Add(term);
+                }
+            }
+            return startedTerms;
         }
     }
 }

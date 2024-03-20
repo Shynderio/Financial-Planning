@@ -20,7 +20,7 @@
       <i class="fa-solid fa-search"></i>
     </form>
   </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" [hidden]="dataSource.length==0">
     <ng-container matColumnDef="term">
       <th mat-header-cell *matHeaderCellDef>Term</th>
       <td mat-cell *matCellDef="let term">{{term.termName}}</td>
@@ -48,7 +48,10 @@
     <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
     <tr mat-row *matRowDef="let row; columns: columnHeaders;"></tr>
   </table>
-  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  <div *ngIf="dataSource.length==0" class="emtry-data-message">
+    No items match your credentials, please try again.
+  </div>
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0">
   </mat-paginator>
 </main>
 <footer>
