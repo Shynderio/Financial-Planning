@@ -17,11 +17,17 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <input type="file" id="file-input" hidden />
+        <input type="file" id="file-input" hidden (change)="onFileSelected($event)" />
       </form>
+      <button>
+        <span>Back</span>
+      </button>
+      <button>
+        <span>Next</span>
+      </button>
     </div>
     <div class="right">
-      <app-upload></app-upload>
+      <app-upload (fileSelected)="onFileSelected($event)"></app-upload>
     </div>
   </div>
 </main>

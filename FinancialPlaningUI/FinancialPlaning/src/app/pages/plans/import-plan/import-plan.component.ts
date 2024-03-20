@@ -39,4 +39,16 @@ export class ImportPlanComponent implements OnInit {
       );
   };
 
+
+  onFileSelected(event: any) {
+    debugger;
+    const file: File = event;
+    if (file) {
+      // Handle the selected file here, for example:
+      console.log('Selected file:', file);
+      // You can trigger the file upload process here if needed
+      // this.uploadFile(file);
+    }
+  }
+
 }
