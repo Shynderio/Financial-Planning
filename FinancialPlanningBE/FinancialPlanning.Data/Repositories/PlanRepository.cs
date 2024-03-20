@@ -92,7 +92,7 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.PlanVersions!.Add(planVersion);
                 await _context.SaveChangesAsync();
-                
+
                 return existingPlan;
             }
             else
@@ -168,7 +168,7 @@ namespace FinancialPlanning.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
-        
+
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
         {
 
@@ -198,8 +198,9 @@ namespace FinancialPlanning.Data.Repositories
 
             // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
             plans = plans.OrderByDescending(p => p.Status)
-                         .ThenBy(p => p.Term.StartDate);
+                .ThenBy(p => p.Term.StartDate);
 
             return await plans.ToListAsync();
         }
     }
+}

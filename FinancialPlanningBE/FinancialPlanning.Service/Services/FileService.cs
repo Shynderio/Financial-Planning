@@ -11,7 +11,7 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpClient _httpClient)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpClient httpClient)
 {
     
 
@@ -280,7 +280,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration,HttpCl
 
         try
         {
-            using (HttpResponseMessage response = await _httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
+            using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
             {
                 response.EnsureSuccessStatusCode();
 

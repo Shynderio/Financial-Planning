@@ -49,7 +49,7 @@ namespace FinancialPlanning.Service.Services
             return startingPlans;
         }
 
-        public async Task<Plan> GetPlanById(Guid id)
+        public async Task<Plan?> GetPlanById(Guid id)
         {
             return await _planRepository.GetPlanById(id);
         }
@@ -141,10 +141,10 @@ namespace FinancialPlanning.Service.Services
 
         public bool ValidFileName(string fileName, Guid uid, Guid termId)
         {
-            var departmment = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
+            var department = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
             var term = _termService.GetTermById(termId).TermName;
 
-            var validName = departmment + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
+            var validName = department + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
             return fileName.Equals(validName);
         }
 
@@ -162,8 +162,8 @@ namespace FinancialPlanning.Service.Services
                 };
 
                 using var saveplan = _planRepository.SavePlan(plan, uid);
-                var Result = saveplan.Result;
-                var filename = Path.Combine(Result.Department.DepartmentName, Result.Term.TermName, "Plan", "version_" + Result.PlanVersions.Count + ".xlsx");
+                var result = saveplan.Result;
+                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, "Plan", "version_" + result.PlanVersions.Count + ".xlsx");
                 // Convert list of expenses to Excel file                        
                 Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                 // Reset position of the memory stream

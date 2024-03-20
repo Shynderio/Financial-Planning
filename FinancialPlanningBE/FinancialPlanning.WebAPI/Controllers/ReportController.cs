@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
-using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -79,12 +75,12 @@ namespace FinancialPlanning.WebAPI.Controllers
             await _reportService.DeleteReport(id);
             return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
-    }
+
         [HttpGet]
         [Route("GetURL")]
         public async Task<IActionResult> GetUrlFile(string key)
         {
-            var url = _reportService.GetFile(key);
+            var url = await _reportService.GetFile(key);
             return Ok(url);
         }
 
@@ -95,7 +91,8 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 string url = await _reportService.GetFile(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files",
+                    "Financial Plan_Template.xlsx");
 
                 bool result = await _fileService.DownloadFile(url, savePath);
                 if (result)
@@ -112,5 +109,5 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error downloading file: {ex.Message}");
             }
         }
-
+    }
 }
