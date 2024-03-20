@@ -76,21 +76,26 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
-        {
-            // Validate model
-            if (!ModelState.IsValid)
-                return BadRequest(new { message = "Invalid password reset request" });
+        {   
+            try {
+                // Validate model
+                if (!ModelState.IsValid)
+                    return BadRequest(new { message = "Invalid password reset request" });
 
-            // Check for null values in model properties
-            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Token))
-                return BadRequest(new { message = "Email, password, and token cannot be empty" });
-
-            try
-            {
+                // Check for null values in model properties
+                if (string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Token))
+                    return BadRequest(new { message = "Password and token cannot be empty" });
+                
                 User user = _mapper.Map<User>(model);
                 // Attempt to reset password
                 await _authService.ResetPassword(user);
+
                 return Ok(new { message = "Password reset successfully" });
+            } 
+            catch (ArgumentException ex) 
+            {
+                // Handle potential errors
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {

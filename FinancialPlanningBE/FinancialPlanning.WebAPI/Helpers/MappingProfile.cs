@@ -24,13 +24,11 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<Term, TermViewModel>().ReverseMap();
             CreateMap<CreateTermModel, Term>();
             CreateMap<LoginModel, User>();
-            CreateMap<ResetPasswordModel, User>();
 
             CreateMap<LoginModel, User>()
           .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
           .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
             CreateMap<ResetPasswordModel, User>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
                 .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token));
 

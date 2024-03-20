@@ -24,28 +24,42 @@ namespace FinancialPlanning.Service.Services
             this.depRepository = depRepository;
         }
 
-        public async Task ValidateToken(string email, string token)
+        public async Task<string> ValidateToken(string token)
         {
-            var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
-            if (tokenFromDb != token)
-            {
-                throw new Exception("Invalid token");
-            }
-            
+            var JwtService = new JwtService(configuration["JWT:Secret"]!, configuration["JWT:ValidIssuer"]!);
+
             if (JwtService.IsTokenExpired(token))
             {
                 throw new Exception("Token expired");
             }
+            var principal = JwtService.GetPrincipal(token) ?? throw new Exception("Invalid token");
+            var emailClaim = principal.FindFirst(ClaimTypes.Email) ?? throw new Exception("Email claim not found in token");
+
+            var email = emailClaim.Value;
+
+            var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
+
+            // var tokenFromDb = await authRepository.GetToken(email) ?? throw new Exception("Token not found");
+            if (tokenFromDb != token)
+            {
+                throw new Exception("Invalid token");
+            }
+
+            return email;
         }
 
         public async Task ResetPassword(User user)
         {
             // Validate token
             var token = user.Token ?? throw new Exception("Token not found");
-            await ValidateToken(user.Email, token);
-            user.Token = null;
-            // If token is valid, proceed with password reset
-            await authRepository.ResetPassword(user);
+            try {
+                var email = await ValidateToken(token);
+                user.Email = email;
+                // If token is valid, proceed with password reset
+                await authRepository.ResetPassword(user);
+            } catch (Exception e) {
+                throw new Exception(e.Message);
+            }
         }
 
         public string GenerateToken(string email)
@@ -80,7 +94,7 @@ namespace FinancialPlanning.Service.Services
 
             //Check email and pass
             var user = await authRepository.IsValidUser(userMapper.Email, userMapper.Password);
-            
+
             if (user != null)
             {
                 //add email to claim
@@ -100,7 +114,7 @@ namespace FinancialPlanning.Service.Services
                 authClaims.Add(new Claim("departmentName", departmentname));
 
                 var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]!));
-              
+
                 //Create token
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
