@@ -24,14 +24,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(userListModels);
         }
 
-        //Get all departments
-        [HttpGet]
-        public async Task<IActionResult> GetListDepartments()
-        {
-            var Departments = await _userService.GetListDepartments();
-            return Ok(Departments);
-        }
-
         //Get user by id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
