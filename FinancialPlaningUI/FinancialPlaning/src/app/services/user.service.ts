@@ -32,7 +32,7 @@ export class UserService {
   }
 
   getAllDepartment(){
-    return this.http.get<IDepartment[]>(this.apiUrl + "/api/Department")
+    return this.http.get<IDepartment[]>(this.apiUrl + "/api/User/AllDepartments")
   }
 
   getRole(){

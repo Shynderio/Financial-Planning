@@ -17,7 +17,7 @@ main {
     max-height: calc(100vh - 120px);
     max-width: calc(100vw - 100px);
     border-radius: 20px;
-    top: 100px;
+    top: 50px;
     left: 80px;
     /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
     /* -moz-box-sizing: border-box;
@@ -25,23 +25,23 @@ main {
     box-sizing: border-box; */
 }
 
+h5 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
 .card {
     background-color: #222143;
     color: white;
-    max-height: 400px;
-    width: 1200px;
+    height: 400px;
+    width: 1000px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    /* left: 50px; */
+    top: 40px;
+    /* align-items: center; */
     justify-content: center;
 }
-
-.left {
-    width: 60%;
-}
-.right {
-    width: 40%;
-}   
 
 /* select {
     margin: 0 15px;
@@ -60,5 +60,33 @@ main {
 }
 
 form {
-    padding-top: 20px;
+    position: relative;
+    width: 300px;
+    padding: 20px;
+}
+
+.buttons{
+    position: absolute;
+    bottom: 30px;
+    display: flex;
+    justify-content:flex-start;
+    margin-top: 20px;
+
+}
+
+.back-button{
+    background-color: white;
+    color: #4F85F2;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-right: 20px;
+}   
+
+.next-button{
+    background-color: #4F85F2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
 }

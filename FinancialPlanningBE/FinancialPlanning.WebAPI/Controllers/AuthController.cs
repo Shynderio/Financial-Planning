@@ -2,11 +2,7 @@
 using FinancialPlanning.Data.Entities;
 using AutoMapper;
 using FinancialPlanning.Service.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using FinancialPlanning.WebAPI.Models.User;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -17,80 +13,80 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly AuthService _authService;
         private readonly IMapper _mapper;
 
-        public AuthController(AuthService authService, IMapper mapper)
+    public AuthController(AuthService authService, IMapper mapper)
+    {
+        _authService = authService;
+        _mapper = mapper;
+    }
+
+    [HttpPost("Login")]
+    public async Task<IActionResult> LogIn(LoginModel model)
+    {
+        IActionResult response;
+
+        //InValid Model
+        if (!ModelState.IsValid)
         {
-            _authService = authService;
-            _mapper = mapper;
+            return BadRequest();
+        }
+        //mapper loginmodel to user
+        var user = _mapper.Map<User>(model);
+
+        //Check acc and create token
+        var token = await _authService.LoginAsync(user);
+
+        //Invalid account and returned emtry
+        if (string.IsNullOrEmpty(token))
+        {
+            response = BadRequest();
+        }
+        else
+        {
+            response = Ok(new { token });
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> LogIn(LoginModel model)
-        {
-            IActionResult respone = Unauthorized();
-
-            //InValid Model
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-            //mapper loginmodel to user
-            var user = _mapper.Map<User>(model);
-
-                //Check acc and create token
-                var token = await _authService.LoginAsync(user);
-
-                //Invalid account and returned emtry
-                if (string.IsNullOrEmpty(token))
-                {
-                    respone = BadRequest();
-                }
-                else
-                {
-                    respone = Ok(new { token = token });
-                }
-
-                return Ok(respone);
-        }
+        return Ok(response);
+    }
         
        
-        [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword(string email)
-        {
-            if (string.IsNullOrEmpty(email))
-                return BadRequest(new { message = "Email cannot be empty" });
+    [HttpPost("ForgotPassword")]
+    public async Task<IActionResult> ForgotPassword(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return BadRequest(new { message = "Email cannot be empty" });
 
-            var isUser = await _authService.IsUser(email);
-            
-            if (isUser)
-            {
-                string token = _authService.GenerateToken(email);
+        var isUser = await _authService.IsUser(email);
+
+        if (!isUser) return BadRequest(new { message = "Email not found" });
+        var token = _authService.GenerateToken(email);
                 
-                _authService.SendResetPasswordEmail(email, token);
-                return Ok(new { message = "Email sent" });
-            }
-            else
-            {
-                return BadRequest(new { message = "Email not found" });
-            }
-        }
+        _authService.SendResetPasswordEmail(email, token);
+        return Ok(new { message = "Email sent" });
+
+    }
 
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
-        {
-            // Validate model
-            if (!ModelState.IsValid)
-                return BadRequest(new { message = "Invalid password reset request" });
+        {   
+            try {
+                // Validate model
+                if (!ModelState.IsValid)
+                    return BadRequest(new { message = "Invalid password reset request" });
 
-            // Check for null values in model properties
-            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Token))
-                return BadRequest(new { message = "Email, password, and token cannot be empty" });
-
-            try
-            {
+                // Check for null values in model properties
+                if (string.IsNullOrEmpty(model.Password) || string.IsNullOrEmpty(model.Token))
+                    return BadRequest(new { message = "Password and token cannot be empty" });
+                
                 User user = _mapper.Map<User>(model);
                 // Attempt to reset password
                 await _authService.ResetPassword(user);
+
                 return Ok(new { message = "Password reset successfully" });
+            } 
+            catch (ArgumentException ex) 
+            {
+                // Handle potential errors
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {

@@ -4,7 +4,7 @@ namespace FinancialPlanning.Data.Repositories
 {
     public interface IAuthRepository
     {
-        public Task<User> IsValidUser(string email, string password);
+        public Task<User?> IsValidUser(string email, string password);
 
         public  Task<string> GetRoleUser(string email);
         public Task ResetPassword(User user);

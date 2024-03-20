@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -11,7 +10,7 @@ public class JwtService(string secretKey, string issuer)
     private readonly string _secretKey = secretKey;
     private readonly string _issuer = issuer;
 
-    public string GenerateToken(string username, int expireMinutes = 30)
+    public string GenerateToken(string email, int expireMinutes = 30)
     {
         var symmetricKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(symmetricKey, SecurityAlgorithms.HmacSha256Signature);
@@ -20,7 +19,7 @@ public class JwtService(string secretKey, string issuer)
             _issuer,
             _issuer,
             [
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Email, email)
             ],
             expires: DateTime.Now.AddMinutes(expireMinutes),
             signingCredentials: credentials
@@ -35,7 +34,7 @@ public class JwtService(string secretKey, string issuer)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            if (tokenHandler.ReadToken(token) is not JwtSecurityToken jwtToken)
+            if (tokenHandler.ReadToken(token) is not JwtSecurityToken)
                 return null;
 
             var validationParameters = new TokenValidationParameters
@@ -62,6 +61,7 @@ public class JwtService(string secretKey, string issuer)
             return null;
         }
     }
+
 
     public static bool IsTokenExpired(string token)
     {
