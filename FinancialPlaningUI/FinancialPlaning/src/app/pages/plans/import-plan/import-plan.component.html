@@ -1,34 +1,165 @@
 <main>
-  <h1 class="mb-4">Import Plan</h1>
-  <h5>Step 1/2: Please select a file to import</h5>
-  <div class="card">
-    <form>
-      <p>
-        <label for="term">Term *</label>
-      </p>
-      <mat-form-field appearance="fill">
-        <mat-label>Term</mat-label>
-        <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term">
-          <mat-option disabled selected>Please select term</mat-option>
-          <mat-option *ngFor="let option of termOptions" [value]="option.value">
-            {{option.viewValue}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <input type="file" id="file-input" hidden (change)="onFileSelected($event)" />
-    </form>
-    
-    <app-upload (fileSelected)="onFileSelected($event)"></app-upload>
-    
-    <div>
-      <div class="buttons">
-        <button class="back-button">
-          <span>Back</span>
-        </button>
-        <button class="next-button">
-          <span>Next</span>
-        </button>
+  <div class="row">
+    <div class="col-lg-4 col-md-12">
+      <h1 class="mb-4">Import Plan</h1>
+      <!-- <h5>Step 1/2: Please select a file to import</h5> -->
+      <div class="card">
+        <form>
+          <p>
+            <label for="term">Term *</label>
+          </p>
+          <mat-form-field appearance="fill">
+            <mat-label>Term</mat-label>
+            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term">
+              <mat-option disabled selected>Please select term</mat-option>
+              <mat-option *ngFor="let option of termOptions" [value]="option.value">
+                {{option.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <input type="file" id="file-input" hidden (change)="onFileSelected($event)" />
+        </form>
+        <app-upload (fileSelected)="onFileSelected($event)"></app-upload>
       </div>
+      
+    </div>
+    <div class="col-lg-8 col-md-12 preview-card">
+      <!-- <div class="preview-card"> -->
+        <!-- <div class="col-12"> -->
+          <h3 class="mb-3">Preview</h3>
+          <form class="row">
+            <div class="col-lg-4 col-md-6 mb-3">
+              <label for="term" class="form-label">Term</label>
+              <input
+                class="form-control"
+                type="text"
+                id="term"
+                value="Q3-2022"
+                disabled
+              />
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <label for="file-name" class="form-label">File</label>
+              <input
+                class="form-control"
+                type="text"
+                id="file-name"
+                value="Marketing_Q32022_Plan.xlsx"
+                disabled
+              />
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+              <label for="department" class="form-label">Department</label>
+              <input
+                class="form-control"
+                type="text"
+                id="department"
+                value="Marketing"
+                disabled
+              />
+            </div>
+          </form>
+          <!-- Data table -->
+          <div class="row">
+            <!-- <div class="table-responsive"> -->
+              <table class="table table-responsive">
+                <thead>
+                    <th class="col">Expense</th>
+                    <th class="col">Cost Type</th>
+                    <th class="col">Unit Price(VND)</th>
+                    <th class="col">Amount</th>
+                    <th class="col">Total(VND)</th>
+                    <th class="col">Project Name</th>
+                    <th class="col">Supplier Name</th>
+                    <th class="col">PIC</th>
+                    <th class="col">Notes</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>Promotion event</td>
+                        <td>Direct cost</td>
+                        <td>200,000,000</td>
+                        <td>3</td>
+                        <td>600,000,000</td>
+                        <td>IN22</td>
+                        <td>Internal</td>
+                        <td>AnhMN2</td>
+                        <td>N/A</td>
+                    </tr>
+                </tbody>
+              </table>
+
+            <!-- </div> -->
+          </div>
+        <!-- </div> -->
+      <!-- </div> -->
     </div>
   </div>
+
+ 
+  <!-- <div>
+    <div class="buttons">
+      <button class="back-button">
+        <span>Back</span>
+      </button>
+      <button class="next-button">
+        <span>Next</span>
+      </button>
+    </div>
+  </div> -->
 </main>
