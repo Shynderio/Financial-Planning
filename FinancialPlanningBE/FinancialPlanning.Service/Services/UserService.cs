@@ -22,6 +22,12 @@ namespace FinancialPlanning.Service.Services
             var result = await _userrepository.GetAllUsers();
             return result;
         }
+        //Get all departments
+        public async Task<List<Department>> GetListDepartments()
+        {
+            return await _userrepository.GetListDepartments();
+        }
+
         //Get user by Id
         public async Task<User> GetUserById(Guid id)
         {

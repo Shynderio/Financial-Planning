@@ -32,6 +32,12 @@ namespace FinancialPlanning.Data.Repositories
                 .Include(u => u.Role).ToListAsync();
         }
 
+        // Get list departments
+        public async Task<List<Department>> GetListDepartments()
+        {
+            return await _context.Departments!.ToListAsync();
+        }
+
         // Update user
         public async Task UpdateUser(Guid id, User user)
         {
