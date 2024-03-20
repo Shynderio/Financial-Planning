@@ -1,37 +1,30 @@
 ﻿using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.Data.Repositories
 {
     public class ReportRepository : IReportRepository
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
+
         public ReportRepository(DataContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         //Get all reports
         public async Task<List<Report>> GetAllReports()
         {
             var reports = new List<Report>();
-            if (context.Reports!=null)
+            if (_context.Reports != null)
             {
-             reports = await context.Reports
-                    .Where(r => r.Status > 0)
-                 .OrderBy(r => r.Status) // order by status
-                .ThenByDescending(r => r.UpdateDate)
-                .Include(t => t.ReportVersions)
-                .Include(t => t.Term)
-                .Include(t => t.Department).ToListAsync();          
+                reports = await _context.Reports
+                    .OrderBy(r => r.Status)
+                    .ThenByDescending(r => r.UpdateDate)
+                    .Include(t => t.ReportVersions)
+                    .Include(t => t.Term)
+                    .Include(t => t.Department).ToListAsync();
             }
 
             return reports;
@@ -40,17 +33,42 @@ namespace FinancialPlanning.Data.Repositories
         //get report by department ID
         public async Task<List<Report>> GetReportsByDepartId(Guid departId)
         {
-            var reports = await context.Reports!
-                .Where(r => r.DepartmentId == departId && r.Status>0)
-                 .OrderBy(r => r.Status) // order by status
+            var reports = await _context.Reports!
+                .Where(r => r.DepartmentId == departId)
+                .OrderBy(r => r.Status) // order by status
                 .ThenByDescending(r => r.UpdateDate)
                 .Include(t => t.ReportVersions)
                 .Include(t => t.Term)
                 .Include(t => t.Department)
                 .ToListAsync();
-    
+
             return reports;
         }
 
+        //Delete report
+        public async Task DeleteReport(Report report)
+        {
+            _context.Reports!.Remove(report);
+            await _context.SaveChangesAsync();
+        }
+
+        //Delete report Version
+        public async Task DeleteReportVersions(IEnumerable<ReportVersion> reportVersions)
+        {
+            foreach (var reportVersion in reportVersions)
+            {
+                _context.ReportVersions!.Remove(reportVersion);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Report?> GetReportById(Guid id)
+        {
+            var report = await _context.Reports!
+                .Include(t => t.ReportVersions)
+                .FirstOrDefaultAsync(t => t.Id == id);
+            return report;
+        }
     }
 }

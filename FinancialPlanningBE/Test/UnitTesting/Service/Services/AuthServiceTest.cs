@@ -86,7 +86,8 @@ namespace Test.UnitTesting.Service.Services
 
             var mockDepartRepository = new Mock<IDepartmentRepository>();
             var mockEmailService = new Mock<EmailService>();
-            var authService = new AuthService(mockAuthRepository.Object, mockConfiguration.Object, mockEmailService.Object, mockDepartRepository.Object);
+            var authService = new AuthService(mockAuthRepository.Object,
+                mockConfiguration.Object, mockEmailService.Object, mockDepartRepository.Object);
 
             var user = new User
             {

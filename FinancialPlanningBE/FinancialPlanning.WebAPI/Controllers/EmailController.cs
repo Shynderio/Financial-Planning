@@ -12,7 +12,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             _emailService = emailService;
         }
         [HttpPost("send")]
-        public IActionResult SendEmail(EmailDTO request)
+        public IActionResult SendEmail(EmailDto request)
         {
             _emailService.SendEmail(request);
             return Ok("Email sent successfully");

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Data;
@@ -31,10 +27,16 @@ namespace FinancialPlanning.Data.Repositories
             return await _context.Terms!.ToListAsync();
         }
 
-        public async Task<Term> GetTermById(Guid id)
+        public async Task<Term?> GetTermByIdAsync(Guid id)
         {
-            var term = await _context.Terms!.FindAsync(id) ?? throw new Exception("Term not found");
+             var term = await _context.Terms!.FindAsync(id);
             return term;
+
+        }
+
+        public Term GetTermById(Guid id)
+        {
+            return _context.Terms!.Find(id) ?? throw new Exception("Term not found");
         }
 
         public async Task UpdateTerm(Term term)

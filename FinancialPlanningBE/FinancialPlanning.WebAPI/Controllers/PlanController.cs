@@ -5,6 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
+using static FinancialPlanning.Data.Repositories.PlanRepository;
+using PlanStatus = FinancialPlanning.Common.PlanStatus;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -15,6 +21,41 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
 
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlanViewModel>>> GetFinancialPlans(string keyword = "",
+            string department = "", string status = "")
+        {
+            var plans = await _planService.GetFinancialPlans(keyword, department, status);
+
+            // Project the results into FinancialPlanDto
+            var result = plans.Select((p, index) => new PlanViewModel
+            {
+                No = index + 1,
+                Plan = p.PlanName,
+                Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
+                Department =
+                    p.Department?.DepartmentName ??
+                    "Unknown", // Check if p.Department is not null before accessing its properties
+                Status = GetPlanStatusString((PlanStatus)p.Status),
+                Version = p.PlanVersions.Any()
+                    ? p.PlanVersions.Max(v => v.Version)
+                    : 0 // Check if PlanVersions has any elements before calling Max()
+            }).ToList();
+
+            return result;
+        }
+
+        private string GetPlanStatusString(PlanStatus status)
+        {
+            var attribute =
+                status.GetType().GetTypeInfo().GetMember(status.ToString())
+                    .FirstOrDefault(member => member.MemberType == MemberTypes.Field)?
+                    .GetCustomAttributes(typeof(DescriptionAttribute), false).SingleOrDefault() as DescriptionAttribute;
+            return attribute?.Description ?? status.ToString();
+        }
+
+
         [HttpGet("Planlist")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAllPlans()
@@ -23,6 +64,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             var planListModels = plans.Select(t => _mapper.Map<PlanListModel>(t)).ToList();
             return Ok(planListModels);
         }
+
         [HttpGet("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetPlanById(Guid id)
@@ -35,21 +77,12 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
         public async Task<IActionResult> CreatePlan(PlanListModel planModel)
         {
-            if (ModelState.IsValid)
-            {
-                var plan = _mapper.Map<Plan>(planModel);
-                await _planService.CreatePlan(plan);
-                return Ok(new { message = "Plan created successfully!" });
-            }
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var plan = _mapper.Map<Plan>(planModel);
+            await _planService.CreatePlan(plan);
+            return Ok(new { message = "Plan created successfully!" });
 
-            return BadRequest(new { error = "Invalid model state!" });
         }
-
-
-
-
-
-
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant")]
@@ -127,9 +160,26 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 // Log the exception
                 // It's generally not a good practice to return detailed exception messages to clients
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while importing the plan file.");
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "An error occurred while importing the plan file.");
+            }
+        }
+    
+        [HttpPost("Upload")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
+        {
+            try
+            {
+                await _planService.SavePlan(expenses, termId, uid);
+                return Ok(new { message = "Plan uploaded successfully!" });
+            }
+            catch (Exception)
+            {
+                // Log the exception
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "An error occurred while uploading the plan file.");
             }
         }
     }
-
 }

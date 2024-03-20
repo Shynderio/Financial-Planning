@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinancialPlanning.Data.Entities;
 
 namespace FinancialPlanning.WebAPI.Models.Plan
 {

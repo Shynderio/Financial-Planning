@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard {
   constructor(private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
@@ -23,7 +23,7 @@ export class AuthGuard implements CanActivate {
         // check token is exp
         if (currentTime > expirationTime) {
           localStorage.removeItem('token');
-       window.location.href='/login';
+          this.router.navigateByUrl('/login');  
           return false;
         } else {
           return true;
@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       }
     }
 
-    this.router.navigateByUrl('/login');
+    // this.router.navigateByUrl('/login');  
     return false;
   }
 }

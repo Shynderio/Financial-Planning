@@ -1,10 +1,7 @@
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -31,11 +28,6 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Plan>> GetAllPlans()
         {
             return await _context.Plans!.ToListAsync();
@@ -46,9 +38,9 @@ namespace FinancialPlanning.Data.Repositories
             return await _context.Plans!.Where(p => p.DepartmentId == departmentId).ToListAsync();
         }
 
-        public async Task<Plan> GetPlanById(Guid id)
+        public async Task<Plan?> GetPlanById(Guid id)
         {
-            return await _context.Plans!.FindAsync(id) ?? throw new Exception("Plan not found");
+            return await _context.Plans!.FindAsync(id);
         }
 
         public async Task<List<Plan>> GetPlans(Guid? termId, Guid? departmentId)
@@ -79,13 +71,16 @@ namespace FinancialPlanning.Data.Repositories
 
         }
 
-        public async Task SavePlan(Plan plan, Guid creatorId)
+        public async Task<Plan> SavePlan(Plan plan, Guid creatorId)
         {
-            var existingPlan = await _context.Plans!.FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
-
+            var existingPlan = await _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions)
+                .FirstOrDefaultAsync(p => p.TermId == plan.TermId && p.DepartmentId == plan.DepartmentId);
             if (existingPlan != null)
             {
-                var newVersion = existingPlan.PlanVersions.Max(pv => pv.Version) + 1;
+                var newVersion = _context.PlanVersions!.Count(pv => pv.PlanId == existingPlan.Id) + 1;
                 var planVersion = new PlanVersion
                 {
                     Id = Guid.NewGuid(),
@@ -96,10 +91,13 @@ namespace FinancialPlanning.Data.Repositories
                 };
 
                 _context.PlanVersions!.Add(planVersion);
+                await _context.SaveChangesAsync();
+
+                return existingPlan;
             }
             else
             {
-                plan.Status = 0;
+                plan.Status = (int)PlanStatus.New;
                 plan.Id = Guid.NewGuid();
 
                 var planVersion = new PlanVersion
@@ -115,9 +113,13 @@ namespace FinancialPlanning.Data.Repositories
 
                 _context.Plans!.Add(plan);
                 _context.PlanVersions!.Add(planVersion);
+
+                await _context.SaveChangesAsync();
+
+                return _context.Plans!
+                    .Include(p => p.Term)
+                    .Include(p => p.Department).FirstOrDefault(p => p.Id == plan.Id)!;
             }
-            
-            await _context.SaveChangesAsync();
         }
 
         public Task<Plan> ViewPlan(string file)
@@ -145,7 +147,7 @@ namespace FinancialPlanning.Data.Repositories
             throw new NotImplementedException();
         }
 
-        Task<bool> IPlanRepository.Approve(Guid termId, string planName, string departmentOrUid, string file)
+        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
         {
             throw new NotImplementedException();
         }
@@ -167,5 +169,38 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
+        {
+
+            IQueryable<Plan> plans = _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions);
+
+            // Lọc kế hoạch tài chính dựa trên từ khóa, phòng ban và trạng thái
+            if (!string.IsNullOrEmpty(keyword))
+                plans = plans.Where(p => p.PlanName.Contains(keyword, StringComparison.CurrentCultureIgnoreCase));
+
+            if (!string.IsNullOrEmpty(department))
+                plans = plans.Where(p => string.Equals(p.Department.DepartmentName.ToLower(), department.ToLower(),
+                    StringComparison.Ordinal));
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                plans = status switch
+                {
+                    "New" => plans.Where(p => p.Status == (int)PlanStatus.New),
+                    "Waiting for Approval" => plans.Where(p => p.Status == (int)PlanStatus.WaitingForApproval),
+                    "Approved" => plans.Where(p => p.Status == (int)PlanStatus.Approved),
+                    _ => plans,
+                };
+            }
+
+            // Sắp xếp theo trạng thái và sau đó theo StartDate trong mỗi trạng thái
+            plans = plans.OrderByDescending(p => p.Status)
+                .ThenBy(p => p.Term.StartDate);
+
+            return await plans.ToListAsync();
+        }
     }
 }

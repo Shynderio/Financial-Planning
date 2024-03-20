@@ -14,7 +14,7 @@ namespace FinancialPlanning.WebAPI.Models.Term
         public Guid CreatorId { get; set; } = creatorId;
 
         [Required(ErrorMessage = "Duration is required")]
-        [RegularExpression(@"^[1,3,6]$", ErrorMessage = "Duration must be set to 1, 3, or 6")]
+        [RegularExpression("^[1,3,6]$", ErrorMessage = "Duration must be set to 1, 3, or 6")]
         public int Duration { get; set; } = duration;
 
         [Required(ErrorMessage = "Start date is required")]

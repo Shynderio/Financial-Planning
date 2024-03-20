@@ -46,4 +46,8 @@ export class TermService {
   getTerm(termId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/' + termId);
   }
+
+  getStartedTerms(): Observable<any> {
+    return this.http.get(this.apiUrl + '/started');
+  }
 }

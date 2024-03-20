@@ -20,14 +20,10 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> CreateTerm(CreateTermModel termModel)
         {
-            if (ModelState.IsValid)
-            {
-                var term = _mapper.Map<Term>(termModel);
-                await _termService.CreateTerm(term);
-                return Ok(new { message = "Term created successfully!" });
-            }
-
-            return BadRequest(new { error = "Invalid model state!" });
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var term = _mapper.Map<Term>(termModel);
+            await _termService.CreateTerm(term);
+            return Ok(new { message = "Term created successfully!" });
         }
 
         [HttpPut("start/{id:guid}")]
@@ -42,7 +38,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetTermById(Guid id)
         {
-            var term = await _termService.GetTermById(id);
+            var term = await _termService.GetTermByIdAsync(id);
             return Ok(term);
         }
 
@@ -59,15 +55,11 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> UpdateTerm(Guid id, CreateTermModel termModel)
         {
-            if (ModelState.IsValid)
-            {
-                var term = _mapper.Map<Term>(termModel);
-                term.Id = id;
-                await _termService.UpdateTerm(term);
-                return Ok(new { message = $"Term with id {id} updated successfully!" });
-            }
-
-            return BadRequest(new { error = "Invalid model state!" });
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var term = _mapper.Map<Term>(termModel);
+            term.Id = id;
+            await _termService.UpdateTerm(term);
+            return Ok(new { message = $"Term with id {id} updated successfully!" });
         }
 
         [HttpDelete("{id:guid}")]
@@ -76,6 +68,15 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             await _termService.DeleteTerm(id);
             return Ok(new { message = $"Term with id {id} deleted successfully!" });
+        }
+
+        [HttpGet("started")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetStartedTerms()
+        {
+            var terms = await _termService.GetStartedTerms();
+            var selectTermModels = _mapper.Map<List<SelectTermModel>>(terms);
+            return Ok(selectTermModels);
         }
     }
 }

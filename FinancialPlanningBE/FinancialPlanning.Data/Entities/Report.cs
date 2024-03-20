@@ -13,7 +13,7 @@ namespace FinancialPlanning.Data.Entities
     {
         [Key] public Guid Id { get; set; }
         [Required] public string ReportName { get; set; } = string.Empty;
-        [Required] public int Month { get; set; }
+        [Required] public string Month { get; set; } = string.Empty;
         [Required] public int Status { get; set; }
         [Required] public DateTime UpdateDate { get; set; }
         [ForeignKey("Term")] public Guid TermId { get; set; }
@@ -24,8 +24,8 @@ namespace FinancialPlanning.Data.Entities
 
         public int? GetMaxVersion()
         {
-            if (this.ReportVersions == null) return 1;
-            else return this.ReportVersions.OrderByDescending(rv => rv.Version).FirstOrDefault()?.Version;
+            if (ReportVersions == null) return 1;
+            return ReportVersions.MaxBy(rv => rv.Version)?.Version;
 
         }
     }
