@@ -9,6 +9,6 @@ namespace FinancialPlanning.Data.Repositories
 {
     public interface IPositionRepository
     {
-        public Task<List<Position>> GetAllPositons();
+        public Task<List<Position>> GetAllPositions();
     }
 }

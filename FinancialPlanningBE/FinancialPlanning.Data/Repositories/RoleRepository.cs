@@ -11,16 +11,16 @@ namespace FinancialPlanning.Data.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly DataContext context;
+        private readonly DataContext _context;
 
         public RoleRepository(DataContext context)
         {
-            this.context = context;
+            this._context = context;
 
         }
         public async Task<List<Role>> GetAllRoles()
         {
-            return await context.Roles!.ToListAsync();
+            return await _context.Roles!.ToListAsync();
         }
     }
 }

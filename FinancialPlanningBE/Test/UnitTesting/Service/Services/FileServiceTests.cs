@@ -5,19 +5,15 @@ using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using Xunit.Abstractions;
 
 namespace Test.UnitTesting.Service.Services;
 
 public class FileServiceTests
 {
     private readonly IConfiguration _configuration;
-    private readonly ITestOutputHelper _testOutputHelper;
 
-    public FileServiceTests(ITestOutputHelper testOutputHelper)
+    public FileServiceTests()
     {
-        _testOutputHelper = testOutputHelper;
-
         //Construct configuration
         var currentDirectory = Directory.GetCurrentDirectory();
 
@@ -137,11 +133,11 @@ public class FileServiceTests
 
     public static IEnumerable<object[]> TestData()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             "CorrectPlan.xlsx", 0, new List<Expense>
             {
-                new Expense
+                new()
                 {
                     No = 1,
                     Date = new DateTime(2024, 3, 8),
@@ -177,13 +173,13 @@ public class FileServiceTests
                     Note = "akjdlkajd"
                 }
             }
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             "CorrectReport.xlsx", 1, new List<Expense>
             {
-                new Expense
+                new()
                 {
                     No = 1,
                     Date = new DateTime(2023, 3, 8),
@@ -215,7 +211,7 @@ public class FileServiceTests
                     Note = "qopwieo"
                 }
             }
-        };
+        ];
     }
 
     [Theory]

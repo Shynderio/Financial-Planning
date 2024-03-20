@@ -2,6 +2,7 @@ using System.Globalization;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Aspose.Cells;
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -11,25 +12,7 @@ namespace FinancialPlanning.Service.Services;
 
 public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
-    private const int MaxSize = 500 * 1024 * 1024; //500MB
-
-    private static readonly string[] TemplatePath =
-    [
-        @"..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
-        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
-    ];
-
-    private readonly string[][] _header =
-    [
-        [
-            "DATE", "TERM", "DEPARTMENT", "EXPENSE", "COST TYPE", "UNIT PRICE", "AMOUNT", "Currency", "Exchange rate",
-            "TOTAL", "", "PROJECT NAME", "SUPPLIER NAME", "PIC", "NOTE"
-        ],
-        [
-            "DATE", "TERM", "DEPARTMENT", "EXPENSE", "COST TYPE", "UNIT PRICE", "AMOUNT", "TOTAL", "PROJECT NAME",
-            "SUPPLIER NAME", "PIC", "NOTE"
-        ]
-    ];
+    
 
     public async Task<string> GetFileAsync(string key)
     {
@@ -75,7 +58,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         string[] validExtension = [".xls", ".xlsx", ".csv"];
 
         //check file is not empty, not bigger than 500MB and has valid extension
-        if (fileStream.Length == 0 || fileStream.Length > MaxSize ||
+        if (fileStream.Length == 0 || fileStream.Length > Constants.MaxFileSize ||
             !validExtension.Contains(Path.GetExtension(fileStream.Name).ToLower()))
         {
             return false;
@@ -90,7 +73,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
         //check number of column is sufficient
         var numOfColumns = worksheet.Dimension?.Columns ?? 0;
-        if (numOfColumns != _header[documentType].Length)
+        if (numOfColumns != Constants.TemplateHeader[documentType].Length)
             return false;
 
         //remove empty row (all cell in row is empty)
@@ -102,7 +85,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //check cell content is not null and has valid format
         for (var i = 1; i <= numOfColumns; i++)
         {
-            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(_header[documentType][i - 1]))
+            if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(Constants.TemplateHeader[documentType][i - 1]))
                 return false;
 
             for (var j = 3; j <= numOfRows; j++)
@@ -190,7 +173,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
-            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), TemplatePath[documentType])));
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), Constants.TemplatePath[documentType])));
         var worksheet = package.Workbook.Worksheets[0];
         foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
         {

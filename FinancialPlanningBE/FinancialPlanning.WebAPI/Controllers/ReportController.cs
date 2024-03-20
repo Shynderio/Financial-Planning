@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -14,20 +12,18 @@ namespace FinancialPlanning.WebAPI.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
-        private readonly AuthService _authService;
         private readonly IMapper _mapper;
         private readonly ReportService _reportService;
         private readonly TokenService _tokenService;
         private readonly TermService _termService;
 
-        public ReportController(AuthService authService, IMapper mapper,
+        public ReportController(IMapper mapper,
             ReportService reportService,TokenService tokenService,TermService termService)
         {
-            _authService = authService;
             _mapper = mapper;
             _reportService = reportService;
             _tokenService = tokenService;
-            this._termService = termService;
+            _termService = termService;
         }
 
         // Phương thức để lấy danh sách báo cáo của user
@@ -38,8 +34,8 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             try
             {
-                // get token ffrom authorization header
-                var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");             
+                // get token from authorization header
+                var token = HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");             
                 var useremail = _tokenService.GetEmailFromToken(token);   // Get user email from JWT token
 
                 var reports = await _reportService.GetReportsByEmail(useremail); // Get list reports          

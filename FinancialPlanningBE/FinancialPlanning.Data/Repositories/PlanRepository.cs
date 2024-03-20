@@ -1,10 +1,7 @@
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -31,11 +28,6 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Plan>> GetAllPlans()
         {
             return await _context.Plans!.ToListAsync();
@@ -46,9 +38,9 @@ namespace FinancialPlanning.Data.Repositories
             return await _context.Plans!.Where(p => p.DepartmentId == departmentId).ToListAsync();
         }
 
-        public async Task<Plan> GetPlanById(Guid id)
+        public async Task<Plan?> GetPlanById(Guid id)
         {
-            return await _context.Plans!.FindAsync(id) ?? throw new Exception("Plan not found");
+            return await _context.Plans!.FindAsync(id);
         }
 
         public async Task<List<Plan>> GetPlans(Guid? termId, Guid? departmentId)
@@ -95,12 +87,12 @@ namespace FinancialPlanning.Data.Repositories
                 };
 
                 _context.PlanVersions!.Add(planVersion);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return newVersion;
             }
             else
             {
-                plan.Status = 0;
+                plan.Status = (int)PlanStatus.New;
                 plan.Id = Guid.NewGuid();
 
                 var planVersion = new PlanVersion
@@ -147,7 +139,7 @@ namespace FinancialPlanning.Data.Repositories
             throw new NotImplementedException();
         }
 
-        Task<bool> IPlanRepository.Approve(Guid termId, string planName, string departmentOrUid, string file)
+        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,4 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 namespace FinancialPlanning.Service.Services
@@ -67,8 +65,8 @@ namespace FinancialPlanning.Service.Services
         {
             var existingPlan = await _planRepository.GetPlanById(plan.Id) ?? throw new ArgumentException("Plan not found with the specified ID");
 
-            var Status = existingPlan.Status;
-            if (Status == 1)
+            var status = existingPlan.Status;
+            if (status == (int)PlanStatus.New)
             {
                 existingPlan.PlanName = plan.PlanName;
                 existingPlan.PlanVersions = plan.PlanVersions;
@@ -106,7 +104,7 @@ namespace FinancialPlanning.Service.Services
             IEnumerable<Plan> plans = await _planRepository.GetAllPlans();
         }
 
-        public string ConvertFile(String fileName)
+        public string ConvertFile(string fileName)
         {
             // Convert the file to a list of expenses using FileService
             try
@@ -157,12 +155,12 @@ namespace FinancialPlanning.Service.Services
                 {
                     PlanName = "Plan",
                     DepartmentId = department,
-                    TermId = termId,
+                    TermId = termId
                 };
 
                 using (var version = _planRepository.SavePlan(plan, uid)){
                     var filename = "Term1" + "/" + "HR" + "/Plan/" + "version_" + version.Result + ".xlsx";
-                    Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+                    var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                     // Create a FileStream from the MemoryStream
                     // using (var fileStream = new FileStream(filename, FileMode.Create))
                     // {

@@ -20,14 +20,10 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> CreateTerm(CreateTermModel termModel)
         {
-            if (ModelState.IsValid)
-            {
-                var term = _mapper.Map<Term>(termModel);
-                await _termService.CreateTerm(term);
-                return Ok(new { message = "Term created successfully!" });
-            }
-
-            return BadRequest(new { error = "Invalid model state!" });
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var term = _mapper.Map<Term>(termModel);
+            await _termService.CreateTerm(term);
+            return Ok(new { message = "Term created successfully!" });
         }
 
         [HttpPut("start/{id:guid}")]
@@ -59,15 +55,11 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> UpdateTerm(Guid id, CreateTermModel termModel)
         {
-            if (ModelState.IsValid)
-            {
-                var term = _mapper.Map<Term>(termModel);
-                term.Id = id;
-                await _termService.UpdateTerm(term);
-                return Ok(new { message = $"Term with id {id} updated successfully!" });
-            }
-
-            return BadRequest(new { error = "Invalid model state!" });
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var term = _mapper.Map<Term>(termModel);
+            term.Id = id;
+            await _termService.UpdateTerm(term);
+            return Ok(new { message = $"Term with id {id} updated successfully!" });
         }
 
         [HttpDelete("{id:guid}")]

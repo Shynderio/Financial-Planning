@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -27,40 +26,6 @@ public class JwtService(string secretKey, string issuer)
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    public ClaimsPrincipal? GetPrincipal(string token)
-    {
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            if (tokenHandler.ReadToken(token) is not JwtSecurityToken jwtToken)
-                return null;
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = _issuer,
-
-                ValidateAudience = true,
-                ValidAudience = _issuer,
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey)),
-
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-            return principal;
-        }
-        catch
-        {
-            return null;
-        }
     }
 
     public static bool IsTokenExpired(string token)

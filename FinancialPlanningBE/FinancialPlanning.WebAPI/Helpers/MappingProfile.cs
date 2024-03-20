@@ -1,4 +1,5 @@
 using AutoMapper;
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models;
@@ -17,10 +18,7 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.EndDate,
                     opt => opt.MapFrom(src => src.StartDate.AddMonths(src.Duration)))
                 .ForMember(dest => dest.Status,
-                    opt => opt.MapFrom(src =>
-                        EntityMaps.StatusMap.ContainsKey(src.Status)
-                            ? EntityMaps.StatusMap[src.Status]
-                            : string.Empty));
+                    opt => opt.MapFrom(src => ((TermStatus)src.Status).ToString()));
             CreateMap<Term, TermViewModel>().ReverseMap();
             CreateMap<CreateTermModel, Term>();
             CreateMap<LoginModel, User>();

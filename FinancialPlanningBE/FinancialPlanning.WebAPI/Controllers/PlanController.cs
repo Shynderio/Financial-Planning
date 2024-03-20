@@ -4,7 +4,6 @@ using FinancialPlanning.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -35,14 +34,11 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
         public async Task<IActionResult> CreatePlan(PlanListModel planModel)
         {
-            if (ModelState.IsValid)
-            {
-                var plan = _mapper.Map<Plan>(planModel);
-                await _planService.CreatePlan(plan);
-                return Ok(new { message = "Plan created successfully!" });
-            }
+            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
+            var plan = _mapper.Map<Plan>(planModel);
+            await _planService.CreatePlan(plan);
+            return Ok(new { message = "Plan created successfully!" });
 
-            return BadRequest(new { error = "Invalid model state!" });
         }
 
         [HttpDelete("{id:guid}")]
@@ -56,7 +52,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         // POST: api/plan
         [Authorize(Roles = "FinancialStaff")]
         [HttpPost("Import")]
-        public ActionResult<List<Expense>> Import(IFormFile file, Guid uid, Guid termId)
+        public ActionResult<List<Expense>> Import(IFormFile? file, Guid uid, Guid termId)
         {
             try
             {

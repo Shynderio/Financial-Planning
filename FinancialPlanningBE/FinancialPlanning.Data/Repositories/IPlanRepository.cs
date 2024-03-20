@@ -50,7 +50,7 @@ namespace FinancialPlanning.Data.Repositories
         // Export a financial plan to a file.
 
         public Task<bool> ExportPlan(string file);
-        public Task<Plan> GetPlanById(Guid id);
+        public Task<Plan?> GetPlanById(Guid id);
         public Task<Guid> CreatePlan(Plan plan);
         public Task UpdatePlan(Plan plan);
         public Task DeletePlan(Plan plan);
