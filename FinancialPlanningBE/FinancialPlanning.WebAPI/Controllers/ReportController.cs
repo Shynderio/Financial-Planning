@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.Runtime.Documents;
+using AutoMapper;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
@@ -101,12 +102,20 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 string url = await _reportService.GetFileByName(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template1.xlsx");
 
                 bool result = await _fileService.DownloadFile(url, savePath);
                 if (result)
                 {
-                    return Ok("File downloaded successfully");
+                    // Tải file thành công, tiến hành chuyển đổi Excel thành danh sách Expense
+                    using (var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read))
+                    {
+                        List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                        return Ok(expenses);
+                        // Xử lý danh sách expenses
+                    }
+
+                 
                 }
                 else
                 {
