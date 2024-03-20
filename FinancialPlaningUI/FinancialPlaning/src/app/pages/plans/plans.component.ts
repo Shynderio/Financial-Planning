@@ -111,7 +111,7 @@ export class PlansComponent implements OnInit {
     const startIndex = this.pageIndex * this.pageSize;
     
     // return filteredList.slice(startIndex, startIndex + this.pageSize);
-    this.listSize = this.planList.slice(startIndex, startIndex + this.pageSize).length;
+    this.listSize = this.planList.length;
     return this.planList.slice(startIndex, startIndex + this.pageSize);
   }
 
