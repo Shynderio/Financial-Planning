@@ -4,7 +4,7 @@
       <h3><b>Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <a routerLink="" id="create-button" >
+    <a routerLink="/import-plan" id="create-button" >
       <button><i class="fa-solid fa-plus"></i> Import</button>
     </a>
   </div>
@@ -34,7 +34,7 @@
     </ng-container>
     
     <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <th mat-header-cell *matHeaderCellDef>version/th>
       <td mat-cell *matCellDef="let plan">V{{plan.version}}</td>
     </ng-container>
     <ng-container matColumnDef="status">
