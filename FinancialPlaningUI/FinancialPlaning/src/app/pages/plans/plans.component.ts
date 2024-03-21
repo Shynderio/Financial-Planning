@@ -28,8 +28,6 @@ import {
 } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { PlanService } from '../../services/plan.service';
-import { TermService } from '../../services/term.service';
-import { ReportService } from '../../services/report.service';
 import { jwtDecode } from 'jwt-decode';
 import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
@@ -93,13 +91,11 @@ export class PlansComponent implements OnInit {
     'action',
   ];
   showEditDeleteButton(plan: Plan): boolean {
-    return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase() ) || this.role === 'FinancialStaff';
+    return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()  || this.role === 'FinancialStaff');
   }
 
   constructor(
     private planService: PlanService,
-    private termService: TermService, 
-    private reportService: ReportService, 
     private elementRef: ElementRef,
     private dialog: MatDialog,
     private messageBar: MatSnackBar
@@ -140,6 +136,7 @@ export class PlansComponent implements OnInit {
       this.dataSource = this.getPaginatedItems();
       console.log('Fetch data');
     });
+    
   }
   getUsersDepartment(): string {
     let userDepartment = '';
@@ -229,7 +226,48 @@ export class PlansComponent implements OnInit {
     // Gọi lại fetchData() để cập nhật dữ liệu mới sau khi đặt lại bộ lọc
     this.fetchData();
   }
+  openDeleteDialog(id: string) {
+    const deleteDialog = this.dialog.open(DeletePlanDialog, {
+      width: '400px',
+      height: '250px',
+    });
+
+    deleteDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'delete') {
+            return this.planService.deletePlan(id);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe((response) => {
+        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
+          
+          panelClass: ['success'],
+        });
+        this.pageIndex = 0;
+        this.fetchData();
+      });
+  }
+}
+
+
+
+
+@Component({
+    selector: 'delete-plan',
+    standalone: true,
+    templateUrl: './delete-plan/delete-plan.component.html',
+    styleUrls: ['./delete-plan/delete-plan.component.css'],
+    imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+})
+
+  export class DeletePlanDialog {
+    constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
+  }
+  
  
 
-
-}
