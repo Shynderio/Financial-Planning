@@ -1,14 +1,12 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { ReportService } from '../../../services/report.service';
-import { Router } from 'express';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { concatMap, of } from 'rxjs';
+
 
 @Component({
   selector: 'app-report-details',
@@ -77,18 +75,16 @@ export class ReportDetailsComponent {
       this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
       this.totalExpense = this.dataFile.reduce((total: any, element: any) => total + (element.totalAmount), 0);
 
-      console.log(data);
-
     });
   }
-
+  //filter page
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.dataFile;
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
-
+  //paging
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.dataSource = this.getPaginatedItems();
@@ -100,7 +96,25 @@ export class ReportDetailsComponent {
   if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
   return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
 }
+//export file
+downloadFile(reportId: string, version: number) {
+  this.reportService.exportSinglereport(reportId, version).subscribe((data: any) => {
+      const downloadUrl = data.downloadUrl;
+       // create hidden link to download
+       const link = document.createElement('a');
+       link.href = downloadUrl;
+       link.setAttribute('download', '');
 
+       // Add link into web and click it to download
+       document.body.appendChild(link);
+       link.click();
+
+       // remove link after download 
+       document.body.removeChild(link)
+    }, 
+  );
+}
+ //open dialog report history
   openReportVersionsDialog() {
     const reportVersionsDialog = this.dialog.open(ReportVersionsDialog, {
       width: '500px',
@@ -120,10 +134,12 @@ export class ReportDetailsComponent {
   imports: [MatDialogActions, MatDialogTitle, MatDialogContent, MatTableModule],
 })
 export class ReportVersionsDialog {
+  
   displayedColumns: string[] = ['Version', 'Published data', 'Changed by'];
   dataSource: any = [];
   currentVersion: any;
   isFirstRow: boolean = true;
+
   constructor(
     public reportService: ReportService,
     public dialogRef: MatDialogRef<ReportVersionsDialog>,
@@ -136,6 +152,7 @@ export class ReportVersionsDialog {
   closeDialog() {
     this.dialogRef.close();
   }
+  //current vesion 
   getVersionLabel(element: any): string {
     if (this.isFirstRow) {
       this.isFirstRow = false;
@@ -144,26 +161,28 @@ export class ReportVersionsDialog {
       return 'v.' + element.version;
     }
   }
+  //Convert date to dd/mm/yyyy
   convertIsoDateToDdMmYyyy(isoDate: string): string {
     if (!isoDate) return '';
     const dateParts = isoDate.split('T')[0].split('-');
     if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
-
+  
+  //download file when click version
   downloadFile(reportId: string, version: number) {
     this.reportService.exportSinglereport(reportId, version).subscribe((data: any) => {
         const downloadUrl = data.downloadUrl;
-         // Tạo một link ẩn để download file
+         // create hidden link to download
          const link = document.createElement('a');
          link.href = downloadUrl;
          link.setAttribute('download', '');
 
-         // Thêm link vào trang web và click vào nó để bắt đầu download
+         // Add link into web and click it to download
          document.body.appendChild(link);
          link.click();
 
-         // Xóa link sau khi download hoàn tất
+         // remove link after download 
          document.body.removeChild(link)
       }, 
     );

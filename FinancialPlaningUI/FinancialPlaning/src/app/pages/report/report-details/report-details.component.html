@@ -5,7 +5,7 @@
       <h6>Report Details</h6>
     </div>
     <div class="abc">
-      <a routerLink="/" class="create-button">
+      <a routerLink="/" class="create-button" (click)="downloadFile(report.id,report.version)">
         <button> Export</button>
       </a>
       <a routerLink="/" class="export-button">
@@ -33,8 +33,8 @@
   </div>
 
   <div>
-    <h6>Total Expense:{{totalExpense}} </h6>
-    <h6>Biggest Expenditure: {{biggestExpenditure}}</h6>
+    <h6>Total Expense:{{totalExpense | number:'1.0-0'}} </h6>
+    <h6>Biggest Expenditure: {{biggestExpenditure | number:'1.0-0'}}</h6>
   </div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
