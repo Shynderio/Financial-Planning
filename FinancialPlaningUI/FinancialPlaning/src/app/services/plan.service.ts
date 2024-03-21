@@ -34,8 +34,8 @@ export class PlanService {
     // Thực hiện gọi HTTP GET đến API endpoint
     return this.http.get<Plan[]>(`${this.apiUrl}`, { params });
   }
-  getAllTerms(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  getAllPlans(): Observable<any> {
+    return this.http.get(this.apiUrl + '/Planlist');
   }
   importPlan(file: File): Observable<any> {
     const formData = new FormData();
