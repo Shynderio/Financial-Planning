@@ -32,7 +32,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             // Project the results into FinancialPlanDto
             var result = plans.Select((p, index) => new PlanViewModel
             {
-                No = index + 1,
+                Id = p.Id,
                 Plan = p.PlanName,
                 Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
                 Department =
@@ -64,7 +64,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             var plans = await _planService.GetFinancialPlans("", "", ""); ;
             var result = plans.Select((p, index) => new PlanViewModel
             {
-                No = index + 1,
+                Id = p.Id,
                 Plan = p.PlanName,
                 Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
                 Department =
@@ -101,7 +101,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Accountant")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeletePlan(Guid id)
         {
             await _planService.DeletePlan(id);

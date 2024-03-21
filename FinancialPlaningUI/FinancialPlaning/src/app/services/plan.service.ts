@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, catchError, map } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
 import { environment } from '../../environments/environment';
 
@@ -41,5 +41,19 @@ export class PlanService {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(this.apiUrl + '/import', formData)
+  }
+  deletePlan(PlanId: string): Observable<number> {
+    return this.http
+      .delete(this.apiUrl + '/' + PlanId, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
   }
 }
