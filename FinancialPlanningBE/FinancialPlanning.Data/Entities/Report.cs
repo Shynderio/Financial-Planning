@@ -28,5 +28,6 @@ namespace FinancialPlanning.Data.Entities
             return ReportVersions.MaxBy(rv => rv.Version)?.Version;
 
         }
+     
     }
 }

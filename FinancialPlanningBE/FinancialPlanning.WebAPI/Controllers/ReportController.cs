@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
@@ -76,35 +77,85 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
 
-        [HttpGet]
-        [Route("GetURL")]
-        public IActionResult GetUrlFile(string key)
-        {
-            return Ok();
-        }
 
 
-        [HttpPost]
-        public async Task<IActionResult> DownloadFileFromUrlAsync(string key)
+        [HttpGet("details/{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetreportDetails(Guid id)
         {
             try
             {
-                string url = await _reportService.GetFileByName(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
+                var report = await _reportService.GetReportById(id);
+                var reportVersions = await _reportService.GetReportVersionsAsync(id);
+                //string reportName = report.ReportName;
+                string reportName = "CorrectPlan";
+                string url = await _reportService.GetFileByName(reportName + ".xlsx");
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", reportName + ".xlsx");
 
-                bool result = await _fileService.DownloadFile(url, savePath);
-                if (result)
+                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
+                //download file sucessfull 
+                if (isDownLoad)
                 {
-                    return Ok("File downloaded successfully");
+                    // conver file to list expense
+                    using (var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read))
+                    {
+                        try
+                        {
+                            List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                            //mapper
+                            var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                            var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
+                            // Get the name of the user who uploaded the file
+                            var firstReportVersion = reportVersionModel.FirstOrDefault();
+                            var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+
+                            var result = new
+                            {
+                                Report = reportViewModel,
+                                Expenses = expenses,
+                                ReportVersions = reportVersionModel,
+                                UploadedBy = uploadedBy
+                            };
+
+                            return Ok(result);
+                        }
+                        catch
+                        {
+                            return BadRequest("Failed to convert");
+                        }
+                    }
                 }
                 else
                 {
                     return BadRequest("Failed to download file");
                 }
             }
+            //error when download
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error downloading file: {ex.Message}");
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+        //export report 
+        [HttpGet("export/{id:guid}/{version:int}")]
+        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSingleReport(Guid id, int version)
+        {
+            try
+            {
+                //from reportVersion Id -> get name report + version
+                var report = await _reportService.GetReportById(id);
+                //var fileName = report.ReportName + "" + version;
+                var fileName = "CorrectPlan";
+                //get url from name file
+                string url = await _reportService.GetFileByName(fileName + ".xlsx");
+
+                // return URL
+                return Ok(new { downloadUrl = url });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
             }
         }
     }
