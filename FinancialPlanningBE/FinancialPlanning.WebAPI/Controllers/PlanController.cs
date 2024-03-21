@@ -102,7 +102,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Check if a file is uploaded
                 if (file == null || file.Length == 0)
                 {
-                    return BadRequest("No file uploaded");
+                    return BadRequest(new { message = "No file uploaded" });
                 }
 
                 // Generate a unique filename using GUID and original file extension
@@ -125,7 +125,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 {
                     // Delete the temporary file if conversion fails
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Failed to convert");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Validate the file
@@ -140,7 +140,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                     // Delete the temporary file if validation fails
                     System.IO.File.Delete(convertedFilePath);
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Invalid file format");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses

@@ -16,6 +16,7 @@ import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
 import { PlansComponent } from './pages/plans/plans.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
+import { ReupPlanComponent } from './pages/plans/reup-plan/reup-plan.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -30,6 +31,7 @@ export const routes: Routes = [
     { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
         { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
+    { path: 'reup-plan', component: ReupPlanComponent, canActivate: [AuthGuard]},
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },
     { path: 'edit-user/:id', component: AddNewUserComponent },

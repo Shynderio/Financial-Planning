@@ -74,14 +74,12 @@ export class ImportPlanComponent implements OnInit {
         console.log(error);
       }
     );
-
   };
 
 
   onFileSelected(event: any) {
     // debugger;
     this.file = event;
-    // this.planForm.get('fileInput')?.setValue(this.file);
     console.log('Selected file:', this.file);
   }
 
@@ -95,6 +93,16 @@ export class ImportPlanComponent implements OnInit {
         },
         error => {
           console.log(error);
+          this.messageBar.open(
+            error.error.message,
+            undefined,
+            {
+              duration: 5000,
+              panelClass: ['messageBar', 'successMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            }
+          );
         }
       );
     } else {
