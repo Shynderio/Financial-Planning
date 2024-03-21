@@ -177,7 +177,6 @@ export class ListReportComponent {
   getQuarters() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-    const currentQuarter = Math.floor((currentDate.getMonth() / 3)) + 1;
 
     // Lặp từ năm trước đến năm tiếp theo và từ quý 1 đến quý 4
     for (let year = currentYear - 2; year <= currentYear + 1; year++) {
