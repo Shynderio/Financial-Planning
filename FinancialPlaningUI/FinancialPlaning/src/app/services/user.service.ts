@@ -26,7 +26,10 @@ export class UserService {
   editUser(userId:string, user: AddUser) {
     return this.http.put<AddUser>(this.apiUrl + '/api/User/'+userId,user)
   }
-
+  changeUserStatus(userId: string, status: number) {
+    return this.http.put(`http://localhost:5085/api/User/${userId}/${status}`, {});
+}
+  
   addNewUser(user: AddUser) {
     return this.http.post(this.apiUrl + "/api/User", user);
   }

@@ -41,19 +41,22 @@
                 </div>
                 <div class="col-6">
                     <h4><label for="status" class="form-label">Status</label></h4>
-                    <input class="form-control" type="text" id="status" formControlName="status" [value]="userForm.get('status')?.value === 1 ? 'Active' : 'Deactive'" [disabled]="true" />
+                    <select class="form-select" id="status" formControlName="status">
+                        <option [value]="1" [selected]="userForm.get('status')?.value === 1">Active</option>
+                        <option [value]="0" [selected]="userForm.get('status')?.value === 0">Deactive</option>
+                    </select>
                 </div>
                 <div class="col-6">
                     <h4><label for="note" class="form-label">Notes</label></h4>
                     <input class="form-control" type="text" id="note" formControlName="note"/>
                 </div>
             </div>
-             <div class="row mt-4">
+            <div class="row mt-4">
                 <div class="col-12">
-                    <button type="button" class="btn btn-primary btn-lg">Create</button>
+                    <button type="button" class="btn btn-primary btn-lg" (click)="changeStatus()">Change Status</button>
                     <button type="button" class="btn btn-secondary btn-lg" (click)="cancel()">Cancel</button>
                 </div>
-            </div> 
+            </div>
         </form>
     </div>
 </main>
