@@ -42,4 +42,13 @@ export class PlanService {
     formData.append('file', file);
     return this.http.post(this.apiUrl + '/import', formData)
   }
+
+  uploadPlan(termId: string, uid: string, expenses: []): Observable<any> {
+    let urlParams = new URLSearchParams();
+    urlParams.append('termId', termId);
+    urlParams.append('uid', uid);
+    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+  }
+
+
 }
