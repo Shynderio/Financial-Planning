@@ -277,9 +277,10 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         {
             return false;
         }
-
         try
         {
+            // Create directory if it does not exist
+           
             using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
             {
                 response.EnsureSuccessStatusCode();

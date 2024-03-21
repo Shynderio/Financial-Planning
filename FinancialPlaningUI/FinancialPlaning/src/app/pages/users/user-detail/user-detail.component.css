@@ -64,3 +64,15 @@ main {
     -webkit-box-sizing: border-box;
     box-sizing: border-box; */
 }
+/* Trích dẫn phần tử chứa các lựa chọn "Active" và "Deactive" */
+.choice-container {
+    position: fixed; /* Đặt vị trí cố định */
+    top: 100px; /* Căn chỉnh vị trí từ phía trên */
+    right: 100px; /* Căn chỉnh vị trí từ phía bên phải */
+}
+
+/* Căn chỉnh nút "Change Status" và "Cancel" */
+.btn-primary,
+.btn-secondary {
+    margin-right: 10px; /* Tạo khoảng cách giữa các nút */
+}

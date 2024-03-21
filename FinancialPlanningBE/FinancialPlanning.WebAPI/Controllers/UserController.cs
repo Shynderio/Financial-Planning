@@ -69,13 +69,14 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(new { message = $"User with id {id} updated successfully!" });
         }
         // Update status User
-        [HttpPut("{id}/status")]
+        [HttpPut("{id:guid}/{status:int}")]
         public async Task<IActionResult> UpdateUserStatus(Guid id, int status)
         {
             try
             {
                 await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
+                
             }
             catch (Exception ex)
             {

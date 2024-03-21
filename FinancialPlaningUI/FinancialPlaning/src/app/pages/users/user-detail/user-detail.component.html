@@ -39,21 +39,30 @@
                     <h4><label for="role" class="form-label">Role</label></h4>
                     <input class="form-control" type="text" id="role" formControlName="role"/>
                 </div>
-                <div class="col-6">
-                    <h4><label for="status" class="form-label">Status</label></h4>
-                    <input class="form-control" type="text" id="status" formControlName="status" [value]="userForm.get('status')?.value === 1 ? 'Active' : 'Deactive'" [disabled]="true" />
-                </div>
+             
                 <div class="col-6">
                     <h4><label for="note" class="form-label">Notes</label></h4>
                     <input class="form-control" type="text" id="note" formControlName="note"/>
                 </div>
+                
             </div>
-             <div class="row mt-4">
-                <div class="col-12">
-                    <button type="button" class="btn btn-primary btn-lg">Create</button>
+            <div class="choice-container">
+                <!-- Phần tử "Active" -->
+                <div *ngIf="userForm.get('status')?.value === 1" class="status-option text-success">
+                    <strong  style="font-size: 26px;"> Active</strong> 
+                </div>
+                <!-- Phần tử "Deactive" -->
+                <div *ngIf="userForm.get('status')?.value === 0" class="status-option text-danger">
+                    <strong style="font-size: 26px;"> InActive</strong> 
+                </div>
+            </div>
+            
+            <div class="row mt-4 justify-content-center">
+                <div class="col-12 d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary btn-lg me-2" (click)="changeStatus()">Change Status</button>
                     <button type="button" class="btn btn-secondary btn-lg" (click)="cancel()">Cancel</button>
                 </div>
-            </div> 
+            </div>
         </form>
     </div>
 </main>
