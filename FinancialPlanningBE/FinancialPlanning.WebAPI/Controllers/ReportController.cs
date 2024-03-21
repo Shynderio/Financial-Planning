@@ -122,7 +122,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                             {
                                 Report = reportViewModel,
                                 Expenses = expenses,
-                                ReportVersion = reportVersionModel,
+                                ReportVersions = reportVersionModel,
                                 UploadedBy = uploadedBy
                             };
 

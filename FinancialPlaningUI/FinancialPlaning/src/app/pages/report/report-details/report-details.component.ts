@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { ReportService } from '../../../services/report.service';
 import { Router } from 'express';
 import { ActivatedRoute } from '@angular/router';
@@ -6,8 +6,9 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { concatMap, of } from 'rxjs';
 
 @Component({
   selector: 'app-report-details',
@@ -36,7 +37,7 @@ export class ReportDetailsComponent {
 
    //paging
    listSize: number = 0;
-   pageSize = 7;
+   pageSize = 5;
    pageIndex = 0;
 
    constructor(
@@ -66,6 +67,7 @@ export class ReportDetailsComponent {
       this.reportVersions = data.reportVersions;  
       this.uploadedBy = data.uploadedBy;
      this.dataSource = this.getPaginatedItems();
+     
       console.log(data);
       
     });
@@ -79,5 +81,36 @@ export class ReportDetailsComponent {
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.dataSource = this.getPaginatedItems();
+  }
+  openReportVersionsDialog() {
+    const reportVersionsDialog = this.dialog.open(ReportVersionsDialog, {
+      width: '450px',
+      height: '350px',
+      data: this.reportVersions,
+    });
+    reportVersionsDialog
+}
+}
+
+
+@Component({
+  selector: 'reportVersions',
+  standalone: true,
+  templateUrl: '../reportVersions/reportVersions.component.html',
+  styleUrls: ['../reportVersions/reportVersions.component.css'],
+  imports: [MatDialogActions, MatDialogTitle, MatDialogContent ,MatTableModule],
+})
+export class ReportVersionsDialog {
+  displayedColumns: string[] = ['Version','Published data','Changed by'];
+  dataSource:any = [];
+  constructor(
+    public dialogRef: MatDialogRef<ReportVersionsDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.dataSource = new MatTableDataSource<any>(data);
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
   }
 }
