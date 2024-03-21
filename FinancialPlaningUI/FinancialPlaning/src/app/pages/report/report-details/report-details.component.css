@@ -111,3 +111,14 @@ main {
     text-decoration: underline;
     cursor:pointer;
   }
+  .report-details{
+    width: 70%;
+    margin: auto;
+    display: flex;
+    border-radius: 5px;
+    border: 1px solid white; 
+    padding: 10px; /* Khoảng cách giữa nội dung và border */
+  }
+  .margin {
+    margin-bottom:10px !important;
+  }

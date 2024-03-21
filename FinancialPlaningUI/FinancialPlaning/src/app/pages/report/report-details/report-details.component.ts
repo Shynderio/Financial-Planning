@@ -35,6 +35,10 @@ export class ReportDetailsComponent {
   reportVersions : any;
   uploadedBy : any;
 
+  totalExpense: number = 0;
+  biggestExpenditure: number = 0;
+ 
+
    //paging
    listSize: number = 0;
    pageSize = 5;
@@ -44,7 +48,7 @@ export class ReportDetailsComponent {
     private reportService:ReportService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private messageBar: MatSnackBar
+   
     
     ){
       this.dataSource = new MatTableDataSource<any>();
@@ -54,6 +58,7 @@ export class ReportDetailsComponent {
     this.route.params.subscribe(params => {
       const reportId = params['id']; // Assuming 'id' is the parameter name
       this.getReport(reportId);
+      
     }
     );
    
@@ -68,16 +73,27 @@ export class ReportDetailsComponent {
       this.uploadedBy = data.uploadedBy;
      this.dataSource = this.getPaginatedItems();
      
-      console.log(data);
+     this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
+     this.totalExpense =  this.dataFile.reduce((total:any, element:any) => total + (element.totalAmount), 0);
+     
+     console.log(data);
       
     });
   }
+
+ 
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.dataFile;
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
+
+
+
+
+  
+  
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.dataSource = this.getPaginatedItems();
