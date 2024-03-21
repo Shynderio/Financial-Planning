@@ -3,7 +3,9 @@ using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.Plan;
+using FinancialPlanning.WebAPI.Models.Position;
 using FinancialPlanning.WebAPI.Models.Report;
+using FinancialPlanning.WebAPI.Models.Role;
 using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.User;
 
@@ -56,7 +58,8 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
             CreateMap<Term, SelectTermModel>();
 
-
+            CreateMap<RoleViewModel, Role>().ReverseMap();
+            CreateMap<PositionViewModel, Position>().ReverseMap();
             //map User to userModel
             CreateMap<User, UserModel>()
                 .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
