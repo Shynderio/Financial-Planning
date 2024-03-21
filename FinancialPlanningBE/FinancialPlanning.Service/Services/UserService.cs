@@ -13,12 +13,16 @@ namespace FinancialPlanning.Service.Services
 
         private readonly IUserRepository _userrepository;
         private readonly IDepartmentRepository _departmentrepository;
+        private readonly IRoleRepository _roleRepository;
+        private readonly IPositionRepository _positionRepository;
 
-        public UserService(IUserRepository userRepository , IDepartmentRepository departmentRepository)
+        public UserService(IUserRepository userRepository , IDepartmentRepository departmentRepository, IRoleRepository roleRepository, IPositionRepository positionRepository)
         {
 
             _userrepository = userRepository;
             _departmentrepository = departmentRepository;
+            _roleRepository = roleRepository;
+            _positionRepository = positionRepository;
 
         }
         //Get all user
@@ -32,6 +36,16 @@ namespace FinancialPlanning.Service.Services
         public async Task<List<Department>> GetAllDepartment()
         {
             return await _departmentrepository.GetAllDepartment();
+        }
+        //Get all position
+        public async Task<List<Position>> GetAllPositions()
+        {
+            return await _positionRepository.GetAllPositions();
+        }
+        //Get all role
+        public async Task<List<Role>> GetAllRoles()
+        {
+            return await _roleRepository.GetAllRoles();
         }
         //Get user by Id
         public async Task<User> GetUserById(Guid id)
