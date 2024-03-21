@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Hosting;
+
 namespace FinancialPlanning.Service.BackgroundServices
 {
     public abstract class BackgroundService : IHostedService
@@ -26,6 +27,7 @@ namespace FinancialPlanning.Service.BackgroundServices
             {
                 return;
             }
+
             try
             {
                 _stoppingCts?.Cancel();
@@ -41,7 +43,7 @@ namespace FinancialPlanning.Service.BackgroundServices
             do
             {
                 await Process();
-                await Task.Delay(5000);
+                await Task.Delay(5000, stoppingToken);
             } while (!stoppingToken.IsCancellationRequested);
         }
 

@@ -16,6 +16,7 @@ import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
 import { PlansComponent } from './pages/plans/plans.component';
 import { ReportDetailsComponent } from './pages/report/report-details/report-details.component';
+import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -38,4 +39,5 @@ export const routes: Routes = [
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },
     { path: 'edit-user/:id', component: AddNewUserComponent },
+    { path: 'user-detail/:id', component: UserDetailComponent }
 ];

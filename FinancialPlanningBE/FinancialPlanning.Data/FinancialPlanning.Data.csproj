@@ -17,4 +17,8 @@
     <PackageReference Include="MimeKit" Version="4.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FinancialPlanning.Common\FinancialPlanning.Common.csproj" />
+  </ItemGroup>
+
 </Project>

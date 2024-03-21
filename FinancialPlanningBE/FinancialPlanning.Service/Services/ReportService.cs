@@ -1,11 +1,5 @@
 ﻿using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FinancialPlanning.Service.Services
 {
@@ -29,13 +23,13 @@ namespace FinancialPlanning.Service.Services
             var role = await _authRepository.GetRoleUser(email);
 
             //If role is FinancialStaff 
-            if (role.ToString().Equals("FinancialStaff"))
+            if (role.Equals("FinancialStaff"))
             {
                 //Get departmentId
-                var departID_raw = await _departmentRepository.GetDepartmentIdByEmail(email);
-                Console.WriteLine(departID_raw.ToString());
-                string src = departID_raw.ToString();
-                Guid departId = Guid.Parse(src);
+                var departIdRaw = await _departmentRepository.GetDepartmentIdByEmail(email);
+                Console.WriteLine(departIdRaw);
+                var src = departIdRaw;
+                var departId = Guid.Parse(src);
                 //Get report by DepartmentId
                 var reports =  await _reportRepository.GetReportsByDepartId(departId);
                 return reports;

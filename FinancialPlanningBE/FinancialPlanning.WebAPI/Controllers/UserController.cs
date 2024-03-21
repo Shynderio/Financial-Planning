@@ -4,6 +4,7 @@ using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.WebAPI.Models.User;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinancialPlanning.WebAPI.Controllers
@@ -19,11 +20,31 @@ namespace FinancialPlanning.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userService.GetAllUsers();
-            var userListModels = users.Select(u => _mapper.Map<UserModel>(u)).ToList();
-            return Ok(userListModels);
-        }
+            try
+            {
+                var users = await _userService.GetAllUsers();
+                //Map user to usermodel
+                var userListModels = users.Select(u => _mapper.Map<UserModel>(u)).ToList();
 
+                var departmentList = await _userService.GetAllDepartment();
+                var positionList = await _userService.GetAllPositions();
+                var roleList = await _userService.GetAllRoles();
+
+                var result = new
+                {
+                    users = userListModels,
+                    departments = departmentList,
+                    roles = roleList
+
+                };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+          
+        }
         //Get user by id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id)
@@ -58,7 +79,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                await _userService.updateUserStatus(id, status);
+                await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
             }
             catch (Exception ex)
@@ -78,6 +99,21 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Error delete user with id {id}: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("AllDepartments")] 
+        public async Task<ActionResult<List<Department>>> GetAllDepartments()
+        {
+            try
+            {
+                var departments = await _userService.GetAllDepartment();
+                return Ok(departments);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 

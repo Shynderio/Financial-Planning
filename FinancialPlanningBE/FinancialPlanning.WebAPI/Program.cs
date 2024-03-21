@@ -45,8 +45,6 @@ builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<RoleService>();
-builder.Services.AddScoped<PositionService>();
 
 
 

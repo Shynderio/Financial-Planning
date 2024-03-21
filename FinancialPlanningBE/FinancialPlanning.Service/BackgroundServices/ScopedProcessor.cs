@@ -6,7 +6,7 @@ namespace FinancialPlanning.Service.BackgroundServices
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        protected ScopedProcessor(IServiceScopeFactory serviceScopeFactory) : base()
+        protected ScopedProcessor(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
         }
