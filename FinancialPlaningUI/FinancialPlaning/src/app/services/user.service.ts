@@ -36,10 +36,10 @@ export class UserService {
   }
 
   getRole(){
-    return this.http.get<IRole[]>(this.apiUrl + "/api/Role")
+    return this.http.get<IRole[]>(this.apiUrl + "/api/User/AllRoles")
   }
 
   getPosition(){
-    return this.http.get<IPosition[]>(this.apiUrl + "/api/Position")
+    return this.http.get<IPosition[]>(this.apiUrl + "/api/User/AllPositions")
   }
 }

@@ -2,9 +2,17 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Service.Services;
+using FinancialPlanning.WebAPI.Models.Department;
 using FinancialPlanning.WebAPI.Models.User;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using FinancialPlanning.WebAPI.Models.Report;
+using FinancialPlanning.WebAPI.Models.Term;
+using FinancialPlanning.WebAPI.Models.Role;
+using FinancialPlanning.WebAPI.Models.Position;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -19,9 +27,17 @@ namespace FinancialPlanning.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = await _userService.GetAllUsers();
-            var userListModels = users.Select(u => _mapper.Map<UserModel>(u)).ToList();
-            return Ok(userListModels);
+            try
+            {
+                var users = await _userService.GetAllUsers();
+                var userListModels = users.Select(u => _mapper.Map<UserModel>(u)).ToList();
+
+                return Ok(userListModels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         //Get user by id
@@ -78,6 +94,52 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Error delete user with id {id}: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("AllDepartments")]
+        public async Task<ActionResult<List<Department>>> GetAllDepartments()
+        {
+            try
+            {
+                var departments = await _userService.GetAllDepartment();
+                var departmentViewModel = _mapper.Map<List<DepartmentViewModel>>(departments);
+                return Ok(departmentViewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("AllRoles")]
+        public async Task<ActionResult<List<Department>>> GetAllRoles()
+        {
+            try
+            {
+                var roles = await _userService.GetAllRoles();
+                var roleViewModel = _mapper.Map<List<RoleViewModel>>(roles);
+                return Ok(roleViewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        [Route("AllPositions")]
+        public async Task<ActionResult<List<Department>>> GetAllPositions()
+        {
+            try
+            {
+                var positions = await _userService.GetAllPositions();
+                var positionViewModel = _mapper.Map<List<PositionViewModel>>(positions);
+                return Ok(positionViewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
