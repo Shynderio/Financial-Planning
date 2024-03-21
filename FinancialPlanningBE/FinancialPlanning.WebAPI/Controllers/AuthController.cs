@@ -45,7 +45,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             response = Ok(new { token });
         }
 
-        return Ok(response);
+        return response;
     }
         
        
