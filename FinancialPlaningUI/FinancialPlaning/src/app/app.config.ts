@@ -1,6 +1,6 @@
 import { withFetch, withInterceptors } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient} from '@angular/common/http';
@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor,errorInterceptor])),
     provideHttpClient(withFetch()), 
     provideClientHydration(),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
     provideToastr(),
   ],

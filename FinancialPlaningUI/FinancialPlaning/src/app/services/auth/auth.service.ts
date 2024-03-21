@@ -59,4 +59,19 @@ export class AuthService {
         })
       );
   }
+
+  resetPassword(password: string, token: string): Observable<number> {
+    return this.http
+      .post(this.apiUrl + '/ResetPassword', { password: password, token: token }, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
 }

@@ -39,7 +39,7 @@ namespace FinancialPlanning.Data.Repositories
         {
             var userToUpdate = await _context.Users!.SingleOrDefaultAsync(u => u.Email == user.Email) ??
                                throw new Exception("User not found");
-            userToUpdate.Password = user.Password;
+            userToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             userToUpdate.Token = null;
             await _context.SaveChangesAsync();
         }

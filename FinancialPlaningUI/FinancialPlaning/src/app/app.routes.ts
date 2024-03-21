@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { ForgotPasswordComponent } from './pages/login/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/login/reset-password/reset-password.component';
 import { HomeComponent } from './pages/home/home.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { CreateTermComponent } from './pages/terms/create-term/create-term.component';
@@ -23,6 +24,7 @@ export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
     { path: 'login', component: LoginComponent},    
     { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
     { path: '', component: SidenavComponent, canActivate: [AuthGuard]},
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
     // term
