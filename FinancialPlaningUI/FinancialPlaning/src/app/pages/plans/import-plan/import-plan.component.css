@@ -109,11 +109,14 @@ form {
 }
 
 .preview-card {
+    position: relative;
     background-color: #222143;
     color: white;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
+    padding: 20px; 
+    min-width: 750px; 
     /* left: 50px; */
     /* align-items: center; */
     /* justify-content: center; */
@@ -126,9 +129,8 @@ h3 {
     margin-bottom: 20px;
 }
 
-/* table {
-    display: inline;
-    text-align: center;
-    overflow:auto;
-    width: 100%;
-} */
+table {
+    /* width: 50%!important; */
+    border-collapse: collapse;
+    margin-top: 20px;
+}
