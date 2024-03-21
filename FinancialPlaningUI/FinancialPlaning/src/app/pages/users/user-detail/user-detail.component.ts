@@ -19,7 +19,7 @@ export class UserDetailComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
   ) {
 
     this.userForm = this.fb.group({
@@ -113,9 +113,10 @@ export class UserDetailComponent implements OnInit {
         console.log(`User status changed successfully!`);
         // Update status on UI
         window.location.reload();
-
       },
-
+      error => {
+        console.error('Error occurred while changing user status:', error);
+      }
     );
   }
 

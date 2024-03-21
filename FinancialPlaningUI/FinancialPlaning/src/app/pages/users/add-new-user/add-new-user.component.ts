@@ -54,7 +54,6 @@ export class AddNewUserComponent implements OnInit {
     }
     this.httpService.getUserById(userId).subscribe(
       (userDetail: any) => {
-        const formattedDate = this.convertDateFormat(userDetail.dob);
         const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
         const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
         const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
@@ -68,22 +67,10 @@ export class AddNewUserComponent implements OnInit {
           fullName: userDetail.fullName,
           phoneNumber: userDetail.phoneNumber,
           address: userDetail.address,
-          dob: formattedDate
+          dob: userDetail.dob
         })
       }
     )
-  }
-  convertDateFormat(inputDate: string): string {
-    // Tách ngày, tháng và năm từ chuỗi đầu vào
-    const parts = inputDate.split('-');
-    const day = parts[0];
-    const month = parts[1];
-    const year = parts[2];
-
-    // Chuyển đổi sang định dạng "yyyy-MM-dd"
-    const formattedDate = year + '-' + month + '-' + day;
-
-    return formattedDate;
   }
 
 
