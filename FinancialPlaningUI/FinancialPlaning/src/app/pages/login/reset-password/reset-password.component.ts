@@ -99,8 +99,6 @@ export class ResetPasswordComponent {
       .resetPassword(this.resetPasswordForm.value.password!, this.token)
       .subscribe({
         next: (response) => {
-          this.elementRef.nativeElement.querySelector('button').disabled =
-            false;
           if (response == 200) {
             this.messageBar.open('Password reset successfully', '', {
               duration: 5000,
@@ -108,28 +106,11 @@ export class ResetPasswordComponent {
               verticalPosition: 'top',
               horizontalPosition: 'end',
             });
-            delay(2000);
-            this.router.navigate(['/login']);
-          } else {
-            this.messageBar.open(
-              'This link has expired. Please go back to Homepage and try again.',
-              '',
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'failMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
-            delay(2000);
-            this.router.navigate(['/login']);
           }
         },
         error: (error) => {
-          this.elementRef.nativeElement.querySelector('button').disabled =
-            false;
           this.messageBar.open(
-            'Something went wrong. Please try again later.',
+            'This link has expired. Please go back to Homepage and try again.',
             '',
             {
               duration: 5000,
@@ -140,5 +121,8 @@ export class ResetPasswordComponent {
           );
         },
       });
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 5000);
   }
 }
