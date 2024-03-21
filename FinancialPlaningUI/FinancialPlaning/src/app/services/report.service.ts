@@ -33,6 +33,10 @@ export class ReportService {
   getReport(reportId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/details/' + reportId);
   }
+  
+  exportSinglereport(reportId: string,version:number){
+    return this.http.get(this.apiUrl+'/export/'+reportId+'/'+version)
+  }
 
 
 

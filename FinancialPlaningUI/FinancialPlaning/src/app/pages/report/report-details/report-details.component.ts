@@ -112,7 +112,6 @@ export class ReportDetailsComponent {
   }
 }
 
-
 @Component({
   selector: 'reportVersions',
   standalone: true,
@@ -126,6 +125,7 @@ export class ReportVersionsDialog {
   currentVersion: any;
   isFirstRow: boolean = true;
   constructor(
+    public reportService: ReportService,
     public dialogRef: MatDialogRef<ReportVersionsDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -149,5 +149,23 @@ export class ReportVersionsDialog {
     const dateParts = isoDate.split('T')[0].split('-');
     if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+  }
+
+  downloadFile(reportId: string, version: number) {
+    this.reportService.exportSinglereport(reportId, version).subscribe((data: any) => {
+        const downloadUrl = data.downloadUrl;
+         // Tạo một link ẩn để download file
+         const link = document.createElement('a');
+         link.href = downloadUrl;
+         link.setAttribute('download', '');
+
+         // Thêm link vào trang web và click vào nó để bắt đầu download
+         document.body.appendChild(link);
+         link.click();
+
+         // Xóa link sau khi download hoàn tất
+         document.body.removeChild(link)
+      }, 
+    );
   }
 }

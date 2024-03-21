@@ -2,9 +2,11 @@
 <mat-dialog-content>
     <table mat-table [dataSource]="data" class="mat-elevation-z8">
 
-        <ng-container matColumnDef="Version" >
+        <ng-container matColumnDef="Version">
             <th mat-header-cell *matHeaderCellDef> Version </th>
-            <td mat-cell *matCellDef="let element; let firstRow = first">
+            <td mat-cell *matCellDef="let element; let firstRow = first"  
+            (click)="downloadFile(element.reportId, element.version)"
+            style="cursor: pointer; text-decoration: underline;">
                 {{ firstRow ? 'CURRENT v.' + element.version : 'v.' + element.version }}
               </td>
         </ng-container>
