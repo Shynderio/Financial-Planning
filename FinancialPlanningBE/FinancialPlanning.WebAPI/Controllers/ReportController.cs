@@ -85,45 +85,64 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
+                List<Expense> expenses;
+                //Get report
                 var report = await _reportService.GetReportById(id);
+                //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
                 //string reportName = report.ReportName;
                 string reportName = "CorrectPlan";
+                //Get url of file on cloud
                 string url = await _reportService.GetFileByName(reportName + ".xlsx");
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", reportName + ".xlsx");
 
+                //If folder doesn't exit -> create
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var savePath = Path.Combine(directoryPath, reportName + ".xlsx");
+                
                 bool isDownLoad = await _fileService.DownloadFile(url, savePath);
                 //download file sucessfull 
                 if (isDownLoad)
                 {
                     // conver file to list expense
-                    using (var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read))
+                    using (var fileStream = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Read))
                     {
                         try
                         {
-                            List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
-                            //mapper
-                            var reportViewModel = _mapper.Map<ReportViewModel>(report);
-                            var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
-                            // Get the name of the user who uploaded the file
-                            var firstReportVersion = reportVersionModel.FirstOrDefault();
-                            var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
-
-                            var result = new
-                            {
-                                Report = reportViewModel,
-                                Expenses = expenses,
-                                ReportVersions = reportVersionModel,
-                                UploadedBy = uploadedBy
-                            };
-
-                            return Ok(result);
+                            //change 1 when have file
+                            expenses = _fileService.ConvertExcelToList(fileStream, 0);
                         }
                         catch
                         {
                             return BadRequest("Failed to convert");
                         }
                     }
+                    //mapper
+                    var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                    var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
+                    // Get the name of the user who uploaded the file
+                    var firstReportVersion = reportVersionModel.FirstOrDefault();
+                    var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+                    //remove file
+                    if (System.IO.File.Exists(savePath))
+                    {
+                        System.IO.File.Delete(savePath);
+                    }
+
+                    var result = new
+                    {
+                        Report = reportViewModel,
+                        Expenses = expenses,
+                        ReportVersions = reportVersionModel,
+                        UploadedBy = uploadedBy
+                    };
+                    
+                    return Ok(result);
+
                 }
                 else
                 {
@@ -136,6 +155,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
+
         //export report 
         [HttpGet("export/{id:guid}/{version:int}")]
         //[Authorize(Roles = "Accountant, FinancialStaff")]

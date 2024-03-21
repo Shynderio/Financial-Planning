@@ -32,7 +32,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             // Project the results into FinancialPlanDto
             var result = plans.Select((p, index) => new PlanViewModel
             {
-                No = index + 1,
+                Id = p.Id,
                 Plan = p.PlanName,
                 Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
                 Department =
@@ -64,7 +64,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             var plans = await _planService.GetFinancialPlans("", "", ""); ;
             var result = plans.Select((p, index) => new PlanViewModel
             {
-                No = index + 1,
+                Id = p.Id,
                 Plan = p.PlanName,
                 Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
                 Department =
@@ -101,7 +101,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Accountant")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeletePlan(Guid id)
         {
             await _planService.DeletePlan(id);
@@ -118,7 +118,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Check if a file is uploaded
                 if (file == null || file.Length == 0)
                 {
-                    return BadRequest("No file uploaded");
+                    return BadRequest(new { message = "No file uploaded" });
                 }
 
                 // Generate a unique filename using GUID and original file extension
@@ -141,7 +141,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 {
                     // Delete the temporary file if conversion fails
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Failed to convert");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Validate the file
@@ -156,7 +156,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                     // Delete the temporary file if validation fails
                     System.IO.File.Delete(convertedFilePath);
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Invalid file format");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses

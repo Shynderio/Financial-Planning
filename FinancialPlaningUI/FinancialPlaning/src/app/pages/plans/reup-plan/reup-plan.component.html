@@ -1,22 +1,9 @@
 <main>
   <div class="row">
     <div class="col-lg-4 col-md-12">
-      <h1 class="mb-4">Import Plan</h1>
+      <h1 class="mb-4">Reup Plan</h1>
       <!-- <h5>Step 1/2: Please select a file to import</h5> -->
       <div class="card">
-        <form [formGroup]="planForm">
-          <!-- <p>
-            <label for="term">Term *</label>
-          </p> -->
-          <mat-form-field>
-            <mat-label>Term</mat-label>
-            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term" formControlName="term">
-              <mat-option *ngFor="let option of termOptions" [value]="option.value">
-                {{option.viewValue}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </form>
         <app-upload (fileSelected)="onFileSelected($event)"></app-upload>
         <div class="buttons">
           <button class="preview-button" (click)="onImport()">

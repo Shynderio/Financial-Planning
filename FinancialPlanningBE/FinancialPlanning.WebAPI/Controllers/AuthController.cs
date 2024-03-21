@@ -39,7 +39,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             //Invalid account and returned emtry
             if (string.IsNullOrEmpty(token))
             {
-                response = BadRequest(new { message = "Invalid email or password" });
+                response = Unauthorized(new { message = "Invalid email or password" });
             }
             else
             {
@@ -58,7 +58,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             var isUser = await _authService.IsUser(email);
 
-            if (!isUser) return BadRequest(new { message = "Email not found" });
+            if (!isUser) return NotFound(new { message = "Email not found" });
             var token = _authService.GenerateToken(email);
 
             _authService.SendResetPasswordEmail(email, token);
@@ -85,15 +85,10 @@ namespace FinancialPlanning.WebAPI.Controllers
 
                 return Ok(new { message = "Password reset successfully" });
             }
-            catch (ArgumentException ex)
-            {
-                // Handle potential errors
-                return BadRequest(new { message = ex.Message });
-            }
             catch (Exception ex)
             {
                 // Handle potential errors
-                return StatusCode(500, new { message = ex });
+                return BadRequest(new { message = ex.Message });
             }
         }
     }
