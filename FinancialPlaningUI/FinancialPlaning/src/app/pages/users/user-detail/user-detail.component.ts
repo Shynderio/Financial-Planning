@@ -8,19 +8,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule,FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.css'
 })
-export class UserDetailComponent implements OnInit{
+export class UserDetailComponent implements OnInit {
   userForm: FormGroup;
- 
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
   ) {
+
     this.userForm = this.fb.group({
       username: [{ value: '', disabled: true }],
       fullname: [{ value: '', disabled: true }],
@@ -33,7 +34,14 @@ export class UserDetailComponent implements OnInit{
       role: [{ value: '', disabled: true }],
       status: [{ value: '', disabled: true }],
       note: [{ value: '', disabled: true }],
+
     });
+    // Kích hoạt control
+    this.userForm.get('status')?.enable();
+
+    // Vô hiệu hóa control
+    this.userForm.get('status')?.disable();
+
   }
 
 
@@ -63,7 +71,7 @@ export class UserDetailComponent implements OnInit{
           note: userDetails.notes,
           phonenumber: userDetails.phoneNumber,
           address: userDetails.address,
-          
+
         });
         console.log(userDetails);
       },
@@ -72,7 +80,7 @@ export class UserDetailComponent implements OnInit{
         console.error('Error fetching term details:', error);
       }
     });
-    
+
   }
   onSubmit() {
     // Handle form submission if needed
@@ -81,4 +89,42 @@ export class UserDetailComponent implements OnInit{
     // Điều hướng người dùng trở lại trang "user-list" khi nhấp vào nút "Cancel"
     this.router.navigate(['/user-list']);
   }
+  changeStatus(): void {
+    const userId = this.route.snapshot.paramMap.get('id');
+    const currentStatus = this.userForm.get('status')?.value;
+    console.log(currentStatus);
+    const newStatus = currentStatus == 1 ? 0 : 1;
+    console.log("new" + newStatus);
+
+
+    if (!userId) {
+      console.error('userId is undefined or null.');
+      return;
+    }
+
+    // Hiển thị hộp thoại xác nhận
+    const confirmation = confirm('Are you sure you want to change the user status?');
+    if (!confirmation) {
+      return; // Người dùng đã chọn "Cancel", không cần thực hiện gì hơn
+    }
+
+    this.userService.changeUserStatus(userId, newStatus).subscribe(
+      () => {
+        console.log(`User status changed successfully!`);
+        // Update status on UI
+        window.location.reload();
+      },
+      error => {
+        console.error('Error occurred while changing user status:', error);
+      }
+    );
+  }
+
+
 }
+
+
+
+
+
+

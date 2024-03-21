@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, catchError, map } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
 import { environment } from '../../environments/environment';
 
@@ -34,8 +34,8 @@ export class PlanService {
     // Thực hiện gọi HTTP GET đến API endpoint
     return this.http.get<Plan[]>(`${this.apiUrl}`, { params });
   }
-  getAllTerms(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  getAllPlans(): Observable<any> {
+    return this.http.get(this.apiUrl + '/Planlist');
   }
   
   importPlan(file: File): Observable<any> {
@@ -52,4 +52,18 @@ export class PlanService {
   }
 
 
+  deletePlan(PlanId: string): Observable<number> {
+    return this.http
+      .delete(this.apiUrl + '/' + PlanId, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
 }

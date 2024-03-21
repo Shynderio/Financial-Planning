@@ -66,9 +66,21 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<Report?> GetReportById(Guid id)
         {
             var report = await _context.Reports!
-                .Include(t => t.ReportVersions)
-                .FirstOrDefaultAsync(t => t.Id == id);
+         .Include(t => t.ReportVersions)
+         .Include(t => t.Term)
+         .Include(t => t.Department)
+         .FirstOrDefaultAsync(t => t.Id == id) ;
             return report;
+        }
+
+        //Get list reportVersions 
+        public async Task<List<ReportVersion>> GetReportVersionsByReportID(Guid reportId)
+        {
+           var reportVersions = await _context.ReportVersions!
+                .Where(r => r.ReportId == reportId)
+                .OrderByDescending(r => r.Version)
+                .Include(r => r.User).ToListAsync();
+            return reportVersions;
         }
     }
 }

@@ -14,6 +14,8 @@ namespace FinancialPlanning.WebAPI.Models.Report
         [Required] public DateTime UpdateDate { get; set; }
         [Required] public string DepartmentName { get; set; } = null!;
         [Required] public string Version { get; set; } = null!;
+        [Required] public DateTime ReportDureDate { get; set; }
+       
 
     }
 }

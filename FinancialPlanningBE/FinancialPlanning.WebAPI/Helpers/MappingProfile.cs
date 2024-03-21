@@ -28,12 +28,17 @@ namespace FinancialPlanning.WebAPI.Helpers
 
             // map report to  ReportViewModel
             CreateMap<Report, ReportViewModel>()
-                .ForMember(dest => dest.TermName, opt => opt.MapFrom(src => src.Term.TermName))
-                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
-                .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()));
+           .ForMember(dest => dest.TermName, opt => opt.MapFrom(src => src.Term.TermName))
+           .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
+           .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()))
+           .ForMember(dest => dest.ReportDureDate, opt => opt.MapFrom(src => src.Term.ReportDueDate));
+    
 
             // map reportViewModel to  Report
             CreateMap<ReportViewModel, Report>();
+            // map reportVersion to reportVersionModel
+            CreateMap<ReportVersion, ReportVersionModel>()
+            .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.User.Username));
 
             //Map department
             CreateMap<Department, DepartmentViewModel>();
@@ -46,7 +51,7 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<PlanListModel, Plan>();
 
             CreateMap<Plan, PlanViewModel>()
-                .ForMember(dest => dest.No, opt => opt.Ignore()) // Không có sẵn trong Plan, có thể bỏ qua
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Không có sẵn trong Plan, có thể bỏ qua
                 .ForMember(dest => dest.Plan, opt => opt.MapFrom(src => src.PlanName))
                 .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))

@@ -23,6 +23,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<IEnumerable<PlanViewModel>>> GetFinancialPlans(string keyword = "",
             string department = "", string status = "")
         {
@@ -31,7 +32,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             // Project the results into FinancialPlanDto
             var result = plans.Select((p, index) => new PlanViewModel
             {
-                No = index + 1,
+                Id = p.Id,
                 Plan = p.PlanName,
                 Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
                 Department =
@@ -60,10 +61,25 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAllPlans()
         {
-            var plans = await _planService.GetAllPlans();
-            var planListModels = plans.Select(t => _mapper.Map<PlanListModel>(t)).ToList();
-            return Ok(planListModels);
+            var plans = await _planService.GetFinancialPlans("", "", ""); ;
+            var result = plans.Select((p, index) => new PlanViewModel
+            {
+                Id = p.Id,
+                Plan = p.PlanName,
+                Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
+                Department =
+                    p.Department?.DepartmentName ??
+                    "Unknown", // Check if p.Department is not null before accessing its properties
+                Status = GetPlanStatusString((PlanStatus)p.Status),
+                Version = p.PlanVersions.Any()
+                    ? p.PlanVersions.Max(v => v.Version)
+                    : 0 // Check if PlanVersions has any elements before calling Max()
+            }).ToList();
+
+            return Ok(result);
         }
+
+        
 
         [HttpGet("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -85,7 +101,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Accountant")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeletePlan(Guid id)
         {
             await _planService.DeletePlan(id);

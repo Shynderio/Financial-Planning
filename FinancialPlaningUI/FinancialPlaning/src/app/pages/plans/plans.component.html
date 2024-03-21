@@ -4,7 +4,7 @@
       <h3><b>Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <a routerLink="/import-plan" id="create-button"  class="btIP" [hidden]="role == 'FinancialStaff'">
+    <a routerLink="/import-plan" id="create-button"  class="btIP" [hidden]="role !== 'FinancialStaff'">
       <button><i class="fa-solid fa-plus"></i> Import</button>
     </a>
   </div>
@@ -51,7 +51,7 @@
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="no">
       <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let plan"> {{ plan.no }} </td>
+      <td mat-cell *matCellDef="let plan, let i = index"> {{ i + 1 }} </td>
     </ng-container>
     <ng-container matColumnDef="plan">
       <th mat-header-cell *matHeaderCellDef>Plan</th>
@@ -78,7 +78,7 @@
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let plan">
         <a><mat-icon>visibility</mat-icon></a>
-        <a [hidden]="role !== 'FinancialStaff'" ><mat-icon>edit</mat-icon></a>
+        <a *ngIf="showEditDeleteButton(plan)" (click)="openDeleteDialog(plan.id)"><mat-icon>edit</mat-icon></a>
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
