@@ -97,34 +97,37 @@ namespace FinancialPlanning.WebAPI.Controllers
                 if (isDownLoad)
                 {
                     // conver file to list expense
-                    using (var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read))
+                    var fileStream = new FileStream(savePath, FileMode.Open, FileAccess.Read);
+
+                    try
                     {
-                        try
-                        {
-                            List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
-                            //mapper
-                            var reportViewModel = _mapper.Map<ReportViewModel>(report);
-                            var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
-                            // Get the name of the user who uploaded the file
-                            var firstReportVersion = reportVersionModel.FirstOrDefault();
-                            var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+                        List<Expense> expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                        //mapper
+                        var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                        var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
+                        // Get the name of the user who uploaded the file
+                        var firstReportVersion = reportVersionModel.FirstOrDefault();
+                        var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+                        //remove file after download
+                        fileStream.Close();
+                        System.IO.File.Delete(savePath);
 
-                            var result = new
-                            {
-                                Report = reportViewModel,
-                                Expenses = expenses,
-                                ReportVersions = reportVersionModel,
-                                UploadedBy = uploadedBy
-                            };
-
-                            return Ok(result);
-                        }
-                        catch
+                        var result = new
                         {
-                            return BadRequest("Failed to convert");
-                        }
+                            Report = reportViewModel,
+                            Expenses = expenses,
+                            ReportVersions = reportVersionModel,
+                            UploadedBy = uploadedBy
+                        };
+
+                        return Ok(result);
+                    }
+                    catch
+                    {
+                        return BadRequest("Failed to convert");
                     }
                 }
+
                 else
                 {
                     return BadRequest("Failed to download file");

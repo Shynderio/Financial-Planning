@@ -39,7 +39,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             //Invalid account and returned emtry
             if (string.IsNullOrEmpty(token))
             {
-                response = BadRequest(new { message = "Invalid email or password" });
+                response = Unauthorized(new { message = "Invalid email or password" });
             }
             else
             {

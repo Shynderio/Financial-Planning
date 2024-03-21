@@ -13,28 +13,30 @@
       </a>
     </div>
   </div>
-  <div *ngIf="report" class="mb-4 report-details d-flex justify-content-between">
+  <div *ngIf="report" class="report-details d-flex justify-content-between">
+    <!-- //report infor -->
 
-    <div>
+    <div class="left-item">
       <h6>Report: {{report.reportName}}</h6>
       <h6>Term: {{report.termName}}</h6>
       <h6>Month: {{report.month}}</h6>
       <h6>Department: {{report.departmentName}}</h6>
       <h6>Status: {{report.status}}</h6>
     </div>
-    <div>
+    <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
-      <h6>Report Due Date: {{report.reportDureDate}}</h6>
+      <h6>Report Due Date: {{convertIsoDateToDdMmYyyy(report.reportDureDate)}}</h6>
       <h6>Date: {{convertIsoDateToDdMmYyyy(report.updateDate)}}</h6>
       <h6 class="underline" (click)="openReportVersionsDialog()">Version: v.{{report.version}}</h6>
-
     </div>
+
+    <!-- //report infor -->
 
   </div>
 
-  <div>
-    <h6>Total Expense:{{totalExpense | number:'1.0-0'}} </h6>
-    <h6>Biggest Expenditure: {{biggestExpenditure | number:'1.0-0'}}</h6>
+  <div class="report-details d-flex justify-content-between">
+    <h6 class="left-item"><b>Total Expense = {{totalExpense | number:'1.0-0'}} VND</b></h6>
+    <h6 class="right-item"><b>Biggest Expenditure = {{biggestExpenditure | number:'1.0-0'}} VND</b></h6>
   </div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -79,7 +81,7 @@
     </ng-container>
     <ng-container matColumnDef="Notes">
       <th mat-header-cell *matHeaderCellDef>Notes </th>
-      <td mat-cell *matCellDef="let element"> {{element.note}} </td>
+      <td mat-cell *matCellDef="let element">   {{ element.note ? element.note : 'N/A' }}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
