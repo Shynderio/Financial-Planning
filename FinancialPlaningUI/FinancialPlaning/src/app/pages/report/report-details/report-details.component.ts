@@ -13,7 +13,7 @@ import { concatMap, of } from 'rxjs';
 @Component({
   selector: 'app-report-details',
   standalone: true,
-  imports: [  
+  imports: [
     CommonModule,
     MatTableModule,
     MatSelectModule,
@@ -24,64 +24,64 @@ import { concatMap, of } from 'rxjs';
 export class ReportDetailsComponent {
 
   displayedColumns: string[] = [
-   'No','Expense','CostType','Unit Price (VND)','Amount',
-   'Total','Project name','Supplier name',
-   'PIC','Notes'
+    'No', 'Expense', 'CostType', 'Unit Price (VND)', 'Amount',
+    'Total', 'Project name', 'Supplier name',
+    'PIC', 'Notes'
   ];
 
   dataSource: any = [];
   dataFile: any = [];
-  report : any;
-  reportVersions : any;
-  uploadedBy : any;
+  report: any;
+  reportVersions: any;
+  uploadedBy: any;
 
   totalExpense: number = 0;
   biggestExpenditure: number = 0;
- 
 
-   //paging
-   listSize: number = 0;
-   pageSize = 5;
-   pageIndex = 0;
 
-   constructor(
-    private reportService:ReportService,
+  //paging
+  listSize: number = 0;
+  pageSize = 5;
+  pageIndex = 0;
+
+  constructor(
+    private reportService: ReportService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-   
-    
-    ){
-      this.dataSource = new MatTableDataSource<any>();
-    }
+  ) {
+    this.dataSource = new MatTableDataSource<any>();
+  }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.route.params.subscribe(params => {
       const reportId = params['id']; // Assuming 'id' is the parameter name
       this.getReport(reportId);
-      
-    }
-    );
-   
-   }
-   @ViewChild(MatPaginator) paginator!: MatPaginator;
-   getReport(reportId: string){
+
+    });
+  }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  getReport(reportId: string) {
     this.reportService.getReport(reportId).subscribe((data: any) => {
 
-      this.dataFile =data.expenses;
+      //List expenses
+      this.dataFile = data.expenses;
+      //data of report
       this.report = data.report;
-      this.reportVersions = data.reportVersions;  
+      this.reportVersions = data.reportVersions;
+      //Name of account uploaded
       this.uploadedBy = data.uploadedBy;
-     this.dataSource = this.getPaginatedItems();
-     
-     this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
-     this.totalExpense =  this.dataFile.reduce((total:any, element:any) => total + (element.totalAmount), 0);
-     
-     console.log(data);
-      
+      //filter
+      this.dataSource = this.getPaginatedItems();
+
+      // Caculate totalExpense and biggestExpenditure
+      this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
+      this.totalExpense = this.dataFile.reduce((total: any, element: any) => total + (element.totalAmount), 0);
+
+      console.log(data);
+
     });
   }
 
- 
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.dataFile;
@@ -89,23 +89,27 @@ export class ReportDetailsComponent {
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
-
-
-
-  
-  
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.dataSource = this.getPaginatedItems();
   }
+
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+  if (!isoDate) return '';
+  const dateParts = isoDate.split('T')[0].split('-');
+  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+}
+
   openReportVersionsDialog() {
     const reportVersionsDialog = this.dialog.open(ReportVersionsDialog, {
-      width: '450px',
+      width: '500px',
       height: '350px',
       data: this.reportVersions,
+ 
     });
     reportVersionsDialog
-}
+  }
 }
 
 
@@ -114,19 +118,36 @@ export class ReportDetailsComponent {
   standalone: true,
   templateUrl: '../reportVersions/reportVersions.component.html',
   styleUrls: ['../reportVersions/reportVersions.component.css'],
-  imports: [MatDialogActions, MatDialogTitle, MatDialogContent ,MatTableModule],
+  imports: [MatDialogActions, MatDialogTitle, MatDialogContent, MatTableModule],
 })
 export class ReportVersionsDialog {
-  displayedColumns: string[] = ['Version','Published data','Changed by'];
-  dataSource:any = [];
+  displayedColumns: string[] = ['Version', 'Published data', 'Changed by'];
+  dataSource: any = [];
+  currentVersion: any;
+  isFirstRow: boolean = true;
   constructor(
     public dialogRef: MatDialogRef<ReportVersionsDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.dataSource = new MatTableDataSource<any>(data);
+    this.currentVersion = data.currentVersion; 
   }
 
   closeDialog() {
     this.dialogRef.close();
+  }
+  getVersionLabel(element: any): string {
+    if (this.isFirstRow) {
+      this.isFirstRow = false;
+      return 'currentVersion ' + element.version;
+    } else {
+      return 'v.' + element.version;
+    }
+  }
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+    if (!isoDate) return '';
+    const dateParts = isoDate.split('T')[0].split('-');
+    if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
 }
