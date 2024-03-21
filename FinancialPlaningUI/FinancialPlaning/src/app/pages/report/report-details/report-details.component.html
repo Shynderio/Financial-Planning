@@ -5,7 +5,7 @@
           <h6>Report Details</h6>
         </div>
         <div class="abc">
-          <a routerLink="/" class="create-button"  (click)="openReportVersionsDialog()">
+          <a routerLink="/" class="create-button"  >
             <button> Export</button>
           </a>
           <a routerLink="/" class="export-button">
@@ -14,17 +14,18 @@
         </div>
     </div>
     <div *ngIf="report" class="mb-4">
+     
         <h6>Report: {{report.reportName}}</h6>
         <h6>Term: {{report.termName}}</h6>
         <h6>Month: {{report.month}}</h6>
         <h6>Department: {{report.departmentName}}</h6>
         <h6>Status: {{report.status}}</h6>
-
+      
         <h6>Uploaded by: {{uploadedBy}}</h6>
-        <h6>Report Dure Date: {{report.reportDureDate}}</h6>
+        <h6>Report Due Date: {{report.reportDureDate}}</h6>
         <h6>Date: {{report.updateDate}}</h6>
-        <h6>Version: v.{{report.version}}</h6>
-
+        <h6 class="underline" (click)="openReportVersionsDialog()">Version: v.{{report.version}}</h6>
+     
     </div>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" >
 

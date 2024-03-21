@@ -21,9 +21,9 @@
 }
 
 ::ng-deep .mat-mdc-dialog-title {
-  color: #ff204e !important;
+ 
   font-weight: bolder !important;
-  font-size: 30px !important;
+  font-size: 20px !important;
   text-transform: uppercase !important;
 }
 
@@ -53,15 +53,34 @@ button {
   width: 85px;
   height: 40px;
 }
-
-#delete-button {
-  background: #ff204e;
-  color: white;
-  border: none;
-}
-
 #cancel-button {
   background: transparent;
   color: #9db2bf;
   border: 1px solid #9db2bf;
+}
+
+
+table {
+  width: 100%;
+  min-height: auto;
+  background-color: #070f2b;
+  border: 1px solid #9290c3;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow: hidden !important;
+  box-shadow: 0px -5px 2px -4px #9290c3;
+  flex-shrink: 0;
+}
+th {
+  border-bottom: 1px solid #1b1a55;
+  color: white;
+}
+
+td {
+  border-top: 1px solid #535c91;
+  color: #9290c3;
+}
+.underline {
+  text-decoration: underline;
+  cursor:pointer;
 }
