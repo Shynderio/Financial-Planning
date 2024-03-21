@@ -80,7 +80,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         
 
         [HttpGet("{id:guid}")]
-        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DownloadFileFromUrlAsync(Guid id)
         {
             try
