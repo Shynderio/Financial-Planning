@@ -77,20 +77,20 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
 
-        
 
-        [HttpGet("{id:guid}")]
+
+        [HttpGet("details/{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> DownloadFileFromUrlAsync(Guid id)
+        public async Task<IActionResult> GetreportDetails(Guid id)
         {
             try
             {
-              var report = await _reportService.GetReportById(id);
-              var reportVersions = await _reportService.GetReportVersionsAsync(id);
+                var report = await _reportService.GetReportById(id);
+                var reportVersions = await _reportService.GetReportVersionsAsync(id);
                 //string reportName = report.ReportName;
                 string reportName = "CorrectPlan";
-                string url = await _reportService.GetFileByName(reportName+ ".xlsx");
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", reportName+ ".xlsx");
+                string url = await _reportService.GetFileByName(reportName + ".xlsx");
+                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", reportName + ".xlsx");
 
                 bool isDownLoad = await _fileService.DownloadFile(url, savePath);
                 //download file sucessfull 
@@ -108,7 +108,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                             // Get the name of the user who uploaded the file
                             var firstReportVersion = reportVersionModel.FirstOrDefault();
                             var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
-                            
+
                             var result = new
                             {
                                 Report = reportViewModel,
@@ -134,6 +134,28 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+        //export report 
+        [HttpGet("export/{id:guid}/{version:int}")]
+        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSingleReport(Guid id, int version)
+        {
+            try
+            {
+                //from reportVersion Id -> get name report + version
+                var report = await _reportService.GetReportById(id);
+                //var fileName = report.ReportName + "" + version;
+                var fileName = "CorrectPlan";
+                //get url from name file
+                string url = await _reportService.GetFileByName(fileName + ".xlsx");
+
+                // return URL
+                return Ok(new { downloadUrl = url });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
             }
         }
     }

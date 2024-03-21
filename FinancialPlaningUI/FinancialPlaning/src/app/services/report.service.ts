@@ -31,7 +31,7 @@ export class ReportService {
   }
 
   getReport(reportId: string): Observable<any> {
-    return this.http.get(this.apiUrl + '/' + reportId);
+    return this.http.get(this.apiUrl + '/details/' + reportId);
   }
 
 
