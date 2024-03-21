@@ -92,6 +92,9 @@ export class PlansComponent implements OnInit {
     'version',
     'action',
   ];
+  showEditDeleteButton(plan: Plan): boolean {
+    return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase() ) || this.role === 'FinancialStaff';
+  }
 
   constructor(
     private planService: PlanService,
@@ -118,9 +121,17 @@ export class PlansComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   fetchData() {
-
-    this.planService.getFinancialPlans().subscribe((data: any) => {
+    console.log(this.role);
+    this.planService.getAllPlans().subscribe((data: any) => {
       this.planList = data;
+
+      // Lọc dữ liệu dựa trên vai trò
+      if (this.role === 'FinancialStaff') {
+        // Hiển thị chỉ các kế hoạch trong phòng ban của người dùng
+        this.planList = this.planList.filter((plan: Plan) =>
+          plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()
+        );
+      }
       this.terms = Array.from(new Set(this.planList.map((plan: Plan) => plan.term)));
       this.departments = Array.from(new Set(this.planList.map((plan: Plan) => plan.department)));
       this.status = Array.from(new Set(this.planList.map((plan: Plan) => plan.status)));
@@ -130,6 +141,19 @@ export class PlansComponent implements OnInit {
       console.log('Fetch data');
     });
   }
+  getUsersDepartment(): string {
+    let userDepartment = '';
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        // Giả sử thông tin phòng ban được lưu trong trường 'department' của token
+        userDepartment = decodedToken.departmentName ?? '';
+      }
+    }
+    return userDepartment;
+  }
+
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -205,4 +229,7 @@ export class PlansComponent implements OnInit {
     // Gọi lại fetchData() để cập nhật dữ liệu mới sau khi đặt lại bộ lọc
     this.fetchData();
   }
+ 
+
+
 }
