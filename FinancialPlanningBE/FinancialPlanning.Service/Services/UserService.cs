@@ -33,17 +33,17 @@ namespace FinancialPlanning.Service.Services
         }
 
         //Get all department
-        public async Task<IEnumerable<Department>> GetAllDepartment()
+        public async Task<List<Department>> GetAllDepartment()
         {
             return await _departmentrepository.GetAllDepartment();
         }
         //Get all position
-        public async Task<IEnumerable<Position>> GetAllPositions()
+        public async Task<List<Position>> GetAllPositions()
         {
             return await _positionRepository.GetAllPositions();
         }
         //Get all role
-        public async Task<IEnumerable<Role>> GetAllRoles()
+        public async Task<List<Role>> GetAllRoles()
         {
             return await _roleRepository.GetAllRoles();
         }
