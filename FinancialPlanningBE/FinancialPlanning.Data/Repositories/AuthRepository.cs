@@ -17,7 +17,7 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<User?> IsValidUser(string email, string password)
         {
             var user = await _context.Users!.SingleOrDefaultAsync(u =>
-                u.Email == email && u.Password == password && u.Status == (int)UserStatus.Active);
+                u.Email == email && u.Status == (int)UserStatus.Active);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 return user;

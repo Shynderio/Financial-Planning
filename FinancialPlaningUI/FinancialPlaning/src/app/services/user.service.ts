@@ -26,20 +26,23 @@ export class UserService {
   editUser(userId:string, user: AddUser) {
     return this.http.put<AddUser>(this.apiUrl + '/api/User/'+userId,user)
   }
-
+  changeUserStatus(userId: string, status: number) {
+    return this.http.put(`http://localhost:5085/api/User/${userId}/${status}`, {});
+}
+  
   addNewUser(user: AddUser) {
     return this.http.post(this.apiUrl + "/api/User", user);
   }
 
   getAllDepartment(){
-    return this.http.get<IDepartment[]>(this.apiUrl + "/api/Department")
+    return this.http.get<IDepartment[]>(this.apiUrl + "/api/User/AllDepartments")
   }
 
   getRole(){
-    return this.http.get<IRole[]>(this.apiUrl + "/api/Role")
+    return this.http.get<IRole[]>(this.apiUrl + "/api/User/AllRoles")
   }
 
   getPosition(){
-    return this.http.get<IPosition[]>(this.apiUrl + "/api/Position")
+    return this.http.get<IPosition[]>(this.apiUrl + "/api/User/AllPositions")
   }
 }

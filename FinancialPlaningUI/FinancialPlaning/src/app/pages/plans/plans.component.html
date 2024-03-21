@@ -4,21 +4,54 @@
       <h3><b>Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <a routerLink="/import-plan" id="create-button" >
+    <a routerLink="/import-plan" id="create-button"  class="btIP" [hidden]="role !== 'FinancialStaff'">
       <button><i class="fa-solid fa-plus"></i> Import</button>
     </a>
   </div>
-  <div class="mb-4">
+  <div class="mb-4" class="container1">
     <form class="searchBar">
-      <input type="text" placeholder="Search for plans"  />
+      <input type="text" placeholder="Search " [value]="searchValue"  (input)="changeSearchText($event)"/>
       <i class="fa-solid fa-search"></i>
     </form>
     
-  </div>
+      <mat-form-field  >
+        <mat-label style="color: white; ">Department</mat-label>
+        <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
+          <mat-option value="All">All</mat-option>
+          @for (depart of departments; track depart) {
+          <mat-option [value]="depart">{{depart}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label style="color: white;">Term</mat-label>
+        <mat-select [(value)]="selectedTerm" (selectionChange)="onTermSelected($event)">
+          <mat-option value="All">All</mat-option>
+          @for (term of terms; track term) {
+          <mat-option [value]="term">{{term}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>  
+
+      <mat-form-field [hidden]="role !== 'FinancialStaff'">
+      <mat-label style="color: white;">Status</mat-label>
+      <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusSelected($event)">
+        <mat-option value="All">All</mat-option>
+          @for (Status of status; track Status) {
+          <mat-option [value]="Status">{{Status}}</mat-option>}
+      </mat-select>
+
+    </mat-form-field>
+  <button class="reset-button"  (click)="resetFilters()">Reset</button>
+</div>
+    
+  
+  
+
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
     <ng-container matColumnDef="no">
       <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let plan"> {{ plan.no }} </td>
+      <td mat-cell *matCellDef="let plan, let i = index"> {{ i + 1 }} </td>
     </ng-container>
     <ng-container matColumnDef="plan">
       <th mat-header-cell *matHeaderCellDef>Plan</th>
@@ -34,7 +67,7 @@
     </ng-container>
     
     <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef>version/th>
+      <th mat-header-cell *matHeaderCellDef>version</th>
       <td mat-cell *matCellDef="let plan">V{{plan.version}}</td>
     </ng-container>
     <ng-container matColumnDef="status">
@@ -45,7 +78,7 @@
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let plan">
         <a><mat-icon>visibility</mat-icon></a>
-        <a ><mat-icon>edit</mat-icon></a>
+        <a *ngIf="showEditDeleteButton(plan)"><mat-icon>edit</mat-icon></a>
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
