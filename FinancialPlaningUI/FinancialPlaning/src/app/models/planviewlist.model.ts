@@ -1,5 +1,5 @@
 export class Plan {
-        no: string;
+        id: string;
         plan: string;
         term: string;
         department: string;
@@ -8,7 +8,7 @@ export class Plan {
         user: any; // You might want to define a UserViewModel here if needed
 
   constructor(data: any = {}) {
-    this.no = data.no || '';
+    this.id = data.id || '';
     this.plan = data.plan || '';
     this.term = data.term || 0;
     this.department = data.department || '';

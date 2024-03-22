@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angular/common/http';
+import { Observable, catchError, map } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,39 @@ export class PlanService {
     // Thực hiện gọi HTTP GET đến API endpoint
     return this.http.get<Plan[]>(`${this.apiUrl}`, { params });
   }
-  getAllTerms(): Observable<any> {
-    return this.http.get(this.apiUrl);
+  getAllPlans(): Observable<any> {
+    return this.http.get(this.apiUrl + '/Planlist');
+  }
+  
+  importPlan(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(this.apiUrl + '/import', formData)
   }
 
+  uploadPlan(termId: string, expenses: []): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('termId', termId);
+    urlParams.append('uid', uid);
+    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+  }
+
+
+  deletePlan(PlanId: string): Observable<number> {
+    return this.http
+      .delete(this.apiUrl + '/' + PlanId, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
 }

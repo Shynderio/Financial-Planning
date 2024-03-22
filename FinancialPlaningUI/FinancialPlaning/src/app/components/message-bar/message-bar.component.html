@@ -1,0 +1,5 @@
+<span [style.color]="data.httpStatusCode == 200 ? '#16ff00' : '#ff204e'">
+  <i *ngIf="data.httpStatusCode == 200" class="fa-regular fa-circle-check"></i>
+  <i *ngIf="data.httpStatusCode != 200" class="fa-regular fa-circle-xmark"></i>
+  {{data.message}}
+</span>

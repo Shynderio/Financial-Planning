@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import {
   Component,
   OnInit,
@@ -30,6 +31,8 @@ import { PlanService } from '../../services/plan.service';
 import { jwtDecode } from 'jwt-decode';
 import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
+import { MatSelectModule } from '@angular/material/select';
+import { Plan } from '../../models/planviewlist.model';
 
 @Component({
   selector: 'app-terms',
@@ -47,15 +50,31 @@ import { concatMap } from 'rxjs/operators';
     MatPaginatorModule,
     MatIconModule,
     MatTableModule,
+    MatFormFieldModule,
+    MatSelectModule
+
   ],
 })
 export class PlansComponent implements OnInit {
   planList: any = [];
 
   role: string = '';
-
-  statusOption: string = 'All';
+// filter
   searchValue: string = '';
+
+  terms: any = [];
+  selectedTerm = "All";
+
+  departments: any = [];
+  selectedDepartment = "All";
+
+  status: any =[];
+  selectedStatus= "All";
+
+  
+  quarters: any[] = [];
+  selectedQuarter = "All";
+
 
   listSize: number = 0;
   pageSize = 7;
@@ -71,6 +90,9 @@ export class PlansComponent implements OnInit {
     'version',
     'action',
   ];
+  showEditDeleteButton(plan: Plan): boolean {
+    return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()  || this.role === 'FinancialStaff');
+  }
 
   constructor(
     private planService: PlanService,
@@ -95,12 +117,40 @@ export class PlansComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   fetchData() {
-    this.planService.getFinancialPlans().subscribe((data: any) => {
+    console.log(this.role);
+    this.planService.getAllPlans().subscribe((data: any) => {
       this.planList = data;
+
+      // Lọc dữ liệu dựa trên vai trò
+      if (this.role === 'FinancialStaff') {
+        // Hiển thị chỉ các kế hoạch trong phòng ban của người dùng
+        this.planList = this.planList.filter((plan: Plan) =>
+          plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()
+        );
+      }
+      this.terms = Array.from(new Set(this.planList.map((plan: Plan) => plan.term)));
+      this.departments = Array.from(new Set(this.planList.map((plan: Plan) => plan.department)));
+      this.status = Array.from(new Set(this.planList.map((plan: Plan) => plan.status)));
+
+
       this.dataSource = this.getPaginatedItems();
       console.log('Fetch data');
     });
+    
   }
+  getUsersDepartment(): string {
+    let userDepartment = '';
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        // Giả sử thông tin phòng ban được lưu trong trường 'department' của token
+        userDepartment = decodedToken.departmentName ?? '';
+      }
+    }
+    return userDepartment;
+  }
+
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -109,10 +159,39 @@ export class PlansComponent implements OnInit {
 
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
-    
-    // return filteredList.slice(startIndex, startIndex + this.pageSize);
-    this.listSize = this.planList.length;
-    return this.planList.slice(startIndex, startIndex + this.pageSize);
+    const endIndex = startIndex + this.pageSize;
+    let filteredList = this.planList;
+
+    // Apply filtering based on search text
+    if (this.searchValue.trim() !== '') {
+      filteredList = filteredList.filter((plan: Plan) =>
+        plan.plan.toLowerCase().includes(this.searchValue.toLowerCase())
+      );
+    }
+  
+    // Apply filtering based on selected department
+    if (this.selectedDepartment !== 'All') {
+      filteredList = filteredList.filter((plan: Plan) =>
+        plan.department.toLowerCase() === this.selectedDepartment.toLowerCase()
+      );
+    }
+
+    if (this.selectedTerm !== 'All') {
+      filteredList = filteredList.filter((plan: Plan) =>
+        plan.term.toLowerCase() === this.selectedTerm.toLowerCase()
+      );
+    }
+  
+    // Apply filtering based on selected status
+    if (this.selectedStatus !== 'All') {
+      filteredList = filteredList.filter((plan: Plan) =>
+     plan.status.toLowerCase() === this.selectedStatus.toLowerCase()
+      );  
+    }
+  
+  
+    this.listSize = filteredList.length;
+    return filteredList.slice(startIndex, endIndex);
   }
 
   changeSearchText(event: Event) {
@@ -122,21 +201,73 @@ export class PlansComponent implements OnInit {
     this.dataSource = this.getPaginatedItems();
   }
 
-  changeStatusFilter(event: Event) {
-    //Toggle class 'chosen' of status filter button
-    let target = event.target as HTMLElement;
-    let statusOptions =
-      this.elementRef.nativeElement.querySelector('#status-filter');
-
-    for (let button of statusOptions.querySelectorAll('button')) {
-      button.classList.remove('chosen');
-    }
-    target.classList.add('chosen');
-
-    this.statusOption = target.innerHTML;
-    this.pageIndex = 0;
+  onDepartmentSelected(event: any): void {
+    console.log(event.value);
+    this.selectedDepartment = event.value;
     this.dataSource = this.getPaginatedItems();
   }
 
+  onStatusSelected(event: any): void {
+    console.log(event.value);
+    this.selectedStatus = event.value;
+    this.dataSource = this.getPaginatedItems();
+  }
+  onTermSelected(event: any): void {
+    console.log(event.value);
+    this.selectedTerm = event.value;
+    this.dataSource = this.getPaginatedItems();
+  }
+  resetFilters() {
+    this.searchValue = '';
+    this.selectedDepartment = 'All';
+    this.selectedStatus = 'All';
+    this.selectedTerm = 'All';
+  
+    // Gọi lại fetchData() để cập nhật dữ liệu mới sau khi đặt lại bộ lọc
+    this.fetchData();
+  }
+  openDeleteDialog(id: string) {
+    const deleteDialog = this.dialog.open(DeletePlanDialog, {
+      width: '400px',
+      height: '250px',
+    });
 
+    deleteDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'delete') {
+            return this.planService.deletePlan(id);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe((response) => {
+        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
+          
+          panelClass: ['success'],
+        });
+        this.pageIndex = 0;
+        this.fetchData();
+      });
+  }
 }
+
+
+
+
+@Component({
+    selector: 'delete-plan',
+    standalone: true,
+    templateUrl: './delete-plan/delete-plan.component.html',
+    styleUrls: ['./delete-plan/delete-plan.component.css'],
+    imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+})
+
+  export class DeletePlanDialog {
+    constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
+  }
+  
+ 
+

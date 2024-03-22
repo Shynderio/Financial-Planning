@@ -17,7 +17,7 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<User?> IsValidUser(string email, string password)
         {
             var user = await _context.Users!.SingleOrDefaultAsync(u =>
-                u.Email == email && u.Password == password && u.Status == (int)UserStatus.Active);
+                u.Email == email && u.Status == (int)UserStatus.Active);
             if (user != null && BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 return user;
@@ -39,7 +39,7 @@ namespace FinancialPlanning.Data.Repositories
         {
             var userToUpdate = await _context.Users!.SingleOrDefaultAsync(u => u.Email == user.Email) ??
                                throw new Exception("User not found");
-            userToUpdate.Password = user.Password;
+            userToUpdate.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             userToUpdate.Token = null;
             await _context.SaveChangesAsync();
         }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
@@ -6,6 +7,9 @@ using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -76,36 +80,125 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(new { message = $"Report with id {id} deleted successfully!" });
         }
 
-        [HttpGet]
-        [Route("GetURL")]
-        public IActionResult GetUrlFile(string key)
-        {
-            return Ok();
-        }
 
 
-        [HttpPost]
-        public async Task<IActionResult> DownloadFileFromUrlAsync(string key)
+        [HttpGet("details/{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetreportDetails(Guid id)
         {
             try
             {
-                string url = await _reportService.GetFileByName(key);
-                var savePath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files", "Financial Plan_Template.xlsx");
+                List<Expense> expenses;
+                //Get report
+                var report = await _reportService.GetReportById(id);
+                //Get reportVersions
+                var reportVersions = await _reportService.GetReportVersionsAsync(id);
+                //string reportName = report.ReportName;
+                string reportName = "CorrectPlan";
+                //Get url of file on cloud
+                string url = await _reportService.GetFileByName(reportName + ".xlsx");
 
-                bool result = await _fileService.DownloadFile(url, savePath);
-                if (result)
+                //If folder doesn't exit -> create
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
+                if (!Directory.Exists(directoryPath))
                 {
-                    return Ok("File downloaded successfully");
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var savePath = Path.Combine(directoryPath, reportName + ".xlsx");
+
+                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
+                //download file sucessfull 
+                if (isDownLoad)
+                {
+                    // conver file to list expense
+                    using (var fileStream = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Read))
+                    {
+                        try
+                        {
+                            //change 1 when have file
+                            expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                        }
+                        catch
+                        {
+                            return BadRequest("Failed to convert");
+                        }
+                    }
+                    //mapper
+                    var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                    var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
+                    // Get the name of the user who uploaded the file
+                    var firstReportVersion = reportVersionModel.FirstOrDefault();
+                    var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
+                    //remove file
+                    if (System.IO.File.Exists(savePath))
+                    {
+                        System.IO.File.Delete(savePath);
+                    }
+
+                    var result = new
+                    {
+                        Report = reportViewModel,
+                        Expenses = expenses,
+                        ReportVersions = reportVersionModel,
+                        UploadedBy = uploadedBy
+                    };
+
+                    return Ok(result);
+
                 }
                 else
                 {
                     return BadRequest("Failed to download file");
                 }
             }
+            //error when download
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error downloading file: {ex.Message}");
+                return StatusCode(500, $"Error : {ex.Message}");
             }
         }
+
+        //export report 
+        [HttpGet("export/{id:guid}/{version:int}")]
+        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSingleReport(Guid id, int version)
+        {
+            try
+            {
+                //from reportVersion Id -> get name report + version
+                var report = await _reportService.GetReportById(id);
+                //var fileName = report.ReportName + "" + version;
+                var fileName = "CorrectPlan";
+                //get url from name file
+                string url = await _reportService.GetFileByName(fileName + ".xlsx");
+
+                // return URL
+                return Ok(new { downloadUrl = url });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
+        }
+
+        [HttpPost("import")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ImportReport(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { message = "File empty" });
+            }
+
+            using (MemoryStream ms = new())
+            {
+                await file.CopyToAsync(ms);
+                var fileBytes = ms.ToArray();
+            }
+
+            return Ok();
+        }
+
     }
 }

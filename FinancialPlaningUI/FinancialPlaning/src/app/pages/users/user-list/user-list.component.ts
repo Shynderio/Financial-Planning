@@ -57,10 +57,6 @@ export class UserListComponent implements OnInit {
   ngOnInit(): void {
     this.getListUsers();
   }
-  generateId(): number {
-    return this.nextId++;
-  }
-
 
   getListUsers(): void {
     this.httpService.getAllUser().subscribe((data: any) => {
@@ -110,14 +106,6 @@ export class UserListComponent implements OnInit {
     this.getPaginatedItems();
   }
   
-  // Remove onSearchChange() method
-  
-  // Remove (input)="onSearchChange()" from HTML
-  
-  
-  
-
-
 
   edit(id: string) {
     console.log(id);
@@ -129,18 +117,6 @@ export class UserListComponent implements OnInit {
     this.listSize = this.userList.length;
     this.dataSource = this.userList.slice(startIndex, startIndex + this.pageSize);
   }
-
-  // onSearchChange(): void {
-  //   // Apply search only on originalUserList
-  //   let filteredList = this.originalUserList;
-  //   if (this.searchValue) {
-  //     filteredList = filteredList.filter(user =>
-  //       user.username.toLowerCase().includes(this.searchValue.toLowerCase())
-  //     );
-  //   }
-  //   this.userList = filteredList;
-  //   this.getPaginatedItems();
-  // }
 
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;

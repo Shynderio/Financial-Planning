@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CreateTermModel } from '../models/term.model';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,10 @@ export class TermService {
   } // Correct injection through
 
   createTerm(term: CreateTermModel): Observable<any> {
-    term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    term.creatorId = uid;
     console.log(term);
     return this.http.post(this.apiUrl, term);
   }
@@ -39,7 +43,10 @@ export class TermService {
   }
 
   updateTerm(termId: string, term: CreateTermModel): Observable<any> {
-    term.creatorId = 'BAAF33C7-5E18-49DD-A1A9-666EF8F11515';
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    term.creatorId = uid;
     return this.http.put(this.apiUrl + '/update/' + termId, term);
   }
 
@@ -50,4 +57,9 @@ export class TermService {
   getStartedTerms(): Observable<any> {
     return this.http.get(this.apiUrl + '/started');
   }
+
+  startTerm(termId: string): Observable<any> {
+    return this.http.put(this.apiUrl + '/start/' + termId, {});
+  }
+
 }

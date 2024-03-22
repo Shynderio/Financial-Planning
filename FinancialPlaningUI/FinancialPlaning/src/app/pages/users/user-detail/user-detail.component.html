@@ -1,0 +1,70 @@
+<main>
+    <h1>User detail</h1>
+    <div class="doc-info mb-5 card">
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-6">
+                    <h4><label for="user-name" class="form-label">User name</label></h4>
+                    <input class="form-control" type="text" id="user-name" formControlName="username" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="full-name" class="form-label">Full name</label></h4>
+                    <input class="form-control" type="text" id="fullname" formControlName="fullname" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="dob" class="form-label">Dob</label></h4>
+                    <input class="form-control" type="date" id="dob" formControlName="dob" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="email" class="form-label">Email</label></h4>
+                    <input class="form-control" type="text" id="email" formControlName="email" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="address" class="form-label">Address</label></h4>
+                    <input class="form-control" type="text" id="address" formControlName="address" />
+                </div>
+                <div class="col-6">
+                    <h4><label for="phonenumber" class="form-label">Phone Number</label></h4>
+                    <input class="form-control" type="text" id="phonenumber" formControlName="phonenumber"/>
+                </div>
+                <div class="col-6">
+                    <h4><label for="department" class="form-label">Department</label></h4>
+                    <input class="form-control" type="text" id="department" formControlName="department"/>
+                </div>
+                <div class="col-6">
+                    <h4><label for="position" class="form-label">Position</label></h4>
+                    <input class="form-control" type="text" id="position" formControlName="position"/>
+                </div>
+                <div class="col-6">
+                    <h4><label for="role" class="form-label">Role</label></h4>
+                    <input class="form-control" type="text" id="role" formControlName="role"/>
+                </div>
+             
+                <div class="col-6">
+                    <h4><label for="note" class="form-label">Notes</label></h4>
+                    <input class="form-control" type="text" id="note" formControlName="note"/>
+                </div>
+                
+            </div>
+            <div class="choice-container">
+                <!-- Phần tử "Active" -->
+                <div *ngIf="userForm.get('status')?.value === 1" class="status-option text-success">
+                    <strong  style="font-size: 26px;color:#4af345"> Active</strong> 
+                </div>
+                <!-- Phần tử "Deactive" -->
+                <div *ngIf="userForm.get('status')?.value === 0" class="status-option text-danger">
+                    <strong style="font-size: 26px;color:#ff3939"> InActive</strong> 
+                </div>
+            </div>
+            
+            <div class="row mt-4 justify-content-center">
+                <div class="col-12 d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary btn-lg me-2"  (click)="openUpdateDialog()">Change Status</button>
+                    <button type="button" class="btn btn-secondary btn-lg" (click)="cancel()">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<footer>
+</footer>

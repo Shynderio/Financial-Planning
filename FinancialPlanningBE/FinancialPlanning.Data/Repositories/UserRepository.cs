@@ -166,6 +166,7 @@ namespace FinancialPlanning.Data.Repositories
             return user;
         }
 
+        
         //Update user status
         public async Task UpdateUserStatus(Guid id, int status)
         {
