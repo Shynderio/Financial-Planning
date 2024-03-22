@@ -4,6 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import { concatMap, of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-detail',
@@ -14,12 +17,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 })
 export class UserDetailComponent implements OnInit {
   userForm: FormGroup;
+  pageIndex = 0;
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
+    private dialog: MatDialog,
+    private messageBar: MatSnackBar
   ) {
 
     this.userForm = this.fb.group({
@@ -89,39 +95,57 @@ export class UserDetailComponent implements OnInit {
     // Điều hướng người dùng trở lại trang "user-list" khi nhấp vào nút "Cancel"
     this.router.navigate(['/user-list']);
   }
-  changeStatus(): void {
+  openUpdateDialog():void {
     const userId = this.route.snapshot.paramMap.get('id');
+    if (!userId) {
+        console.error('User ID is null');
+        return;
+    }
+
     const currentStatus = this.userForm.get('status')?.value;
     console.log(currentStatus);
     const newStatus = currentStatus == 1 ? 0 : 1;
     console.log("new" + newStatus);
 
+    const updateDialog = this.dialog.open(UpdateUserStatusDialog, {
+      width: '400px',
+      height: '250px',
+    });
 
-    if (!userId) {
-      console.error('userId is undefined or null.');
-      return;
-    }
-
-    // Hiển thị hộp thoại xác nhận
-    const confirmation = confirm('Are you sure you want to change the user status?');
-    if (!confirmation) {
-      return; // Người dùng đã chọn "Cancel", không cần thực hiện gì hơn
-    }
-
-    this.userService.changeUserStatus(userId, newStatus).subscribe(
-      () => {
-        console.log(`User status changed successfully!`);
-        // Update status on UI
-        window.location.reload();
-      },
-      error => {
-        console.error('Error occurred while changing user status:', error);
-      }
-    );
+    updateDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'update') {
+            return this.userService.changeUserStatus(userId, newStatus);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe((response) => {
+        this.messageBar.open(response == 200 ? 'Updated successfully' : 'Something went wrong', 'Close', {
+          panelClass: ['success'],
+        });
+        this.loadUserDetail(userId);
+      });
   }
 
-
 }
+@Component({
+  selector: 'app-update-user-status',
+  standalone: true,
+  imports: [ MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+  templateUrl: '../update-user-status/update-user-status.component.html',
+  styleUrl: '../update-user-status/update-user-status.component.css'
+})
+export class UpdateUserStatusDialog {
+  constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) {}
+}
+
+
+
+
 
 
 
