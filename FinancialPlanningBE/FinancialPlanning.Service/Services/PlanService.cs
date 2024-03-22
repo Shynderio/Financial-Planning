@@ -184,14 +184,6 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.GetFileAsync(key);
         }
 
-
-
-        public async Task<IEnumerable<ReportVersion>> GetReportVersionsAsync(Guid planId)
-        {
-            var planVersions = await _planRepository.GetReportVersionsByPlanID(planId);
-            return planVersions;
-        }
-
         public Task GetPlanVersionsAsync(Guid id)
         {
             throw new NotImplementedException();

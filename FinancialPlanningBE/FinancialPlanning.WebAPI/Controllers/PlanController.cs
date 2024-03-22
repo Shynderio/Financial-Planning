@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 using static FinancialPlanning.Data.Repositories.PlanRepository;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
-using FinancialPlanning.WebAPI.Models.Plan;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -21,7 +20,7 @@ namespace FinancialPlanning.WebAPI.Controllers
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
-        private readonly FileService _fileService = planService ?? throw new ArgumentNullException(nameof(fileService));
+        private readonly FileService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
 
 
         [HttpGet]
@@ -214,7 +213,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
                 //Get planVersions
-                var planVersions = await _planService.GetPlanVersionsAsync(id);
+               //  var planVersions = await _planService.GetPlanVersionsAsync(id);
                 //string planName = plan.PlanName;
                 string planName = "CorrectPlan";
                 //Get url of file on cloud
@@ -248,10 +247,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                     }
                     //mapper
                     var planViewModel = _mapper.Map<PlanViewModel>(plan);
-                    var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions);
+               //     var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions);
                     // Get the name of the user who uploaded the file
-                    var firstPlanVersion = planVersionModel.FirstOrDefault();
-                    var uploadedBy = firstPlanVersion != null ? firstPlanVersion.UploadedBy : null;
+                //    var firstPlanVersion = planVersionModel.FirstOrDefault();
+                //    var uploadedBy = firstPlanVersion != null ? firstPlanVersion.UploadedBy : null;
                     //remove file
                     if (System.IO.File.Exists(savePath))
                     {
@@ -262,8 +261,8 @@ namespace FinancialPlanning.WebAPI.Controllers
                     {
                         Plan = planViewModel,
                         Expenses = expenses,
-                        PlanVersions = planVersionModel,
-                        UploadedBy = uploadedBy
+                       // PlanVersions = planVersionModel,
+                      //  UploadedBy = uploadedBy
                     };
 
                     return Ok(result);
