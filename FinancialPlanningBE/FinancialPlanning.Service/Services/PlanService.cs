@@ -62,9 +62,9 @@ namespace FinancialPlanning.Service.Services
 
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
         {
-          return  await _planRepository.GetFinancialPlans(keyword, department, status);   
+            return await _planRepository.GetFinancialPlans(keyword, department, status);
         }
-        
+
         public async Task UpdatePlan(Plan plan)
         {
             var existingPlan = await _planRepository.GetPlanById(plan.Id) ?? throw new ArgumentException("Plan not found with the specified ID");
@@ -178,6 +178,23 @@ namespace FinancialPlanning.Service.Services
                 // Log exception
                 throw new InvalidOperationException("An error occurred while saving the plan.", ex);
             }
+        }
+        public async Task<string> GetFileByName(string key)
+        {
+            return await _fileService.GetFileAsync(key);
+        }
+
+
+
+        public async Task<IEnumerable<ReportVersion>> GetReportVersionsAsync(Guid planId)
+        {
+            var planVersions = await _planRepository.GetReportVersionsByPlanID(planId);
+            return planVersions;
+        }
+
+        public Task GetPlanVersionsAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

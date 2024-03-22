@@ -49,17 +49,17 @@
             <div class="choice-container">
                 <!-- Phần tử "Active" -->
                 <div *ngIf="userForm.get('status')?.value === 1" class="status-option text-success">
-                    <strong  style="font-size: 26px;"> Active</strong> 
+                    <strong  style="font-size: 26px;color:#4af345"> Active</strong> 
                 </div>
                 <!-- Phần tử "Deactive" -->
                 <div *ngIf="userForm.get('status')?.value === 0" class="status-option text-danger">
-                    <strong style="font-size: 26px;"> InActive</strong> 
+                    <strong style="font-size: 26px;color:#ff3939"> InActive</strong> 
                 </div>
             </div>
             
             <div class="row mt-4 justify-content-center">
                 <div class="col-12 d-flex justify-content-center">
-                    <button type="button" class="btn btn-primary btn-lg me-2" (click)="changeStatus()">Change Status</button>
+                    <button type="button" class="btn btn-primary btn-lg me-2"  (click)="openUpdateDialog()">Change Status</button>
                     <button type="button" class="btn btn-secondary btn-lg" (click)="cancel()">Cancel</button>
                 </div>
             </div>

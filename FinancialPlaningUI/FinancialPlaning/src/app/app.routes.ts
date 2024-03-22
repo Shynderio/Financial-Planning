@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { ForgotPasswordComponent } from './pages/login/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/login/reset-password/reset-password.component';
 import { HomeComponent } from './pages/home/home.component';
 import { TermsComponent } from './pages/terms/terms.component';
 import { CreateTermComponent } from './pages/terms/create-term/create-term.component';
@@ -17,11 +18,17 @@ import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.com
 import { PlansComponent } from './pages/plans/plans.component';
 import { ReportDetailsComponent } from './pages/report/report-details/report-details.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
+<<<<<<< HEAD
+import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
+=======
+import { ReupPlanComponent } from './pages/plans/reup-plan/reup-plan.component';
+>>>>>>> 12e265a8415cfeb3b4c42026f55900c7cc75ad0a
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
     { path: 'login', component: LoginComponent},    
     { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
     { path: '', component: SidenavComponent, canActivate: [AuthGuard]},
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
     // term
@@ -35,6 +42,11 @@ export const routes: Routes = [
     // plan
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
+<<<<<<< HEAD
+    { path: 'plan-details/:id', component: PlanDetailsComponent, canActivate: [AuthGuard] },
+=======
+    { path: 'reup-plan', component: ReupPlanComponent, canActivate: [AuthGuard]},
+>>>>>>> 12e265a8415cfeb3b4c42026f55900c7cc75ad0a
      //user
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },

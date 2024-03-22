@@ -11,15 +11,17 @@ using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 using static FinancialPlanning.Data.Repositories.PlanRepository;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
+using FinancialPlanning.WebAPI.Models.Plan;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController(IMapper mapper, PlanService planService) : ControllerBase
+    public class PlanController(IMapper mapper, PlanService planService, FileService fileService) : ControllerBase
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
+        private readonly FileService _fileService = planService ?? throw new ArgumentNullException(nameof(fileService));
 
 
         [HttpGet]
@@ -118,14 +120,19 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Check if a file is uploaded
                 if (file == null || file.Length == 0)
                 {
-                    return BadRequest("No file uploaded");
+                    return BadRequest(new { message = "No file uploaded" });
                 }
 
                 // Generate a unique filename using GUID and original file extension
                 var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
                 // Save the uploaded file to the temporary directory
-                var tempFilePath = Path.Combine("Resources", "ExcelFiles", tempFileName);
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources\\ExcelFiles");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                var tempFilePath = Path.Combine(directoryPath, tempFileName);
                 using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
@@ -141,7 +148,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 {
                     // Delete the temporary file if conversion fails
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Failed to convert");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Validate the file
@@ -156,7 +163,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                     // Delete the temporary file if validation fails
                     System.IO.File.Delete(convertedFilePath);
                     System.IO.File.Delete(tempFilePath);
-                    return BadRequest("Invalid file format");
+                    return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses
@@ -197,5 +204,82 @@ namespace FinancialPlanning.WebAPI.Controllers
                     "An error occurred while uploading the plan file.");
             }
         }
+        [HttpGet("details/{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetplanDetails(Guid id)
+        {
+            try
+            {
+                List<Expense> expenses;
+                //Get plan
+                var plan = await _planService.GetPlanById(id);
+                //Get planVersions
+                var planVersions = await _planService.GetPlanVersionsAsync(id);
+                //string planName = plan.PlanName;
+                string planName = "CorrectPlan";
+                //Get url of file on cloud
+                string url = await _planService.GetFileByName(planName + ".xlsx");
+
+                //If folder doesn't exit -> create
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var savePath = Path.Combine(directoryPath, planName + ".xlsx");
+
+                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
+                //download file sucessfull 
+                if (isDownLoad)
+                {
+                    // conver file to list expense
+                    using (var fileStream = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Read))
+                    {
+                        try
+                        {
+                            //change 1 when have file
+                            expenses = _fileService.ConvertExcelToList(fileStream, 0);
+                        }
+                        catch
+                        {
+                            return BadRequest("Failed to convert");
+                        }
+                    }
+                    //mapper
+                    var planViewModel = _mapper.Map<PlanViewModel>(plan);
+                    var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions);
+                    // Get the name of the user who uploaded the file
+                    var firstPlanVersion = planVersionModel.FirstOrDefault();
+                    var uploadedBy = firstPlanVersion != null ? firstPlanVersion.UploadedBy : null;
+                    //remove file
+                    if (System.IO.File.Exists(savePath))
+                    {
+                        System.IO.File.Delete(savePath);
+                    }
+
+                    var result = new
+                    {
+                        Plan = planViewModel,
+                        Expenses = expenses,
+                        PlanVersions = planVersionModel,
+                        UploadedBy = uploadedBy
+                    };
+
+                    return Ok(result);
+
+                }
+                else
+                {
+                    return BadRequest("Failed to download file");
+                }
+            }
+            //error when download
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+
     }
 }

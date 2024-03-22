@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angula
 import { Observable, catchError, map } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +38,24 @@ export class PlanService {
   getAllPlans(): Observable<any> {
     return this.http.get(this.apiUrl + '/Planlist');
   }
+  
   importPlan(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post(this.apiUrl + '/import', formData)
   }
+
+  uploadPlan(termId: string, expenses: []): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('termId', termId);
+    urlParams.append('uid', uid);
+    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+  }
+
+
   deletePlan(PlanId: string): Observable<number> {
     return this.http
       .delete(this.apiUrl + '/' + PlanId, {
@@ -55,5 +69,8 @@ export class PlanService {
           throw error;
         })
       );
+  }
+  getPlan(planId: string): Observable<any> {
+    return this.http.get(this.apiUrl + '/' + planId);
   }
 }
