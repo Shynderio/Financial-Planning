@@ -58,4 +58,8 @@ export class TermService {
     return this.http.get(this.apiUrl + '/started');
   }
 
+  startTerm(termId: string): Observable<any> {
+    return this.http.put(this.apiUrl + '/start/' + termId, {});
+  }
+
 }
