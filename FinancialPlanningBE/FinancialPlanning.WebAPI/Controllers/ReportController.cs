@@ -7,6 +7,9 @@ using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using Newtonsoft.Json;
+using OfficeOpenXml;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -103,7 +106,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 }
 
                 var savePath = Path.Combine(directoryPath, reportName + ".xlsx");
-                
+
                 bool isDownLoad = await _fileService.DownloadFile(url, savePath);
                 //download file sucessfull 
                 if (isDownLoad)
@@ -140,7 +143,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                         ReportVersions = reportVersionModel,
                         UploadedBy = uploadedBy
                     };
-                    
+
                     return Ok(result);
 
                 }
@@ -179,7 +182,23 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
+        [HttpPost("import")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ImportReport(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { message = "File empty" });
+            }
 
+            using (MemoryStream ms = new())
+            {
+                await file.CopyToAsync(ms);
+                var fileBytes = ms.ToArray();
+            }
 
+            return Ok();
         }
+
+    }
 }

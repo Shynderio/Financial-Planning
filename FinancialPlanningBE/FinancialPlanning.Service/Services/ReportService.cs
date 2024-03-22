@@ -66,7 +66,7 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.GetFileAsync(key);
         }
 
-        public async Task<Report> GetReportById(Guid id)
+        public async Task<Report?> GetReportById(Guid id)
         {
             var report = await _reportRepository.GetReportById(id);
             return report;
@@ -78,6 +78,21 @@ namespace FinancialPlanning.Service.Services
             return repostVersions;
         }
 
+        public bool ValidateReportFileData(Byte[] fileByte)
+        {
+            // Validate the file using FileService
+            throw new NotImplementedException();
+            // try
+            // {
+            //     // Assuming plan documents have document type 0
+            //     return _fileService.ValidateFile(fileByte, documentType: 1);
+            // }
+            // catch (Exception ex)
+            // {
+            //     // Log exception
+            //     throw new InvalidOperationException("An error occurred while validating the plan file.", ex);
+            // }
+        }
 
     }
 }
