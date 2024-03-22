@@ -101,7 +101,7 @@ namespace FinancialPlanning.Data.Repositories
             var lastName = nameParts[^1];
 
             // Extract initials
-            var initials = "";
+            var initials = string.Empty;
             for (var i = 0; i < nameParts.Length - 1; i++)
             {
                 initials += nameParts[i][0].ToString().ToUpper();
@@ -111,7 +111,7 @@ namespace FinancialPlanning.Data.Repositories
             var userName = $"{lastName}{initials}";
 
             // Check username existence
-            if (_context.Users == null) throw new Exception("");
+            if (_context.Users == null) throw new Exception(string.Empty);
             var existingUserNames = _context.Users.Where(u => u.Username.StartsWith(userName)).Select(u => u.Username)
                 .ToList();
             var count = 1;

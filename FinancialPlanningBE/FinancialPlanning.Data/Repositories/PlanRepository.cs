@@ -202,5 +202,6 @@ namespace FinancialPlanning.Data.Repositories
 
             return await plans.ToListAsync();
         }
+       
     }
 }
