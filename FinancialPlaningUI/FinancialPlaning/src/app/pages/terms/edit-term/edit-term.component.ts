@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -11,7 +11,9 @@ import { CreateTermModel } from '../../../models/term.model';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { concatMap, of } from 'rxjs';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -41,7 +43,8 @@ export class EditTermComponent implements OnInit {
     private termService: TermService,
     private route: ActivatedRoute,
     private router: Router,
-    private messageBar: MatSnackBar
+    private messageBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {
     this.termService = termService;
     this.termForm = this.fb.group({
@@ -70,15 +73,7 @@ export class EditTermComponent implements OnInit {
     // this.updateEndDate();
   }
 
-  startTerm() { 
-    
-
-    this.termService.startTerm(this.termId).subscribe((response) => {
-      this.messageBar.open('Term started successfully', 'Close', {});
-      
-    });
-  }
-
+  
 
   populateForm(termData: TermViewModel): void {
     this.termForm.patchValue({
@@ -218,4 +213,65 @@ export class EditTermComponent implements OnInit {
     // Handle cancel action
     console.log('Cancel');
   }
+
+  startTerm() {   
+    const startDialog = this.dialog.open(StartTermDialog, {
+      width: '400px',
+      height: '250px',
+    });
+    startDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'start') {
+            return this.termService.startTerm(this.termId);
+          } else {
+            return of(null);
+          }
+        })
+      ).subscribe((response) => {
+        if (response == null){
+          return;
+        }
+        this.messageBar.openFromComponent(MessageBarTerm, {
+          duration: 5000,
+          data: {
+            httpStatusCode: response,
+            message:
+              response == 200
+                ? 'Term started successfully'
+                : 'Failed to start term',
+          },
+        });
+      });
+  }
+
+}
+
+
+
+@Component({
+  selector: 'start-term',
+  standalone: true,
+  templateUrl: '../start-term/start-term.component.html',
+  styleUrls: ['../start-term/start-term.component.css'],
+  imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+})
+export class StartTermDialog {
+  constructor(public dialogRef: MatDialogRef<StartTermDialog>) {}
+}
+
+@Component({
+  selector: 'message-bar-term',
+  standalone: true,
+  templateUrl: '../message-bar-term.component.html',
+  styles: `
+    i {
+      margin-right: 5px;
+    }
+  `,
+  imports: [CommonModule],
+})
+export class MessageBarTerm {
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 }

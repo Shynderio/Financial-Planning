@@ -155,6 +155,9 @@ export class TermsComponent implements OnInit {
         })
       )
       .subscribe((response) => {
+        if (response == null){
+          return;
+        }
         this.messageBar.openFromComponent(MessageBarTerm, {
           duration: 5000,
           data: {
