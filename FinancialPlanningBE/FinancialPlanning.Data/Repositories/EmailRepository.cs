@@ -16,12 +16,13 @@ namespace FinancialPlanning.Data.Repositories
             email.Body = new TextPart("html")
             {
                 Text =
-            $"This email is from Financial Planning System.<br/><br/><br/>" +
-            $"User name: <span style='color: red; '>{username}</span><br/>" +
-            $"Password: <span style='color: red;'>{password}</span><br/><br/><br/><br/><br/><br/></p>" +
-            $"<p><span style='color: green;'>If anything wrong, please contact to 012345678. We are so sorry for this inconvenience. <br/><br/><br/>" +
-            $"Thanks & Regards! " +
-            $"Financial Planning Team.</span></p>"
+               @"This email is from Financial Planning System.
+                <br/><br/><br/>User name: <span style='color: red; '>{username}</span>
+                <br/>Password: <span style='color: red;'>##password##</span></p>
+                <br/><br/><br/><br/><br/><br/><p><span style='color: green;'>If anything wrong, please contact to 012345678. We are so sorry for this inconvenience. <br/><br/><br/>
+                Thanks & Regards! 
+                Financial Planning Team.</span></p>
+                "
             };
 
             // usinh SMTP client to send email
