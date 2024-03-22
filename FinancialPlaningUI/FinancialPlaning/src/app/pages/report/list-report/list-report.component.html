@@ -14,10 +14,10 @@
     </div>
   </div>
   <div class="mb-4">
-    <form class="searchBar">
-      <input type="text" placeholder="Search " [value]="searchValue"  (input)="changeSearchText($event)"/>
+    <div class="searchBar">
+      <input type="text" placeholder="Search " [value]="searchValue" (keydown.enter)="changeSearchText($event)"  (input)="changeSearchText($event)" />
       <i class="fa-solid fa-search"></i>
-    </form>
+    </div>
     <!-- Department -->
 
     <mat-form-field  [hidden]="role == 'FinancialStaff'">
