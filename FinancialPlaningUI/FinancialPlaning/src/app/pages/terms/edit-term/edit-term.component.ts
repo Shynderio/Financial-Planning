@@ -11,6 +11,7 @@ import { CreateTermModel } from '../../../models/term.model';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -19,6 +20,9 @@ import { TermViewModel } from '../../../models/termview.model';
   styleUrl: './edit-term.component.css',
 })
 export class EditTermComponent implements OnInit {
+
+
+ 
   termForm: FormGroup;
   // termService: TermService;
   termId: string = '';
@@ -36,7 +40,8 @@ export class EditTermComponent implements OnInit {
     private fb: FormBuilder,
     private termService: TermService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageBar: MatSnackBar
   ) {
     this.termService = termService;
     this.termForm = this.fb.group({
@@ -64,6 +69,16 @@ export class EditTermComponent implements OnInit {
     );
     // this.updateEndDate();
   }
+
+  startTerm() { 
+    
+
+    this.termService.startTerm(this.termId).subscribe((response) => {
+      this.messageBar.open('Term started successfully', 'Close', {});
+      
+    });
+  }
+
 
   populateForm(termData: TermViewModel): void {
     this.termForm.patchValue({
