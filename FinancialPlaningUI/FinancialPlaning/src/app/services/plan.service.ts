@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpParams, HttpResponse } from '@angula
 import { Observable, catchError, map } from 'rxjs';
 import { Plan } from '../models/planviewlist.model';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -44,8 +45,11 @@ export class PlanService {
     return this.http.post(this.apiUrl + '/import', formData)
   }
 
-  uploadPlan(termId: string, uid: string, expenses: []): Observable<any> {
-    let urlParams = new URLSearchParams();
+  uploadPlan(termId: string, expenses: []): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
     urlParams.append('termId', termId);
     urlParams.append('uid', uid);
     return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
