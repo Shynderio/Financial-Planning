@@ -24,7 +24,7 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<List<Term>> GetAllTerms()
         {
-            return await _context.Terms!.ToListAsync();
+            return await _context.Terms!.Include(t => t.Plans).ToListAsync();
         }
 
         public async Task<Term?> GetTermByIdAsync(Guid id)

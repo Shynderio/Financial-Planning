@@ -9,12 +9,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CreateTermModel } from '../../../models/term.model';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './edit-term.component.html',
   styleUrl: './edit-term.component.css',
 })

@@ -10,6 +10,7 @@ import { PlanService } from '../../../services/plan.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-import-plan',
@@ -21,7 +22,8 @@ import { jwtDecode } from 'jwt-decode';
     MatOption, CommonModule,
     MatPaginatorModule,
     MatTableModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './import-plan.component.html',
   styleUrls: ['./import-plan.component.css']
@@ -128,13 +130,9 @@ export class ImportPlanComponent implements OnInit {
     debugger;
     if (this.planForm.valid) {
       if (this.file){
-        const token = localStorage.getItem('token') ?? '';
-
-        const decodedToken: any = jwtDecode(token);
-        var uid = decodedToken.userId;
         var term = this.planForm.value.term;
         this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-        this.planService.uploadPlan(term, uid, this.dataSource).subscribe(
+        this.planService.uploadPlan(term, this.dataSource).subscribe(
           (data: any) => {
             console.log('Plan uploaded:', data);
             this.messageBar.open(

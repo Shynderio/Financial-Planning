@@ -153,23 +153,23 @@ main {
   
   .custom-select {
     flex: 1; /* Số tự nhiên là phần tử `<select>` chiếm mọi không gian còn lại */
-    margin-right: 10px; /* Khoảng cách giữa phần tử `<select>` và `<button>` */
-    padding: 8px 12px;
+    margin-right: 10px;
+    margin-left: 10px; /* Khoảng cách giữa phần tử `<select>` và `<button>` */
+    padding: 9px 13px;
     font-size: 16px;
-    border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #fff;
-    color: #333;
-    outline: none;
+    background-color:#535c91;
+    color: #fff;
     cursor: pointer;
+    border: none;
   }
   
   .custom-button {
-    padding: 10px 20px;
+    padding: 8px 12px;
     font-size: 16px;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color:#535c91;
     color: #fff;
     cursor: pointer;
   }

@@ -105,11 +105,10 @@ export class ReupPlanComponent implements OnInit {
 
     if (this.file) {
       const token = localStorage.getItem('token') ?? '';
-
       const decodedToken: any = jwtDecode(token);
       var uid = decodedToken.userId;
       this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-      this.planService.uploadPlan(this.term, uid, this.dataSource).subscribe(
+      this.planService.uploadPlan(this.term, this.dataSource).subscribe(
         (data: any) => {
           console.log('Plan uploaded:', data);
           this.messageBar.open(
