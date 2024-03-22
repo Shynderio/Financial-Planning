@@ -1,13 +1,28 @@
 <main>
-    <h1 class="mb-4">Update Term</h1>
+    <!-- <h1 class="mb-4">Update Term</h1>
+    <button (click)="startTerm()">
+        Start Term
+    </button> -->
+    <div class="container mb-4">
+        <div id="page-title">
+          <h3><b> Monthly Reports</b></h3>
+          <h6>View all Monthly Reports</h6>
+        </div>
+        <div class="abc">
+          <a   routerLink="/create-term" class="create-button" >
+            <button> Import</button>
+          </a>
+          <a routerLink="/import-reports" class="export-button">
+            <button> Export</button>
+          </a>
+        </div>
+      </div>
     <!-- <div class="container h-100"> -->
     <div class="row d-flex justify-content-center align-items-center ">
         <!-- <div class="col-xl-9"> -->
         <!-- <div class="card" style="border-radius: 15px;"> -->
         <!-- <div class="card-body"> -->
-            <button (click)="startTerm()">
-                Start Term
-            </button>
+          
         <form [formGroup]="termForm" (ngSubmit)="onSubmit()">
             <div class="row">
 
