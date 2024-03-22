@@ -125,7 +125,12 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
 
                 // Save the uploaded file to the temporary directory
-                var tempFilePath = Path.Combine("Resources", "ExcelFiles", tempFileName);
+                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources\\ExcelFiles");
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+                var tempFilePath = Path.Combine(directoryPath, tempFileName);
                 using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(fileStream);
