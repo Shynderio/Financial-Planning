@@ -229,21 +229,22 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-      ).subscribe((response) => {
-        if (response == null){
-          return;
+        ).subscribe((response) => {
+          console.log(response)
+          if (response == null){
+            return;
         }
         this.messageBar.openFromComponent(MessageBarTerm, {
+          
           duration: 5000,
           data: {
-            httpStatusCode: response,
+            httpStatusCode: 200,
             message:
-              response == 200
-                ? 'Term started successfully'
-                : 'Failed to start term',
+              'Term started successfully'
           },
         });
       });
+      this.router.navigate(['/terms']);
   }
 
 }
