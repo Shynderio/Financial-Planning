@@ -73,7 +73,7 @@ export class ImportPlanComponent implements OnInit {
         this.termOptions = data.map(term => {
           return { value: term.id, viewValue: term.termName };
         });
-        // console.log(this.termOptions);
+        console.log(this.termOptions);
       },
       error => {
         console.log(error);

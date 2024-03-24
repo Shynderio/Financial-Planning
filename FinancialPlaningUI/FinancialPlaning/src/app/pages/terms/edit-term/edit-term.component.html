@@ -5,15 +5,15 @@
     </button> -->
     <div class="container mb-4">
         <div id="page-title">
-          <h3><b> Monthly Reports</b></h3>
-          <h6>View all Monthly Reports</h6>
+          <h3><b>Term Manager</b></h3>
+          <h6>Edit Term</h6>
         </div>
         <div class="abc">
-          <a   routerLink="/create-term" class="create-button" >
-            <button> Import</button>
+          <a  class="create-button" (click)="startTerm()">
+            <button> Start Term</button>
           </a>
-          <a routerLink="/import-reports" class="export-button">
-            <button> Export</button>
+          <a  class="export-button">
+            <button> End Term</button>
           </a>
         </div>
       </div>

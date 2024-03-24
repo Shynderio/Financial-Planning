@@ -123,7 +123,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startedTerms = [];
             foreach (var term in terms)
             {
-                if (term.Status == (int)TermStatus.InProgress && term.Plans == null)
+                if (term.Status == (int)TermStatus.InProgress && term.Plans.Count == 0)
                 {
                     startedTerms.Add(term);
                 }

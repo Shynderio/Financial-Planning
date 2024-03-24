@@ -28,10 +28,18 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<string> GetRoleUser(string email)
         {
-            if (_context.Users == null) return string.Empty;
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-            if (user == null) return string.Empty;
-            var role = await _context.Roles!.SingleOrDefaultAsync(r => r.Id == user.RoleId);
+            if (_context.Users == null)
+            {
+                return string.Empty;
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                return string.Empty;
+            }
+
+            var role = await _context.Roles!.FirstOrDefaultAsync(r => r.Id == user.RoleId);
             return role != null ? role.RoleName : string.Empty;
         }
 
@@ -46,13 +54,13 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<bool> IsUser(string email)
         {
-            var user = await _context.Users!.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users!.FirstOrDefaultAsync(u => u.Email == email);
             return user != null;
         }
 
         public async Task SetToken(string email, string token)
         {
-            var user = await _context.Users!.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users!.FirstOrDefaultAsync(u => u.Email == email);
             if (user != null)
             {
                 user.Token = token;
@@ -62,7 +70,7 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<string> GetToken(string email)
         {
-            var user = await _context.Users!.SingleOrDefaultAsync(u => u.Email == email) ??
+            var user = await _context.Users!.FirstOrDefaultAsync(u => u.Email == email) ??
                        throw new Exception("User not found");
             return user.Token!;
         }
