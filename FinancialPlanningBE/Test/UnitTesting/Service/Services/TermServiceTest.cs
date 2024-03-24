@@ -31,7 +31,7 @@ namespace Test.UnitTesting.Service.Services
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term> { startingTerm, endingTerm });
 
             // Act
-            var result = await termService.GetStartingTerms();
+            var result = await termService.GetTermsToStart();
 
             // Assert
             var collection = result.ToList();

@@ -14,6 +14,8 @@ import { TermViewModel } from '../../../models/termview.model';
 import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
+import { MessageBarComponent } from '../../../components/message-bar/message-bar.component';
+import { DialogComponent } from '../../../components/dialog/dialog.component';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -22,9 +24,6 @@ import { concatMap, of } from 'rxjs';
   styleUrl: './edit-term.component.css',
 })
 export class EditTermComponent implements OnInit {
-
-
- 
   termForm: FormGroup;
   // termService: TermService;
   termId: string = '';
@@ -84,7 +83,7 @@ export class EditTermComponent implements OnInit {
       reportDueDate: termData.reportDueDate.slice(0, 10),
       // Populate other form controls
     });
-    // this.updateEndDate();
+    this.updateEndDate();
   }
 
   updateEndDate(): void {
@@ -104,6 +103,44 @@ export class EditTermComponent implements OnInit {
       endDate.setMonth(endDate.getMonth() + monthsToAdd);
       endDateControl.setValue(this.formatDate(endDate));
     }
+  }
+
+  closeTerm(){
+    const closeDialog = this.dialog.open(DialogComponent, {
+      width: '400px',
+      height: '250px',
+      data: {
+        title: 'Close term',
+        content: 'Are you sure you want to close this term?',
+        note: 'Please, rethink your decision because you will not be able to undo this action'
+      }
+    });
+    closeDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'confirm') {
+            return this.termService.closeTerm(this.termId);
+          } else {
+            return of(null);
+          }
+        })
+        ).subscribe((response) => {
+          console.log(response)
+          if (response == null){
+            return;
+        }
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          
+          duration: 5000,
+          data: {
+            success: true,
+            message:
+              'Term closed successfully'
+          },
+        });
+      });
+      // this.router.navigate(['/terms']);
   }
 
   planDueDateValidator(control: any): { [key: string]: boolean } | null {
@@ -215,15 +252,20 @@ export class EditTermComponent implements OnInit {
   }
 
   startTerm() {   
-    const startDialog = this.dialog.open(StartTermDialog, {
+    const startDialog = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
+      data: {
+        title: 'Start term',
+        content: 'Are you sure you want to start this term?',
+        note: 'Please, rethink your decision because you will not be able to undo this action'
+      }
     });
     startDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'start') {
+          if (result === 'confirm') {
             return this.termService.startTerm(this.termId);
           } else {
             return of(null);
@@ -234,17 +276,16 @@ export class EditTermComponent implements OnInit {
           if (response == null){
             return;
         }
-        this.messageBar.openFromComponent(MessageBarTerm, {
-          
+        this.messageBar.openFromComponent(MessageBarComponent, {
           duration: 5000,
           data: {
-            httpStatusCode: 200,
+            success: true,
             message:
-              'Term started successfully'
+              'Start term successfully'
           },
         });
       });
-      this.router.navigate(['/terms']);
+      // this.router.navigate(['/terms']);
   }
 
 }
@@ -262,17 +303,3 @@ export class StartTermDialog {
   constructor(public dialogRef: MatDialogRef<StartTermDialog>) {}
 }
 
-@Component({
-  selector: 'message-bar-term',
-  standalone: true,
-  templateUrl: '../message-bar-term.component.html',
-  styles: `
-    i {
-      margin-right: 5px;
-    }
-  `,
-  imports: [CommonModule],
-})
-export class MessageBarTerm {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
-}

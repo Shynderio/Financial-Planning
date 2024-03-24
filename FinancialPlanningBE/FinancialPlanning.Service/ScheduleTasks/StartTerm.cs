@@ -20,7 +20,7 @@ namespace FinancialPlanning.Service.ScheduleTasks
         {
             var termService = serviceProvider.GetRequiredService<TermService>();
 
-            var terms = await termService.GetStartingTerms();
+            var terms = await termService.GetTermsToStart();
 
             foreach (var term in terms)
             {
