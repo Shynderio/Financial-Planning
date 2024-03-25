@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net.Http;
 using Amazon.S3;
 using Amazon.S3.Model;
 using FinancialPlanning.Common;
@@ -10,7 +9,7 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpClient httpClient)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
     
 
@@ -209,7 +208,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         //Convert ExcelPackage to Stream
         var memoryStream = new MemoryStream();
         await package.SaveAsAsync(memoryStream);
-        memoryStream.Seek(0, SeekOrigin.Begin);
 
         return memoryStream.ToArray();
     }

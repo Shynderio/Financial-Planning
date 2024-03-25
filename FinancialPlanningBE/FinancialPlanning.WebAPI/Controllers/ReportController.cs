@@ -135,9 +135,12 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("export")]
-        public Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
+        public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {
-            return Task.FromResult<IActionResult>(Ok());
+            var reports = await _reportService.MergeExcelFiles(reportIds);
+
+            return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                DateTime.Now.ToString("ddMMyyyyHHmmss") + "_reports.xlsx");
         }
     }
 }

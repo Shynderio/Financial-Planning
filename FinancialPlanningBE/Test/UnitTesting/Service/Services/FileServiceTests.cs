@@ -35,7 +35,7 @@ public class FileServiceTests
         // Arrange
         var s3Client = new AmazonS3Client(_configuration["AWS:AccessKey"], _configuration["AWS:SecretKey"],
             Amazon.RegionEndpoint.GetBySystemName(_configuration["AWS:Region"]));
-        var fileService = new FileService(s3Client, _configuration, _httpClient);
+        var fileService = new FileService(s3Client, _configuration);
 
         var expectedRequest = new GetPreSignedUrlRequest
         {
@@ -65,7 +65,7 @@ public class FileServiceTests
         var mockConfiguration = new Mock<IConfiguration>();
         var mockHttpClient = new Mock<HttpClient>();
 
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object,mockHttpClient.Object);
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object);
 
         var key = @"Test\" + fileName;
 
@@ -121,7 +121,7 @@ public class FileServiceTests
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
         var mockHttpClient = new Mock<HttpClient>();
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object,mockHttpClient.Object );
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object );
 
         // Act
         var actualResult = fileService.ValidateFile(memoryStream.ToArray(), documentType);
@@ -225,7 +225,7 @@ public class FileServiceTests
         var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
         var mockS3Client = new Mock<IAmazonS3>();
-        var fileService = new FileService(mockS3Client.Object, _configuration,_httpClient);
+        var fileService = new FileService(mockS3Client.Object, _configuration);
 
         using var memoryStream = new MemoryStream();
         fileStream.CopyTo(memoryStream);
@@ -246,7 +246,7 @@ public class FileServiceTests
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
         var mockHttpClient = new Mock<HttpClient>();
-        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object, mockHttpClient.Object);
+        var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object);
         
         // Act
         var stream = await fileService.ConvertListToExcelAsync(expenses, documentType);
