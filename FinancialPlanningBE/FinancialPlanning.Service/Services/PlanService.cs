@@ -18,13 +18,13 @@ namespace FinancialPlanning.Service.Services
             _termService = termRepository ?? throw new ArgumentNullException(nameof(termRepository));
         }
 
-        public bool ValidatePlanFileAsync(FileStream fileStream)
+        public bool ValidatePlanFileAsync(byte[] file)
         {
             // Validate the file using FileService
             try
             {
                 // Assuming plan documents have document type 0
-                return _fileService.ValidateFile(fileStream, documentType: 0);
+                return _fileService.ValidateFile(file, documentType: 0);
             }
             catch (Exception ex)
             {
@@ -108,28 +108,12 @@ namespace FinancialPlanning.Service.Services
             IEnumerable<Plan> plans = await _planRepository.GetAllPlans();
         }
 
-        public string ConvertFile(string fileName)
-        {
-            // Convert the file to a list of expenses using FileService
-            try
-            {
-                // Assuming plan documents have document type 0
-                return _fileService.ConvertCsvToExcel(fileName);
-            }
-            catch (Exception ex)
-            {
-                // Log exception
-                throw new InvalidOperationException("An error occurred while importing the plan file.", ex);
-            }
-
-        }
-
-        public List<Expense> GetExpenses(FileStream fileStream)
+        public List<Expense> GetExpenses(byte[] file)
         {
             try
             {
                 // Convert the file to a list of expenses using FileService
-                var expenses = _fileService.ConvertExcelToList(fileStream, documentType: 0);
+                var expenses = _fileService.ConvertExcelToList(file, documentType: 0);
                 return expenses;
             }
             catch (Exception ex)
@@ -165,11 +149,9 @@ namespace FinancialPlanning.Service.Services
                 var result = saveplan.Result;
                 var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, "Plan", "version_" + result.PlanVersions.Count + ".xlsx");
                 // Convert list of expenses to Excel file                        
-                Stream excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
-                // Reset position of the memory stream
-                excelFileStream.Position = 0;
+                var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                 // Upload the file to AWS S3
-                await _fileService.UploadPlanAsync(filename.Replace('\\', '/'), excelFileStream);
+                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
 
                 // Convert list of expenses to Excel file
             }
@@ -181,7 +163,7 @@ namespace FinancialPlanning.Service.Services
         }
         public async Task<string> GetFileByName(string key)
         {
-            return await _fileService.GetFileAsync(key);
+            return await _fileService.GetFileUrlAsync(key);
         }
 
         public Task GetPlanVersionsAsync(Guid id)
