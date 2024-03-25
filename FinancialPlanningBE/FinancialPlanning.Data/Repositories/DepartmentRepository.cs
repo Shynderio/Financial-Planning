@@ -27,7 +27,7 @@ namespace FinancialPlanning.Data.Repositories
         //Get DepartmentId by email
         public async Task<string> GetDepartmentIdByEmail(string email)
         {
-            var user = await context.Users!.SingleOrDefaultAsync(u => u.Email == email);
+            var user = await context.Users!.FirstOrDefaultAsync(u => u.Email == email);
             return user!.DepartmentId.ToString();
         }
 
@@ -37,7 +37,7 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<string> GetDepartmentNameByUser(User user)
         {
 
-            var department = await context.Departments!.SingleOrDefaultAsync(d => d.Id == user.DepartmentId);
+            var department = await context.Departments!.FirstOrDefaultAsync(d => d.Id == user.DepartmentId);
             if (department != null)
             {
                 return department.DepartmentName;

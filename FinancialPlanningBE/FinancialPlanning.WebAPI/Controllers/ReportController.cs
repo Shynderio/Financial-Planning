@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
@@ -20,7 +19,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         private readonly TermService _termService;
         private readonly FileService _fileService;
 
-        public ReportController(AuthService authService, IMapper mapper,
+        public ReportController(IMapper mapper,
             ReportService reportService, TokenService tokenService, TermService termService,
             FileService fileService
         )
@@ -141,6 +140,24 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 DateTime.Now.ToString("ddMMyyyyHHmmss") + "_reports.xlsx");
+        }
+
+        [HttpPost("import")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ImportReport(IFormFile file)
+        {
+            if (file.Length == 0)
+            {
+                return BadRequest(new { message = "File empty" });
+            }
+
+            using (MemoryStream ms = new())
+            {
+                await file.CopyToAsync(ms);
+                var fileBytes = ms.ToArray();
+            }
+
+            return Ok();
         }
     }
 }

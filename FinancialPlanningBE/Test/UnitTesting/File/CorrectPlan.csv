@@ -2,8 +2,12 @@
 DATE;TERM;DEPARTMENT;EXPENSE;COST TYPE;UNIT PRICE;AMOUNT;Currency;Exchange rate;TOTAL;;PROJECT NAME;SUPPLIER NAME;PIC;NOTE
 08/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,00 ;1;askjdhajsdh;2.0; $1,000 ;;Project Name 2;Supplier Name 1;amndsan;
 08/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,00 ;1;askjdhajsdh;2.0; $1,000 ;;Project Name 2;Supplier Name 1;amndsan;akjdlkajd
-;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;
+09/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,01;2;askjdhajsdh;2.1; $1,001;;Project Name 3;Supplier Name 2;amndsan;akjdlkajd
+10/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,02;3;askjdhajsdh;2.2; $1,002;;Project Name 4;Supplier Name 3;amndsan;akjdlkajd
+11/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,03;4;askjdhajsdh;2.3; $1,003;;Project Name 5;Supplier Name 4;amndsan;akjdlkajd
+12/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,04;5;askjdhajsdh;2.4; $1,004;;Project Name 6;Supplier Name 5;amndsan;akjdlkajd
+13/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,05;6;askjdhajsdh;2.5; $1,005;;Project Name 7;Supplier Name 6;amndsan;akjdlkajd
+14/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,06;7;askjdhajsdh;2.6; $1,006;;Project Name 8;Supplier Name 7;amndsan;akjdlkajd
+15/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,07;8;askjdhajsdh;2.7; $1,007;;Project Name 9;Supplier Name 8;amndsan;akjdlkajd
+16/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,08;9;askjdhajsdh;2.8; $1,008;;Project Name 10;Supplier Name 9;amndsan;akjdlkajd
+17/03/2024;klsjdlk;Delivery;asdasd;Operation; $1,09;10;askjdhajsdh;2.9; $1,009;;Project Name 11;Supplier Name 10;amndsan;akjdlkajd

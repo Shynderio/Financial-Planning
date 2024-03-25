@@ -35,9 +35,12 @@ export class ImportPlanComponent implements OnInit {
   termOptions: { value: string, viewValue: string }[] = [];
   planForm: FormGroup;
   dataSource: any = [];
+  //paging
   listSize: number = 0;
   pageSize = 7;
   pageIndex = 0;
+  filedata: any = [];
+
   file: any;
   columnHeaders: string[] = [
     'expense',
@@ -70,7 +73,7 @@ export class ImportPlanComponent implements OnInit {
         this.termOptions = data.map(term => {
           return { value: term.id, viewValue: term.termName };
         });
-        // console.log(this.termOptions);
+        console.log(this.termOptions);
       },
       error => {
         console.log(error);
@@ -84,13 +87,20 @@ export class ImportPlanComponent implements OnInit {
     this.file = event;
     console.log('Selected file:', this.file);
   }
-
+  //filter page
+  getPaginatedItems() {
+    const startIndex = this.pageIndex * this.pageSize;
+    let filteredList = this.filedata;
+    this.listSize = filteredList.length;
+    return filteredList.slice(startIndex, startIndex + this.pageSize);
+  }
   onImport() {
     if (this.file) {
       console.log('Importing file:', this.file);
       this.planService.importPlan(this.file).subscribe(
         (data: any) => {
-          this.dataSource = data;
+          this.filedata = data;
+          this.dataSource = this.getPaginatedItems();
           console.log(data);
         },
         error => {
@@ -123,7 +133,7 @@ export class ImportPlanComponent implements OnInit {
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
-    // this.dataSource = this.getPaginatedItems();
+    this.dataSource = this.getPaginatedItems();
   }
 
   onSubmit() {

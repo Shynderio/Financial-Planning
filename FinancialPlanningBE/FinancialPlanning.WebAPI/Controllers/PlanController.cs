@@ -12,10 +12,11 @@ namespace FinancialPlanning.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController(IMapper mapper, PlanService planService) : ControllerBase
+    public class PlanController(IMapper mapper, PlanService planService, FileService fileService) : ControllerBase
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
+        private readonly FileService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
 
 
         [HttpGet]
@@ -150,6 +151,36 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     "An error occurred while uploading the plan file.");
             }
+        }
+
+        [HttpGet("details/{id:guid}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetPlanDetails(Guid id)
+        {
+            List<Expense> expenses;
+            //Get plan
+            var plan = await _planService.GetPlanById(id);
+            //Get planVersions
+            //  var planVersions = await _planService.GetPlanVersionsAsync(id);
+            //string planName = plan.PlanName;
+            var planName = "CorrectPlan";
+            //Get url of file on cloud
+            var file = await _fileService.GetFileAsync(planName + ".xlsx");
+
+            //change 1 when have file
+            expenses = _fileService.ConvertExcelToList(file, 0);
+
+            //mapper
+            var planViewModel = _mapper.Map<PlanViewModel>(plan);
+
+            var result = new
+            {
+                Plan = planViewModel,
+                Expenses = expenses,
+                // PlanVersions = planVersionModel,
+                //  UploadedBy = uploadedBy
+            };
+            return Ok(result);
         }
     }
 }
