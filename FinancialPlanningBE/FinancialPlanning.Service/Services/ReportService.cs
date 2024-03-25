@@ -160,6 +160,8 @@ namespace FinancialPlanning.Service.Services
 
         public async Task CreateReport(List<Expense> expenses, Report report, Guid userId)
         {
+            var departId = _departmentRepository.GetDepartmentIdByUid(userId);
+            report.DepartmentId = departId;
             var isReportExist = await _reportRepository.IsReportExist(report.TermId, report.DepartmentId, report.Month);
             if (isReportExist)
             {

@@ -176,13 +176,12 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpPost("upload")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> UploadReport(List<Expense> expenses, Guid departmentId, Guid termId, string month, Guid uid)
+        public async Task<IActionResult> UploadReport(List<Expense> expenses, Guid termId, Guid uid, string month)
         {
             try
             {
                 var report = new Report
                 {
-                    DepartmentId = departmentId,
                     TermId = termId,
                     Month = month
                 };

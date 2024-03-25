@@ -18,6 +18,7 @@ import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.com
 import { PlansComponent } from './pages/plans/plans.component';
 import { ReportDetailsComponent } from './pages/report/report-details/report-details.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
+import { ImportReportComponent } from './pages/report/import-report/import-report.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -34,6 +35,7 @@ export const routes: Routes = [
      //report
     { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
     { path: 'report-details/:id', component: ReportDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'import-report', component: ImportReportComponent, canActivate: [AuthGuard]},
     // plan
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},

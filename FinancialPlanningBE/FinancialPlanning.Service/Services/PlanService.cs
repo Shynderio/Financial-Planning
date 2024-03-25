@@ -135,7 +135,7 @@ namespace FinancialPlanning.Service.Services
             // Save the plan using PlanRepository
             try
             {
-                var department = _departmentRepository.GetDepartmentByUid(uid);
+                var department = _departmentRepository.GetDepartmentIdByUid(uid);
                 Plan plan = new()
                 {
                     PlanName = string.Empty,

@@ -68,7 +68,7 @@ namespace FinancialPlanning.Data.Repositories
             return department!;
         }
 
-        public Guid GetDepartmentByUid(Guid id)
+        public Guid GetDepartmentIdByUid(Guid id)
         {
             var department = context.Users!.FirstOrDefault(x => x.Id == id)!.DepartmentId;
             return department;
