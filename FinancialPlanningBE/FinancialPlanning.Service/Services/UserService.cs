@@ -1,4 +1,5 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using FinancialPlanning.Common;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Service.DTOs;
 using System;
@@ -86,7 +87,7 @@ namespace FinancialPlanning.Service.Services
         }
 
         //Update user status
-        public async Task UpdateUserStatus(Guid id, int status)
+        public async Task UpdateUserStatus(Guid id, UserStatus status)
         {
             await _userrepository.UpdateUserStatus(id, status);
         }

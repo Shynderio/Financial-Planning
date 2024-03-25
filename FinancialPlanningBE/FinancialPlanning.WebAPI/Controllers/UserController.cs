@@ -13,6 +13,7 @@ using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.Role;
 using FinancialPlanning.WebAPI.Models.Position;
+using FinancialPlanning.Common;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -70,7 +71,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
         // Update status User
         [HttpPut("{id:guid}/{status:int}")]
-        public async Task<IActionResult> UpdateUserStatus(Guid id, int status)
+        public async Task<IActionResult> UpdateUserStatus(Guid id, UserStatus status)
         {
             try
             {

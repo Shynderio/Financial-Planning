@@ -1,4 +1,5 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using FinancialPlanning.Common;
+using FinancialPlanning.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,6 @@ namespace FinancialPlanning.Data.Repositories
         public Task DeleteUser(Guid id);
         public Task<List<User>> GetAllUsers();
         public Task<User> GetUserById(Guid id);
-        public Task UpdateUserStatus(Guid id, int status);
+        public Task UpdateUserStatus(Guid id, UserStatus status);
     }
 }

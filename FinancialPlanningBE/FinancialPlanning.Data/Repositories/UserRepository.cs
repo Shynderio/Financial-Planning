@@ -169,7 +169,7 @@ namespace FinancialPlanning.Data.Repositories
 
         
         //Update user status
-        public async Task UpdateUserStatus(Guid id, int status)
+        public async Task UpdateUserStatus(Guid id, UserStatus status)
         {
             var user = await _context.Users!.FindAsync(id);
 
