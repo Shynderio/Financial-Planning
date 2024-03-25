@@ -66,21 +66,84 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<Report?> GetReportById(Guid id)
         {
             var report = await _context.Reports!
-         .Include(t => t.ReportVersions)
-         .Include(t => t.Term)
-         .Include(t => t.Department)
-         .FirstOrDefaultAsync(t => t.Id == id) ;
+                .Include(t => t.ReportVersions)
+                .Include(t => t.Term)
+                .Include(t => t.Department)
+                .FirstOrDefaultAsync(t => t.Id == id);
             return report;
         }
 
         //Get list reportVersions 
         public async Task<List<ReportVersion>> GetReportVersionsByReportID(Guid reportId)
         {
-           var reportVersions = await _context.ReportVersions!
+            var reportVersions = await _context.ReportVersions!
                 .Where(r => r.ReportId == reportId)
                 .OrderByDescending(r => r.Version)
                 .Include(r => r.User).ToListAsync();
             return reportVersions;
+        }
+
+        //Check report exist
+        public async Task<bool> IsReportExist(Guid termId, Guid departmentId, string month)
+        {
+            var report = await _context.Reports!
+                .FirstOrDefaultAsync(r => r.TermId == termId && r.DepartmentId == departmentId && r.Month == month);
+            return report != null;
+        }
+
+        //Create report
+        public async Task CreateReport(Report report, Guid userId)
+        {
+            _context.Reports!.Add(report);
+            ReportVersion reportVersion = new ReportVersion
+            {
+                Id = Guid.NewGuid(),
+                ReportId = report.Id,
+                Version = (int)Common.ReportStatus.New,
+                ImportDate = report.UpdateDate,
+                CreatorId = userId,
+            };
+            _context.ReportVersions!.Add(reportVersion);
+            await _context.SaveChangesAsync();
+        }
+
+        //Update report
+        public async Task ReupReport(Guid reportId, Guid userId)
+        {
+            var report = await _context.Reports!
+                .Include(r => r.ReportVersions)
+                .FirstOrDefaultAsync(r => r.Id == reportId);
+
+            var nextversion = report!.GetMaxVersion() + 1;
+            var reportVersion = new ReportVersion
+            {
+                Id = Guid.NewGuid(),
+                ReportId = report.Id,
+                Version = nextversion ?? 1,
+                ImportDate = DateTime.Now,
+                CreatorId = userId,
+            };
+
+            _context.ReportVersions!.Add(reportVersion);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Report>> GetAllDueReports()
+        {
+            return await _context.Reports!
+                .Include(r => r.Term)
+                .Where(r => r.Status == (int)Common.ReportStatus.New && r.Term.ReportDueDate < DateTime.Now)
+                .ToListAsync();
+        }
+
+        public async Task CloseAllDueReports(List<Report> reports)
+        {
+            foreach (var report in reports)
+            {
+                report.Status = (int)Common.ReportStatus.Closed;
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

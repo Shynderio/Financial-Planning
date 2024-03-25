@@ -78,5 +78,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             var selectTermModels = _mapper.Map<List<SelectTermModel>>(terms);
             return Ok(selectTermModels);
         }
+
+        [HttpPut("close/{id:guid}")]
+        [Authorize(Roles = "Accountant")]
+        public async Task<IActionResult> CloseTerm(Guid id)
+        {
+            await _termService.CloseTerm(id);
+            return Ok(new { message = "Term closed successfully!" });
+        }
     }
 }

@@ -4,12 +4,8 @@ using FinancialPlanning.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using SkiaSharp;
-using static FinancialPlanning.Data.Repositories.PlanRepository;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 
 namespace FinancialPlanning.WebAPI.Controllers
@@ -31,18 +27,16 @@ namespace FinancialPlanning.WebAPI.Controllers
             var plans = await _planService.GetFinancialPlans(keyword, department, status);
 
             // Project the results into FinancialPlanDto
-            var result = plans.Select((p, index) => new PlanViewModel
+            var result = plans.Select((p, _) => new PlanViewModel
             {
                 Id = p.Id,
                 Plan = p.PlanName,
-                Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
-                Department =
-                    p.Department?.DepartmentName ??
-                    "Unknown", // Check if p.Department is not null before accessing its properties
+                Term = p.Term.TermName,
+                Department = p.Department.DepartmentName,
                 Status = GetPlanStatusString((PlanStatus)p.Status),
                 Version = p.PlanVersions.Any()
                     ? p.PlanVersions.Max(v => v.Version)
-                    : 0 // Check if PlanVersions has any elements before calling Max()
+                    : 0
             }).ToList();
 
             return result;
@@ -62,15 +56,13 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAllPlans()
         {
-            var plans = await _planService.GetFinancialPlans("", "", ""); ;
-            var result = plans.Select((p, index) => new PlanViewModel
+            var plans = await _planService.GetFinancialPlans();
+            var result = plans.Select((p, _) => new PlanViewModel
             {
                 Id = p.Id,
                 Plan = p.PlanName,
-                Term = p.Term?.TermName ?? "Unknown", // Check if p.Term is not null before accessing its properties
-                Department =
-                    p.Department?.DepartmentName ??
-                    "Unknown", // Check if p.Department is not null before accessing its properties
+                Term = p.Term.TermName,
+                Department = p.Department.DepartmentName,
                 Status = GetPlanStatusString((PlanStatus)p.Status),
                 Version = p.PlanVersions.Any()
                     ? p.PlanVersions.Max(v => v.Version)
@@ -80,7 +72,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             return Ok(result);
         }
 
-        
 
         [HttpGet("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -98,7 +89,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             var plan = _mapper.Map<Plan>(planModel);
             await _planService.CreatePlan(plan);
             return Ok(new { message = "Plan created successfully!" });
-
         }
 
         [HttpDelete("{id:guid}")]
@@ -117,64 +107,23 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 // Check if a file is uploaded
-                if (file == null || file.Length == 0)
+                if (file.Length == 0)
                 {
                     return BadRequest(new { message = "No file uploaded" });
                 }
 
-                // Generate a unique filename using GUID and original file extension
-                var tempFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-
-                // Save the uploaded file to the temporary directory
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Resources\\ExcelFiles");
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-                var tempFilePath = Path.Combine(directoryPath, tempFileName);
-                using (var fileStream = new FileStream(tempFilePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
-                // Convert the file
-                string convertedFilePath;
-                try
-                {
-                    convertedFilePath = _planService.ConvertFile(tempFileName);
-                }
-                catch
-                {
-                    // Delete the temporary file if conversion fails
-                    System.IO.File.Delete(tempFilePath);
-                    return BadRequest(new { message = "Invalid file format!" });
-                }
-
                 // Validate the file
-                bool isValid;
-                using (var openfileStream = new FileStream(convertedFilePath, FileMode.Open))
-                {
-                    isValid = _planService.ValidatePlanFileAsync(openfileStream);
-                }
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                var isValid = _planService.ValidatePlanFileAsync(memoryStream.ToArray());
 
                 if (!isValid)
                 {
-                    // Delete the temporary file if validation fails
-                    System.IO.File.Delete(convertedFilePath);
-                    System.IO.File.Delete(tempFilePath);
                     return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses
-                List<Expense> expenses;
-                using (var openfileStream = new FileStream(convertedFilePath, FileMode.Open))
-                {
-                    expenses = _planService.GetExpenses(openfileStream);
-                }
-
-                // Delete temporary files
-                System.IO.File.Delete(convertedFilePath);
-                System.IO.File.Delete(tempFilePath);
+                var expenses = _planService.GetExpenses(memoryStream.ToArray());
 
                 return Ok(expenses);
             }
@@ -186,7 +135,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                     "An error occurred while importing the plan file.");
             }
         }
-    
+
         [HttpPost("Upload")]
         [Authorize(Roles = "FinancialStaff")]
         public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
@@ -203,82 +152,35 @@ namespace FinancialPlanning.WebAPI.Controllers
                     "An error occurred while uploading the plan file.");
             }
         }
+
         [HttpGet("details/{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> GetplanDetails(Guid id)
+        public async Task<IActionResult> GetPlanDetails(Guid id)
         {
-            try
+            List<Expense> expenses;
+            //Get plan
+            var plan = await _planService.GetPlanById(id);
+            //Get planVersions
+            //  var planVersions = await _planService.GetPlanVersionsAsync(id);
+            //string planName = plan.PlanName;
+            var planName = "CorrectPlan";
+            //Get url of file on cloud
+            var file = await _fileService.GetFileAsync(planName + ".xlsx");
+
+            //change 1 when have file
+            expenses = _fileService.ConvertExcelToList(file, 0);
+
+            //mapper
+            var planViewModel = _mapper.Map<PlanViewModel>(plan);
+
+            var result = new
             {
-                List<Expense> expenses;
-                //Get plan
-                var plan = await _planService.GetPlanById(id);
-                //Get planVersions
-               //  var planVersions = await _planService.GetPlanVersionsAsync(id);
-                //string planName = plan.PlanName;
-                string planName = "CorrectPlan";
-                //Get url of file on cloud
-                string url = await _planService.GetFileByName(planName + ".xlsx");
-
-                //If folder doesn't exit -> create
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                var savePath = Path.Combine(directoryPath, planName + ".xlsx");
-
-                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
-                //download file sucessfull 
-                if (isDownLoad)
-                {
-                    // conver file to list expense
-                    using (var fileStream = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Read))
-                    {
-                        try
-                        {
-                            //change 1 when have file
-                            expenses = _fileService.ConvertExcelToList(fileStream, 0);
-                        }
-                        catch
-                        {
-                            return BadRequest("Failed to convert");
-                        }
-                    }
-                    //mapper
-                    var planViewModel = _mapper.Map<PlanViewModel>(plan);
-               //     var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions);
-                    // Get the name of the user who uploaded the file
-                //    var firstPlanVersion = planVersionModel.FirstOrDefault();
-                //    var uploadedBy = firstPlanVersion != null ? firstPlanVersion.UploadedBy : null;
-                    //remove file
-                    if (System.IO.File.Exists(savePath))
-                    {
-                        System.IO.File.Delete(savePath);
-                    }
-
-                    var result = new
-                    {
-                        Plan = planViewModel,
-                        Expenses = expenses,
-                       // PlanVersions = planVersionModel,
-                      //  UploadedBy = uploadedBy
-                    };
-
-                    return Ok(result);
-
-                }
-                else
-                {
-                    return BadRequest("Failed to download file");
-                }
-            }
-            //error when download
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error : {ex.Message}");
-            }
+                Plan = planViewModel,
+                Expenses = expenses,
+                // PlanVersions = planVersionModel,
+                //  UploadedBy = uploadedBy
+            };
+            return Ok(result);
         }
-
     }
 }

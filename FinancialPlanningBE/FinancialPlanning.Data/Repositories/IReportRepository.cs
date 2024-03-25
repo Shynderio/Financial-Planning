@@ -15,7 +15,10 @@ namespace FinancialPlanning.Data.Repositories
         public Task DeleteReportVersions(IEnumerable<ReportVersion> reportVersions);
         public Task<Report?> GetReportById(Guid id);
         public Task<List<ReportVersion>> GetReportVersionsByReportID(Guid reportId);
-
-
+        public Task<bool> IsReportExist(Guid termId, Guid departmentId, string month);
+        public Task CreateReport(Report report, Guid userId);
+        public Task ReupReport(Guid reportId, Guid userId);
+        public Task<List<Report>> GetAllDueReports();
+        public Task CloseAllDueReports(List<Report> reports);
     }
 }
