@@ -279,12 +279,12 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
-            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "..\\FinancialPlanning.Service\\Template\\Annual Expense Report.xlsx")));
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), @"..\FinancialPlanning.Service\Template\Annual Expense Report.xlsx")));
         var worksheet = package.Workbook.Worksheets[0];
 
         //Annual report
         worksheet.Cells["B1"].Value = report.Year;
-        worksheet.Cells["B2"].Value = report.CreateDate;
+        worksheet.Cells["B2"].Value = report.CreateDate.ToString();
         worksheet.Cells["B3"].Value = report.TotalTerm;
         worksheet.Cells["B4"].Value = report.TotalDepartment;
 

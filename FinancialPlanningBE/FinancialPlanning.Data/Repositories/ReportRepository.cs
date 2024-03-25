@@ -151,7 +151,7 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<int> GetTotalDepartByYear(int year)
         {
             var departmentCount = await _context.Reports
-                .Where(r => r.UpdateDate.Year == year)
+              .Where(r => r.Month.EndsWith(year.ToString()))
                 .Select(r => r.DepartmentId)
                 .Distinct()
                 .CountAsync();
@@ -164,10 +164,12 @@ namespace FinancialPlanning.Data.Repositories
         {
             var reports = await _context.Reports
                 .Include(r => r.Department)
-                .Where(r => r.UpdateDate.Year == year)
+                .Where(r => r.Month.EndsWith(year.ToString()))
                 .ToListAsync();
 
             return reports;
         }
+
+      
     }
 }

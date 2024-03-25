@@ -18,15 +18,15 @@ namespace FinancialPlanning.Service.Services
         {
             _fileService = fileService;
             _termRepository = termRepository;
-            _termRepository = termRepository;
+            _reportRepository = reportRepository;
         }
 
-        public async Task ImportAnnualReport()
+        public async Task<string> ImportAnnualReport()
         {
             try
             {
                 DateTime timenow = DateTime.Now;
-                DateTime create_at = new DateTime(timenow.Year, 12, 20).Date;
+                DateTime create_at = new DateTime(timenow.Year, 12, 20);
 
                 int year = timenow.Year;
                 //Total term 
@@ -46,10 +46,10 @@ namespace FinancialPlanning.Service.Services
                 foreach (Report report in reports)
                 {
                     string fileName = report.ReportName;
-                    byte[] file = await _fileService.GetFileAsync(fileName);
+                    byte[] file = await _fileService.GetFileAsync("CorrectPlan.xlsx");
 
                     //Change 1 
-                    List<Expense> expenses = _fileService.ConvertExcelToList(file, 0);
+                    List <Expense> expenses = _fileService.ConvertExcelToList(file, 0);
                     decimal totalExpense = expenses.Sum(e => e.TotalAmount);
                     decimal biggestExpense = expenses.Max(e => e.TotalAmount);
                     ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
@@ -63,13 +63,18 @@ namespace FinancialPlanning.Service.Services
                 }
 
                 //Convert list to exel
-                byte[] annualFile = await _fileService.ConvertAnnualReportToExcel(expenseAnnualReports, annualreport);
+                var annualFile = await _fileService.ConvertAnnualReportToExcel(expenseAnnualReports, annualreport);
                 //Import file to cloud
+                string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_" + year + ".xlsx");
+
+                await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(annualFile));
+
+                return "Import successfully!";
 
             }
             catch (Exception ex)
             {
-               
+                return ex.Message;
             }
 
         }

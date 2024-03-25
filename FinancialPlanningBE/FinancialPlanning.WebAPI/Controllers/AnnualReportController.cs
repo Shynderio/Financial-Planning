@@ -13,10 +13,27 @@ namespace FinancialPlanning.WebAPI.Controllers
     {
 
         private readonly FileService _fileService;
-        public AnnualReportController(FileService fileService)
+        private readonly AnnualReportService _annualReportService;
+        public AnnualReportController(FileService fileService, AnnualReportService annualReportService)
         {
             _fileService = fileService;
+            _annualReportService= annualReportService;
         }
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportAnnualReport()
+        {
+            try
+            {
+            var result = await _annualReportService.ImportAnnualReport();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         [HttpPost("ConvertAnnualReport")]
         public IActionResult ConvertAnnualReport(IFormFile file)
         {
