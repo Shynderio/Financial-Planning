@@ -57,7 +57,7 @@ namespace FinancialPlanning.Data.Repositories
         }
 
         //Add new User
-        public async Task AddNewUser(User user)
+        public async Task<(string username, string password)> AddNewUser(User user)
         {
             var existingUser = _context.Users!.FirstOrDefault(u => u.Email == user.Email);
             if (existingUser != null)
@@ -72,7 +72,7 @@ namespace FinancialPlanning.Data.Repositories
             var newUser = new User
             {
                 Username = GenerateUserName(user.FullName),
-                Password = EncryptPassword(),
+                Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
                 Email = user.Email,
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
@@ -89,7 +89,8 @@ namespace FinancialPlanning.Data.Repositories
             await _context.Users!.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            _emailRepository.SendWelcomeEmail(newUser.Username, plainPassword, newUser.Email, createdUser);
+            return (newUser.Username, plainPassword);
+
         }
 
         //Auto GenerateUserName

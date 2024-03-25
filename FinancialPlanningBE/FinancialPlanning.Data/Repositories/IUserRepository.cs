@@ -10,7 +10,7 @@ namespace FinancialPlanning.Data.Repositories
 {
     public interface IUserRepository
     {
-        public Task AddNewUser(User user);
+        public Task<(string username, string password)> AddNewUser(User user);
         public Task UpdateUser(Guid id, User user);
         public Task DeleteUser(Guid id);
         public Task<List<User>> GetAllUsers();
