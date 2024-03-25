@@ -53,6 +53,13 @@ namespace FinancialPlanning.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
+        //Get total term in the year
+        public async Task<int> GetTotalTermByYear(int year)
+        {
+           var totalTerm = await _context.Terms.Where(t => t.StartDate.Year == year).CountAsync();
+            return totalTerm;
+        }
+
 
 
 

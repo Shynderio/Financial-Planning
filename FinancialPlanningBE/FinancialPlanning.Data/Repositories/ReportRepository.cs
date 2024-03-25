@@ -145,5 +145,29 @@ namespace FinancialPlanning.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        //Total department that has submitted the report of the year.
+
+        public async Task<int> GetTotalDepartByYear(int year)
+        {
+            var departmentCount = await _context.Reports
+                .Where(r => r.UpdateDate.Year == year)
+                .Select(r => r.DepartmentId)
+                .Distinct()
+                .CountAsync();
+
+            return departmentCount;
+        }
+
+        //List reports by yearg
+        public async Task<List<Report>> GetAllReportsByYear(int year)
+        {
+            var reports = await _context.Reports
+                .Include(r => r.Department)
+                .Where(r => r.UpdateDate.Year == year)
+                .ToListAsync();
+
+            return reports;
+        }
     }
 }

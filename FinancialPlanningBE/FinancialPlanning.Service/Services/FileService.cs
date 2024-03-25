@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Globalization;
+using Amazon.Runtime.Documents;
 using Amazon.S3;
 using Amazon.S3.Model;
 using FinancialPlanning.Common;
@@ -236,75 +237,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
         return package;
     }
-<<<<<<< HEAD
-
-
-    public string ConvertCsvToExcel(string fileName)
-    {
-
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" + fileName);
-
-        // Load file to workbook
-        Workbook workbook;
-        if (Path.GetExtension(fileName) == ".csv")
-        {
-            var loadOption = new TxtLoadOptions(LoadFormat.Csv)
-            {
-                Separator = ';', // Data in CSV file is separated by semicolon
-                ConvertDateTimeData = false // Do not convert date time to numeric
-            };
-            workbook = new Workbook(filePath, loadOption);
-        }
-        else
-        {
-            workbook = new Workbook(filePath);
-        }
-
-        filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" +  Path.GetFileNameWithoutExtension(fileName) + ".xlsx");
-        // Convert to xlsx
-        using var memoryStream = new MemoryStream();
-        workbook.Save(memoryStream, SaveFormat.Xlsx);
-
-        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-
-        memoryStream.WriteTo(fileStream);
-        
-        memoryStream.Close();
-        // fileStream.Seek(0, SeekOrigin.Begin);
-
-        return filePath;
-    }
-
-    //DownloadFile from Url
-    public async Task<bool> DownloadFile(string url, string savePath)
-    {
-        //Check if the url is in the correct format
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && uriResult != null)
-        {
-            return false;
-        }
-        try
-        {
-            // Create directory if it does not exist
-           
-            using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
-            {
-                response.EnsureSuccessStatusCode();
-
-                using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
-                    stream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                {
-                    await contentStream.CopyToAsync(stream);
-                }
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
 
     public (List<ExpenseAnnualReport>, List<AnnualReport>) ConvertExelAnnualReport(ExcelPackage package)
     {
@@ -341,8 +273,37 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         throw new Exception("Invalid Excel file.");
     }
 
+    //Convert list to annual report file 
+    public async Task<byte[]> ConvertAnnualReportToExcel(List<ExpenseAnnualReport> expenses, AnnualReport report)
+    {
+        //Write list of expenses to ExcelPackage
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package =
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "..\\FinancialPlanning.Service\\Template\\Annual Expense Report.xlsx")));
+        var worksheet = package.Workbook.Worksheets[0];
 
+        //Annual report
+        worksheet.Cells["B1"].Value = report.Year;
+        worksheet.Cells["B2"].Value = report.CreateDate;
+        worksheet.Cells["B3"].Value = report.TotalTerm;
+        worksheet.Cells["B4"].Value = report.TotalDepartment;
 
-=======
->>>>>>> origin/sprint-04
+        int row = 7;
+        foreach(var expense in expenses) {
+
+            worksheet.Cells[row,1].Value = expense.Department;
+            worksheet.Cells[row, 2].Value = expense.TotalExpense;
+            worksheet.Cells[row, 3].Value = expense.BiggestExpenditure;
+            worksheet.Cells[row, 4].Value = expense.CostType;
+            row++;
+        }
+
+        //Convert ExcelPackage to Stream
+        var memoryStream = new MemoryStream();
+        await package.SaveAsAsync(memoryStream);
+
+        return memoryStream.ToArray();
+
+    }
+
 }

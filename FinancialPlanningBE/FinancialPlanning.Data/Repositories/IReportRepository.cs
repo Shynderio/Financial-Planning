@@ -20,5 +20,7 @@ namespace FinancialPlanning.Data.Repositories
         public Task ReupReport(Guid reportId, Guid userId);
         public Task<List<Report>> GetAllDueReports();
         public Task CloseAllDueReports(List<Report> reports);
+        public Task<int> GetTotalDepartByYear(int year);
+        public  Task<List<Report>> GetAllReportsByYear(int year);
     }
 }
