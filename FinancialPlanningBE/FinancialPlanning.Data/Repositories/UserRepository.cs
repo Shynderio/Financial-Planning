@@ -36,18 +36,7 @@ namespace FinancialPlanning.Data.Repositories
             updateUser.FullName = user.FullName;
             updateUser.Email = user.Email;
             updateUser.PhoneNumber = user.PhoneNumber;
-            // Chuyển đổi định dạng ngày sinh từ "dd-MM-yyyy" sang "yyyy-MM-dd"
-            if (DateTime.TryParseExact(user.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None,
-                    out var dob))
-            {
-                updateUser.DOB = dob.ToString("dd-MM-yyyy");
-            }
-            else
-            {
-                // Xử lý trường hợp không thể chuyển đổi định dạng ngày sinh
-                throw new Exception("Invalid date of birth format.");
-            }
-
+            updateUser.DOB = user.DOB;
             updateUser.Address = user.Address;
             updateUser.DepartmentId = user.DepartmentId;
             updateUser.PositionId = user.PositionId;
@@ -167,7 +156,7 @@ namespace FinancialPlanning.Data.Repositories
             return user;
         }
 
-        
+
         //Update user status
         public async Task UpdateUserStatus(Guid id, UserStatus status)
         {
