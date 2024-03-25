@@ -56,8 +56,8 @@ namespace FinancialPlanning.Data.Repositories
         public Task UpdatePlan(Plan plan);
         public Task DeletePlan(Plan plan);
         public Task<Plan> SavePlan(Plan plan, Guid creatorId);
-
-        
+        public Task<List<Plan>> GetAllDuePlans();
+        public Task CloseAllDuePlans(List<Plan> plans);
     }
 
 }

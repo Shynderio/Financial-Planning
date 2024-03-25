@@ -15,12 +15,13 @@ namespace FinancialPlanning.Service.ScheduleTasks
         }
 
         protected override string Schedule => "*/3 * * * *"; // every 3 minute
+        // protected override string Schedule => "0 0 * * *"; // every day at 00:00
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
             var termService = serviceProvider.GetRequiredService<TermService>();
 
-            var terms = await termService.GetStartingTerms();
+            var terms = await termService.GetTermsToStart();
 
             foreach (var term in terms)
             {

@@ -13,13 +13,14 @@ namespace FinancialPlanning.Service.Services
             _termRepository = termRepository;
         }
 
-        public async Task<IEnumerable<Term>> GetStartingTerms()
+        public async Task<IEnumerable<Term>> GetTermsToStart()
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             List<Term> startingTerms = [];
             foreach (var term in terms)
             {
-                if (term.StartDate >= DateTime.Now.AddDays(-7) && term.Status == (int)TermStatus.New)
+                
+                if (term.StartDate.AddDays(-7) <= DateTime.Now && (int)term.Status == (int)TermStatus.New)
                 {
                     startingTerms.Add(term);
                 }
@@ -105,15 +106,30 @@ namespace FinancialPlanning.Service.Services
             return await _termRepository.GetAllTerms();
         }
 
-        public async Task CloseTerms()
+        public async Task CloseDueTerms()
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             foreach (var term in terms)
             {
-                var endDate = term.StartDate.AddMonths(term.Duration);
-                if (endDate > DateTime.Now || term.Status != (int)TermStatus.InProgress) continue;
+                var endDate = term.StartDate.AddMonths(term.Duration).Day;
+                if (endDate < DateTime.Now.Day || term.Status == (int)TermStatus.Closed) 
+                    continue;
                 term.Status = (int)TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
+            }
+        }
+
+        public async Task CloseTerm(Guid termId)
+        {
+            var term = await _termRepository.GetTermByIdAsync(termId);
+            if (term != null)
+            {
+                term.Status = (int)TermStatus.Closed;
+                await _termRepository.UpdateTerm(term);
+            }
+            else
+            {
+                throw new ArgumentException("Term not found with the specified ID");
             }
         }
 
@@ -123,7 +139,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startedTerms = [];
             foreach (var term in terms)
             {
-                if (term.Status == (int)TermStatus.InProgress && term.Plans.Count == 0)
+                if (term.Status == (int)TermStatus.InProgress && term.Plans!.Count == 0)
                 {
                     startedTerms.Add(term);
                 }

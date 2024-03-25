@@ -11,5 +11,6 @@ namespace FinancialPlanning.Data.Repositories
         public Task<Guid> CreateTerm(Term term);
         public Task UpdateTerm(Term term);
         public Task DeleteTerm(Term term);
+        
     }
 }

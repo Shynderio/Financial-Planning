@@ -103,9 +103,10 @@ namespace FinancialPlanning.Service.Services
             return await _planRepository.GetAllPlans();
         }
 
-        public async Task ClosePlans()
+        public async Task CloseDuePlans()
         {
-            IEnumerable<Plan> plans = await _planRepository.GetAllPlans();
+            var plans = await _planRepository.GetAllDuePlans();
+            await _planRepository.CloseAllDuePlans(plans);
         }
 
         public List<Expense> GetExpenses(byte[] file)

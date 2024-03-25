@@ -62,4 +62,9 @@ export class TermService {
     return this.http.put(this.apiUrl + '/start/' + termId, {});
   }
 
+  closeTerm(termId: string): Observable<any> {
+    return this.http.put(this.apiUrl + '/close/' + termId, {});
+  }
+
+  
 }

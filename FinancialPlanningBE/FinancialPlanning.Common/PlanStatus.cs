@@ -4,5 +4,6 @@ public enum PlanStatus
 {
     New, 
     WaitingForApproval,
-    Approved
+    Approved,
+    Closed
 }

@@ -31,7 +31,7 @@ namespace Test.UnitTesting.Service.Services
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term> { startingTerm, endingTerm });
 
             // Act
-            var result = await termService.GetStartingTerms();
+            var result = await termService.GetTermsToStart();
 
             // Assert
             var collection = result.ToList();
@@ -210,7 +210,7 @@ namespace Test.UnitTesting.Service.Services
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { closingTerm1, closingTerm2, nonClosingTerm1, nonClosingTerm2 });
 
             // Act
-            await termService.CloseTerms();
+            await termService.CloseDueTerms();
 
             // Assert
             Assert.Equal(3, closingTerm1.Status); // Assert status is changed to closed
@@ -235,7 +235,7 @@ namespace Test.UnitTesting.Service.Services
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { nonClosingTerm1, nonClosingTerm2 });
 
             // Act
-            await termService.CloseTerms();
+            await termService.CloseDueTerms();
 
             // Assert
             Assert.Equal(2, nonClosingTerm1.Status); // Assert status remains unchanged
@@ -257,7 +257,7 @@ namespace Test.UnitTesting.Service.Services
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { nonClosingTerm1, nonClosingTerm2 });
 
             // Act
-            await termService.CloseTerms();
+            await termService.CloseDueTerms();
 
             // Assert
             Assert.Equal(1, nonClosingTerm1.Status); // Assert status remains unchanged
