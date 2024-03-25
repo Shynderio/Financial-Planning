@@ -1,3 +1,4 @@
+﻿using System.Data;
 using System.Globalization;
 using System.Net.Http;
 using Amazon.S3;
@@ -299,4 +300,42 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
             return false;
         }
     }
+
+    public (List<ExpenseAnnualReport>, List<AnnualReport>) ConvertExelAnnualReport(ExcelPackage package)
+    {
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+        if (worksheet != null)
+        {
+            List<ExpenseAnnualReport> expense = new List<ExpenseAnnualReport>();
+            List<AnnualReport> reports = new List<AnnualReport>();
+
+            reports.Add(new AnnualReport
+            {
+                Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
+                CreateDate = int.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
+                TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString())
+            });
+            for (int row = 6; row <= worksheet.Dimension.End.Row; row++)
+            {
+
+                expense.Add(new ExpenseAnnualReport
+                {
+                    Department = worksheet.Cells[row, 1].Value?.ToString(),
+                    TotalExpense = int.Parse(worksheet.Cells[row, 2].Value?.ToString()),
+                    BiggestExpenditure = int.Parse(worksheet.Cells[row, 3].Value?.ToString()),
+                    CostType = worksheet.Cells[row, 4].Value?.ToString()
+                });
+
+            }
+
+            return (expense, reports);
+        }
+
+        throw new Exception("Invalid Excel file.");
+    }
+
+
+
 }
