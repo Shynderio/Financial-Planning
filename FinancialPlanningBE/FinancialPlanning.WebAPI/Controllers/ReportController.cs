@@ -84,10 +84,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get report
                 var report = await _reportService.GetReportById(id);
+                string filename = report.Department.DepartmentName + "/"
+                      + report.Term.TermName + "/" + report.Month + "/Report/_version" + report.GetMaxVersion();
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
 
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("CorrectPlan.xlsx"), 0);
+                //Download file report form cloud
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename + ".xlsx"), 1);
 
                 //mapper
                 var reportViewModel = _mapper.Map<ReportViewModel>(report);
@@ -121,9 +124,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 //from reportVersion Id -> get name report + version
-                await _reportService.GetReportById(id);
+                var report = await _reportService.GetReportById(id);
+                string filename = report.Department.DepartmentName + "/"
+                    + report.Term.TermName + "/" + report.Month + "/Report/_version" + report.GetMaxVersion();
+              
+
                 //get url from name file
-                var url = await _reportService.GetFileByName("CorrectPlan.xlsx");
+                var url = await _reportService.GetFileByName(filename+".xlsx");
 
                 // return URL
                 return Ok(new { downloadUrl = url });

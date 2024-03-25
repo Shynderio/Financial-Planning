@@ -250,11 +250,11 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             reports.Add(new AnnualReport
             {
                 Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
-                CreateDate = DateTime.ParseExact(worksheet.Cells["B2"].Value?.ToString(), "MM/dd/yyyy hh:mm:ss tt", CultureInfo.InvariantCulture),
+                CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
                 TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
                 TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString())
             });
-            for (int row = 6; row <= worksheet.Dimension.End.Row; row++)
+            for (int row = 7; row <= worksheet.Dimension.End.Row; row++)
             {
 
                 expense.Add(new ExpenseAnnualReport

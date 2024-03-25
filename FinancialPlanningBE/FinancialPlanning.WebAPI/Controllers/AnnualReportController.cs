@@ -19,20 +19,20 @@ namespace FinancialPlanning.WebAPI.Controllers
             _fileService = fileService;
             _annualReportService= annualReportService;
         }
-        [HttpPost("import")]
-        public async Task<IActionResult> ImportAnnualReport()
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            try
-            {
-            var result = await _annualReportService.ImportAnnualReport();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+      var annualReport = await  _annualReportService.GetAllAnnualReportsAsync();
+            return Ok(annualReport);
+          
         }
+        [HttpGet("0")]
+       public async Task<IActionResult> GetAllFile(string key)
+        {
+            var url = await _fileService.GetFileUrlAsync(key);
+            return Ok(url);
 
+        }
 
         [HttpPost("ConvertAnnualReport")]
         public IActionResult ConvertAnnualReport(IFormFile file)
@@ -62,7 +62,40 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-       
+        [HttpPost("Upload")]
+        public async Task<IActionResult> UploadAnnualReport()
+        {
+            List<ExpenseAnnualReport> expenses = new List<ExpenseAnnualReport>();
+
+            ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
+            {
+                Department = "a",
+                TotalExpense = 1,
+                BiggestExpenditure = 12,
+                CostType = "b",
+            };
+            expenses.Add(expenseAnnualReport);
+            var annualreport = new AnnualReport
+            {
+                Year = 2023,
+                CreateDate = DateTime.Now,
+                TotalTerm = 12,
+                TotalDepartment = 12,
+            };
+            string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2021.xlsx");
+
+            //Import file to cloud
+            var filae = await _fileService.ConvertAnnualReportToExcel(expenses, annualreport);
+
+
+            await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(filae));
+
+
+            return Ok(filePath);
+        }
+
+
+
     }
 
 

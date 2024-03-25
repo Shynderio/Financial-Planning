@@ -1,7 +1,9 @@
 ﻿using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +23,7 @@ namespace FinancialPlanning.Service.Services
             _reportRepository = reportRepository;
         }
 
-        public async Task<string> ImportAnnualReport()
+        public async Task<string> GenerateAnnualReport()
         {
             try
             {
@@ -49,7 +51,8 @@ namespace FinancialPlanning.Service.Services
                     byte[] file = await _fileService.GetFileAsync("CorrectPlan.xlsx");
 
                     //Change 1 
-                    List <Expense> expenses = _fileService.ConvertExcelToList(file, 0);
+                    //Get expense of report
+                    List<Expense> expenses = _fileService.ConvertExcelToList(file, 0);
                     decimal totalExpense = expenses.Sum(e => e.TotalAmount);
                     decimal biggestExpense = expenses.Max(e => e.TotalAmount);
                     ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
@@ -76,6 +79,38 @@ namespace FinancialPlanning.Service.Services
             {
                 return ex.Message;
             }
+
+        }
+
+        public async Task<IEnumerable<AnnualReport>> GetAllAnnualReportsAsync()
+        {
+            DateTime dateTime = DateTime.Now;
+            DateTime timeGenAnnualReport = new DateTime(dateTime.Year, 12, 20);
+            int currentYear = dateTime.Year;
+            if (dateTime <= timeGenAnnualReport)
+            {
+                currentYear--;
+            }
+            List<AnnualReport> annualReports = new List<AnnualReport>();
+            while (currentYear > 0)
+            {
+                try
+                {
+                    var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + currentYear + ".xlsx");
+                    List<ExpenseAnnualReport> expenses;
+                    List<AnnualReport> annual;
+                    //Convert
+                    (expenses, annual) = _fileService.ConvertExelAnnualReport(new ExcelPackage(new MemoryStream(file)));
+                    annualReports.AddRange(annual);
+                }
+                catch
+                {
+                    break;
+                }
+                currentYear--;
+            }
+
+            return annualReports;
 
         }
 
