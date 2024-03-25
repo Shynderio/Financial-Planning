@@ -1,8 +1,6 @@
 using System.Globalization;
-using System.Net.Http;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Aspose.Cells;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +9,11 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpClient httpClient)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
     
 
-    public async Task<string> GetFileAsync(string key)
+    public async Task<string> GetFileUrlAsync(string key)
     {
         var request = new GetPreSignedUrlRequest
         {
@@ -27,6 +25,17 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         return await s3Client.GetPreSignedURLAsync(request);
     }
 
+    public async Task<byte[]> GetFileAsync(string key)
+    {
+        using var response = await s3Client.GetObjectAsync(configuration["AWS:BucketName"], key);
+
+        await using var stream = response.ResponseStream;
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+
+        return memoryStream.ToArray();
+    }
+
     /*
      * documentType:
      * {
@@ -34,7 +43,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public async Task UploadPlanAsync(string key, Stream fileStream)
+    public async Task UploadFileAsync(string key, Stream fileStream)
     {
         var request = new PutObjectRequest
         {
@@ -53,20 +62,16 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public bool ValidateFile(FileStream fileStream, byte documentType)
+    public bool ValidateFile(byte[] file, byte documentType)
     {
-        Console.WriteLine(fileStream.Name);
-        string[] validExtension = [".xls", ".xlsx", ".csv"];
-
-        //check file is not empty, not bigger than 500MB and has valid extension
-        if (fileStream.Length == 0 || fileStream.Length > Constants.MaxFileSize ||
-            !validExtension.Contains(Path.GetExtension(fileStream.Name).ToLower()))
+        //check file is not empty and not bigger than 500MB 
+        if (file.Length is 0 or > Constants.MaxFileSize)
         {
             return false;
         }
+        
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-        var package = new ExcelPackage(fileStream);
+        var package = new ExcelPackage(new MemoryStream(file));
         package = RemoveEmptyRow(package);
 
         var worksheet = package.Workbook.Worksheets[0];
@@ -133,12 +138,12 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public List<Expense> ConvertExcelToList(FileStream fileStream, byte documentType)
+    public List<Expense> ConvertExcelToList(byte[] file, byte documentType)
     {
         var expenses = new List<Expense>();
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var package = new ExcelPackage(fileStream);
+        var package = new ExcelPackage(new MemoryStream(file));
         package = RemoveEmptyRow(package);
 
         var worksheet = package.Workbook.Worksheets[0];
@@ -169,7 +174,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         return expenses;
     }
 
-    public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
+    public async Task<byte[]> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -203,9 +208,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         //Convert ExcelPackage to Stream
         var memoryStream = new MemoryStream();
         await package.SaveAsAsync(memoryStream);
-        memoryStream.Seek(0, SeekOrigin.Begin);
 
-        return memoryStream;
+        return memoryStream.ToArray();
     }
 
     private ExcelPackage RemoveEmptyRow(ExcelPackage package)
@@ -230,73 +234,5 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         package.Save();
 
         return package;
-    }
-
-
-    public string ConvertCsvToExcel(string fileName)
-    {
-
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" + fileName);
-
-        // Load file to workbook
-        Workbook workbook;
-        if (Path.GetExtension(fileName) == ".csv")
-        {
-            var loadOption = new TxtLoadOptions(LoadFormat.Csv)
-            {
-                Separator = ';', // Data in CSV file is separated by semicolon
-                ConvertDateTimeData = false // Do not convert date time to numeric
-            };
-            workbook = new Workbook(filePath, loadOption);
-        }
-        else
-        {
-            workbook = new Workbook(filePath);
-        }
-
-        filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" +  Path.GetFileNameWithoutExtension(fileName) + ".xlsx");
-        // Convert to xlsx
-        using var memoryStream = new MemoryStream();
-        workbook.Save(memoryStream, SaveFormat.Xlsx);
-
-        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-
-        memoryStream.WriteTo(fileStream);
-        
-        memoryStream.Close();
-        // fileStream.Seek(0, SeekOrigin.Begin);
-
-        return filePath;
-    }
-
-    //DownloadFile from Url
-    public async Task<bool> DownloadFile(string url, string savePath)
-    {
-        //Check if the url is in the correct format
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && uriResult != null)
-        {
-            return false;
-        }
-        try
-        {
-            // Create directory if it does not exist
-           
-            using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
-            {
-                response.EnsureSuccessStatusCode();
-
-                using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
-                    stream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                {
-                    await contentStream.CopyToAsync(stream);
-                }
-            }
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
     }
 }
