@@ -94,6 +94,36 @@ namespace FinancialPlanning.Service.Services
             // }
         }
 
+        public async Task CreateReport(Report report, Guid userId)
+        {
+            var isReportExist = await _reportRepository.IsReportExist(report.TermId, report.DepartmentId, report.Month);
+            if (isReportExist)
+            {
+                throw new ArgumentException("Report already exists with the specified term, department and month");
+            } else {
+                report.Status = (int)Common.ReportStatus.New;
+                report.UpdateDate = DateTime.Now;
+                await _reportRepository.CreateReport(report, userId);
+            }
+            // await _reportRepository.CreateReport(report);
+        }
+
+        public async Task ReupReport(Guid reportId, Guid userId)
+        {
+            var isReportExist = await _reportRepository.GetReportById(reportId);
+            if (isReportExist == null)
+            {
+                throw new ArgumentException("Report not found with the specified ID");
+            } else {
+                await _reportRepository.ReupReport(reportId, userId);
+            }
+        }
+
+        public async Task CloseDueReports()
+        {
+            var reports = await _reportRepository.GetAllDueReports();
+            await _reportRepository.CloseAllDueReports(reports);
+        }
     }
 }
 

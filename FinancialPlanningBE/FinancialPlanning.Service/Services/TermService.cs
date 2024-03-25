@@ -106,13 +106,13 @@ namespace FinancialPlanning.Service.Services
             return await _termRepository.GetAllTerms();
         }
 
-        public async Task CloseTerms()
+        public async Task CloseDueTerms()
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             foreach (var term in terms)
             {
                 var endDate = term.StartDate.AddMonths(term.Duration).Day;
-                if (endDate > DateTime.Now.Day || term.Status == (int)TermStatus.Closed) 
+                if (endDate < DateTime.Now.Day || term.Status == (int)TermStatus.Closed) 
                     continue;
                 term.Status = (int)TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);

@@ -5,21 +5,22 @@ using Microsoft.Extensions.Logging;
 
 namespace FinancialPlanning.Service.ScheduleTasks
 {
-    public class CloseTerm : ScheduledProcessor
+    public class AnnualTask : ScheduledProcessor
     {
         private readonly ILogger<StartTerm> _logger;
 
-        public CloseTerm(IServiceScopeFactory serviceScopeFactory, ILogger<StartTerm> logger) : base(serviceScopeFactory)
+        public AnnualTask(IServiceScopeFactory serviceScopeFactory, ILogger<StartTerm> logger) : base(serviceScopeFactory)
         {
             _logger = logger;
         }
 
-        protected override string Schedule => "*/3 * * * *"; // every 3 minute
+        protected override string Schedule => "*/3 * * * *"; 
+        // protected override string Schedule => "0 0 20 12 *";
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
-            var termService = serviceProvider.GetRequiredService<TermService>();
-            await termService.CloseTerms();
+            // var termService = serviceProvider.GetRequiredService<TermService>();
+            
         }
     }
 }
