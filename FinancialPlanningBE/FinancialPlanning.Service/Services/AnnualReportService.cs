@@ -125,17 +125,31 @@ namespace FinancialPlanning.Service.Services
         {
             try
             {
-               var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + year + ".xlsx");
-               (var expenses, var annualreport) =  _fileService.ConvertExelAnnualReportToList(new ExcelPackage(new MemoryStream(file)));
+                var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + year + ".xlsx");
+                (var expenses, var annualreport) = _fileService.ConvertExelAnnualReportToList(new ExcelPackage(new MemoryStream(file)));
 
-              return (expenses, annualreport);
-            
+                return (expenses, annualreport);
+
             }
             catch (Exception ex)
             {
                 throw new Exception("Failed to process annual report details", ex);
             }
 
+
+        }
+
+        public async Task<string> GetURLFile(string name)
+        {
+            try
+            {
+                var url = await _fileService.GetFileUrlAsync(name);
+                return url;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to export file :", ex);
+            }
 
         }
 

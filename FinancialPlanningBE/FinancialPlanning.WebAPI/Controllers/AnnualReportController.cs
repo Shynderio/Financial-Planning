@@ -41,12 +41,30 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
+        [HttpGet("export/{year:int}")]
+        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportAnnualReport(int year)
+        {
+            try
+            {
+                string filename = "AnnualExpenseReport/AnnualReport_" + year + ".xlsx";
+                var url = _annualReportService.GetURLFile(filename);
+                return Ok(url);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
 
 
 
-            [HttpGet("0")]
+
+
+        [HttpGet("0")]
         public async Task<IActionResult> GetAllFile(string key)
         {
             var url = await _fileService.GetFileUrlAsync(key);
@@ -102,7 +120,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 TotalTerm = 31,
                 TotalDepartment = 12,
                 TotalExpense = "1210000"
-            
+
             };
             string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2023.xlsx");
 
