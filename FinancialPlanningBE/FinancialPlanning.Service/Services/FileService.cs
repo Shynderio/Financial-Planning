@@ -313,7 +313,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
             reports.Add(new AnnualReport
             {
                 Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
-                CreateDate = int.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                CreateDate = DateTime.ParseExact(worksheet.Cells["B2"].Value?.ToString(), "MM/dd/yyyy hh:mm:ss tt", CultureInfo.InvariantCulture),
                 TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
                 TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString())
             });

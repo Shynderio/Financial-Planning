@@ -9,7 +9,7 @@ namespace FinancialPlanning.Data.Entities
     public class AnnualReport
     {
         public int Year { get; set; }
-        public int CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
         public int TotalTerm { get; set; }
         public int TotalDepartment { get; set; }
     }
