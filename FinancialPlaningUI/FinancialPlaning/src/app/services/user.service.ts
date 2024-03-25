@@ -36,14 +36,6 @@ export class UserService {
         throw error;
       })
     );
-    // return this.http.put(`http://localhost:5085/api/User/${userId}/${status}`, {}, { observe: 'response', responseType: 'text' })
-    //   .pipe(
-    //     map((response: HttpResponse<any>) => response.status),
-    //     catchError((error: HttpErrorResponse) => {
-    //       console.error('Error occurred:', error);
-    //       throw error;
-    //     })
-    //   );
   }
 
   addNewUser(user: AddUser) {
