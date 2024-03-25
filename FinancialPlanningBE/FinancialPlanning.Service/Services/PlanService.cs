@@ -18,7 +18,7 @@ namespace FinancialPlanning.Service.Services
             _termService = termRepository ?? throw new ArgumentNullException(nameof(termRepository));
         }
 
-        public bool ValidatePlanFileAsync(byte[] file)
+        public bool ValidatePlanFile(byte[] file)
         {
             // Validate the file using FileService
             try
@@ -32,9 +32,6 @@ namespace FinancialPlanning.Service.Services
                 throw new InvalidOperationException("An error occurred while validating the plan file.", ex);
             }
         }
-
-
-
 
         public async Task<IEnumerable<Plan>> GetStartingPlans()
         {
