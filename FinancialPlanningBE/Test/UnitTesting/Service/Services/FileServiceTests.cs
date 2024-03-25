@@ -5,7 +5,6 @@ using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using System.Net.Http;
 
 namespace Test.UnitTesting.Service.Services;
 
@@ -14,8 +13,9 @@ public class FileServiceTests
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
 
-    public FileServiceTests()
+    public FileServiceTests(HttpClient httpClient)
     {
+        _httpClient = httpClient;
         //Construct configuration
         var currentDirectory = Directory.GetCurrentDirectory();
 
@@ -47,7 +47,7 @@ public class FileServiceTests
         var expectedPreSignedUrl = await s3Client.GetPreSignedURLAsync(expectedRequest);
 
         //Act
-        var result = await fileService.GetFileAsync(key);
+        var result = await fileService.GetFileUrlAsync(key);
 
         //Assert
         Assert.Equal(expectedPreSignedUrl, result);
@@ -116,8 +116,7 @@ public class FileServiceTests
         workbook.Save(memoryStream, SaveFormat.Xlsx);
         var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         memoryStream.WriteTo(fileStream);
-        fileStream.Seek(0, SeekOrigin.Begin);
-        memoryStream.Close();
+        fileStream.Close();
 
         var mockS3Client = new Mock<IAmazonS3>();
         var mockConfiguration = new Mock<IConfiguration>();
@@ -125,10 +124,9 @@ public class FileServiceTests
         var fileService = new FileService(mockS3Client.Object, mockConfiguration.Object,mockHttpClient.Object );
 
         // Act
-        var actualResult = fileService.ValidateFile(fileStream, documentType);
+        var actualResult = fileService.ValidateFile(memoryStream.ToArray(), documentType);
 
         // delete dummy file
-        fileStream.Close();
         File.Delete(filePath);
 
         // Assert
@@ -229,8 +227,11 @@ public class FileServiceTests
         var mockS3Client = new Mock<IAmazonS3>();
         var fileService = new FileService(mockS3Client.Object, _configuration,_httpClient);
 
+        using var memoryStream = new MemoryStream();
+        fileStream.CopyTo(memoryStream);
+        
         // Act
-        var actualResult = fileService.ConvertExcelToList(fileStream, documentType);
+        var actualResult = fileService.ConvertExcelToList(memoryStream.ToArray(), documentType);
 
         // Assert
         for (var i = 0; i < expectedResult.Count; i++)

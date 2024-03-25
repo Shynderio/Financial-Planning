@@ -14,7 +14,6 @@ namespace FinancialPlanning.WebAPI.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
-        private readonly AuthService _authService;
         private readonly IMapper _mapper;
         private readonly ReportService _reportService;
         private readonly TokenService _tokenService;
@@ -26,7 +25,6 @@ namespace FinancialPlanning.WebAPI.Controllers
             FileService fileService
         )
         {
-            _authService = authService;
             _mapper = mapper;
             _reportService = reportService;
             _tokenService = tokenService;
@@ -78,76 +76,35 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
 
-
         [HttpGet("details/{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> GetreportDetails(Guid id)
+        public async Task<IActionResult> GetReportDetails(Guid id)
         {
             try
             {
-                List<Expense> expenses;
                 //Get report
                 var report = await _reportService.GetReportById(id);
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
-                //string reportName = report.ReportName;
-                string reportName = "CorrectPlan";
-                //Get url of file on cloud
-                string url = await _reportService.GetFileByName(reportName + ".xlsx");
 
-                //If folder doesn't exit -> create
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Upload\\Files");
-                if (!Directory.Exists(directoryPath))
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("CorrectPlan.xlsx"), 0);
+
+                //mapper
+                var reportViewModel = _mapper.Map<ReportViewModel>(report);
+                var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions).ToList();
+                // Get the name of the user who uploaded the file
+                var firstReportVersion = reportVersionModel.FirstOrDefault();
+                var uploadedBy = firstReportVersion?.UploadedBy;
+
+                var result = new
                 {
-                    Directory.CreateDirectory(directoryPath);
-                }
+                    Report = reportViewModel,
+                    Expenses = expenses,
+                    ReportVersions = reportVersionModel,
+                    UploadedBy = uploadedBy
+                };
 
-                var savePath = Path.Combine(directoryPath, reportName + ".xlsx");
-                
-                bool isDownLoad = await _fileService.DownloadFile(url, savePath);
-                //download file sucessfull 
-                if (isDownLoad)
-                {
-                    // conver file to list expense
-                    using (var fileStream = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Read))
-                    {
-                        try
-                        {
-                            //change 1 when have file
-                            expenses = _fileService.ConvertExcelToList(fileStream, 0);
-                        }
-                        catch
-                        {
-                            return BadRequest("Failed to convert");
-                        }
-                    }
-                    //mapper
-                    var reportViewModel = _mapper.Map<ReportViewModel>(report);
-                    var reportVersionModel = _mapper.Map<IEnumerable<ReportVersionModel>>(reportVersions);
-                    // Get the name of the user who uploaded the file
-                    var firstReportVersion = reportVersionModel.FirstOrDefault();
-                    var uploadedBy = firstReportVersion != null ? firstReportVersion.UploadedBy : null;
-                    //remove file
-                    if (System.IO.File.Exists(savePath))
-                    {
-                        System.IO.File.Delete(savePath);
-                    }
-
-                    var result = new
-                    {
-                        Report = reportViewModel,
-                        Expenses = expenses,
-                        ReportVersions = reportVersionModel,
-                        UploadedBy = uploadedBy
-                    };
-                    
-                    return Ok(result);
-
-                }
-                else
-                {
-                    return BadRequest("Failed to download file");
-                }
+                return Ok(result);
             }
             //error when download
             catch (Exception ex)
@@ -164,11 +121,9 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 //from reportVersion Id -> get name report + version
-                var report = await _reportService.GetReportById(id);
-                //var fileName = report.ReportName + "" + version;
-                var fileName = "CorrectPlan";
+                await _reportService.GetReportById(id);
                 //get url from name file
-                string url = await _reportService.GetFileByName(fileName + ".xlsx");
+                var url = await _reportService.GetFileByName("CorrectPlan.xlsx");
 
                 // return URL
                 return Ok(new { downloadUrl = url });
@@ -177,6 +132,12 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 return StatusCode(500, new { message = ex });
             }
+        }
+
+        [HttpGet("export")]
+        public Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
+        {
+            return Task.FromResult<IActionResult>(Ok());
         }
     }
 }
