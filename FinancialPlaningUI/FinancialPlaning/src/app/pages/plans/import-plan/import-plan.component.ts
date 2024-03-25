@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { RouterLink } from '@angular/router';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-import-plan',
@@ -23,7 +24,8 @@ import { RouterLink } from '@angular/router';
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink, 
+    MatCard
   ],
   templateUrl: './import-plan.component.html',
   styleUrls: ['./import-plan.component.css']

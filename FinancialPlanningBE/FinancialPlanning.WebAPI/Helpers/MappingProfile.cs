@@ -79,6 +79,8 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.PositionId, opt => opt.MapFrom(src => src.PositionId))
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
+
+            CreateMap<Report, ImportReportModel>();
         }
     }
 }

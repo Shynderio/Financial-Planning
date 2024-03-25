@@ -20,8 +20,13 @@ namespace FinancialPlanning.Service.ScheduleTasks
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
             // var termService = serviceProvider.GetRequiredService<TermService>();
+<<<<<<< HEAD
             var termService = serviceProvider.GetRequiredService<AnnualReportService>();
            await termService.ImportAnnualReport();
+=======
+            var reportService = serviceProvider.GetRequiredService<ReportService>();
+            await reportService.GenerateAnnualReport();
+>>>>>>> origin/import-reup
             
         }
     }

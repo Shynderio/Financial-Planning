@@ -115,7 +115,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Validate the file
                 using var memoryStream = new MemoryStream();
                 await file.CopyToAsync(memoryStream);
-                var isValid = _planService.ValidatePlanFileAsync(memoryStream.ToArray());
+                var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
                 if (!isValid)
                 {

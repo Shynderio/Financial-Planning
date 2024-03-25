@@ -10,6 +10,7 @@ import { PlanService } from '../../../services/plan.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-reup-plan',
@@ -21,7 +22,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatOption, CommonModule,
     MatPaginatorModule,
     MatTableModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCard
   ],
   templateUrl: './reup-plan.component.html',
   styleUrls: ['./reup-plan.component.css']
