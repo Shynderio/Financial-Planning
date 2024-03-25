@@ -36,14 +36,8 @@ namespace FinancialPlanning.Service.Services
                 //Total department
                 int totalDepartment = await _reportRepository.GetTotalDepartByYear(year);
 
-                var annualreport = new AnnualReport
-                {
-                    Year = year,
-                    CreateDate = create_at,
-                    TotalTerm = totalTerm,
-                    TotalDepartment = totalDepartment,
-                };
                 List<ExpenseAnnualReport> expenseAnnualReports = new List<ExpenseAnnualReport>();
+                //Get all reports
                 List<Report> reports = await _reportRepository.GetAllReportsByYear(year);
                 foreach (Report report in reports)
                 {
@@ -58,12 +52,23 @@ namespace FinancialPlanning.Service.Services
                     ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
                     {
                         Department = report.Department.DepartmentName,
-                        TotalExpense = (int)totalExpense,
-                        BiggestExpenditure = (int)biggestExpense,
+                        TotalExpense = (long)totalExpense,
+                        BiggestExpenditure = (long)biggestExpense,
                         CostType = expenses[0].CostType,
                     };
                     expenseAnnualReports.Add(expenseAnnualReport);
                 }
+                //get total Expense of annual report
+                long totalExpenseOflist = expenseAnnualReports.Sum(e => e.TotalExpense);
+
+                var annualreport = new AnnualReport
+                {
+                    Year = year,
+                    CreateDate = create_at,
+                    TotalTerm = totalTerm,
+                    TotalDepartment = totalDepartment,
+                    TotalExpense = totalExpenseOflist.ToString()
+                };
 
                 //Convert list to exel
                 var annualFile = await _fileService.ConvertAnnualReportToExcel(expenseAnnualReports, annualreport);
@@ -84,6 +89,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task<IEnumerable<AnnualReport>> GetAllAnnualReportsAsync()
         {
+            List<AnnualReport> annualReports = new List<AnnualReport>();
             DateTime dateTime = DateTime.Now;
             DateTime timeGenAnnualReport = new DateTime(dateTime.Year, 12, 20);
             int currentYear = dateTime.Year;
@@ -91,26 +97,45 @@ namespace FinancialPlanning.Service.Services
             {
                 currentYear--;
             }
-            List<AnnualReport> annualReports = new List<AnnualReport>();
+
             while (currentYear > 0)
             {
                 try
                 {
+                    //Get file by year
                     var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + currentYear + ".xlsx");
                     List<ExpenseAnnualReport> expenses;
-                    List<AnnualReport> annual;
-                    //Convert
-                    (expenses, annual) = _fileService.ConvertExelAnnualReport(new ExcelPackage(new MemoryStream(file)));
-                    annualReports.AddRange(annual);
+                    //Convert file to list
+                    var annual = _fileService.ConvertExelToListAnnualReport(new ExcelPackage(new MemoryStream(file)));
+                    annualReports.Add(annual);
                 }
                 catch
                 {
+                    //if file can't find 
                     break;
                 }
                 currentYear--;
             }
 
             return annualReports;
+
+        }
+
+        public async Task<(IEnumerable<ExpenseAnnualReport>, AnnualReport)> GetAnnualReportDetails(int year)
+        {
+            try
+            {
+               var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + year + ".xlsx");
+               (var expenses, var annualreport) =  _fileService.ConvertExelAnnualReportToList(new ExcelPackage(new MemoryStream(file)));
+
+              return (expenses, annualreport);
+            
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to process annual report details", ex);
+            }
+
 
         }
 

@@ -17,17 +17,37 @@ namespace FinancialPlanning.WebAPI.Controllers
         public AnnualReportController(FileService fileService, AnnualReportService annualReportService)
         {
             _fileService = fileService;
-            _annualReportService= annualReportService;
+            _annualReportService = annualReportService;
         }
-        [HttpGet]
+
+        [HttpGet("annualreports")]
         public async Task<IActionResult> GetAll()
         {
-      var annualReport = await  _annualReportService.GetAllAnnualReportsAsync();
+            var annualReport = await _annualReportService.GetAllAnnualReportsAsync();
             return Ok(annualReport);
-          
+
         }
-        [HttpGet("0")]
-       public async Task<IActionResult> GetAllFile(string key)
+
+        [HttpGet("details/{year:int}")]
+        public async Task<IActionResult> GetAnnualReportDetails(int year)
+        {
+            try
+            {
+                var (expense, reports) = await _annualReportService.GetAnnualReportDetails(year);
+                return Ok(new { Expense = expense, Reports = reports });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        
+
+
+
+
+            [HttpGet("0")]
+        public async Task<IActionResult> GetAllFile(string key)
         {
             var url = await _fileService.GetFileUrlAsync(key);
             return Ok(url);
@@ -46,7 +66,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                         file.CopyTo(stream);
                         using (var package = new ExcelPackage(stream))
                         {
-                            var (expense, reports) = _fileService.ConvertExelAnnualReport(package);
+                            var (expense, reports) = _fileService.ConvertExelAnnualReportToList(package);
                             return Ok(new { Expense = expense, Reports = reports });
                         }
                     }
@@ -69,20 +89,22 @@ namespace FinancialPlanning.WebAPI.Controllers
 
             ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
             {
-                Department = "a",
-                TotalExpense = 1,
-                BiggestExpenditure = 12,
-                CostType = "b",
+                Department = "HR",
+                TotalExpense = 100000000,
+                BiggestExpenditure = 120000,
+                CostType = "MK",
             };
             expenses.Add(expenseAnnualReport);
             var annualreport = new AnnualReport
             {
                 Year = 2023,
                 CreateDate = DateTime.Now,
-                TotalTerm = 12,
+                TotalTerm = 31,
                 TotalDepartment = 12,
+                TotalExpense = "1210000"
+            
             };
-            string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2021.xlsx");
+            string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2023.xlsx");
 
             //Import file to cloud
             var filae = await _fileService.ConvertAnnualReportToExcel(expenses, annualreport);

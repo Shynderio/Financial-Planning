@@ -12,5 +12,6 @@ namespace FinancialPlanning.Data.Entities
         public DateTime CreateDate { get; set; }
         public int TotalTerm { get; set; }
         public int TotalDepartment { get; set; }
+        public string TotalExpense { get; set; }
     }
 }
