@@ -73,7 +73,7 @@ public class FileServiceTests
             .ReturnsAsync(new PutObjectResponse());
 
         // Act
-        await fileService.UploadPlanAsync(key, fileStream);
+        await fileService.UploadFileAsync(key, fileStream);
 
         // Assert
         mockS3Client.Verify(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), default), Times.Once);

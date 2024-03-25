@@ -151,7 +151,7 @@ namespace FinancialPlanning.Service.Services
                 // Convert list of expenses to Excel file                        
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
                 // Upload the file to AWS S3
-                await _fileService.UploadPlanAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
+                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
 
                 // Convert list of expenses to Excel file
             }

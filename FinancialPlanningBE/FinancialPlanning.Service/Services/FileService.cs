@@ -43,7 +43,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    public async Task UploadPlanAsync(string key, Stream fileStream)
+    public async Task UploadFileAsync(string key, Stream fileStream)
     {
         var request = new PutObjectRequest
         {
