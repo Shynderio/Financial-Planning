@@ -20,7 +20,8 @@ export class AdminGuard implements CanActivate {
         }        
       } 
     // ROle isn't Accountant
-    this.router.navigateByUrl('/home');
+    // this.router.navigateByUrl('/home');
+    window.location.href='/home';
     return false;
   }
 }

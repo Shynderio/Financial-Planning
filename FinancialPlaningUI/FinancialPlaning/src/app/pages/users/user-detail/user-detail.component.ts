@@ -123,7 +123,7 @@ export class UserDetailComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Updated successfully' : 'Something went wrong', 'Close', {
+        this.messageBar.open(response == 200 ? 'Change status successfully' : 'Something went wrong', 'Close', {
           panelClass: ['success'],
         });
         this.loadUserDetail(userId);

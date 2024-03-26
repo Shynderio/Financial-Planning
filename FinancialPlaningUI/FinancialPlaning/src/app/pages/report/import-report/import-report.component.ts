@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { UploadComponent } from '../../../components/upload/upload.component';
+import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -10,8 +10,11 @@ import { ReportService } from '../../../services/report.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
+import { start } from 'repl';
+import { SelectTermModel } from '../../../models/select-term.model';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-import-report',
@@ -24,7 +27,7 @@ import { MatCard } from '@angular/material/card';
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
-    RouterLink, 
+    RouterLink,
     MatCard
   ],
   templateUrl: './import-report.component.html',
@@ -32,9 +35,10 @@ import { MatCard } from '@angular/material/card';
 })
 export class ImportReportComponent implements OnInit {
 
+
   termService: TermService;
   reportService: ReportService;
-  termOptions: { value: string, viewValue: string }[] = [];
+  termOptions: SelectTermModel[] = [];
   monthOptions: string[] = [];
   reportForm: FormGroup;
   dataSource: any = [];
@@ -56,12 +60,16 @@ export class ImportReportComponent implements OnInit {
     'pic',
     'notes'
   ];
+
+  months: string[] = [
+    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+  ];
   selectedTermId: string = '';
-  constructor(termService: TermService, 
-    reportService: ReportService, 
-    private fb: FormBuilder, 
+  constructor(termService: TermService,
+    reportService: ReportService,
+    private fb: FormBuilder,
     private elementRef: ElementRef,
-    private messageBar: MatSnackBar) {
+    private messageBar: MatSnackBar, private router: Router) {
     this.termService = termService;
     this.reportService = reportService;
     this.reportForm = this.fb.group({
@@ -73,10 +81,8 @@ export class ImportReportComponent implements OnInit {
 
   ngOnInit() {
     this.termService.getStartedTerms().subscribe(
-      (data: any[]) => {
-        this.termOptions = data.map(term => {
-          return { value: term.id, viewValue: term.termName };
-        });
+      (data: SelectTermModel[]) => {
+        this.termOptions = data;
         console.log(this.termOptions);
       },
       error => {
@@ -84,11 +90,29 @@ export class ImportReportComponent implements OnInit {
       }
     );
 
-    this.monthOptions = [
-      "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
-    ];
   };
 
+  changeTerm() {
+    // debugger;
+    var term = this.reportForm.value.term;
+    if (term) {
+      var startMonth = new Date(term.startDate).getMonth();
+      var startYear = new Date(term.startDate).getFullYear();
+
+      var monthOptions = [];
+      for (let i = 0; i < term.duration; i++) {
+        const currentMonthIndex = (startMonth + i) % 12;
+        const currentYear = startYear + Math.floor((startMonth + i) / 12);
+        monthOptions.push(this.months[currentMonthIndex] + ' ' + currentYear);
+      }
+
+      this.monthOptions = monthOptions;
+
+      console.log('Selected term:', term);
+      console.log('Month options:', this.monthOptions);
+      // this.monthOptions = this.months.slice(0, selectedTerm.duration);
+    }
+  }
 
   onFileSelected(event: any) {
     // debugger;
@@ -113,29 +137,20 @@ export class ImportReportComponent implements OnInit {
         },
         error => {
           console.log(error);
-          this.messageBar.open(
-            error.error.message,
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            data: { 
+              message: error.error.message,
+              success: false},
+
+            })
         }
       );
     } else {
-      this.messageBar.open(
-        "Please select a file to preview.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        data: { 
+          message: 'Please select a file to preview.' ,
+          success: false},
+        })
     }
   }
 
@@ -145,14 +160,16 @@ export class ImportReportComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger;
-    if (this.reportForm.valid) {
-      if (this.file){
-        var term = this.reportForm.value.term;
+    // debugger;
+    var term = this.reportForm.value.term;
+    if (this.reportForm.valid && term) {
+      if (this.file) {
+        var id = term.id;
         var month = this.reportForm.value.month;
         this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-        this.reportService.uploadReport(this.dataSource, term, month).subscribe(
-          (data: any) => {  
+        this.reportService.uploadReport(this.dataSource, id, month).subscribe(
+          (data: any) => {
+
             console.log('report uploaded:', data);
             this.messageBar.open(
               "Uploaded successfully.",
@@ -164,54 +181,41 @@ export class ImportReportComponent implements OnInit {
                 horizontalPosition: 'end',
               }
             );
-            
+            this.router.navigate(['/reports']);
           },
           error => {
             console.log('Error uploading report:', error);
-            this.messageBar.open(
-              error.error.message,
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              data: { 
+                message: error.error.message ,
+                success: false},
+              })
           }
         );
       } else {
         // console.log('Please select a file to upload.');
-        this.messageBar.open(
-          "Please select a file to upload.",
-          undefined,
-          {
-            duration: 5000,
-            panelClass: ['messageBar', 'successMessage'],
-            verticalPosition: 'top',
-            horizontalPosition: 'end',
-          }
-        );
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          data: {
+            message: 'Please select a file to upload.',
+            success: false
+          },
+        })
         this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
       }
     } else {
       // console.log('Form is invalid.');
-      this.messageBar.open(
-        "Please select a term.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        data: {
+          message: 'Please select a term.',
+          success: false
+        },
+      })
     }
   }
 
   onTermSelect(termId: string) {
     this.selectedTermId = termId;
-    console.log('Selected term:', termId);  
+    console.log('Selected term:', termId);
   }
 
 }

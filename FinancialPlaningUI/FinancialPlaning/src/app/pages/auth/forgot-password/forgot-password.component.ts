@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormControl,
-  FormGroupDirective,
-  NgForm,
   Validators,
   FormsModule,
   ReactiveFormsModule,
@@ -15,6 +13,8 @@ import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -30,9 +30,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatInputModule,
     ReactiveFormsModule,
     RouterLink,
+    MatProgressSpinnerModule,
   ],
 })
 export class ForgotPasswordComponent {
+  isLoading = false;
+
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
@@ -41,12 +44,21 @@ export class ForgotPasswordComponent {
   constructor(
     private authService: AuthService,
     private messageBar: MatSnackBar,
-    private elementRef: ElementRef
+    private router: Router
   ) {}
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    if (this.authService.IsLoggedIn()) {
+      console.log(this.authService.IsLoggedIn());
+      this.router.navigate(['/home']);
+    }
+  }
 
   onSubmit() {
     if (this.emailFormControl.invalid) return;
-    this.elementRef.nativeElement.querySelector('button').disabled = true;
+    this.isLoading = true;
     this.authService.forgotPassword(this.emailFormControl.value!).subscribe({
       next: (response) => {
         this.messageBar.open(
@@ -56,10 +68,9 @@ export class ForgotPasswordComponent {
             duration: 500000,
             panelClass: ['messageBar', 'successMessage'],
             verticalPosition: 'top',
-            horizontalPosition: 'end',
           }
         );
-        this.elementRef.nativeElement.querySelector('button').disabled = false;
+        this.isLoading = false;
         console.log(response);
       },
       error: (error) => {
@@ -70,10 +81,9 @@ export class ForgotPasswordComponent {
             duration: 5000,
             panelClass: ['messageBar', 'failMessage'],
             verticalPosition: 'top',
-            horizontalPosition: 'end',
           }
         );
-        this.elementRef.nativeElement.querySelector('button').disabled = false;
+        this.isLoading = false;
       },
     });
   }

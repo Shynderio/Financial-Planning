@@ -3,21 +3,21 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
-import { MessageBarComponent } from './message-bar.component';
+import { ReupReportComponent } from './reup-report.component';
 
-describe('MessageBarComponent', () => {
-  let component: MessageBarComponent;
-  let fixture: ComponentFixture<MessageBarComponent>;
+describe('ReupReportComponent', () => {
+  let component: ReupReportComponent;
+  let fixture: ComponentFixture<ReupReportComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MessageBarComponent ]
+      declarations: [ ReupReportComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(MessageBarComponent);
+    fixture = TestBed.createComponent(ReupReportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

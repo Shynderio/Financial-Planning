@@ -1,0 +1,12 @@
+i {
+  margin-right: 5px;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  padding: 0;
+  font-weight: bolder;
+  float: right; /* Added this line to float the button to the left */
+}
