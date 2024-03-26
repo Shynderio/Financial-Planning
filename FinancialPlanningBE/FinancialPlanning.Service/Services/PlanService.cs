@@ -164,9 +164,10 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.GetFileUrlAsync(key);
         }
 
-        public Task GetPlanVersionsAsync(Guid id)
+        public async Task<IEnumerable<PlanVersion>> GetPlanVersionsAsync(Guid planId)
         {
-            throw new NotImplementedException();
+            var planVersions = await _planRepository.GetPlanVersionsByPlanID(planId);
+            return planVersions;
         }
     }
 }

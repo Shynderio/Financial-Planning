@@ -21,7 +21,7 @@
   }
   
   ::ng-deep .mat-mdc-dialog-title {
-    color: #ff204e !important;
+    color: #14d364 !important;
     font-weight: bolder !important;
     font-size: 30px !important;
     text-transform: uppercase !important;
@@ -55,14 +55,15 @@
   }
   
   #update-button {
-    background: #ff204e;
+    background:#14d364;
     color: white;
-    border: none;
+    border-radius: 5px;
   }
-  
   #cancel-button {
     background: transparent;
     color: #9db2bf;
-    border: 1px solid #9db2bf;
+    border-radius:5px;
   }
+  
+  
   

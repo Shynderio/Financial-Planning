@@ -48,12 +48,14 @@ export class AddNewUserComponent implements OnInit {
   }
 
   getUserById(userId: string) {
-    if (userId) {
-      this.isEdit = true;
-      this.userId = userId;
-    }
-    this.httpService.getUserById(userId).subscribe(
-      (userDetail: any) => {
+  if (userId) {
+    this.isEdit = true;
+    this.userId = userId;
+    this.httpService.getUserById(userId).subscribe({
+      next: (userDetail: any) => {
+        const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
+        const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
+        const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
         this.addUserF.patchValue({
           username: userDetail.username,
           department: userDetail.departmentId,
@@ -65,12 +67,16 @@ export class AddNewUserComponent implements OnInit {
           phoneNumber: userDetail.phoneNumber,
           address: userDetail.address,
           dob: userDetail.dob
-        })
+        });
+      },
+      error: (error: any) => {
+        console.log('Lỗi khi lấy thông tin người dùng:', error);
       }
-    )
+    });
+  } else {
+    console.error('Invalid userId:', userId);
   }
-
-
+}
   //Get list departments
   getDepartments() {
     this.httpService.getAllDepartment().subscribe(

@@ -4,22 +4,24 @@ form {
 }
 
 form .col-6 {
-    width: 50%;
+    width: 25%;
     /* Set column width to 50% */
 }
 
 h1 {
+    font-weight: 750;
+    color: rgb(51, 50, 50);
+}
+h4 {
     font-weight: bolder;
 }
 form input,
 form select {
-    /* border: 2px solid #575757   ; */
-    border-radius: 20px;
-    /* width: 60%; */
     border: 0;
     height: 50px;
+    margin-bottom: 10px;
     padding: 0 15px;
-    background-color: #3E6AC2;
+    background-color: #ebeef3;
     
 }
 
@@ -29,8 +31,8 @@ form select {
 }
 
 .card{
-    background-color: #222143;
-    color: white;
+    background-color: #0101dd00;
+    color: rgb(32, 32, 32);
     height: 80%;
 }
 
@@ -40,13 +42,15 @@ table {
 }
 
 main {
+    background-color:rgb(194, 194, 194);
     box-shadow: none;
     padding: 30px;
 }
 
 main>div {
     border-radius: 24px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    background-color: rgb(194, 194, 194);
+    box-shadow: rgba(228, 223, 216, 0.2) 0px 8px 24px;
     padding: 20px;
 }
 
@@ -76,4 +80,12 @@ main {
 .btn-secondary {
     margin-right: 10px; /* Tạo khoảng cách giữa các nút */
 }
+.choice-container{
+    font-weight: bold;
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px 5px 5px 5px;
+    margin-top: 20px;
+    padding: 5px;
+}
+
 

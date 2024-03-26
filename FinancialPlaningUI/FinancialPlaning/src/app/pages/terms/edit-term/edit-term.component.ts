@@ -14,8 +14,8 @@ import { TermViewModel } from '../../../models/termview.model';
 import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
-import { MessageBarComponent } from '../../../components/message-bar/message-bar.component';
-import { DialogComponent } from '../../../components/dialog/dialog.component';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
+import { DialogComponent } from '../../../share/dialog/dialog.component';
 @Component({
   selector: 'app-edit-term',
   standalone: true,

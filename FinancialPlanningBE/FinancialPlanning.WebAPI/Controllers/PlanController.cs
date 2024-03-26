@@ -157,30 +157,36 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetPlanDetails(Guid id)
         {
-            List<Expense> expenses;
-            //Get plan
-            var plan = await _planService.GetPlanById(id);
-            //Get planVersions
-            //  var planVersions = await _planService.GetPlanVersionsAsync(id);
-            //string planName = plan.PlanName;
-            var planName = "CorrectPlan";
-            //Get url of file on cloud
-            var file = await _fileService.GetFileAsync(planName + ".xlsx");
-
-            //change 1 when have file
-            expenses = _fileService.ConvertExcelToList(file, 0);
-
-            //mapper
-            var planViewModel = _mapper.Map<PlanViewModel>(plan);
-
-            var result = new
+            try
             {
-                Plan = planViewModel,
-                Expenses = expenses,
-                // PlanVersions = planVersionModel,
-                //  UploadedBy = uploadedBy
-            };
-            return Ok(result);
+                //Get plan
+                var plan = await _planService.GetPlanById(id);
+                //Get planVersions
+                var planVersions = await _planService.GetPlanVersionsAsync(id);
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("CorrectPlan.xlsx"), 0);
+
+                //mapper
+                var planViewModel = _mapper.Map<PlanViewModel>(plan);
+                var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions).ToList();
+                // Get the name of the user who uploaded the file
+                var firstPlanVersion = planVersionModel.FirstOrDefault();
+                var uploadedBy = firstPlanVersion?.UploadedBy;
+
+                var result = new
+                {
+                    Plan = planViewModel,
+                    Expenses = expenses,
+                    PlanVersions = planVersionModel,
+                    UploadedBy = uploadedBy
+                };
+
+                return Ok(result);
+            }
+            //error when download
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
         }
     }
 }

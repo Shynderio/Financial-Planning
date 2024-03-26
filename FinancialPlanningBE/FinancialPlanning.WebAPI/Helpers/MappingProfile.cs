@@ -80,7 +80,9 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.RoleId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status)).ReverseMap();
 
-            CreateMap<Report, ImportReportModel>();
+            // map planVersion to planVersionModel
+            CreateMap<PlanVersion, PlanVersionModel>()
+            .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.User.Username));
         }
     }
 }
