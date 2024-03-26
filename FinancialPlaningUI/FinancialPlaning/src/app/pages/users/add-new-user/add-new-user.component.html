@@ -215,11 +215,11 @@
 
             <div class="row align-items-center justify-content-center py-3">
                 @if (isEdit) { <div class="col-md-6 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg me-3">Update</button>
+                    <button type="submit" class="btn btn-primary btn-lg me-3" [disabled]="!addUserF.valid">Update</button>
                     <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
                 </div>}
                 @else { <div class="col-md-6 text-center">
-                    <button type="submit" class="btn btn-primary btn-lg me-3">Create</button>
+                    <button type="submit" class="btn btn-primary btn-lg me-3" [disabled]="!addUserF.valid">Create</button>
                     <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
                 </div>}
             </div>
