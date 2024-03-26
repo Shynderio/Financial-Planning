@@ -33,8 +33,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                var (expense, reports) = await _annualReportService.GetAnnualReportDetails(year);
-                return Ok(new { Expense = expense, Reports = reports });
+                var (expenses, report) = await _annualReportService.GetAnnualReportDetails(year);
+                return Ok(new { Expenses = expenses, Report = report });
             }
             catch (Exception ex)
             {

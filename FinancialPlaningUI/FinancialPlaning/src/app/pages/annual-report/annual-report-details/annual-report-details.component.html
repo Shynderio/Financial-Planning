@@ -1,0 +1,64 @@
+<main>
+    <div class="container mb-4 margin">
+        <div id="page-title">
+            <h4><b> Annual Report</b></h4>
+            <h6>Annual Report Details</h6>
+        </div>
+        <div class="abc">
+            <a routerLink="/" class="create-button">
+                <button> Export</button>
+            </a>
+        </div>
+    </div>
+
+    <div *ngIf="annualReport" class="report-details d-flex justify-content-between">
+        <!-- //report infor -->
+
+        <div class="left-item">
+            <h6>Year: {{annualReport.year}}</h6>
+            <h6>Total Term: {{annualReport.totalTerm}}</h6>
+            <h6>Total Expense: {{annualReport.totalExpense| number:'1.0-0'}} VND</h6>
+        </div>
+        <div class="right-item">
+            <h6>Created Date: {{convertIsoDateToDdMmYyyy(annualReport.createDate)}}</h6>
+            <h6>Total Department: {{annualReport.totalDepartment}}</h6>
+        </div>
+    </div>
+    <div class="mb-4">
+        <div class="searchBar">
+            <input type="text" placeholder="Search by Department" [value]="searchValue" (keydown.enter)="changeSearchText($event)"
+                (input)="changeSearchText($event)" />
+            <i class="fa-solid fa-search"></i>
+        </div>
+    </div>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="No">
+          <th mat-header-cell *matHeaderCellDef> No. </th>
+          <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+        </ng-container>
+        <ng-container matColumnDef="Department">
+            <th mat-header-cell *matHeaderCellDef> Department </th>
+            <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+          </ng-container>
+          <ng-container matColumnDef="TotalExpense">
+            <th mat-header-cell *matHeaderCellDef> TotalExpense </th>
+            <td mat-cell *matCellDef="let element"> {{element.totalExpense | number:'1.0-0'}} VND</td>
+          </ng-container>
+          <ng-container matColumnDef="BiggestExpenditure">
+            <th mat-header-cell *matHeaderCellDef> Biggest Expenditure </th>
+            <td mat-cell *matCellDef="let element"> {{element.biggestExpenditure| number:'1.0-0'}} VND</td>
+          </ng-container>
+          <ng-container matColumnDef="CostType">
+            <th mat-header-cell *matHeaderCellDef> Cost Type </th>
+            <td mat-cell *matCellDef="let element"> {{element.costType}} </td>
+          </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
+    [hidden]="dataSource.length==0 || dataSource.length<pageSize">
+  </mat-paginator>
+</main>

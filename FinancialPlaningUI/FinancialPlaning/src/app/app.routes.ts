@@ -20,6 +20,7 @@ import { ReportDetailsComponent } from './pages/report/report-details/report-det
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
 import { ImportReportComponent } from './pages/report/import-report/import-report.component';
 import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-reports/list-annual-reports.component';
+import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -46,5 +47,7 @@ export const routes: Routes = [
     { path: 'edit-user/:id', component: AddNewUserComponent },
     { path: 'user-detail/:id', component: UserDetailComponent },
     //annual reports
-    { path: 'annual-reports', component: ListAnnualReportsComponent }
+    { path: 'annual-reports', component: ListAnnualReportsComponent },
+    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent }
+  
 ];
