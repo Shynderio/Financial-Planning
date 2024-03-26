@@ -70,4 +70,11 @@ onPageChange(event: PageEvent) {
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
+  //Convert date to dd/mm/yyyy
+ convertIsoDateToDdMmYyyy(isoDate: string): string {
+  if (!isoDate) return '';
+  const dateParts = isoDate.split('T')[0].split('-');
+  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+}
 }
