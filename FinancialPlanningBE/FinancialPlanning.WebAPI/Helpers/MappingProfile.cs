@@ -51,7 +51,6 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<PlanListModel, Plan>();
 
             CreateMap<Plan, PlanViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Không có sẵn trong Plan, có thể bỏ qua
                 .ForMember(dest => dest.Plan, opt => opt.MapFrom(src => src.PlanName))
                 .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
