@@ -15,7 +15,7 @@ namespace FinancialPlanning.Service.ScheduleTasks
         }
 
        
-         protected override string Schedule => "0 0 20 12 *";
+        protected override string Schedule => "0 0 20 12 *";
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
