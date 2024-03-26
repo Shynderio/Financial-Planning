@@ -1,6 +1,11 @@
 :root {
-  --primary-color: #ffffff;
-  --secondary-color: #a379c9;
+  --green: #59de11;
+  --red: #fb1b07;
+  --lavender: #a379c9;
+  --picton-blue: #1b7aa3;
+  --gable-green: #152630;
+  --white-smoke: #d4d6d5;
+  --river-bed: #49565e;
 }
 
 body {

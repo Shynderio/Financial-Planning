@@ -1,17 +1,16 @@
-<aside id="sidenav">
+<aside id="sidenav" #sidenav (mouseover)="hovering=true" (mouseout)="hovering=false">
   <a routerLink="/home" routerLinkActive="active">
-    <b>FinancialPlanning</b>
+    <img src="../../../assets/img/logo.png" alt="logo" *ngIf="!hovering" class="w-100">
+    <b *ngIf="hovering">FinancialPlanning</b>
   </a>
   <a routerLink="/terms"> <i class="fa-solid fa-timeline"></i>Term List</a>
   <a routerLink="/plans"> <i class="fa-solid fa-list-check"></i>Plan List</a>
   <a routerLink="/reports"> <i class="fa-regular fa-file"></i>Report List</a>
-  <div id="account">
-   
-    <i class="fa-regular fa-user"></i>
-    <div>{{ username }}<br /><span id="role">{{role}}</span></div>
-    <a id="logout" (click)="logout()">
+  <div id="account" class="pt-2">
+    <i class="fa-regular fa-user my-auto mx-3"></i>
+    <div class="d-grid align-self-center fw-bolder">{{ username }}<span id="role" class="d-block">{{role}}</span></div>
+    <a role="button" id="logout" class="mx-0 my-auto" (click)="logout()">
       <i class="fa-solid fa-arrow-right-from-bracket"></i>
     </a>
-  
   </div>
 </aside>
