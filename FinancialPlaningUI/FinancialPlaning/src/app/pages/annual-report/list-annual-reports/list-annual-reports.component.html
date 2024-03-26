@@ -57,6 +57,6 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
         No items match your credentials, please try again.
     </div>
     <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
-        [hidden]="dataSource.length==0 || annualReports.length<=pageSize">
+        [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
     </mat-paginator>
 </main>

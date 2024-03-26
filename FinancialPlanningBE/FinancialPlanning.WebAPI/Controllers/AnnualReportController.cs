@@ -64,7 +64,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
 
 
-        [HttpGet("0")]
+        [HttpGet("Geturlfile")]
         public async Task<IActionResult> GetAllFile(string key)
         {
             var url = await _fileService.GetFileUrlAsync(key);
@@ -99,40 +99,59 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-        [HttpPost("Upload")]
-        public async Task<IActionResult> UploadAnnualReport()
+        [HttpPost("ConvertReport")]
+        public IActionResult ConvertReport(IFormFile file)
         {
-            List<ExpenseAnnualReport> expenses = new List<ExpenseAnnualReport>();
-
-            ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
+            try
             {
-                Department = "HR",
-                TotalExpense = 100000000,
-                BiggestExpenditure = 120000,
-                CostType = "MK",
-            };
-            expenses.Add(expenseAnnualReport);
-            var annualreport = new AnnualReport
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    file.CopyTo(memoryStream);
+
+                    var expense = _fileService.ConvertExcelToList(memoryStream.ToArray(),1);
+                    return Ok(new { Expense = expense });
+                }
+           
+            }
+            catch (Exception ex)
             {
-                Year = 2023,
-                CreateDate = DateTime.Now,
-                TotalTerm = 31,
-                TotalDepartment = 12,
-                TotalExpense = "1210000"
-
-            };
-            string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2023.xlsx");
-
-            //Import file to cloud
-            var filae = await _fileService.ConvertAnnualReportToExcel(expenses, annualreport);
-
-
-            await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(filae));
-
-
-            return Ok(filePath);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
+        //[HttpPost("Upload")]
+        //public async Task<IActionResult> UploadAnnualReport()
+        //{
+        //    List<ExpenseAnnualReport> expenses = new List<ExpenseAnnualReport>();
+
+        //    ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
+        //    {
+        //        Department = "HR",
+        //        TotalExpense = 100000000,
+        //        BiggestExpenditure = 120000,
+        //        CostType = "MK",
+        //    };
+        //    expenses.Add(expenseAnnualReport);
+        //    var annualreport = new AnnualReport
+        //    {
+        //        Year = 2023,
+        //        CreateDate = DateTime.Now,
+        //        TotalTerm = 31,
+        //        TotalDepartment = 12,
+        //        TotalExpense = "1210000"
+
+        //    };
+        //    string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2023.xlsx");
+
+        //    //Import file to cloud
+        //    var filae = await _fileService.ConvertAnnualReportToExcel(expenses, annualreport);
+
+
+        //    await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(filae));
+
+
+        //    return Ok(filePath);
+        //}
 
 
 

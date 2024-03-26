@@ -14,7 +14,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { start } from 'repl';
 import { SelectTermModel } from '../../../models/select-term.model';
-import { MessageBarComponent } from '../../../components/message-bar/message-bar.component';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-import-report',

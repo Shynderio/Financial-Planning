@@ -117,6 +117,6 @@
   <div *ngIf="dataSource.length==0" class="emtry-data-message">
     No items match your credentials, please try again.
   </div>
-  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0">
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0  || (dataSource.length<pageSize && pageIndex==0)">
   </mat-paginator>
 </main>
