@@ -1,17 +1,18 @@
 main {
   height: 100vh;
   width: 100vw;
-  background-color: white;
   color: #070f2b;
   position: relative;
+  overflow: hidden;
 }
 
-.bg-image {
-  background-image: url(../../../../assets/img/auth-background.png);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  height: 100%;
+.retangle {
+  height: 1500px;
+  width: 1500px;
+  position: absolute;
+  rotate: 45deg;
+  top: 40%;
+  transform: translateX(-50%);
 }
 
 mat-card {
@@ -59,6 +60,10 @@ mat-card-subtitle {
   color: #f8f8f8 !important;
 }
 
+button:hover {
+  background-color: #1a2547 !important;
+}
+
 a {
   text-decoration: none;
   color: #070f2b;
@@ -75,17 +80,12 @@ img {
   transform: translate(-50%, -50%);
 }
 
-::ng-deep .successMessage > .mdc-snackbar__surface {
-  background-color: #6DB154 !important;
+.error {
+  background-color: #F96C57;
+  color: white;
+  padding: 10px;
 }
 
-::ng-deep .failMessage > .mdc-snackbar__surface {
-  background-color: #F96C57 !important;
-}
-
-mat-spinner {
-  display: inline-block;
-  height: 30px !important;
-  width: 30px !important;
-  color: white !important;
+.error:empty {
+  display: none;
 }

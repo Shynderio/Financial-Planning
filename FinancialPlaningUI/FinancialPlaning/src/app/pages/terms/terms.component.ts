@@ -6,7 +6,7 @@ import {
   ElementRef,
   Inject,
 } from '@angular/core';
-import { SidenavComponent } from '../../components/sidenav/sidenav.component';
+import { SidenavComponent } from '../../share/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
 import {
   MatDialog,

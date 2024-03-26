@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { LoginComponent } from './pages/login/login.component';
+import { LoginComponent } from './pages/auth/login/login.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { SidenavComponent } from "./components/sidenav/sidenav.component";
+import { SidenavComponent } from "./share/sidenav/sidenav.component";
 import { AuthService } from './services/auth/auth.service';
 
 @Component({

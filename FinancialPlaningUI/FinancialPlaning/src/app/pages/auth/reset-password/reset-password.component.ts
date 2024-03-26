@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, inject } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 import {
   FormControl,
   FormsModule,
@@ -17,7 +17,8 @@ import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { delay } from 'rxjs';
+import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 export function passwordStrengthValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -66,10 +67,15 @@ export function passwordMatchValidator(): ValidatorFn {
     MatInputModule,
     ReactiveFormsModule,
     RouterLink,
+    MatProgressSpinnerModule,
   ],
 })
 export class ResetPasswordComponent {
   @Input() token: string = '';
+
+  MESSAGE_CONSTANTS = MESSAGE_CONSTANTS;
+
+  isLoading = false;
 
   resetPasswordForm = new FormGroup({
     password: new FormControl(null, [
@@ -86,15 +92,19 @@ export class ResetPasswordComponent {
   constructor(
     private authService: AuthService,
     private messageBar: MatSnackBar,
-    private elementRef: ElementRef,
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.authService.IsLoggedIn()) {
+      console.log(this.authService.IsLoggedIn());
+      this.router.navigate(['/home']);
+    }
+  }
 
   onSubmit() {
     if (!this.resetPasswordForm.valid) return;
-    this.elementRef.nativeElement.querySelector('button').disabled = true;
+    this.isLoading = true;
     this.authService
       .resetPassword(this.resetPasswordForm.value.password!, this.token)
       .subscribe({
@@ -104,21 +114,15 @@ export class ResetPasswordComponent {
               duration: 5000,
               panelClass: ['messageBar', 'successMessage'],
               verticalPosition: 'top',
-              horizontalPosition: 'end',
             });
           }
         },
         error: (error) => {
-          this.messageBar.open(
-            'This link has expired. Please go back to Homepage and try again.',
-            '',
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'failMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          this.messageBar.open(MESSAGE_CONSTANTS.ME005, '', {
+            duration: 5000,
+            panelClass: ['messageBar', 'failMessage'],
+            verticalPosition: 'top',
+          });
         },
       });
     setTimeout(() => {
