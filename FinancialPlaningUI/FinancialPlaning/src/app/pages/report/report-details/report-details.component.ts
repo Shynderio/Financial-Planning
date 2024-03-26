@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { ReportService } from '../../../services/report.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDial
     CommonModule,
     MatTableModule,
     MatSelectModule,
-    MatPaginatorModule],
+    MatPaginatorModule, 
+    RouterLink
+  ],
   templateUrl: './report-details.component.html',
   styleUrl: './report-details.component.css'
 })
@@ -32,7 +34,7 @@ export class ReportDetailsComponent {
   report: any;
   reportVersions: any;
   uploadedBy: any;
-
+  
   totalExpense: number = 0;
   biggestExpenditure: number = 0;
 

@@ -8,7 +8,7 @@
       <a routerLink="/" class="create-button" (click)="downloadFile(report.id,report.version)">
         <button> Export</button>
       </a>
-      <a routerLink="/" class="export-button">
+      <a [routerLink]="['/reup-report/', report.id ]" class="export-button">
         <button> Reup</button>
       </a>
     </div>
