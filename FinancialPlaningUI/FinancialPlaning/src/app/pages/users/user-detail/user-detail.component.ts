@@ -77,7 +77,6 @@ export class UserDetailComponent implements OnInit {
           note: userDetails.notes,
           phonenumber: userDetails.phoneNumber,
           address: userDetails.address,
-
         });
         console.log(userDetails);
       },
@@ -124,12 +123,19 @@ export class UserDetailComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Updated successfully' : 'Something went wrong', 'Close', {
+        this.messageBar.open(response == 200 ? 'Change status successfully' : 'Something went wrong', 'Close', {
           panelClass: ['success'],
         });
         this.loadUserDetail(userId);
       });
   }
+     //Convert date to dd/mm/yyyy
+ convertIsoDateToDdMmYyyy(isoDate: string): string {
+  if (!isoDate) return '';
+  const dateParts = isoDate.split('T')[0].split('-');
+  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+}
 
 }
 @Component({

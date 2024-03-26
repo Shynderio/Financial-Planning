@@ -71,6 +71,6 @@ export class PlanService {
       );
   }
   getPlan(planId: string): Observable<any> {
-    return this.http.get(this.apiUrl + '/' + planId);
+    return this.http.get(this.apiUrl + '/details/' + planId);
   }
 }

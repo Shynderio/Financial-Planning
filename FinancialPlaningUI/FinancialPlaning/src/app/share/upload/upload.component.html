@@ -1,0 +1,25 @@
+
+<div class="wrapper w-100">
+  
+  <form action="#" (click)="onClick()">
+    <input type="file" class="file-input" (change)="onChange($event)" hidden />
+    <!-- <input class="file-input" type="file" name="file" hidden> -->
+    <i class="fas fa-cloud-upload-alt"></i>
+    <p>Browse File to Upload</p>
+  </form>
+
+  <div *ngIf="file">
+    <section class="uploaded-area">
+      <li class="row">
+        <div class="content upload">
+          <i class="fas fa-file-alt"></i>
+          <div class="details">
+            <span class="name">{{file.name}}</span>
+            <span class="size">{{ (file.size / 1024) | number:'1.2-2' }} KB</span>
+          </div>
+        </div>
+        <!-- <i class="fas fa-check"></i> -->
+      </li>
+    </section>
+  </div>
+</div>

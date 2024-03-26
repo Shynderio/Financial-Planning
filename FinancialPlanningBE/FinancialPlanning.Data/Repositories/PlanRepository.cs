@@ -190,8 +190,8 @@ namespace FinancialPlanning.Data.Repositories
                 plans = status switch
                 {
                     "New" => plans.Where(p => p.Status == (int)PlanStatus.New),
-                    "Waiting for Approval" => plans.Where(p => p.Status == (int)PlanStatus.WaitingForApproval),
-                    "Approved" => plans.Where(p => p.Status == (int)PlanStatus.Approved),
+                    "Waiting for Approval" => plans.Where(p => p.Status == PlanStatus.WaitingForApproval),
+                    "Approved" => plans.Where(p => p.Status == PlanStatus.Approved),
                     _ => plans,
                 };
             }
@@ -202,6 +202,35 @@ namespace FinancialPlanning.Data.Repositories
 
             return await plans.ToListAsync();
         }
-       
+
+        public async Task<List<Plan>> GetAllDuePlans()
+        {
+            return await _context.Plans!
+                .Include(p => p.Term)
+                .Where(p => p.Term.PlanDueDate < DateTime.UtcNow && p.Status == (int)PlanStatus.New)
+                .ToListAsync();
+        }
+
+        public async Task CloseAllDuePlans(List<Plan> plans)
+        {
+            foreach (var plan in plans)
+            {
+                if (plan.Status == PlanStatus.New){
+                    plan.Status = PlanStatus.Closed;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<PlanVersion>> GetPlanVersionsByPlanID(Guid planId)
+        {
+            var planVersions = await _context.PlanVersions!
+                .Where(r => r.PlanId == planId)
+                .OrderByDescending(r => r.Version)
+                .Include(r => r.User).ToListAsync();
+            return planVersions;
+        }
+
     }
 }

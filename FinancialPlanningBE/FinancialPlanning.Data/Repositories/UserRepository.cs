@@ -36,18 +36,7 @@ namespace FinancialPlanning.Data.Repositories
             updateUser.FullName = user.FullName;
             updateUser.Email = user.Email;
             updateUser.PhoneNumber = user.PhoneNumber;
-            // Chuyển đổi định dạng ngày sinh từ "dd-MM-yyyy" sang "yyyy-MM-dd"
-            if (DateTime.TryParseExact(user.DOB, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None,
-                    out var dob))
-            {
-                updateUser.DOB = dob.ToString("dd-MM-yyyy");
-            }
-            else
-            {
-                // Xử lý trường hợp không thể chuyển đổi định dạng ngày sinh
-                throw new Exception("Invalid date of birth format.");
-            }
-
+            updateUser.DOB = user.DOB;
             updateUser.Address = user.Address;
             updateUser.DepartmentId = user.DepartmentId;
             updateUser.PositionId = user.PositionId;
@@ -57,7 +46,7 @@ namespace FinancialPlanning.Data.Repositories
         }
 
         //Add new User
-        public async Task AddNewUser(User user)
+        public async Task<(string username, string password)> AddNewUser(User user)
         {
             var existingUser = _context.Users!.FirstOrDefault(u => u.Email == user.Email);
             if (existingUser != null)
@@ -72,7 +61,7 @@ namespace FinancialPlanning.Data.Repositories
             var newUser = new User
             {
                 Username = GenerateUserName(user.FullName),
-                Password = EncryptPassword(),
+                Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
                 Email = user.Email,
                 FullName = user.FullName,
                 PhoneNumber = user.PhoneNumber,
@@ -89,7 +78,8 @@ namespace FinancialPlanning.Data.Repositories
             await _context.Users!.AddAsync(newUser);
             await _context.SaveChangesAsync();
 
-            _emailRepository.SendWelcomeEmail(newUser.Username, plainPassword, newUser.Email, createdUser);
+            return (newUser.Username, plainPassword);
+
         }
 
         //Auto GenerateUserName
@@ -166,9 +156,9 @@ namespace FinancialPlanning.Data.Repositories
             return user;
         }
 
-        
+
         //Update user status
-        public async Task UpdateUserStatus(Guid id, int status)
+        public async Task UpdateUserStatus(Guid id, UserStatus status)
         {
             var user = await _context.Users!.FindAsync(id);
 

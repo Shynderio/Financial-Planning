@@ -1,8 +1,8 @@
+﻿using System.Data;
 using System.Globalization;
-using System.Net.Http;
+using Amazon.Runtime.Documents;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Aspose.Cells;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
@@ -11,11 +11,11 @@ using OfficeOpenXml;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpClient httpClient)
+public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
-    
 
-    public async Task<string> GetFileAsync(string key)
+
+    public async Task<string> GetFileUrlAsync(string key)
     {
         var request = new GetPreSignedUrlRequest
         {
@@ -27,6 +27,17 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         return await s3Client.GetPreSignedURLAsync(request);
     }
 
+    public async Task<byte[]> GetFileAsync(string key)
+    {
+        using var response = await s3Client.GetObjectAsync(configuration["AWS:BucketName"], key);
+
+        await using var stream = response.ResponseStream;
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+
+        return memoryStream.ToArray();
+    }
+
     /*
      * documentType:
      * {
@@ -34,7 +45,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public async Task UploadPlanAsync(string key, Stream fileStream)
+    public async Task UploadFileAsync(string key, Stream fileStream)
     {
         var request = new PutObjectRequest
         {
@@ -53,20 +64,16 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public bool ValidateFile(FileStream fileStream, byte documentType)
+    public bool ValidateFile(byte[] file, byte documentType)
     {
-        Console.WriteLine(fileStream.Name);
-        string[] validExtension = [".xls", ".xlsx", ".csv"];
-
-        //check file is not empty, not bigger than 500MB and has valid extension
-        if (fileStream.Length == 0 || fileStream.Length > Constants.MaxFileSize ||
-            !validExtension.Contains(Path.GetExtension(fileStream.Name).ToLower()))
+        //check file is not empty and not bigger than 500MB 
+        if (file.Length is 0 or > Constants.MaxFileSize)
         {
             return false;
         }
-        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-        var package = new ExcelPackage(fileStream);
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(new MemoryStream(file));
         package = RemoveEmptyRow(package);
 
         var worksheet = package.Workbook.Worksheets[0];
@@ -133,12 +140,12 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
      *  report: 1
      * }
      */
-    public List<Expense> ConvertExcelToList(FileStream fileStream, byte documentType)
+    public List<Expense> ConvertExcelToList(byte[] file, byte documentType)
     {
         var expenses = new List<Expense>();
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var package = new ExcelPackage(fileStream);
+        var package = new ExcelPackage(new MemoryStream(file));
         package = RemoveEmptyRow(package);
 
         var worksheet = package.Workbook.Worksheets[0];
@@ -169,7 +176,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         return expenses;
     }
 
-    public async Task<Stream> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
+    public async Task<byte[]> ConvertListToExcelAsync(IEnumerable<Expense> expenses, byte documentType)
     {
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -203,9 +210,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         //Convert ExcelPackage to Stream
         var memoryStream = new MemoryStream();
         await package.SaveAsAsync(memoryStream);
-        memoryStream.Seek(0, SeekOrigin.Begin);
 
-        return memoryStream;
+        return memoryStream.ToArray();
     }
 
     private ExcelPackage RemoveEmptyRow(ExcelPackage package)
@@ -232,71 +238,100 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration, HttpC
         return package;
     }
 
-
-    public string ConvertCsvToExcel(string fileName)
+    //Convert file exel of annual report to list expense and AnnualReport
+    public (List<ExpenseAnnualReport>, AnnualReport) ConvertExelAnnualReportToList(ExcelPackage package)
     {
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
 
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" + fileName);
-
-        // Load file to workbook
-        Workbook workbook;
-        if (Path.GetExtension(fileName) == ".csv")
+        if (worksheet != null)
         {
-            var loadOption = new TxtLoadOptions(LoadFormat.Csv)
+            List<ExpenseAnnualReport> expense = new List<ExpenseAnnualReport>();
+
+
+            AnnualReport report = new AnnualReport
             {
-                Separator = ';', // Data in CSV file is separated by semicolon
-                ConvertDateTimeData = false // Do not convert date time to numeric
+                Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
+                CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
+                TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
+                TotalExpense = worksheet.Cells["B5"].Value?.ToString(),
             };
-            workbook = new Workbook(filePath, loadOption);
-        }
-        else
-        {
-            workbook = new Workbook(filePath);
-        }
-
-        filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\ExcelFiles\" +  Path.GetFileNameWithoutExtension(fileName) + ".xlsx");
-        // Convert to xlsx
-        using var memoryStream = new MemoryStream();
-        workbook.Save(memoryStream, SaveFormat.Xlsx);
-
-        using var fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-
-        memoryStream.WriteTo(fileStream);
-        
-        memoryStream.Close();
-        // fileStream.Seek(0, SeekOrigin.Begin);
-
-        return filePath;
-    }
-
-    //DownloadFile from Url
-    public async Task<bool> DownloadFile(string url, string savePath)
-    {
-        //Check if the url is in the correct format
-        if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uriResult) && uriResult != null)
-        {
-            return false;
-        }
-        try
-        {
-            // Create directory if it does not exist
-           
-            using (HttpResponseMessage response = await httpClient.GetAsync(uriResult, HttpCompletionOption.ResponseHeadersRead))
+            for (int row = 8; row <= worksheet.Dimension.End.Row; row++)
             {
-                response.EnsureSuccessStatusCode();
 
-                using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
-                    stream = new FileStream(savePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                expense.Add(new ExpenseAnnualReport
                 {
-                    await contentStream.CopyToAsync(stream);
-                }
+                    Department = worksheet.Cells[row, 1].Value?.ToString(),
+                    TotalExpense = long.Parse(worksheet.Cells[row, 2].Value?.ToString()),
+                    BiggestExpenditure = long.Parse(worksheet.Cells[row, 3].Value?.ToString()),
+                    CostType = worksheet.Cells[row, 4].Value?.ToString()
+                });
+
             }
 
-            return true;
+            return (expense, report);
         }
-        catch
-        {
-            return false;
-        }
+
+        throw new Exception("Invalid Excel file.");
     }
+
+    //Convert file exel of annual report to list  AnnualReport
+    public AnnualReport ConvertExelToListAnnualReport(ExcelPackage package)
+    {
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+        if (worksheet != null)
+        {
+
+            AnnualReport report = new AnnualReport
+            {
+                Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
+                CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
+                TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
+                TotalExpense = worksheet.Cells["B5"].Value?.ToString()
+            };
+
+
+            return report;
+        }
+
+        throw new Exception("Invalid Excel file.");
+    }
+
+    //Convert list to annual report file exel
+    public async Task<byte[]> ConvertAnnualReportToExcel(List<ExpenseAnnualReport> expenses, AnnualReport report)
+    {
+        //Write list of expenses to ExcelPackage
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package =
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), @"..\FinancialPlanning.Service\Template\Annual Expense Report.xlsx")));
+        var worksheet = package.Workbook.Worksheets[0];
+
+        //Annual report
+        worksheet.Cells["B1"].Value = report.Year;
+        worksheet.Cells["B2"].Value = report.CreateDate.ToString();
+        worksheet.Cells["B3"].Value = report.TotalTerm;
+        worksheet.Cells["B4"].Value = report.TotalDepartment;
+        worksheet.Cells["B5"].Value = report.TotalExpense;
+
+        int row = 8;
+        foreach (var expense in expenses)
+        {
+
+            worksheet.Cells[row, 1].Value = expense.Department;
+            worksheet.Cells[row, 2].Value = expense.TotalExpense;
+            worksheet.Cells[row, 3].Value = expense.BiggestExpenditure;
+            worksheet.Cells[row, 4].Value = expense.CostType;
+            row++;
+        }
+
+        //Convert ExcelPackage to Stream
+        var memoryStream = new MemoryStream();
+        await package.SaveAsAsync(memoryStream);
+
+        return memoryStream.ToArray();
+
+    }
+
 }

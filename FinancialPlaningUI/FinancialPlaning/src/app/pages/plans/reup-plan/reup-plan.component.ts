@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { UploadComponent } from '../../../components/upload/upload.component';
+import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -10,6 +10,7 @@ import { PlanService } from '../../../services/plan.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-reup-plan',
@@ -21,7 +22,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatOption, CommonModule,
     MatPaginatorModule,
     MatTableModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatCard
   ],
   templateUrl: './reup-plan.component.html',
   styleUrls: ['./reup-plan.component.css']

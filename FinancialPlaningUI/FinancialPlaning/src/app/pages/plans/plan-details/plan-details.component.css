@@ -60,7 +60,9 @@ table {
 th {
   border-bottom: 1px solid #1b1a55;
   color: white;
+  font-weight: bold;
 }
+
 
 td {
   border-top: 1px solid #535c91;

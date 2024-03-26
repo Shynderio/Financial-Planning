@@ -8,7 +8,8 @@ public static class Constants
     public static readonly string[] TemplatePath =
     [
         @"..\FinancialPlanning.Service\Template\Financial Plan_Template.xlsx",
-        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx"
+        @"..\FinancialPlanning.Service\Template\Monthly Expense Report_Template.xlsx",
+        @"..\FinancialPlanning.Service\Template\Annual Expense Report.xlsx"
     ];
     
     public static readonly string[][] TemplateHeader=

@@ -9,7 +9,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 import { CreateTermModel } from '../../../models/term.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-create-term',
   standalone: true,
@@ -20,7 +22,10 @@ import { RouterLink } from '@angular/router';
 export class CreateTermComponent implements OnInit {
   termForm: FormGroup;
   termService: TermService;
-  constructor(private fb: FormBuilder, termService: TermService) {
+  constructor(private fb: FormBuilder, 
+    termService: TermService, 
+    private _snackBar: MatSnackBar,
+    private router: Router) {
     this.termForm = this.fb.group({
       term: [''],
     });
@@ -155,7 +160,18 @@ export class CreateTermComponent implements OnInit {
       reportDueDate: this.termForm.get('reportDueDate')?.value,
     });
     this.termService.createTerm(termData).subscribe((response) => {
-      console.log(response);
+      // console.log(response.status);
+      if (response.errors != null) {
+        // Redirect to the terms page
+        // this.router.navigate(['/terms']);
+        const data = { success: false, message: 'Operation failed!' };
+        this._snackBar.openFromComponent(MessageBarComponent, { data });
+      } else {
+        // Redirect to the terms page
+        this.router.navigate(['/terms']);
+        const data = { success: true, message: 'Term created successful!' };
+        this._snackBar.openFromComponent(MessageBarComponent, { data });
+      } 
     });
   }
 

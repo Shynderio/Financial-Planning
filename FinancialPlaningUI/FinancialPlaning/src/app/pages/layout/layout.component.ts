@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SidenavComponent } from '../../components/sidenav/sidenav.component';
+import { SidenavComponent } from '../../share/sidenav/sidenav.component';
 
 
 @Component({

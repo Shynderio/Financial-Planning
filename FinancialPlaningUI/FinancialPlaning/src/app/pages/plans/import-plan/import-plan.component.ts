@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { UploadComponent } from '../../../components/upload/upload.component';
+import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { RouterLink } from '@angular/router';
+import { MatCard } from '@angular/material/card';
 
 @Component({
   selector: 'app-import-plan',
@@ -23,7 +24,8 @@ import { RouterLink } from '@angular/router';
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink, 
+    MatCard
   ],
   templateUrl: './import-plan.component.html',
   styleUrls: ['./import-plan.component.css']
