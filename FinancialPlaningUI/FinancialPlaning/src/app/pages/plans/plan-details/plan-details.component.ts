@@ -22,9 +22,9 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDial
 export class PlanDetailsComponent {
 
   displayedColumns: string[] = [
-    'No', 'Expense', 'CostType', 'Unit Price (VND)', 'Amount',
+    'No', 'Expense', 'CostType', 'Unit Price (VND)', 'Amount', 'Currency', 'Exchange rate',
     'Total', 'Project name', 'Supplier name',
-    'PIC', 'Notes'
+    'PIC', 'Notes', 'Expense Status'
   ];
 
   dataSource: any = [];

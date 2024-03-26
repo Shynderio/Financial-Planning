@@ -129,5 +129,83 @@ namespace FinancialPlanning.Service.Services
 
             return await _fileService.ConvertListToExcelAsync(expenses, 1);
         }
+
+        public bool ValidateReportFile(byte[] file){
+            try
+            {
+                // Assuming plan documents have document type 0
+                return _fileService.ValidateFile(file, documentType: 1);
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                throw new InvalidOperationException("An error occurred while validating the plan file.", ex);
+            }
+        }
+
+        public List<Expense> GetExpenses(byte[] file)
+        {
+            try
+            {
+                // Convert the file to a list of expenses using FileService
+                var expenses = _fileService.ConvertExcelToList(file, documentType: 1);
+                return expenses;
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                throw new InvalidOperationException("An error occurred while importing the report file.", ex);
+            }
+        }
+
+        public async Task CreateReport(List<Expense> expenses, Report report, Guid userId)
+        {
+            var departId = _departmentRepository.GetDepartmentIdByUid(userId);
+            report.DepartmentId = departId;
+            var isReportExist = await _reportRepository.IsReportExist(report.TermId, report.DepartmentId, report.Month);
+            if (isReportExist)
+            {
+                throw new ArgumentException("Report already exists with the specified term, department and month");
+            } else {
+                report.Status = (int)ReportStatus.New;
+                report.UpdateDate = DateTime.Now;
+                var result = await _reportRepository.CreateReport(report, userId);
+
+                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
+                // Convert list of expenses to Excel file                        
+                var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
+                // Upload the file to AWS S3
+                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
+            }
+        }
+
+        public async Task ReupReport(List<Expense> expenses, Guid reportId, Guid userId)
+        {
+            var isReportExist = await _reportRepository.GetReportById(reportId);
+            if (isReportExist == null)
+            {
+                throw new ArgumentException("Report not found with the specified ID");
+            } else {
+                await _reportRepository.ReupReport(reportId, userId);
+
+                var report = await _reportRepository.GetReportById(reportId);
+                var filename = Path.Combine(report!.Department.DepartmentName, report.Term.TermName, report.Month, "Report", "version_" + report.GetMaxVersion() + ".xlsx");
+                // Convert list of expenses to Excel file
+                var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
+                // Upload the file to AWS S3
+                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
+            }
+        }
+
+        public async Task CloseDueReports()
+        {
+            var reports = await _reportRepository.GetAllDueReports();
+            await _reportRepository.CloseAllDueReports(reports);
+        }
+
+        internal async Task GenerateAnnualReport()
+        {
+            await Task.CompletedTask;
+        }
     }
 }

@@ -1,4 +1,6 @@
+﻿using System.Data;
 using System.Globalization;
+using Amazon.Runtime.Documents;
 using Amazon.S3;
 using Amazon.S3.Model;
 using FinancialPlanning.Common;
@@ -11,7 +13,7 @@ namespace FinancialPlanning.Service.Services;
 
 public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 {
-    
+
 
     public async Task<string> GetFileUrlAsync(string key)
     {
@@ -69,7 +71,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         {
             return false;
         }
-        
+
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         var package = new ExcelPackage(new MemoryStream(file));
         package = RemoveEmptyRow(package);
@@ -235,4 +237,101 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
         return package;
     }
+
+    //Convert file exel of annual report to list expense and AnnualReport
+    public (List<ExpenseAnnualReport>, AnnualReport) ConvertExelAnnualReportToList(ExcelPackage package)
+    {
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+        if (worksheet != null)
+        {
+            List<ExpenseAnnualReport> expense = new List<ExpenseAnnualReport>();
+
+
+            AnnualReport report = new AnnualReport
+            {
+                Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
+                CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
+                TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
+                TotalExpense = worksheet.Cells["B5"].Value?.ToString(),
+            };
+            for (int row = 8; row <= worksheet.Dimension.End.Row; row++)
+            {
+
+                expense.Add(new ExpenseAnnualReport
+                {
+                    Department = worksheet.Cells[row, 1].Value?.ToString(),
+                    TotalExpense = long.Parse(worksheet.Cells[row, 2].Value?.ToString()),
+                    BiggestExpenditure = long.Parse(worksheet.Cells[row, 3].Value?.ToString()),
+                    CostType = worksheet.Cells[row, 4].Value?.ToString()
+                });
+
+            }
+
+            return (expense, report);
+        }
+
+        throw new Exception("Invalid Excel file.");
+    }
+
+    //Convert file exel of annual report to list  AnnualReport
+    public AnnualReport ConvertExelToListAnnualReport(ExcelPackage package)
+    {
+        ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
+
+        if (worksheet != null)
+        {
+
+            AnnualReport report = new AnnualReport
+            {
+                Year = int.Parse(worksheet.Cells["B1"].Value?.ToString()),
+                CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
+                TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
+                TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
+                TotalExpense = worksheet.Cells["B5"].Value?.ToString()
+            };
+
+
+            return report;
+        }
+
+        throw new Exception("Invalid Excel file.");
+    }
+
+    //Convert list to annual report file exel
+    public async Task<byte[]> ConvertAnnualReportToExcel(List<ExpenseAnnualReport> expenses, AnnualReport report)
+    {
+        //Write list of expenses to ExcelPackage
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package =
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), @"..\FinancialPlanning.Service\Template\Annual Expense Report.xlsx")));
+        var worksheet = package.Workbook.Worksheets[0];
+
+        //Annual report
+        worksheet.Cells["B1"].Value = report.Year;
+        worksheet.Cells["B2"].Value = report.CreateDate.ToString();
+        worksheet.Cells["B3"].Value = report.TotalTerm;
+        worksheet.Cells["B4"].Value = report.TotalDepartment;
+        worksheet.Cells["B5"].Value = report.TotalExpense;
+
+        int row = 8;
+        foreach (var expense in expenses)
+        {
+
+            worksheet.Cells[row, 1].Value = expense.Department;
+            worksheet.Cells[row, 2].Value = expense.TotalExpense;
+            worksheet.Cells[row, 3].Value = expense.BiggestExpenditure;
+            worksheet.Cells[row, 4].Value = expense.CostType;
+            row++;
+        }
+
+        //Convert ExcelPackage to Stream
+        var memoryStream = new MemoryStream();
+        await package.SaveAsAsync(memoryStream);
+
+        return memoryStream.ToArray();
+
+    }
+
 }

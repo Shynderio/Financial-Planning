@@ -18,6 +18,10 @@ import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.com
 import { PlansComponent } from './pages/plans/plans.component';
 import { ReportDetailsComponent } from './pages/report/report-details/report-details.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
+import { ImportReportComponent } from './pages/report/import-report/import-report.component';
+import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-reports/list-annual-reports.component';
+import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
+import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -34,12 +38,18 @@ export const routes: Routes = [
      //report
     { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
     { path: 'report-details/:id', component: ReportDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'import-report', component: ImportReportComponent, canActivate: [AuthGuard]},
     // plan
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
+    { path: 'plan-details/:id', component: PlanDetailsComponent, canActivate: [AuthGuard] },
      //user
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },
     { path: 'edit-user/:id', component: AddNewUserComponent },
-    { path: 'user-detail/:id', component: UserDetailComponent }
+    { path: 'user-detail/:id', component: UserDetailComponent },
+    //annual reports
+    { path: 'annual-reports', component: ListAnnualReportsComponent },
+    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent }
+  
 ];

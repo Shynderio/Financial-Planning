@@ -54,9 +54,6 @@ export class AddNewUserComponent implements OnInit {
     }
     this.httpService.getUserById(userId).subscribe(
       (userDetail: any) => {
-        const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
-        const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
-        const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
         this.addUserF.patchValue({
           username: userDetail.username,
           department: userDetail.departmentId,

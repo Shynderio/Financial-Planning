@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
 using FinancialPlanning.WebAPI.Models.Department;
@@ -83,10 +84,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get report
                 var report = await _reportService.GetReportById(id);
+                string filename = report.Department.DepartmentName + "/"
+                      + report.Term.TermName + "/" + report.Month + "/Report/_version" + report.GetMaxVersion();
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
 
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("CorrectPlan.xlsx"), 0);
+                //Download file report form cloud
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename + ".xlsx"), 1);
 
                 //mapper
                 var reportViewModel = _mapper.Map<ReportViewModel>(report);
@@ -120,9 +124,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 //from reportVersion Id -> get name report + version
-                await _reportService.GetReportById(id);
+                var report = await _reportService.GetReportById(id);
+                string filename = report.Department.DepartmentName + "/"
+                    + report.Term.TermName + "/" + report.Month + "/Report/_version" + report.GetMaxVersion();
+              
+
                 //get url from name file
-                var url = await _reportService.GetFileByName("CorrectPlan.xlsx");
+                var url = await _reportService.GetFileByName(filename+".xlsx");
 
                 // return URL
                 return Ok(new { downloadUrl = url });
@@ -146,18 +154,71 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ImportReport(IFormFile file)
         {
-            if (file.Length == 0)
+            try
             {
-                return BadRequest(new { message = "File empty" });
-            }
+                if (file.Length == 0)
+                {
+                    return BadRequest(new { message = "File empty" });
+                }
 
-            using (MemoryStream ms = new())
-            {
+                using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
                 var fileBytes = ms.ToArray();
-            }
+                bool isValid = _reportService.ValidateReportFile(fileBytes);
 
-            return Ok();
+                if (!isValid)
+                {
+                    return BadRequest(new { message = "Invalid file format!" });
+                }
+
+                var expenses = _reportService.GetExpenses(fileBytes);
+
+                return Ok(expenses);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
         }
+
+        [HttpPost("upload")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> UploadReport(List<Expense> expenses, Guid termId, Guid uid, string month)
+        {
+            try
+            {
+                var report = new Report
+                {
+                    TermId = termId,
+                    Month = month
+                };
+                await _reportService.CreateReport(expenses, report, uid);
+                return Ok(new { message = "Report uploaded successfully!"});
+            } 
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
+        }
+
+        [HttpPost("reupload")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ReuploadReport(List<Expense> expenses, Guid reportId, Guid uid)
+        {
+            try
+            {
+                await _reportService.ReupReport(expenses, reportId, uid);
+                return Ok(new { message = "Report reuploaded successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
+        }
+
     }
 }

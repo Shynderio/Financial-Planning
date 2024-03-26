@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 
 import { Router, ActivatedRoute} from '@angular/router';
+import { TermViewModel } from '../../../models/termview.model';
 
 @Component({
   selector: 'app-edit-term',
@@ -28,6 +29,24 @@ export class TermDetailsComponent implements OnInit {
     private router: Router,
     private termService: TermService
   ) {
+
+    this.termService = termService;
+    this.termForm = this.fb.group({
+      term: [''],
+    });
+    // this.termForm = this.fb.group({
+    //   termName: [{ value: '', disabled: true }],
+    //   startDate: [{ value: '', disabled: true }],
+    //   duration: [{ value: '', disabled: true }],
+    //   endDate: [{ value: '', disabled: true }],
+    //   planDueDate: [{ value: '', disabled: true }],
+    //   reportDueDate: [{ value: '', disabled: true }],
+    // });
+  }
+
+
+  ngOnInit(): void {
+    var termId = this.route.snapshot.params['id'];
     this.termForm = this.fb.group({
       termName: [{ value: '', disabled: true }],
       startDate: [{ value: '', disabled: true }],
@@ -36,44 +55,52 @@ export class TermDetailsComponent implements OnInit {
       planDueDate: [{ value: '', disabled: true }],
       reportDueDate: [{ value: '', disabled: true }],
     });
-  }
-
-
-  ngOnInit(): void {
-
-    this.route.params.subscribe(params => {
-      const termId = params['id']; // Assuming 'id' is the parameter name
-      this.loadTermDetails(termId);
-    }
+    this.termService.getTerm(termId).subscribe(
+      (termData: TermViewModel) => {
+        this.populateForm(termData);
+        console.log(termData);
+      },
+      (error) => {
+        console.error('Error fetching term details:', error);
+      }
     );
   }
 
-  loadTermDetails(termId: string): void {
-    // debugger;
-    this.termService.getTerm(termId).subscribe({
-      next: (termDetails: any) => {
-        // Assuming termDetails contains the required data
-        this.termForm.patchValue({
-          termName: termDetails.termName,
-          startDate: termDetails.startDate.slice(0, 10),
-          duration: this.durationReverseMap[termDetails.duration],
-    
-          endDate: '',
-    
-          planDueDate: termDetails.planDueDate.slice(0, 10),
-          reportDueDate: termDetails.reportDueDate.slice(0, 10),
-        });
-        console.log(termDetails);
-      },
-      error: (error: any) => {
-        // Handle error
-        console.error('Error fetching term details:', error);
-      }
+  populateForm(termData: TermViewModel): void {
+    this.termForm.patchValue({
+      termName: termData.termName.slice(0, 10),
+      startDate: termData.startDate.slice(0, 10),
+      duration: this.durationReverseMap[termData.duration],
+      planDueDate: termData.planDueDate.slice(0, 10),
+      reportDueDate: termData.reportDueDate.slice(0, 10),
+      // Populate other form controls
     });
-    
+    this.updateEndDate();
   }
-  
 
+  durationMap: { [key: string]: number } = {
+    '1_month': 1,
+    quarter: 3,
+    half_year: 6,
+  };
+
+  updateEndDate(): void {
+    // Update end date based on start date and duration
+    var startDate = this.termForm.get('startDate')!.value;
+    var duration = this.termForm.get('duration')!.value;
+    // if (startDate && duration) {
+    var startDateObj = new Date(startDate);
+    var endDateObj = new Date(startDateObj);
+    endDateObj.setMonth(startDateObj.getMonth() + Number(this.durationMap[duration])); // Convert to number
+    console.log("value", endDateObj);
+    this.termForm.patchValue({
+      endDate: endDateObj.toISOString().slice(0, 10)
+    });
+    // }
+  }
+
+
+  
   onSubmit() {
     // Handle form submission if needed
   }

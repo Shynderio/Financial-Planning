@@ -13,16 +13,26 @@ main {
   align-items: center;
 }
 
+th {
+  border-bottom: 1px solid #1b1a55;
+  color: white;
+  font-weight: bold;
+}
+
 .searchBar {
-  flex: 1; /* Ô tìm kiếm sẽ mở rộng để lấp đầy không gian còn trống */
+  flex: 1;
+  /* Ô tìm kiếm sẽ mở rộng để lấp đầy không gian còn trống */
   position: relative;
   width: 100%;
-  margin-right: 10px; /* Khoảng cách giữa ô tìm kiếm và các ô filter */
+  margin-right: 10px;
+  /* Khoảng cách giữa ô tìm kiếm và các ô filter */
 }
 
 mat-form-field {
-  flex: 1; /* Tất cả các ô filter sẽ có cùng kích thước */
-  margin-right: 10px; /* Khoảng cách giữa các ô filter */
+  flex: 1;
+  /* Tất cả các ô filter sẽ có cùng kích thước */
+  margin-right: 10px;
+  /* Khoảng cách giữa các ô filter */
 }
 
 .reset-button {
@@ -32,6 +42,10 @@ mat-form-field {
   border-radius: 10px;
   padding: 10px 20px;
   cursor: pointer;
+}
+
+mat-label {
+  color: #4F85F2;
 }
 
 .container {
@@ -74,7 +88,7 @@ button {
 
 .searchBar {
   position: relative;
- display: inline;
+  display: inline;
 }
 
 .searchBar input[type="text"] {
@@ -134,15 +148,15 @@ td {
   height: 50px;
 }
 
-::ng-deep  .mat-mdc-text-field-wrapper{
+::ng-deep .mat-mdc-text-field-wrapper {
   margin-top: 20px !important;
 }
 
-::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled){
-  background-color: #070f2b  !important;
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: #070f2b !important;
   border: 1px solid #9290c3;
   border-radius: 10px;
-  
+
 }
 
 ::ng-deep .mat-mdc-select-arrow {
@@ -150,26 +164,28 @@ td {
 }
 
 ::ng-deep .mat-mdc-form-field-infix {
- 
+
   width: 100px !important;
 }
 
 ::ng-deep .mdc-text-field--filled .mdc-floating-label {
- 
+
   font-size: 14px !important;
-  
+
 }
-::ng-deep  .mat-mdc-select {
+
+::ng-deep .mat-mdc-select {
   color: white !important;
   font-size: 14px !important;
 }
+
 ::ng-deep .mat-mdc-form-field {
- 
+
   margin-left: 30px;
 
 }
 
-.emtry-data-message{
+.emtry-data-message {
   text-align: center;
   font-size: large;
   margin-top: 15%;

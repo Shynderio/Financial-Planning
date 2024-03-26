@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
 import { Report } from '../models/report.model';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +39,22 @@ export class ReportService {
     return this.http.get(this.apiUrl+'/export/'+reportId+'/'+version)
   }
 
+  importReport(file: any): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post(this.apiUrl + '/import', formData);
+  }
+
+  uploadReport(expenses: [], termId: string, month: string): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('uid', uid);
+    urlParams.append('termId', termId);
+    urlParams.append('month', month);
+    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+  }
 
 
 }

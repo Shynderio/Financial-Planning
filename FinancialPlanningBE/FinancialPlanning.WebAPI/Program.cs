@@ -20,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSingleton<IHostedService, StartTerm>();
+builder.Services.AddSingleton<IHostedService, AnnualTask>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,6 +47,7 @@ builder.Services.AddScoped<PlanService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<FileService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<AnnualReportService>();
 
 
 

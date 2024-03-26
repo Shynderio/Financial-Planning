@@ -3,10 +3,12 @@ namespace FinancialPlanning.WebAPI.Models.Report
 {
     public class ImportReportModel
     {
-        public Guid Id { get; set; } 
-        [Required] public int Version { get; set; }
-        [Required] public Guid ReportId { get; set; }
-        [Required] public string UploadedBy { get; set; } = string.Empty;
+        [Required]
+        public string Month { get; set; } = string.Empty;
+        [Required]
+        public string TermId { get; set; } = string.Empty;
+        [Required]
+        public string DepartmentId { get; set; } = string.Empty;
 
     }
 }

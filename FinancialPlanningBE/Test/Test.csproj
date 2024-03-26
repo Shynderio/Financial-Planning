@@ -30,11 +30,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FinancialPlanning.Service\FinancialPlanning.Service.csproj" />
-    <ProjectReference Include="..\FinancialPlanning.Data\FinancialPlanning.Data.csproj" />
+    <Folder Include="UnitTesting\Controller\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UnitTesting\Controller\" />
+    <ProjectReference Include="..\FinancialPlanning.Data\FinancialPlanning.Data.csproj" />
+    <ProjectReference Include="..\FinancialPlanning.Service\FinancialPlanning.Service.csproj" />
   </ItemGroup>
 </Project>
