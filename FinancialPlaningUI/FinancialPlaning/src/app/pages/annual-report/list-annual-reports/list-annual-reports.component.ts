@@ -55,7 +55,10 @@ onPageChange(event: PageEvent) {
 
  getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
-    let filteredList = this.annualReports;
+    let filteredList = this.annualReports.filter(
+      (data: any) =>
+      data.year.toString().includes(this.searchValue)
+    );
     this.listSize = filteredList.length;
 
     return filteredList.slice(startIndex, startIndex + this.pageSize);
