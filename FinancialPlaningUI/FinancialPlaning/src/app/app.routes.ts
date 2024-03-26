@@ -11,7 +11,6 @@ import { ListReportComponent } from './pages/report/list-report/list-report.comp
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { AuthGuard } from './services/auth/auth.guard';
 import { AccountantGuard } from './services/auth/accountant.guard';
-// import { UploadComponent } from './components/upload/upload.component';
 import { ImportPlanComponent } from './pages/plans/import-plan/import-plan.component';
 import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { AddNewUserComponent } from './pages/users/add-new-user/add-new-user.component';
@@ -19,6 +18,7 @@ import { PlansComponent } from './pages/plans/plans.component';
 import { ReportDetailsComponent } from './pages/report/report-details/report-details.component';
 import { UserDetailComponent } from './pages/users/user-detail/user-detail.component';
 import { ImportReportComponent } from './pages/report/import-report/import-report.component';
+import { ReupReportComponent } from './pages/report/reup-report/reup-report.component';
 import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-reports/list-annual-reports.component';
 import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
 import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
@@ -39,6 +39,7 @@ export const routes: Routes = [
     { path: 'reports', component: ListReportComponent , canActivate: [AuthGuard]},
     { path: 'report-details/:id', component: ReportDetailsComponent, canActivate: [AuthGuard] },
     { path: 'import-report', component: ImportReportComponent, canActivate: [AuthGuard]},
+    { path: 'reup-report/:id', component: ReupReportComponent, canActivate: [AuthGuard]},
     // plan
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},

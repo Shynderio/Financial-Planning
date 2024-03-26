@@ -53,16 +53,16 @@ export class ReupPlanComponent implements OnInit {
   }
 
   ngOnInit() {
-    // // get term from parent router
-    // this.route.params.subscribe(params => {
-    //   // Check if 'term' parameter exists
-    //   if (params && params['term']) {
-    //     this.term = params['term'];
-    //   } else {
-    //     // Redirect to 'planlist'
-    //     this.router.navigate(['/plans']);
-    //   }
-    // });
+    // get term from parent router
+    this.route.params.subscribe(params => {
+      // Check if 'term' parameter exists
+      if (params && params['term']) {
+        this.term = params['term'];
+      } else {
+        // Redirect to 'planlist'
+        this.router.navigate(['/plans']);
+      }
+    });
   }
 
   onFileSelected(event: any) {
@@ -103,8 +103,7 @@ export class ReupPlanComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger;
-
+    // debugger;
     if (this.file) {
       const token = localStorage.getItem('token') ?? '';
       const decodedToken: any = jwtDecode(token);
