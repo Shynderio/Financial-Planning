@@ -58,6 +58,8 @@ namespace FinancialPlanning.Data.Repositories
         public Task<Plan> SavePlan(Plan plan, Guid creatorId);
         public Task<List<Plan>> GetAllDuePlans();
         public Task CloseAllDuePlans(List<Plan> plans);
+        public Task<List<PlanVersion>> GetPlanVersionsByPlanID(Guid planId);
+
     }
 
 }

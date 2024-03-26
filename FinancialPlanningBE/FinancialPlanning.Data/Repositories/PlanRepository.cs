@@ -222,6 +222,15 @@ namespace FinancialPlanning.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
-       
+
+        public async Task<List<PlanVersion>> GetPlanVersionsByPlanID(Guid planId)
+        {
+            var planVersions = await _context.PlanVersions!
+                .Where(r => r.PlanId == planId)
+                .OrderByDescending(r => r.Version)
+                .Include(r => r.User).ToListAsync();
+            return planVersions;
+        }
+
     }
 }
