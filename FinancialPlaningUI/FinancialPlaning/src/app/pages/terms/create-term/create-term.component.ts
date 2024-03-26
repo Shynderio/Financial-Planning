@@ -10,7 +10,7 @@ import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 import { CreateTermModel } from '../../../models/term.model';
 import { Router, RouterLink } from '@angular/router';
-import { MessageBarComponent } from '../../../components/message-bar/message-bar.component';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-create-term',

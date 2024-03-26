@@ -1,15 +1,8 @@
-body {
-  font-family: 'Lato', Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
+:root {
+  --primary-color: #ffffff;
+  --secondary-color: #a379c9;
 }
 
-.backgroundLogin {
-  background-image: URL("../src/assets/img/curved-images/sunset-8485916_1280.jpg");
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #000; /* Thay đổi màu nền theo ý muốn */
-  background-size: cover;
-  background-repeat: no-repeat;
+body {
+  font-family: 'Lato', Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
 }
