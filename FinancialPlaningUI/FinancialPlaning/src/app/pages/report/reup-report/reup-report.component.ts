@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { UploadComponent } from '../../../components/upload/upload.component';
+import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -15,7 +15,7 @@ import { MatCard } from '@angular/material/card';
 import { start } from 'repl';
 import { SelectTermModel } from '../../../models/select-term.model';
 import { ActivatedRoute } from '@angular/router';
-import { MessageBarComponent } from '../../../components/message-bar/message-bar.component';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-import-report',
