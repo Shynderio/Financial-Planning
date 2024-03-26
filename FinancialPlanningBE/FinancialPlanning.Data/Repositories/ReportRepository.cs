@@ -70,6 +70,7 @@ namespace FinancialPlanning.Data.Repositories
                 .Include(t => t.Term)
                 .Include(t => t.Department)
                 .FirstOrDefaultAsync(t => t.Id == id);
+
             return report;
         }
 
@@ -80,6 +81,7 @@ namespace FinancialPlanning.Data.Repositories
                 .Where(r => r.ReportId == reportId)
                 .OrderByDescending(r => r.Version)
                 .Include(r => r.User).ToListAsync();
+
             return reportVersions;
         }
 
@@ -87,24 +89,29 @@ namespace FinancialPlanning.Data.Repositories
         public async Task<bool> IsReportExist(Guid termId, Guid departmentId, string month)
         {
             var report = await _context.Reports!
-                .FirstOrDefaultAsync(r => r.TermId == termId && r.DepartmentId == departmentId && r.Month == month);
+                .Where(r => r.TermId == termId && r.DepartmentId == departmentId && r.Month == month).FirstOrDefaultAsync();
+
             return report != null;
         }
 
         //Create report
-        public async Task CreateReport(Report report, Guid userId)
+        public async Task<Report> CreateReport(Report report, Guid userId)
         {
             _context.Reports!.Add(report);
-            ReportVersion reportVersion = new ReportVersion
+            ReportVersion reportVersion = new()
             {
                 Id = Guid.NewGuid(),
                 ReportId = report.Id,
-                Version = (int)Common.ReportStatus.New,
+                Version = 1,
                 ImportDate = report.UpdateDate,
                 CreatorId = userId,
             };
             _context.ReportVersions!.Add(reportVersion);
             await _context.SaveChangesAsync();
+
+            var reportCreated = await GetReportById(report.Id);
+
+            return reportCreated!;
         }
 
         //Update report
@@ -123,8 +130,8 @@ namespace FinancialPlanning.Data.Repositories
                 ImportDate = DateTime.Now,
                 CreatorId = userId,
             };
-
             _context.ReportVersions!.Add(reportVersion);
+
             await _context.SaveChangesAsync();
         }
 
@@ -145,5 +152,31 @@ namespace FinancialPlanning.Data.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        //Total department that has submitted the report of the year.
+
+        public async Task<int> GetTotalDepartByYear(int year)
+        {
+            var departmentCount = await _context.Reports
+              .Where(r => r.Month.EndsWith(year.ToString()))
+                .Select(r => r.DepartmentId)
+                .Distinct()
+                .CountAsync();
+
+            return departmentCount;
+        }
+
+        //List reports by yearg
+        public async Task<List<Report>> GetAllReportsByYear(int year)
+        {
+            var reports = await _context.Reports
+                .Include(r => r.Department)
+                .Where(r => r.Month.EndsWith(year.ToString()))
+                .ToListAsync();
+
+            return reports;
+        }
+
+      
     }
 }

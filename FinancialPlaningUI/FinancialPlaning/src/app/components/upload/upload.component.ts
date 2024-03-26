@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { catchError, map, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [MatIconModule, CommonModule],
+  imports: [MatIconModule, CommonModule, MatCardModule],
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.css']
 })

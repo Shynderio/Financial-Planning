@@ -14,12 +14,15 @@ namespace FinancialPlanning.Service.ScheduleTasks
             _logger = logger;
         }
 
-        protected override string Schedule => "*/3 * * * *"; 
-        // protected override string Schedule => "0 0 20 12 *";
+       
+        protected override string Schedule => "0 0 20 12 *";
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
-            // var termService = serviceProvider.GetRequiredService<TermService>();
+
+            var termService = serviceProvider.GetRequiredService<AnnualReportService>();
+           await termService.GenerateAnnualReport();
+
             
         }
     }

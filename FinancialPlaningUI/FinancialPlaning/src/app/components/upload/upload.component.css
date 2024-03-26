@@ -18,7 +18,8 @@ body {
 }
 
 .wrapper {
-    /* width: 360px; */
+    /* width: 300px; */
+    /* width: 100%; */
     /* background: #4F85F2; */
     border-radius: 5px;
     padding: 30px;
