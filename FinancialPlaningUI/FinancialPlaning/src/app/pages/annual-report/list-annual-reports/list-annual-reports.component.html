@@ -2,12 +2,25 @@
 displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','Create-Date']; -->
 
 <main>
+    <div class="container mb-4">
+        <div id="page-title">
+            <h2><b> Annual Report</b></h2>
+            <h5>Annual Report List</h5>
+        </div>
 
+    </div>
+    <div class="mb-4">
+        <div class="searchBar">
+            <input type="text" placeholder="Search " [value]="searchValue" (keydown.enter)="changeSearchText($event)"
+                (input)="changeSearchText($event)" />
+            <i class="fa-solid fa-search"></i>
+        </div>
+    </div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" [hidden]="dataSource.length==0">
 
         <ng-container matColumnDef="Index">
-          <th mat-header-cell *matHeaderCellDef> No. </th>
-          <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+            <th mat-header-cell *matHeaderCellDef> No. </th>
+            <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
         </ng-container>
         <ng-container matColumnDef="Year">
             <th mat-header-cell *matHeaderCellDef> Year </th>
@@ -16,7 +29,7 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
 
         <ng-container matColumnDef="TotalExpense">
             <th mat-header-cell *matHeaderCellDef> Total Expense </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalDepartment}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.totalExpense}} </td>
         </ng-container>
         <ng-container matColumnDef="TotalDepartment">
             <th mat-header-cell *matHeaderCellDef> Total Department </th>
@@ -26,12 +39,18 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
             <th mat-header-cell *matHeaderCellDef> Create-Date </th>
             <td mat-cell *matCellDef="let element"> {{element.createDate}} </td>
         </ng-container>
-       
+        <ng-container matColumnDef="Action">
+            <th mat-header-cell *matHeaderCellDef>Action</th>
+            <td mat-cell *matCellDef="let element">
+              <a [routerLink]="[ '/annualreport-details/', element.year ]"><mat-icon>visibility</mat-icon></a>        
+            </td>
+          </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      
-      </table>
-      <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0">
+
+    </table>
+    <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
+        [hidden]="dataSource.length==0 || dataSource.length<=pageSize">
     </mat-paginator>
 </main>

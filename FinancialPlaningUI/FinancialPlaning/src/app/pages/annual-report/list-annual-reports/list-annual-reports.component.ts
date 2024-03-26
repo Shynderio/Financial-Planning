@@ -4,6 +4,7 @@ import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/p
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 import { AnnualReportService } from '../../../services/annual-report.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-list-annual-reports',
@@ -13,18 +14,20 @@ import { AnnualReportService } from '../../../services/annual-report.service';
     MatPaginatorModule,
     CommonModule,
     MatTableModule,
+    MatIconModule
   ],
   templateUrl: './list-annual-reports.component.html',
   styleUrl: './list-annual-reports.component.css'
 })
 export class ListAnnualReportsComponent {
-  displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','Create-Date'];
+  displayedColumns: string[] = ['Index','Year','TotalExpense',
+  'TotalDepartment','Create-Date','Action'];
   dataSource: any = [];
   annualReports: any = [];
   searchValue: string = '';
    //paging
    listSize: number = 0;
-   pageSize = 7;
+   pageSize = 8;
    pageIndex = 0;
 
    constructor(
@@ -56,5 +59,12 @@ onPageChange(event: PageEvent) {
     this.listSize = filteredList.length;
 
     return filteredList.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  changeSearchText(event: Event) {
+    let target = event.target as HTMLInputElement;
+    this.searchValue = target.value.trim();
+    this.pageIndex = 0;
+    this.dataSource = this.getPaginatedItems();
   }
 }
