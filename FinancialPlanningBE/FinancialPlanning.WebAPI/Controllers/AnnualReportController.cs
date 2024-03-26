@@ -1,5 +1,6 @@
 ﻿using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -21,6 +22,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("annualreports")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAll()
         {
             var annualReport = await _annualReportService.GetAllAnnualReportsAsync();
@@ -29,6 +31,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("details/{year:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAnnualReportDetails(int year)
         {
             try
@@ -43,7 +46,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("export/{year:int}")]
-        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportAnnualReport(int year)
         {
             try
