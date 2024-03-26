@@ -85,4 +85,23 @@ changeSearchText(event: Event) {
   this.pageIndex = 0;
   this.dataSource = this.getPaginatedItems();
 }
+
+//export file
+downloadFile(year: number) {
+  this.annualReportService.exportAnnualReport(year).subscribe((data: any) => {
+      const downloadUrl = data.result;
+       // create hidden link to download
+       const link = document.createElement('a');
+       link.href = downloadUrl;
+       link.setAttribute('download', '');
+
+       // Add link into web and click it to download
+       document.body.appendChild(link);
+       link.click();
+
+       // remove link after download 
+       document.body.removeChild(link)
+    }, 
+  );
+}
 }
