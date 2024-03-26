@@ -15,6 +15,7 @@ main {
   
   h6 {
     font-size: smaller;
+    color: white;
   }
   
   div:has(#page-title) {
@@ -172,6 +173,9 @@ main {
     background-color:#535c91;
     color: #fff;
     cursor: pointer;
+  }
+  .h3,b{
+    color: white;
   }
   
   
