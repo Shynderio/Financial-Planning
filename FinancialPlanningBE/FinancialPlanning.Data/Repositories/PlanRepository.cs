@@ -190,8 +190,8 @@ namespace FinancialPlanning.Data.Repositories
                 plans = status switch
                 {
                     "New" => plans.Where(p => p.Status == (int)PlanStatus.New),
-                    "Waiting for Approval" => plans.Where(p => p.Status == (int)PlanStatus.WaitingForApproval),
-                    "Approved" => plans.Where(p => p.Status == (int)PlanStatus.Approved),
+                    "Waiting for Approval" => plans.Where(p => p.Status == PlanStatus.WaitingForApproval),
+                    "Approved" => plans.Where(p => p.Status == PlanStatus.Approved),
                     _ => plans,
                 };
             }
@@ -215,8 +215,8 @@ namespace FinancialPlanning.Data.Repositories
         {
             foreach (var plan in plans)
             {
-                if (plan.Status == (int)PlanStatus.New){
-                    plan.Status = (int)PlanStatus.Closed;
+                if (plan.Status == PlanStatus.New){
+                    plan.Status = PlanStatus.Closed;
                 }
             }
 

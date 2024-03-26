@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FinancialPlanning.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,7 +15,7 @@ namespace FinancialPlanning.Data.Entities
         [Key] public Guid Id { get; set; }
         [Required] public string ReportName { get; set; } = string.Empty;
         [Required] public string Month { get; set; } = string.Empty;
-        [Required] public int Status { get; set; }
+        [Required] public ReportStatus Status { get; set; }
         [Required] public DateTime UpdateDate { get; set; }
         [ForeignKey("Term")] public Guid TermId { get; set; }
         public virtual Term Term { get; set; } = null!;

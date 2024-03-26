@@ -1,3 +1,4 @@
+using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using FinancialPlanning.Service.Services;
@@ -25,8 +26,8 @@ namespace Test.UnitTesting.Service.Services
             var termService = new TermService(mockRepository.Object);
 
             var startDate = DateTime.Now.AddDays(-5); // Start date within the past 7 days
-            var startingTerm = new Term { StartDate = startDate, Status = 1, Id = Guid.NewGuid() };
-            var endingTerm = new Term { StartDate = startDate.AddDays(-9), Status = 1, Id = Guid.NewGuid() }; // Not within the past 7 days
+            var startingTerm = new Term { StartDate = startDate, Status = (TermStatus)1, Id = Guid.NewGuid() };
+            var endingTerm = new Term { StartDate = startDate.AddDays(-9), Status = (TermStatus)1, Id = Guid.NewGuid() }; // Not within the past 7 days
 
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term> { startingTerm, endingTerm });
 
@@ -50,7 +51,7 @@ namespace Test.UnitTesting.Service.Services
             await termService.StartTerm(_testTerm.Id);
 
             // Assert
-            Assert.Equal(2, _testTerm.Status);
+            Assert.Equal((TermStatus)2, _testTerm.Status);
             mockRepository.Verify(repo => repo.UpdateTerm(_testTerm), Times.Once);
         }
 
@@ -98,7 +99,7 @@ namespace Test.UnitTesting.Service.Services
             await termService.CreateTerm(term);
 
             // Assert
-            Assert.Equal(1, term.Status); // Assert the status set after calling CreateTerm
+            Assert.Equal((TermStatus)1, term.Status); // Assert the status set after calling CreateTerm
             mockRepository.Verify(repo => repo.CreateTerm(term), Times.Once);
         }
 
@@ -148,7 +149,7 @@ namespace Test.UnitTesting.Service.Services
             // Arrange
             var mockRepository = new Mock<ITermRepository>();
             var termService = new TermService(mockRepository.Object);
-            var termToUpdate = new Term { Id = Guid.NewGuid(), TermName = "Existing Term", Status = 1};
+            var termToUpdate = new Term { Id = Guid.NewGuid(), TermName = "Existing Term", Status = (TermStatus)1 };
             var updatedTerm = new Term { Id = termToUpdate.Id, TermName = "Updated Term" };
 
             mockRepository.Setup(repo => repo.GetTermByIdAsync(termToUpdate.Id)).ReturnsAsync(termToUpdate);
@@ -202,10 +203,10 @@ namespace Test.UnitTesting.Service.Services
 
             var currentDate = DateTime.Now;
             var closingDate = currentDate.AddDays(-10); // A date before the current date
-            var closingTerm1 = new Term { StartDate = currentDate.AddMonths(-1).AddDays(-6), Duration = 1, Status = 2 }; // End date is before current date
-            var closingTerm2 = new Term { StartDate = currentDate.AddMonths(-2), Duration = 1, Status = 2 }; // End date is before current date
-            var nonClosingTerm1 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = 1 }; // Active term but end date is after current date
-            var nonClosingTerm2 = new Term { StartDate = currentDate.AddMonths(-3), Duration = 6, Status = 2 }; // End date is after current date
+            var closingTerm1 = new Term { StartDate = currentDate.AddMonths(-1).AddDays(-6), Duration = 1, Status = (TermStatus)2 }; // End date is before current date
+            var closingTerm2 = new Term { StartDate = currentDate.AddMonths(-2), Duration = 1, Status = (TermStatus)2 }; // End date is before current date
+            var nonClosingTerm1 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = (TermStatus)1 }; // Active term but end date is after current date
+            var nonClosingTerm2 = new Term { StartDate = currentDate.AddMonths(-3), Duration = 6, Status = (TermStatus)2 }; // End date is after current date
 
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { closingTerm1, closingTerm2, nonClosingTerm1, nonClosingTerm2 });
 
@@ -213,10 +214,10 @@ namespace Test.UnitTesting.Service.Services
             await termService.CloseDueTerms();
 
             // Assert
-            Assert.Equal(3, closingTerm1.Status); // Assert status is changed to closed
-            Assert.Equal(3, closingTerm2.Status); // Assert status is changed to closed
-            Assert.Equal(1, nonClosingTerm1.Status); // Assert status remains unchanged
-            Assert.Equal(2, nonClosingTerm2.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)3, closingTerm1.Status); // Assert status is changed to closed
+            Assert.Equal((TermStatus)3, closingTerm2.Status); // Assert status is changed to closed
+            Assert.Equal((TermStatus)1, nonClosingTerm1.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)2, nonClosingTerm2.Status); // Assert status remains unchanged
             mockRepository.Verify(repo => repo.UpdateTerm(closingTerm1), Times.Once); // Verify UpdateTerm called for each closed term
             mockRepository.Verify(repo => repo.UpdateTerm(closingTerm2), Times.Once);
         }
@@ -229,8 +230,8 @@ namespace Test.UnitTesting.Service.Services
             var termService = new TermService(mockRepository.Object);
 
             var currentDate = DateTime.Now;
-            var nonClosingTerm1 = new Term { StartDate = currentDate.AddMonths(-1).AddDays(2), Duration = 1, Status = 2 }; // End date is after current date
-            var nonClosingTerm2 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = 2 }; // End date is after current date
+            var nonClosingTerm1 = new Term { StartDate = currentDate.AddMonths(-1).AddDays(2), Duration = 1, Status = (TermStatus)2 }; // End date is after current date
+            var nonClosingTerm2 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = (TermStatus)2 }; // End date is after current date
 
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { nonClosingTerm1, nonClosingTerm2 });
 
@@ -238,8 +239,8 @@ namespace Test.UnitTesting.Service.Services
             await termService.CloseDueTerms();
 
             // Assert
-            Assert.Equal(2, nonClosingTerm1.Status); // Assert status remains unchanged
-            Assert.Equal(2, nonClosingTerm2.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)2, nonClosingTerm1.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)2, nonClosingTerm2.Status); // Assert status remains unchanged
             mockRepository.Verify(repo => repo.UpdateTerm(It.IsAny<Term>()), Times.Never); // Verify UpdateTerm not called
         }
 
@@ -251,8 +252,8 @@ namespace Test.UnitTesting.Service.Services
             var termService = new TermService(mockRepository.Object);
 
             var currentDate = DateTime.Now;
-            var nonClosingTerm1 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = 1 }; // Status not equal to 2
-            var nonClosingTerm2 = new Term { StartDate = currentDate.AddDays(-10), Duration = 1, Status = 3 }; // Status not equal to 2
+            var nonClosingTerm1 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = (TermStatus)1 }; // Status not equal to 2
+            var nonClosingTerm2 = new Term { StartDate = currentDate.AddDays(-10), Duration = 1, Status = (TermStatus)3 }; // Status not equal to 2
 
             mockRepository.Setup(repo => repo.GetAllTerms()).ReturnsAsync(new List<Term>  { nonClosingTerm1, nonClosingTerm2 });
 
@@ -260,8 +261,8 @@ namespace Test.UnitTesting.Service.Services
             await termService.CloseDueTerms();
 
             // Assert
-            Assert.Equal(1, nonClosingTerm1.Status); // Assert status remains unchanged
-            Assert.Equal(3, nonClosingTerm2.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)1, nonClosingTerm1.Status); // Assert status remains unchanged
+            Assert.Equal((TermStatus)3, nonClosingTerm2.Status); // Assert status remains unchanged
             mockRepository.Verify(repo => repo.UpdateTerm(It.IsAny<Term>()), Times.Never); //
 
         }

@@ -147,7 +147,7 @@ namespace FinancialPlanning.Data.Repositories
         {
             foreach (var report in reports)
             {
-                report.Status = (int)Common.ReportStatus.Closed;
+                report.Status = Common.ReportStatus.Closed;
             }
 
             await _context.SaveChangesAsync();

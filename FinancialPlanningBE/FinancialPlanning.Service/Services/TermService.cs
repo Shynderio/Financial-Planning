@@ -42,7 +42,7 @@ namespace FinancialPlanning.Service.Services
             var term = await _termRepository.GetTermByIdAsync(id);
             if (term != null)
             {
-                term.Status = (int)TermStatus.InProgress;
+                term.Status = TermStatus.InProgress;
                 await _termRepository.UpdateTerm(term);
             }
             else
@@ -53,7 +53,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task CreateTerm(Term term)
         {
-            term.Status = (int)TermStatus.New;
+            term.Status = TermStatus.New;
             var endDate = term.StartDate.AddMonths(term.Duration);
             if (endDate < term.ReportDueDate)
             {
@@ -72,7 +72,7 @@ namespace FinancialPlanning.Service.Services
             var existingTerm = await _termRepository.GetTermByIdAsync(term.Id) ?? throw new ArgumentException("Term not found with the specified ID");
 
             var status = existingTerm.Status;
-            if (status == (int)TermStatus.New)
+            if (status == TermStatus.New)
             {
                 existingTerm.TermName = term.TermName;
                 existingTerm.CreatorId = term.CreatorId;
@@ -112,9 +112,9 @@ namespace FinancialPlanning.Service.Services
             foreach (var term in terms)
             {
                 var endDate = term.StartDate.AddMonths(term.Duration).Day;
-                if (endDate < DateTime.Now.Day || term.Status == (int)TermStatus.Closed) 
+                if (endDate < DateTime.Now.Day || term.Status == TermStatus.Closed) 
                     continue;
-                term.Status = (int)TermStatus.Closed;
+                term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
             }
         }
@@ -124,7 +124,7 @@ namespace FinancialPlanning.Service.Services
             var term = await _termRepository.GetTermByIdAsync(termId);
             if (term != null)
             {
-                term.Status = (int)TermStatus.Closed;
+                term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
             }
             else
@@ -139,7 +139,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startedTerms = [];
             foreach (var term in terms)
             {
-                if (term.Status == (int)TermStatus.InProgress && term.Plans!.Count == 0)
+                if (term.Status == TermStatus.InProgress && term.Plans!.Count == 0)
                 {
                     startedTerms.Add(term);
                 }

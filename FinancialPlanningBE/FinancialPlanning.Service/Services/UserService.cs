@@ -1,5 +1,7 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using FinancialPlanning.Common;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using FinancialPlanning.Service.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +17,17 @@ namespace FinancialPlanning.Service.Services
         private readonly IDepartmentRepository _departmentrepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IPositionRepository _positionRepository;
+        private readonly EmailService _emailService;
 
-        public UserService(IUserRepository userRepository , IDepartmentRepository departmentRepository, IRoleRepository roleRepository, IPositionRepository positionRepository)
+        public UserService(IUserRepository userRepository, IDepartmentRepository departmentRepository
+            , IRoleRepository roleRepository, IPositionRepository positionRepository, EmailService emailService)
         {
 
             _userrepository = userRepository;
             _departmentrepository = departmentRepository;
             _roleRepository = roleRepository;
             _positionRepository = positionRepository;
+            _emailService = emailService;
 
         }
         //Get all user
@@ -62,10 +67,27 @@ namespace FinancialPlanning.Service.Services
         //Add new user
         public async Task AddNewUser(User user)
         {
-            await _userrepository.AddNewUser(user);
+            (string username, string password) = await _userrepository.AddNewUser(user);
+
+
+            // Gửi email thông báo đã thêm mới người dùng
+            var emailDto = new EmailDto
+            {
+                To = user.Email, // Địa chỉ email của người nhận
+                Subject = $"no-reply-email-Financial Planning-system <{username}>",
+                Body = $"This email is from Financial Planning system,<br>" +
+            "Your account has been created. Please use the following credential to login:<br><br>" +
+            $"- User name: <strong>{user.Email}</strong><br>" +
+            $"- Password: <strong>{password}</strong><br><br>" +
+            $"If anything wrong, please reach-out financialplanapp@gmail.com. We are so sorry for this inconvenience.<br>" +
+            "Thanks & Regards!<br>" +
+            "Financial Planning Team."
+            };
+            _emailService.SendEmail(emailDto);
         }
+
         //Update user status
-        public async Task UpdateUserStatus(Guid id, int status)
+        public async Task UpdateUserStatus(Guid id, UserStatus status)
         {
             await _userrepository.UpdateUserStatus(id, status);
         }

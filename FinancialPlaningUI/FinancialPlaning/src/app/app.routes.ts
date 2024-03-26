@@ -21,6 +21,7 @@ import { UserDetailComponent } from './pages/users/user-detail/user-detail.compo
 import { ImportReportComponent } from './pages/report/import-report/import-report.component';
 import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-reports/list-annual-reports.component';
 import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
+import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -41,6 +42,7 @@ export const routes: Routes = [
     // plan
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
+    { path: 'plan-details/:id', component: PlanDetailsComponent, canActivate: [AuthGuard] },
      //user
     { path: 'user-list', component: UserListComponent },
     { path: 'add-user', component: AddNewUserComponent },
