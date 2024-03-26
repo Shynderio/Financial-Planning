@@ -23,9 +23,12 @@
             <mat-error *ngIf="loginForm.get('password')?.hasError('required')"> {{ MESSAGE_CONSTANTS.ME003 }} </mat-error>
           </mat-form-field>
           <p class="error">{{ errorMessage }}</p>
-          <button mat-raised-button type="submit" class="w-100 mb-2">Log in</button>
+          <button mat-raised-button type="submit" class="w-100" [disabled]="isLoading">
+            <span *ngIf="isLoading"><mat-spinner [diameter]="20"></mat-spinner></span>
+            <span *ngIf="!isLoading">Log in</span>
+        </button>
         </form>
-        <a routerLink="/forgot-password" class="d-table mx-auto">Forgot password</a>
+        <a routerLink="/forgot-password" class="d-table mx-auto mt-2">Forgot password</a>
       </mat-card-content>
     </div>
     <img src="../../../../assets/img/login.png" alt="Forgot Password" class="col-6">
