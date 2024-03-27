@@ -32,6 +32,8 @@ import { TermService } from '../../services/term.service';
 import { jwtDecode } from 'jwt-decode';
 import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-terms',
@@ -46,6 +48,8 @@ import { concatMap } from 'rxjs/operators';
     MatIconModule,
     MatTableModule,
     MatSnackBarModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
 })
 export class TermsComponent implements OnInit {
@@ -55,9 +59,10 @@ export class TermsComponent implements OnInit {
 
   statusOption: string = 'All';
   searchValue: string = '';
+  filterStatusEnable = false;
 
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   dataSource: any = [];
 
@@ -120,29 +125,19 @@ export class TermsComponent implements OnInit {
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
-  
-  changeStatusFilter(event: Event) {
-    //Toggle class 'chosen' of status filter button
-    let target = event.target as HTMLElement;
-    let statusOptions =
-      this.elementRef.nativeElement.querySelector('#status-filter');
 
-    for (let button of statusOptions.querySelectorAll('button')) {
-      button.classList.remove('chosen');
-    }
-    target.classList.add('chosen');
-
-    this.statusOption = target.innerHTML;
+  changeStatusFilter(event: any) {
+    this.statusOption = event.value;
     this.pageIndex = 0;
     this.dataSource = this.getPaginatedItems();
   }
- //Convert date to dd/mm/yyyy
- convertIsoDateToDdMmYyyy(isoDate: string): string {
-  if (!isoDate) return '';
-  const dateParts = isoDate.split('T')[0].split('-');
-  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
-  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-}
+  //Convert date to dd/mm/yyyy
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+    if (!isoDate) return '';
+    const dateParts = isoDate.split('T')[0].split('-');
+    if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+  }
   openDeleteDialog(id: string) {
     const deleteDialog = this.dialog.open(DeleteTermDialog, {
       width: '400px',
@@ -161,7 +156,7 @@ export class TermsComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        if (response == null){
+        if (response == null) {
           return;
         }
         this.messageBar.openFromComponent(MessageBarTerm, {

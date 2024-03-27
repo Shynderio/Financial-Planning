@@ -5,7 +5,7 @@
   padding-top: 1px;
   transition: width 0.5s;
   z-index: 1;
-  opacity: 90%;
+  opacity: 95%;
   overflow: hidden;
   background-color: var(--sidenav-primary-background);
   color: white;
