@@ -5,23 +5,27 @@ import { jwtDecode } from 'jwt-decode';
 @Injectable({
   providedIn: 'root'
 })
-export class AdminGuard implements CanActivate {
+export class AdminGuard {
   constructor(private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-     const localData = localStorage.getItem('token');   // get token in locap storage
+     // Check if localStorage is defined
+     if (typeof localStorage !== 'undefined') {
+      const localData = localStorage.getItem('token');
       if (localData) {
         const decodedToken: any = jwtDecode(localData);
-        const role = decodedToken.role;   //get role from token
-     
+        const role = decodedToken.role;
+        console.log('role')
         if(role == 'Admin'){
             return true;
-        }        
-      } 
-    // ROle isn't Accountant
-    // this.router.navigateByUrl('/home');
-    window.location.href='/home';
+        }
+        
+      }
+    }
+    // ROle isn't Admin
+     this.router.navigateByUrl('/home');
+   
     return false;
   }
 }
