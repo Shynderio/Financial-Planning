@@ -1,6 +1,17 @@
 :root {
-  --primary-color: #ffffff;
-  --secondary-color: #a379c9;
+  --success-color: #59de11;
+  --fail-color: #fb1b07;
+  --lavender: #a379c9;
+  --white-smoke: #d9dbda;
+  --sidenav-secondary-background: #6744ff;
+  --sidenav-primary-background: #152630;
+  --icon-background: #28485a;
+  --new-status-background: #f4f9fb;
+  --new-status-color: #add8e6;
+  --inprogress-status-background: #fff2df;
+  --inprogress-status-color: #ffa500;
+  --closed-status-background: #ececec;
+  --closed-status-color: #808080; 
 }
 
 body {

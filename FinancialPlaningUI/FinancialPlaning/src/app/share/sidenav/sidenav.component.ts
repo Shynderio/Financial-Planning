@@ -13,6 +13,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sidenav.component.css',
 })
 export class SidenavComponent {
+  hovering = false;
+
   constructor(
     private authService: AuthService,
     // private http: HttpClient,
