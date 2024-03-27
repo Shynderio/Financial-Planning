@@ -115,12 +115,12 @@ td {
   cursor: pointer;
 }
 
-.report-details {
+.plan-details {
   width: 70%;
   margin: auto;
   display: flex;
   border-radius: 5px;
-  border: 1px solid white;
+  border: 1px solid rgb(111, 124, 219);
   margin-bottom: 10px;
   padding-top: 5px;
 }

@@ -40,7 +40,11 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<Plan?> GetPlanById(Guid id)
         {
-            return await _context.Plans!.FindAsync(id);
+            return await _context.Plans
+                    .Include(p => p.Term)
+                    .Include(p => p.Department)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+           
         }
 
         public async Task<List<Plan>> GetPlans(Guid? termId, Guid? departmentId)

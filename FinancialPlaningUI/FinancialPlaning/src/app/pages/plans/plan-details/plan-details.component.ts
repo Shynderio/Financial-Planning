@@ -32,6 +32,8 @@ export class PlanDetailsComponent {
   plan: any;
   planVersions: any;
   uploadedBy: any;
+  planDueDate: any;
+
 
   totalExpense: number = 0;
   biggestExpenditure: number = 0;
@@ -68,6 +70,7 @@ export class PlanDetailsComponent {
       this.planVersions = data.planVersions;
       //Name of account uploaded
       this.uploadedBy = data.uploadedBy;
+      this.planDueDate= data.planDueDate;
       //filter
       this.dataSource = this.getPaginatedItems();
 
