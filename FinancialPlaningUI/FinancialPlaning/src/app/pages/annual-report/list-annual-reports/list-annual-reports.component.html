@@ -11,8 +11,9 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
     </div>
     <div class="mb-4">
         <div class="searchBar">
-            <input type="text" placeholder="Search " [value]="searchValue" (keydown.enter)="changeSearchText($event)"
-                (input)="changeSearchText($event)" />
+            <form >
+            <input type="text" placeholder="Search " [value]="searchValue"
+                (input)="changeSearchText($event)" /></form>
             <i class="fa-solid fa-search"></i>
         </div>
     </div>

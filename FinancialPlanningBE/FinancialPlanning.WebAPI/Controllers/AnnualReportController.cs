@@ -1,4 +1,5 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using Amazon.S3;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -72,6 +73,25 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             var url = await _fileService.GetFileUrlAsync(key);
             return Ok(url);
+
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFile(string key)
+        {
+            try
+            {
+                await _fileService.DeleteFileAsync(key);
+                return Ok();
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return BadRequest($"Error deleting file: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
 
         }
 

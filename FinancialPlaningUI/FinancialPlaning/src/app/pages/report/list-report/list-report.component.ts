@@ -32,7 +32,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ListReportComponent {
   displayedColumns: string[] = [
-    'index',
     'reportName',
     'month',
     'termName',
@@ -61,16 +60,13 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 5;
   pageIndex = 0;
 
   constructor(
     private reportService: ReportService,
-    private fb: FormBuilder,
-    private elementRef: ElementRef,
     private dialog: MatDialog,
     private messageBar: MatSnackBar) {
-
     this.dataSource = new MatTableDataSource<Report>();
   }
 
@@ -186,7 +182,12 @@ export class ListReportComponent {
       }
     }
   }
-  //
+//   // Export all report
+//   exportFile(reportIds: string[]): void{
+// this.reportService.exportMutilreport(reportIds).subscribe(response => {
+//   console.log(response);
+// });
+//   }
 
 
   openDeleteDialog(id: string) {

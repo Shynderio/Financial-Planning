@@ -171,6 +171,7 @@ namespace FinancialPlanning.Data.Repositories
         {
             var reports = await _context.Reports
                 .Include(r => r.Department)
+                .Include(r => r.Term)
                 .Where(r => r.Month.EndsWith(year.ToString()))
                 .ToListAsync();
 

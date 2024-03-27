@@ -118,7 +118,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //export report 
         [HttpGet("export/{id:guid}/{version:int}")]
-        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportSingleReport(Guid id, int version)
         {
             try
@@ -126,7 +126,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //from reportVersion Id -> get name report + version
                 var report = await _reportService.GetReportById(id);
                 string filename = report.Department.DepartmentName + "/"
-                    + report.Term.TermName + "/" + report.Month + "/Report/_version" + report.GetMaxVersion();
+                    + report.Term.TermName + "/" + report.Month + "/Report/version_" + version;
               
 
                 //get url from name file
@@ -142,6 +142,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("export")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {
             var reports = await _reportService.MergeExcelFiles(reportIds);
