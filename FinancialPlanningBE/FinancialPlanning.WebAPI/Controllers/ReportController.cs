@@ -141,7 +141,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpGet("export")]
+        [HttpPost("export")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {

@@ -196,7 +196,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         var worksheet = package.Workbook.Worksheets[0];
         foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
         {
-            worksheet.Cells[index + 3, 1].Value = expense.Date.ToString();
+            worksheet.Cells[index + 3, 1].Value = expense.Date.ToString().Substring(0,10);
             worksheet.Cells[index + 3, 2].Value = expense.Term;
             worksheet.Cells[index + 3, 3].Value = expense.Department;
             worksheet.Cells[index + 3, 4].Value = expense.ExpenseName;

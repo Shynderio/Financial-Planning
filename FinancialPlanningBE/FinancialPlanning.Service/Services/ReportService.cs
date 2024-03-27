@@ -101,8 +101,8 @@ namespace FinancialPlanning.Service.Services
             foreach (var report in reports)
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
-                    await _fileService.GetFileAsync(report.Department.DepartmentName + '/' + report.Term.TermName +"/"
-                                                  + report.Month + "/Report/version_" + report.GetMaxVersion()),
+                    await _fileService.GetFileAsync(report.Department.DepartmentName + "/"
+                    + report.Term.TermName + "/" + report.Month + "/Report/version_" + report.GetMaxVersion()+ ".xlsx"),
                     1));
             }
             
