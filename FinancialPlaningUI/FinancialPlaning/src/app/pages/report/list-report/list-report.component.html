@@ -1,5 +1,6 @@
 <main>
-  <div class="container mb-4">
+ 
+  <div class="container mb-4 pb-3 mx-0">
     <div id="page-title">
       <h3><b> Monthly Reports</b></h3>
       <h6>View all Monthly Reports</h6>
@@ -13,16 +14,20 @@
       </a>
     </div>
   </div>
-  <div class="mb-4">
-    <div class="searchBar">
-      <input type="text" placeholder="Search " [value]="searchValue" (keydown.enter)="changeSearchText($event)"  (input)="changeSearchText($event)" />
+  <div class="mb-4 row">
+    <form class="searchBar col-6">
+      <input type="text" placeholder="Search for Terms" (input)="changeSearchText($event)" />
       <i class="fa-solid fa-search"></i>
-    </div>
+    </form>
+    <button id="filter-button" class="btn col-6 ms-4" (click)="filterStatusEnable = !filterStatusEnable"><mat-icon
+        class="align-middle">filter_list</mat-icon> Filter </button>
+  </div>
+  <div *ngIf="filterStatusEnable">
     <!-- Department -->
 
     <mat-form-field  [hidden]="role == 'FinancialStaff'">
 
-      <mat-label style="color: white; ">Department</mat-label>
+      <mat-label>Department</mat-label>
       <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
         <mat-option value="All">All</mat-option>
         @for (depart of departments; track depart) {
@@ -33,7 +38,7 @@
 
     <!-- Term -->
     <mat-form-field>
-      <mat-label style="color: white;">Term</mat-label>
+      <mat-label>Term</mat-label>
       <mat-select [(value)]="selectedTerm" (selectionChange)="onTermSelected($event)">
         <mat-option value="All">All</mat-option>
         @for (term of terms; track term) {
@@ -43,7 +48,7 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label style="color: white;">Quarter</mat-label>
+      <mat-label>Quarter</mat-label>
       <mat-select value="All" (selectionChange)="onQuarterSelected($event)">
         <mat-option value="All">All</mat-option>
         @for (quarter of quarters; track quarter) {
@@ -53,7 +58,7 @@
     </mat-form-field>
     <!-- //Status -->
     <mat-form-field>
-      <mat-label style="color: white;">Status</mat-label>
+      <mat-label >Status</mat-label>
       <mat-select value="All" (selectionChange)="onStatusSelected($event)">
         <mat-option value="All">All</mat-option>
 
@@ -103,7 +108,7 @@
         <a [routerLink]="[ '/report-details/', element.id ]"><mat-icon>visibility</mat-icon></a>
 
         <a
-          [hidden]="(role == 'Accountant' && element.departmentName!= departmentName) || element.status == '2'"  (click)="openDeleteDialog(element.id)"><mat-icon>delete</mat-icon></a>
+          [hidden]="(role == 'Accountant' && element.departmentName!= departmentName) || element.status == '1'"  (click)="openDeleteDialog(element.id)"><mat-icon>delete</mat-icon></a>
       </td>
     </ng-container>
 
