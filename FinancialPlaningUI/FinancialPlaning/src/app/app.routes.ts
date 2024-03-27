@@ -23,6 +23,7 @@ import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-re
 import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
 import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
 import { AdminGuard } from './services/auth/admin.guard';
+import { ReupPlanComponent } from './pages/plans/reup-plan/reup-plan.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -45,6 +46,7 @@ export const routes: Routes = [
     { path: 'plans', component: PlansComponent , canActivate: [AuthGuard]},
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
     { path: 'plan-details/:id', component: PlanDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'reup-plan/:id', component: ReupPlanComponent, canActivate: [AuthGuard]},
      //user
     { path: 'user-list', component: UserListComponent, canActivate:[AdminGuard]},
     { path: 'add-user', component: AddNewUserComponent,canActivate:[AdminGuard] },

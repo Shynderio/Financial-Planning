@@ -84,6 +84,14 @@ form {
     margin-top: 20px;
 } */
 
+.import-card .buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* margin-top: 20px; */
+    width: 100%;
+}
+
 .back-button {
     background-color: white;
     color: #4F85F2;
@@ -113,9 +121,11 @@ form {
 }
 
 .preview-card {
-    min-width: 750px;
+    min-width: 900px;
     position: relative;
 }
+
+
 
 .import-card{
     min-width: 200px;
@@ -123,7 +133,43 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
 
+app-upload {
+    width: 100%;
+}
+@media screen and (max-width: 1200px) {
+    .import-card {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+
+    }
+
+    .left{
+        /* width: 100%; */
+        min-width: 550px
+    }
+
+    app-upload {
+        width: 75%;
+    }
+
+    .import-card .buttons{
+        flex-direction: column;
+        width: 20%;
+    }
+
+    .preview-button{
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+
+mat-label {
+    color: #4F85F2;
 }
 
 h3 {
@@ -273,13 +319,3 @@ td {
     margin-top: 15%;
 }
 
-@media screen and (max-width: 1200px) {
-    .import-card {
-        flex-direction: row;
-    }
-
-    .left{
-        width: 100%;
-        min-width: 550px
-    }
-}
