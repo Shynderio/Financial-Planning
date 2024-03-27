@@ -45,7 +45,7 @@ export class ListReportComponent {
   dataSource: any = [];
   reports: any = [];
   listSearch: any = [];
-
+  filterStatusEnable = false;
   searchValue: string = '';
 
   terms: any = [];
@@ -80,6 +80,7 @@ export class ListReportComponent {
         this.departmentName = decodedToken.departmentName;
         console.log(this.departmentName);
         this.fetchData();
+    
       }
     }
 
