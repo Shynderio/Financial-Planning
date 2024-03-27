@@ -117,13 +117,25 @@ form {
     position: relative;
 }
 
+
+
 .import-card{
     min-width: 200px;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
 
+@media screen and (max-width: 1200px) {
+    .import-card {
+        flex-direction: row;
+    }
+
+    .left{
+        width: 100%;
+        min-width: 550px
+    }
 }
 
 mat-label {
@@ -276,3 +288,4 @@ td {
     font-size: large;
     margin-top: 15%;
 }
+

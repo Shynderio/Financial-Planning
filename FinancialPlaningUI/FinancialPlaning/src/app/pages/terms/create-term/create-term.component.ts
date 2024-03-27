@@ -12,10 +12,21 @@ import { CreateTermModel } from '../../../models/term.model';
 import { Router, RouterLink } from '@angular/router';
 import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
+import {MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 @Component({
   selector: 'app-create-term',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, 
+    ReactiveFormsModule, 
+    CommonModule, 
+    RouterLink,
+    MatFormField,
+    MatLabel, 
+    MatHint,MatDatepickerModule,
+  ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './create-term.component.html',
   styleUrl: './create-term.component.css',
 })
@@ -48,6 +59,11 @@ export class CreateTermComponent implements OnInit {
     this.termForm.get('duration')?.valueChanges.subscribe(() => {
       this.updateEndDate();
     });
+  }
+
+  onStartDateSelected(event: MatDatepickerInputEvent<Date>) {
+    // Update value of startDate form control
+    this.termForm.get('startDate')!.setValue(event.value);
   }
 
   updateEndDate(): void {
