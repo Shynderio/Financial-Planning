@@ -2,6 +2,7 @@ using System.ComponentModel;
 using AutoMapper;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.WebAPI.Models.Department;
+using FinancialPlanning.WebAPI.Models.Expense;
 using FinancialPlanning.WebAPI.Models.Plan;
 using FinancialPlanning.WebAPI.Models.Position;
 using FinancialPlanning.WebAPI.Models.Report;
@@ -51,7 +52,6 @@ namespace FinancialPlanning.WebAPI.Helpers
             CreateMap<PlanListModel, Plan>();
 
             CreateMap<Plan, PlanViewModel>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()) // Không có sẵn trong Plan, có thể bỏ qua
                 .ForMember(dest => dest.Plan, opt => opt.MapFrom(src => src.PlanName))
                 .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
@@ -83,6 +83,10 @@ namespace FinancialPlanning.WebAPI.Helpers
             // map planVersion to planVersionModel
             CreateMap<PlanVersion, PlanVersionModel>()
             .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.User.Username));
+
+            // map Expense
+            CreateMap<Expense, ExpenseStatusModel>();
+            CreateMap<ExpenseStatusModel, Expense>();
         }
 
         private static string GetEnumDescription(Enum value)

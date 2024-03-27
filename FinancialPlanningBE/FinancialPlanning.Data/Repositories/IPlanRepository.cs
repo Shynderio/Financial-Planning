@@ -20,12 +20,12 @@ namespace FinancialPlanning.Data.Repositories
 
         // Import a new financial plan.
 
-        public Task<bool> ImportPlan(string uid, Guid termId, string planName, string file);
+        public Task<Plan> ImportPlan(Plan plan, Guid userId);
 
 
         // Re-upload an existing financial plan.
 
-        public Task<bool> ReupPlan(string uid, Guid termId, string planName, string file);
+        public Task<Plan> ReupPlan(Plan plan, Guid userId);
 
 
         // Retrieve details of a financial plan based on term and department.
@@ -59,7 +59,7 @@ namespace FinancialPlanning.Data.Repositories
         public Task<List<Plan>> GetAllDuePlans();
         public Task CloseAllDuePlans(List<Plan> plans);
         public Task<List<PlanVersion>> GetPlanVersionsByPlanID(Guid planId);
-
+        public Task<bool> IsPlanExist(Guid termId, Guid departmentId);
     }
 
 }

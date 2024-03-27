@@ -5,10 +5,10 @@
       <h6>Report Details</h6>
     </div>
     <div class="abc">
-      <a routerLink="/" class="create-button" (click)="downloadFile(report.id,report.version)">
+      <a class="create-button" (click)="downloadFile(report.id,report.version)">
         <button> Export</button>
       </a>
-      <a routerLink="/" class="export-button">
+      <a *ngIf="report" [routerLink]="['/reup-report/', report.id ]" class="export-button"  [hidden]="report.status==1">
         <button> Reup</button>
       </a>
     </div>
@@ -21,7 +21,7 @@
       <h6>Term: {{report.termName}}</h6>
       <h6>Month: {{report.month}}</h6>
       <h6>Department: {{report.departmentName}}</h6>
-      <h6>Status: {{report.status}}</h6>
+      <h6>Status: {{ report.status === 0 ? 'New' : 'Closed' }}</h6>
     </div>
     <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
@@ -29,9 +29,7 @@
       <h6>Date: {{convertIsoDateToDdMmYyyy(report.updateDate)}}</h6>
       <h6 class="underline" (click)="openReportVersionsDialog()">Version: v.{{report.version}}</h6>
     </div>
-
     <!-- //report infor -->
-
   </div>
 
   <div class="report-details d-flex justify-content-between">
@@ -89,6 +87,6 @@
 
   </table>
   <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
-    [hidden]="dataSource.length==0">
+    [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
   </mat-paginator>
 </main>

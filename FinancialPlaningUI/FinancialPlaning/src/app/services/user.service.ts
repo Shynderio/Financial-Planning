@@ -8,24 +8,24 @@ import { IRole } from '../models/role-list';
 import { IPosition } from '../models/position-list';
 import { Observable, catchError, map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private apiUrl = environment.apiUrl + '/User';
-
   constructor(private http: HttpClient) { }
 
-  getAllUser() {
+  getAllUser(): Observable<any> {
     return this.http.get<UserModel[]>(this.apiUrl)
   }
 
-  getUserById(userId: string) {
+  getUserById(userId: string): Observable<any> {
     return this.http.get<EditUser[]>(this.apiUrl +'/'+ userId)
   }
 
-  editUser(userId: string, user: AddUser) {
+  editUser(userId: string, user: AddUser): Observable<any> {
     return this.http.put<AddUser>(this.apiUrl + '/' + userId, user)
   }
   changeUserStatus(userId: string, status: number): Observable<number> {
@@ -38,19 +38,24 @@ export class UserService {
     );
   }
 
-  addNewUser(user: AddUser) {
+  addNewUser(user: AddUser): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    user.id = uid;
+    console.log(user);
     return this.http.post(this.apiUrl, user);
   }
 
-  getAllDepartment() {
+  getAllDepartment(): Observable<any> {
     return this.http.get<IDepartment[]>(this.apiUrl + '/'+'AllDepartments')
   }
 
-  getRole() {
+  getRole(): Observable<any> {
     return this.http.get<IRole[]>(this.apiUrl + '/'+'AllRoles')
   }
 
-  getPosition() {
+  getPosition(): Observable<any> {
     return this.http.get<IPosition[]>(this.apiUrl + '/'+'AllPositions')
   }
 }

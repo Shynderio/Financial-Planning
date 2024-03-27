@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Reflection;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
+using FinancialPlanning.WebAPI.Models.Expense;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -136,20 +137,60 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpPost("Upload")]
+        // POST: api/plan/
+        [HttpPost("reup")]
         [Authorize(Roles = "FinancialStaff")]
-        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
+        public async Task<ActionResult<List<ExpenseStatusModel>>> ReuploadPlan(IFormFile file, Guid planId)
         {
             try
             {
-                await _planService.SavePlan(expenses, termId, uid);
-                return Ok(new { message = "Plan uploaded successfully!" });
+                // Check if a file is uploaded
+                if (file.Length == 0)
+                {
+                    return BadRequest(new { message = "No file uploaded" });
+                }
+
+                // Validate the file
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
+
+                if (!isValid)
+                {
+                    return BadRequest(new { message = "Invalid file format!" });
+                }
+
+                // Get expenses
+                var expenses = _planService.GetExpenses(memoryStream.ToArray());
+                
+                // Check expenses
+                var approvedExpenses = _planService.CheckExpenses(expenses, planId);
+
+                
+                var expenseModels = new List<ExpenseStatusModel>();
+
+                var planStatus = _planService.GetPlanById(planId).Result!.Status;
+                foreach(var expense in expenses)
+                {
+                    var expenseModel = _mapper.Map<ExpenseStatusModel>(expense);
+                    if (planStatus != PlanStatus.New)
+                    {
+                        expenseModel.Status = approvedExpenses.Contains(expense.No) ? PlanStatus.Approved : PlanStatus.WaitingForApproval;
+                    } else {
+                        expenseModel.Status = PlanStatus.New;
+                    }
+                    expenseModels.Add(expenseModel);
+                }
+
+                return Ok(expenseModels);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // Log the exception
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while uploading the plan file.");
+                // It's generally not a good practice to return detailed exception messages to clients
+                // return StatusCode(StatusCodes.Status500InternalServerError,
+                //     "An error occurred while importing the plan file.");
+                return BadRequest(new { message = ex.Message });
             }
         }
 
@@ -171,10 +212,12 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Get the name of the user who uploaded the file
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
+                var dueDate = plan!.Term.PlanDueDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
+                    planDueDate = dueDate,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy
@@ -185,6 +228,46 @@ namespace FinancialPlanning.WebAPI.Controllers
             //error when download
             catch (Exception ex)
             {
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+
+        [HttpPost("edit")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId){
+            try{
+                var expenses = new List<Expense>();
+                var approvedNos = new List<int>();
+                foreach(var expenseModel in expenseModels){
+                    var expense = _mapper.Map<Expense>(expenseModel);
+                    expenses.Add(expense);
+                    if (expenseModel.Status == PlanStatus.Approved){
+                        approvedNos.Add(expense.No);
+                    }
+                }
+                await _planService.ReupPlan(expenses, approvedNos, planId, userId);
+                return Ok(new { message = "Plan updated successfully!" });
+            }
+            catch (Exception ex){
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+    
+        [HttpPost("create")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid){
+            try{
+                var plan = new Plan{
+                    TermId = termId,
+                    Status = PlanStatus.New,   
+                };
+                await _planService.CreatePlan(expenses, plan, uid);
+                return Ok(new { message = "Plan updated successfully!" });
+            }
+            catch (ArgumentException ex){
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex){
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }

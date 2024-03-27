@@ -1,22 +1,27 @@
 <main>
   <div class="row">
-    <div class="left col-md-12 col-lg-3">
-      <h1 class="mb-4">Import Plan</h1>
+    <div class="col-md-12 col-lg-4">
+      <h1 class="mb-4">Reup Report</h1>
       <!-- <h5>Step 1/2: Please select a file to import</h5> -->
       <mat-card class="import-card">
-        <form [formGroup]="planForm">
-          <!-- <p>
-              <label for="term">Term *</label>
-            </p> -->
+        <!-- <form [formGroup]="reportForm">
           <mat-form-field>
             <mat-label>Term</mat-label>
-            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term" formControlName="term">
-              <mat-option *ngFor="let option of termOptions" [value]="option.value">
-                {{option.viewValue}}
+            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term" formControlName="term" (selectionChange)="changeTerm()">
+              <mat-option *ngFor="let option of termOptions" [value]="option">
+                {{option.termName}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-        </form>
+          <mat-form-field>
+            <mat-label>Month</mat-label>
+            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="month" formControlName="month">
+              <mat-option *ngFor="let option of monthOptions" [value]="option">
+                {{option}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form> -->
         <app-upload class="w-100" (fileSelected)="onFileSelected($event)"></app-upload>
         <div class="buttons">
           <button class="preview-button" (click)="onImport()">
@@ -25,7 +30,7 @@
         </div>
       </mat-card>
     </div>
-    <div class="right col-md-12 col-lg-9">
+    <div class="col-md-12 col-lg-8">
       <mat-card class="preview-card">
         <h3 class="mb-3">Preview</h3>
         <div class="table mat-elevation-z8">
@@ -72,12 +77,12 @@
           </table>
   
           <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
-            [hidden]="dataSource.length==0">
+            [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
           </mat-paginator>
         </div>
         <div>
           <div class="buttons">
-            <a routerLink="/plans">
+            <a [routerLink]="['/reports']">
               <button class="back-button">
                 <span>Back</span>
               </button>

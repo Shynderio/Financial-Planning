@@ -40,7 +40,12 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<Plan?> GetPlanById(Guid id)
         {
-            return await _context.Plans!.FindAsync(id);
+            var plan = await _context.Plans!
+                .Include(p => p.Term)
+                .Include(p => p.Department)
+                .Include(p => p.PlanVersions)
+                .FirstOrDefaultAsync(p => p.Id == id);
+            return plan;
         }
 
         public async Task<List<Plan>> GetPlans(Guid? termId, Guid? departmentId)
@@ -90,6 +95,7 @@ namespace FinancialPlanning.Data.Repositories
                     ImportDate = DateTime.UtcNow
                 };
 
+                existingPlan.ApprovedExpenses = plan.ApprovedExpenses;
                 _context.PlanVersions!.Add(planVersion);
                 await _context.SaveChangesAsync();
 
@@ -99,6 +105,7 @@ namespace FinancialPlanning.Data.Repositories
             {
                 plan.Status = (int)PlanStatus.New;
                 plan.Id = Guid.NewGuid();
+                plan.ApprovedExpenses = "[]"; 
 
                 var planVersion = new PlanVersion
                 {
@@ -127,14 +134,41 @@ namespace FinancialPlanning.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<bool> ImportPlan(string uid, Guid termId, string planName, string file)
+        public async Task<Plan> ImportPlan(Plan plan, Guid userId)
         {
-            throw new NotImplementedException();
+            plan.Id = new Guid();
+            plan.ApprovedExpenses = "[]";
+            _context.Plans!.Add(plan);
+            PlanVersion planVersion = new()
+            {
+                Id = Guid.NewGuid(),
+                PlanId = plan.Id,
+                Version = 1,
+                ImportDate = DateTime.Now,
+                CreatorId = userId,
+            };
+            _context.PlanVersions!.Add(planVersion);
+            await _context.SaveChangesAsync();
+            return GetPlanById(plan.Id).Result!;
         }
 
-        public Task<bool> ReupPlan(string uid, Guid termId, string planName, string file)
+        public async Task<Plan> ReupPlan(Plan plan, Guid userId)
         {
-            throw new NotImplementedException();
+            var nextversion = plan!.PlanVersions.Count + 1;
+            var planVersion = new PlanVersion
+            {
+                Id = Guid.NewGuid(),
+                PlanId = plan.Id,
+                Version = nextversion,
+                ImportDate = DateTime.Now,
+                CreatorId = userId,
+            };
+            _context.Plans!.Update(plan);
+            _context.PlanVersions!.Add(planVersion);
+
+            await _context.SaveChangesAsync();
+
+            return GetPlanById(plan.Id).Result!;
         }
 
         public Task<Plan> GetPlanDetails(Guid termId, string department, int version)
@@ -159,13 +193,7 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task UpdatePlan(Plan plan)
         {
-            var existingTerm = await _context.Plans!.FindAsync(plan.Id) ?? throw new Exception("Plan not found");
-            existingTerm.PlanName = plan.PlanName;
-            existingTerm.PlanVersions = plan.PlanVersions;
-            existingTerm.Status = plan.Status;
-            existingTerm.Term = plan.Term;
-            existingTerm.Department = plan.Department;
-
+            _context.Plans!.Update(plan);
             await _context.SaveChangesAsync();
         }
 
@@ -232,5 +260,12 @@ namespace FinancialPlanning.Data.Repositories
             return planVersions;
         }
 
+        public async Task<bool> IsPlanExist(Guid termId, Guid departmentId)
+        {
+            var plan = await _context.Plans!
+                .FirstOrDefaultAsync(p => p.TermId == termId && p.DepartmentId == departmentId);
+                
+            return plan != null;
+        }
     }
 }

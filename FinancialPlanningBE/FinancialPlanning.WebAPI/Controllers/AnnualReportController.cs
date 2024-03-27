@@ -1,5 +1,7 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using Amazon.S3;
+using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -21,6 +23,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("annualreports")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAll()
         {
             var annualReport = await _annualReportService.GetAllAnnualReportsAsync();
@@ -29,6 +32,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("details/{year:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetAnnualReportDetails(int year)
         {
             try
@@ -43,7 +47,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("export/{year:int}")]
-        //[Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportAnnualReport(int year)
         {
             try
@@ -59,82 +63,34 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-
-
-
-
-
-        [HttpGet("0")]
-        public async Task<IActionResult> GetAllFile(string key)
+        [HttpGet("Geturlfile")]
+        public async Task<IActionResult> GetUrlFile(string key)
         {
             var url = await _fileService.GetFileUrlAsync(key);
             return Ok(url);
 
         }
-
-        [HttpPost("ConvertAnnualReport")]
-        public IActionResult ConvertAnnualReport(IFormFile file)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteFile(string key)
         {
             try
             {
-                if (file != null && file.Length > 0)
-                {
-                    using (var stream = new MemoryStream())
-                    {
-                        file.CopyTo(stream);
-                        using (var package = new ExcelPackage(stream))
-                        {
-                            var (expense, reports) = _fileService.ConvertExelAnnualReportToList(package);
-                            return Ok(new { Expense = expense, Reports = reports });
-                        }
-                    }
-                }
-                else
-                {
-                    return BadRequest("No file uploaded.");
-                }
+                await _fileService.DeleteFileAsync(key);
+                return Ok();
+            }
+            catch (AmazonS3Exception ex)
+            {
+                return BadRequest($"Error deleting file: {ex.Message}");
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
+
         }
 
-        [HttpPost("Upload")]
-        public async Task<IActionResult> UploadAnnualReport()
-        {
-            List<ExpenseAnnualReport> expenses = new List<ExpenseAnnualReport>();
-
-            ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport
-            {
-                Department = "HR",
-                TotalExpense = 100000000,
-                BiggestExpenditure = 120000,
-                CostType = "MK",
-            };
-            expenses.Add(expenseAnnualReport);
-            var annualreport = new AnnualReport
-            {
-                Year = 2023,
-                CreateDate = DateTime.Now,
-                TotalTerm = 31,
-                TotalDepartment = 12,
-                TotalExpense = "1210000"
-
-            };
-            string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_2023.xlsx");
-
-            //Import file to cloud
-            var filae = await _fileService.ConvertAnnualReportToExcel(expenses, annualreport);
-
-
-            await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(filae));
-
-
-            return Ok(filePath);
-        }
-
-
+       
 
     }
 

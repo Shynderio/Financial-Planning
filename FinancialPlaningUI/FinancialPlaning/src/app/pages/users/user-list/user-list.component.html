@@ -52,8 +52,8 @@
     <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
     <tr mat-row *matRowDef="let row; columns: columnHeaders; let rowIndex = index;"></tr>
   </table>
-  
-  
+
+
   <div *ngIf="userList.length == 0" class="empty-data-message">
     No items match your credentials, please try again.
   </div>

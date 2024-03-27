@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
 import { Report } from '../models/report.model';
@@ -39,6 +39,14 @@ export class ReportService {
     return this.http.get(this.apiUrl+'/export/'+reportId+'/'+version)
   }
 
+  exportMutilreport(reportIds: string[]): Observable<Blob> {
+    return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, { responseType: 'blob' as 'json' });
+  }
+  exportTemplateReport(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
+  }
+
+
   importReport(file: any): Observable<any> {
     const formData = new FormData();
     formData.append('file', file, file.name);
@@ -56,5 +64,14 @@ export class ReportService {
     return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
   }
 
+  reupReport(expenses: [], reportId: string): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('reportId', reportId);
+    urlParams.append('uid', uid);
+    return this.http.post(this.apiUrl + '/reupload?' + urlParams, expenses);
+  }
 
 }
