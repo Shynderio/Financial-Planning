@@ -65,7 +65,20 @@ namespace FinancialPlanning.WebAPI.Controllers
 
 
 
+        [HttpGet("GenerateAnnual")]
+        public async Task<IActionResult> GenerateAnnual()
+        {
+            try
+            {
+                var result = await _annualReportService.GenerateAnnualReport();
+            return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
 
+        }
 
 
         [HttpGet("Geturlfile")]

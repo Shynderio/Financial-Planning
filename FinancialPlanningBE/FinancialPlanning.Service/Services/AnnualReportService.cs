@@ -1,5 +1,6 @@
 ﻿using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -47,6 +48,10 @@ namespace FinancialPlanning.Service.Services
 
                     //Get expense of report
                     List<Expense> expenses = _fileService.ConvertExcelToList(file, 1);
+                    if (expenses == null || !expenses.Any())
+                    {
+                        continue;
+                    }
                     decimal totalExpense = expenses.Sum(e => e.TotalAmount);
                     decimal biggestExpense = expenses.Max(e => e.TotalAmount);
                     ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport

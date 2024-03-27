@@ -42,6 +42,7 @@ export class ImportReportComponent implements OnInit {
   monthOptions: string[] = [];
   reportForm: FormGroup;
   dataSource: any = [];
+  isPreview = false;
   //paging
   listSize: number = 0;
   pageSize = 7;
@@ -133,6 +134,7 @@ export class ImportReportComponent implements OnInit {
         (data: any) => {
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
+          this.isPreview = true;
           console.log(data);
         },
         error => {
