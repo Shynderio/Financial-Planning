@@ -41,12 +41,12 @@ namespace FinancialPlanning.Service.Services
                 List<Report> reports = await _reportRepository.GetAllReportsByYear(year);
                 foreach (Report report in reports)
                 {
-                    string fileName = report.ReportName;
-                    byte[] file = await _fileService.GetFileAsync("CorrectPlan.xlsx");
+                    string fileName = report.Department.DepartmentName + '/' + report.Term.TermName + "/"
+                                                  + report.Month + "/Report/version_" + report.GetMaxVersion();
+                    byte[] file = await _fileService.GetFileAsync(fileName+".xlsx");
 
-                    //Change 1 
                     //Get expense of report
-                    List<Expense> expenses = _fileService.ConvertExcelToList(file, 0);
+                    List<Expense> expenses = _fileService.ConvertExcelToList(file, 1);
                     decimal totalExpense = expenses.Sum(e => e.TotalAmount);
                     decimal biggestExpense = expenses.Max(e => e.TotalAmount);
                     ExpenseAnnualReport expenseAnnualReport = new ExpenseAnnualReport

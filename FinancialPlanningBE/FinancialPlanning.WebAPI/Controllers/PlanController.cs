@@ -154,7 +154,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("details/{id:guid}")]
-        [Authorize(Roles = "Accountant, FinancialStaff")]
+   //     [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetPlanDetails(Guid id)
         {
             try
@@ -171,10 +171,12 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Get the name of the user who uploaded the file
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
+                var dueDate = plan.Term.PlanDueDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
+                    planDueDate = dueDate,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy

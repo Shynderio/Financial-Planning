@@ -56,5 +56,14 @@ export class ReportService {
     return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
   }
 
+  reupReport(expenses: [], reportId: string): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const uid = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('reportId', reportId);
+    urlParams.append('uid', uid);
+    return this.http.post(this.apiUrl + '/reupload?' + urlParams, expenses);
+  }
 
 }

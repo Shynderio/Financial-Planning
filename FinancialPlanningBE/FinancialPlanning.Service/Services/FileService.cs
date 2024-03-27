@@ -38,6 +38,17 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         return memoryStream.ToArray();
     }
 
+    public async Task DeleteFileAsync(string key)
+    {
+        var request = new DeleteObjectRequest
+        {
+            BucketName = configuration["AWS:BucketName"],
+            Key = key,
+        };
+
+        await s3Client.DeleteObjectAsync(request);
+    }
+
     /*
      * documentType:
      * {
@@ -185,26 +196,26 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         var worksheet = package.Workbook.Worksheets[0];
         foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
         {
-            worksheet.Cells[index + 2, 1].Value = expense.Date;
-            worksheet.Cells[index + 2, 2].Value = expense.Term;
-            worksheet.Cells[index + 2, 3].Value = expense.Department;
-            worksheet.Cells[index + 2, 4].Value = expense.ExpenseName;
-            worksheet.Cells[index + 2, 5].Value = expense.CostType;
-            worksheet.Cells[index + 2, 6].Value = expense.UnitPrice;
-            worksheet.Cells[index + 2, 7].Value = expense.Amount;
+            worksheet.Cells[index + 3, 1].Value = expense.Date.ToString();
+            worksheet.Cells[index + 3, 2].Value = expense.Term;
+            worksheet.Cells[index + 3, 3].Value = expense.Department;
+            worksheet.Cells[index + 3, 4].Value = expense.ExpenseName;
+            worksheet.Cells[index + 3, 5].Value = expense.CostType;
+            worksheet.Cells[index + 3, 6].Value = expense.UnitPrice;
+            worksheet.Cells[index + 3, 7].Value = expense.Amount;
 
             //if document is plan
             if (documentType == 0)
             {
-                worksheet.Cells[index + 2, 8].Value = expense.Currency;
-                worksheet.Cells[index + 2, 9].Value = expense.ExchangeRate;
+                worksheet.Cells[index + 3, 8].Value = expense.Currency;
+                worksheet.Cells[index + 3, 9].Value = expense.ExchangeRate;
             }
 
-            worksheet.Cells[index + 2, 10 - documentType * 2].Value = expense.TotalAmount;
-            worksheet.Cells[index + 2, 12 - documentType * 3].Value = expense.ProjectName;
-            worksheet.Cells[index + 2, 13 - documentType * 3].Value = expense.SupplierName;
-            worksheet.Cells[index + 2, 14 - documentType * 3].Value = expense.PIC;
-            worksheet.Cells[index + 2, 15 - documentType * 3].Value = expense.Note;
+            worksheet.Cells[index + 3, 10 - documentType * 2].Value = expense.TotalAmount;
+            worksheet.Cells[index + 3, 12 - documentType * 3].Value = expense.ProjectName;
+            worksheet.Cells[index + 3, 13 - documentType * 3].Value = expense.SupplierName;
+            worksheet.Cells[index + 3, 14 - documentType * 3].Value = expense.PIC;
+            worksheet.Cells[index + 3, 15 - documentType * 3].Value = expense.Note;
         }
 
         //Convert ExcelPackage to Stream
