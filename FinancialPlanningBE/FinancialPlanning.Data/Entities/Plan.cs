@@ -15,5 +15,11 @@ namespace FinancialPlanning.Data.Entities
         [ForeignKey("Department")] public Guid DepartmentId { get; set; }
         public virtual Department Department { get; set; } = null!;
         public virtual ICollection<PlanVersion> PlanVersions { get; set; } = null!;
+        public int? GetMaxVersion()
+        {
+            if (PlanVersions == null) return 1;
+            return PlanVersions.MaxBy(rv => rv.Version)?.Version;
+
+        }
     }
 }
