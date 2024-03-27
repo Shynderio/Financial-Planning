@@ -44,13 +44,14 @@ export class AddNewUserComponent implements OnInit {
   }
   //Set default status is 1
   getStatusLabel(status: string): string {
-    return status === '1' ? 'Active' : 'DeActive';
+    return status === '1' ? 'Active' : 'Inactive';
   }
-
+ 
   getUserById(userId: string) {
     if (userId) {
       this.isEdit = true;
       this.userId = userId;
+      
       this.httpService.getUserById(userId).subscribe({
         next: (userDetail: any) => {
           const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
@@ -66,7 +67,9 @@ export class AddNewUserComponent implements OnInit {
             fullName: userDetail.fullName,
             phoneNumber: userDetail.phoneNumber,
             address: userDetail.address,
-            dob:userDetail.dob
+            dob: this.convertDdMmYyyyToIsoDate(userDetail.dob),
+            status: userDetail.status
+           
           });
         },
         error: (error: any) => {
@@ -131,9 +134,13 @@ export class AddNewUserComponent implements OnInit {
 
   validateName(control: FormControl): { [key: string]: any } | null {
     const vietnameseCharactersRegex = /[^\x00-\x7F]+/; // Biểu thức chính quy để kiểm tra ký tự tiếng Việt
+    const containsNumbers = /\d/.test(control.value); // Kiểm tra xem có chứa số không
 
     if (vietnameseCharactersRegex.test(control.value)) {
       return { containsVietnamese: true }; // Có chứa ký tự tiếng Việt
+    }
+    if (containsNumbers) {
+      return { containsNumber: true }; // Có chứa số
     }
 
     return null;
@@ -205,13 +212,22 @@ export class AddNewUserComponent implements OnInit {
     }
 
   }
-     //Convert date to dd/mm/yyyy
-     convertIsoDateToDdMmYyyy(isoDate: string): string {
-      if (!isoDate) return '';
-      const dateParts = isoDate.split('T')[0].split('-');
-      if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
-      return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-    }
+  //Convert date to dd/mm/yyyy
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+    if (!isoDate) return '';
+    const dateParts = isoDate.split('T')[0].split('-');
+    if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+  }
+  convertDdMmYyyyToIsoDate(ddMmYyyyDate: string): string {
+    if (!ddMmYyyyDate) return '';
+    const dateParts = ddMmYyyyDate.split('/');
+    if (dateParts.length !== 3) return ddMmYyyyDate; // Trả về nguyên bản nếu không phải định dạng dd/mm/yyyy
   
-
+    const yyyy = dateParts[2];
+    const mm = dateParts[1].padStart(2, '0'); // Đảm bảo mm luôn có 2 chữ số
+    const dd = dateParts[0].padStart(2, '0'); // Đảm bảo dd luôn có 2 chữ số
+  
+    return `${yyyy}-${mm}-${dd}`;
+  }
 }

@@ -202,9 +202,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
+                string filename = plan.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/"+plan.PlanName  +"/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("CorrectPlan.xlsx"), 0);
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("HR/Term+1/Plan/version_1.xlsx"), 0);
 
                 //mapper
                 var planViewModel = _mapper.Map<PlanViewModel>(plan);
@@ -212,12 +214,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Get the name of the user who uploaded the file
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
-                var dueDate = plan!.Term.PlanDueDate;
+                var dueDate = plan.Term.PlanDueDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
                     planDueDate = dueDate,
+                 //   date = date,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy

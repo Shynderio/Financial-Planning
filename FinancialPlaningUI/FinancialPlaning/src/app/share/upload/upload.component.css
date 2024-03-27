@@ -53,6 +53,7 @@ body {
         width: 20%;
         margin-left: 10%;
         margin-right: 10%;
+        border: 0;
     }
 
     .wrapper form p {

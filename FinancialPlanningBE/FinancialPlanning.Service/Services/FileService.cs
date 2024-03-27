@@ -346,5 +346,34 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         return memoryStream.ToArray();
 
     }
+    public async Task<DateTime?> GetS3FileLastModifiedAsync(string fileKey)
+    {
+
+        try
+        {
+            // Gọi API để lấy thông tin về file
+            GetObjectMetadataRequest metadataRequest = new GetObjectMetadataRequest
+            {
+                BucketName = configuration["AWS:BucketName"],
+                Key = fileKey
+            };
+
+            GetObjectMetadataResponse response = await s3Client.GetObjectMetadataAsync(metadataRequest);
+
+            // Trả về thời gian sửa đổi cuối cùng của file
+            return response.LastModified;
+        }
+        catch (AmazonS3Exception e)
+        {
+            Console.WriteLine("Error encountered on server. Message:'{0}'", e.Message);
+            return null;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Unknown encountered on server. Message:'{0}'", e.Message);
+            return null;
+        }
+    }
+
 
 }
