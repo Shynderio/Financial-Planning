@@ -1,11 +1,10 @@
 :root {
-  --green: #59de11;
-  --red: #fb1b07;
+  --success-color: #59de11;
+  --fail-color: #fb1b07;
   --lavender: #a379c9;
-  --picton-blue: #1b7aa3;
-  --gable-green: #152630;
-  --white-smoke: #d4d6d5;
-  --river-bed: #49565e;
+  --sidenav-secondary-background: #6744ff;
+  --sidenav-primary-background: #152630;
+  --icon-background: #28485a;
 }
 
 body {

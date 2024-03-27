@@ -7,7 +7,7 @@
   z-index: 1;
   opacity: 90%;
   overflow: hidden;
-  background-color: var(--gable-green);
+  background-color: var(--sidenav-primary-background);
   color: white;
 }
 
@@ -50,7 +50,11 @@
   flex-shrink: 0;
   border-radius: 20px;
   color: white;
-  background-color: var(--river-bed);
+  background-color: var(--icon-background);
+}
+
+a:hover i {
+  background-color: #4d8baf !important;
 }
 
 #account {
@@ -59,7 +63,7 @@
   bottom: 0px;
   border-top-left-radius: 50px;
   height: 70px;
-  background-color: var(--picton-blue);
+  background-color: var(--sidenav-secondary-background);
 }
 
 #account > a > i {
@@ -78,5 +82,9 @@
 
 #logout > i {
   font-size: medium !important;
-  background-color: transparent;
+  background-color: transparent !important;
+}
+
+#logout:hover > i {
+  color: #c6e53f;
 }
