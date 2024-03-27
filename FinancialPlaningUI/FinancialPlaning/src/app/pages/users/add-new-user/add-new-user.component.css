@@ -25,18 +25,9 @@ form input:focus, form select:focus {
 .form-field{
   position: relative;
 }
-
-/* form label {
-  position: absolute;
-  top: 25px;
-  transform: translateY(-50%);
-  left: 30px;
-  color: #575757;
-  user-select: none;
-  pointer-events: none;
-  transition: .25s ease;
-  font: 400 16px/1.5 'Roboto', sans-serif;
-} */
+a.user-list-link {
+  color: black; /* Màu chữ đen */
+}
 
 .form-control:focus + label {
   top: 0px;
@@ -68,7 +59,11 @@ main>div {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   padding: 20px;
 }
-
+.btn-disabled {
+  background-color: #5C636A; /* Thay đổi màu nền */
+  color: white; /* Thay đổi màu chữ */
+  cursor: not-allowed; /* Thay đổi kiểu con trỏ */
+}
 main {
   position: absolute;
   height: calc(100vh - 120px);
@@ -82,4 +77,8 @@ main {
   /* -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; */
+}
+ .mb-4{
+  font-weight: bolder;
+
 }

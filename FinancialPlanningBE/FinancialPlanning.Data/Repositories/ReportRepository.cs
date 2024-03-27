@@ -157,7 +157,7 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<int> GetTotalDepartByYear(int year)
         {
-            var departmentCount = await _context.Reports
+            var departmentCount = await _context.Reports!
               .Where(r => r.Month.EndsWith(year.ToString()))
                 .Select(r => r.DepartmentId)
                 .Distinct()
@@ -169,9 +169,10 @@ namespace FinancialPlanning.Data.Repositories
         //List reports by yearg
         public async Task<List<Report>> GetAllReportsByYear(int year)
         {
-            var reports = await _context.Reports
+            var reports = await _context.Reports!
                 .Include(r => r.Department)
                 .Include(r => r.Term)
+                .Include(r => r.ReportVersions)
                 .Where(r => r.Month.EndsWith(year.ToString()))
                 .ToListAsync();
 

@@ -1,7 +1,8 @@
+using System.ComponentModel;
 using AutoMapper;
-using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.WebAPI.Models.Department;
+using FinancialPlanning.WebAPI.Models.Expense;
 using FinancialPlanning.WebAPI.Models.Plan;
 using FinancialPlanning.WebAPI.Models.Position;
 using FinancialPlanning.WebAPI.Models.Report;
@@ -19,7 +20,7 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.EndDate,
                     opt => opt.MapFrom(src => src.StartDate.AddMonths(src.Duration)))
                 .ForMember(dest => dest.Status,
-                    opt => opt.MapFrom(src => ((TermStatus)src.Status).ToString()));
+                    opt => opt.MapFrom(src => GetEnumDescription(src.Status)));
             CreateMap<Term, TermViewModel>().ReverseMap();
             CreateMap<CreateTermModel, Term>();
 
@@ -82,6 +83,21 @@ namespace FinancialPlanning.WebAPI.Helpers
             // map planVersion to planVersionModel
             CreateMap<PlanVersion, PlanVersionModel>()
             .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.User.Username));
+
+            // map Expense
+            CreateMap<Expense, ExpenseStatusModel>();
+            CreateMap<ExpenseStatusModel, Expense>();
+        }
+
+        private static string GetEnumDescription(Enum value)
+        {
+            var fieldInfo = value.GetType().GetField(value.ToString());
+            var descriptionAttributes = fieldInfo?.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+            if (descriptionAttributes == null || descriptionAttributes.Length == 0)
+                return value.ToString();
+
+            return descriptionAttributes[0].Description;
         }
     }
 }

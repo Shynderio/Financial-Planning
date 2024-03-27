@@ -42,6 +42,7 @@ export class ImportReportComponent implements OnInit {
   monthOptions: string[] = [];
   reportForm: FormGroup;
   dataSource: any = [];
+  isPreview = false;
   //paging
   listSize: number = 0;
   pageSize = 7;
@@ -133,6 +134,7 @@ export class ImportReportComponent implements OnInit {
         (data: any) => {
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
+          this.isPreview = true;
           console.log(data);
         },
         error => {
@@ -217,5 +219,20 @@ export class ImportReportComponent implements OnInit {
     this.selectedTermId = termId;
     console.log('Selected term:', termId);
   }
+
+   // Export all file template
+exportMutilreport() {
+ 
+  this.reportService.exportTemplateReport().subscribe(
+    (data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'Template Report.xlsx';
+      link.click();
+    }
+   
+  );
+}
 
 }

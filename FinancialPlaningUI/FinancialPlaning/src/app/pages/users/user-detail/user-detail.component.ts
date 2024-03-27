@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterLink],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.css'
 })
@@ -68,7 +68,7 @@ export class UserDetailComponent implements OnInit {
         this.userForm.patchValue({
           username: userDetails.username,
           fullname: userDetails.fullName,
-          dob: userDetails.dob,
+          dob: this.convertDdMmYyyyToIsoDate( userDetails.dob),
           email: userDetails.email,
           department: userDetails.departmentName,
           position: userDetails.positionName,
@@ -136,6 +136,18 @@ export class UserDetailComponent implements OnInit {
   if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
   return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
 }
+convertDdMmYyyyToIsoDate(ddMmYyyyDate: string): string {
+  if (!ddMmYyyyDate) return '';
+  const dateParts = ddMmYyyyDate.split('/');
+  if (dateParts.length !== 3) return ddMmYyyyDate; // Trả về nguyên bản nếu không phải định dạng dd/mm/yyyy
+
+  const yyyy = dateParts[2];
+  const mm = dateParts[1].padStart(2, '0'); // Đảm bảo mm luôn có 2 chữ số
+  const dd = dateParts[0].padStart(2, '0'); // Đảm bảo dd luôn có 2 chữ số
+
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 
 }
 @Component({

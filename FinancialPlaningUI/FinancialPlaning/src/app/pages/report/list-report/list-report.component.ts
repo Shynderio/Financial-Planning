@@ -44,7 +44,8 @@ export class ListReportComponent {
   departmentName: string = '';
   dataSource: any = [];
   reports: any = [];
-
+  listSearch: any = [];
+  filterStatusEnable = false;
   searchValue: string = '';
 
   terms: any = [];
@@ -79,6 +80,7 @@ export class ListReportComponent {
         this.departmentName = decodedToken.departmentName;
         console.log(this.departmentName);
         this.fetchData();
+    
       }
     }
 
@@ -95,7 +97,6 @@ export class ListReportComponent {
       this.departments = data.departments;
 
       this.dataSource = this.getPaginatedItems();
-      console.log(data);
     });
   }
 
@@ -131,7 +132,7 @@ export class ListReportComponent {
     }
 
     this.listSize = filteredList.length;
-
+    this.listSearch = filteredList;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
@@ -159,7 +160,6 @@ export class ListReportComponent {
   //Select Quater
   onQuarterSelected(event: any): void {
     this.selectedQuarter = event.value;
-    console.log('Selected quarter ID:', this.selectedQuarter);
     this.dataSource = this.getPaginatedItems();
 
   }
@@ -182,12 +182,21 @@ export class ListReportComponent {
       }
     }
   }
-//   // Export all report
-//   exportFile(reportIds: string[]): void{
-// this.reportService.exportMutilreport(reportIds).subscribe(response => {
-//   console.log(response);
-// });
-//   }
+
+ // Export all report
+exportMutilreport() {
+  const reportIds = this.listSearch.map((report: any) => report.id);
+  this.reportService.exportMutilreport(reportIds).subscribe(
+    (data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'reports.xlsx';
+      link.click();
+    }
+   
+  );
+}
 
 
   openDeleteDialog(id: string) {

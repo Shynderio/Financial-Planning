@@ -45,14 +45,32 @@ export class PlanService {
     return this.http.post(this.apiUrl + '/import', formData)
   }
 
-  uploadPlan(termId: string, expenses: []): Observable<any> {
+  reupPlan(file: File, planId: string): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const urlParams = new URLSearchParams();
+    urlParams.append('planId', planId);
+    return this.http.post(this.apiUrl + '/reup?' + urlParams, formData)
+  }
+
+  createPlan(termId: string, expenses: []): Observable<any> {
     const token = localStorage.getItem('token') ?? '';
     const decodedToken: any = jwtDecode(token);
     const uid = decodedToken.userId;
     const urlParams = new URLSearchParams();
     urlParams.append('termId', termId);
     urlParams.append('uid', uid);
-    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+    return this.http.post(this.apiUrl + '/create?' + urlParams, expenses)
+  }
+
+  editPlan(planId: string, expenses: []): Observable<any> {
+    const token = localStorage.getItem('token') ?? '';
+    const decodedToken: any = jwtDecode(token);
+    const userId = decodedToken.userId;
+    const urlParams = new URLSearchParams();
+    urlParams.append('planId', planId);
+    urlParams.append('userId', userId);
+    return this.http.put(this.apiUrl + '/edit?' + urlParams, expenses)
   }
 
 

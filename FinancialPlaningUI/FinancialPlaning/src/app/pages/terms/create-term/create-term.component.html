@@ -29,15 +29,17 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Start date</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="date" id="start-date"
-                                formControlName="startDate" />
-                        </div>
-                        <div class="error-message col-md-3"
-                            *ngIf="termForm.get('startDate')?.errors?.['required'] && termForm.get('startDate')?.touched">
+                        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                        <div class="error-message" *ngIf="termForm.get('startDate')?.errors?.[' '] && termForm.get('startDate')?.touched">
                             <span class="text-danger">Start Date is required</span>
                         </div>
                     </div>
+                
+                 
+                    
+                    
                 </div>
             </div>
 

@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSingleton<IHostedService, StartTerm>();
 builder.Services.AddSingleton<IHostedService, AnnualTask>();
-
+builder.Services.AddSingleton<IHostedService, DayEndTasks>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -60,7 +60,7 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
-    b => b.MigrationsAssembly("FinancialPlanning.Data")));
+    b => b.MigrationsAssembly("FinancialPlanning.WebAPI")));
 
 
 builder.Services.AddHttpClient();

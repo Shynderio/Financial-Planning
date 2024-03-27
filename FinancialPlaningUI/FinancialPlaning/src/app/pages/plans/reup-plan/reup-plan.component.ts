@@ -35,7 +35,7 @@ export class ReupPlanComponent implements OnInit {
   pageSize = 7;
   pageIndex = 0;
   file: any;
-  term: string = '';
+  planId: string = '';
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -45,7 +45,8 @@ export class ReupPlanComponent implements OnInit {
     'projectName',
     'supplierName',
     'pic',
-    'notes'
+    'notes',
+    'status'
   ];
   constructor(planService: PlanService, private elementRef: ElementRef,
     private messageBar: MatSnackBar, private route: ActivatedRoute, private router: Router) {
@@ -56,8 +57,8 @@ export class ReupPlanComponent implements OnInit {
     // get term from parent router
     this.route.params.subscribe(params => {
       // Check if 'term' parameter exists
-      if (params && params['term']) {
-        this.term = params['term'];
+      if (params && params['id']) {
+        this.planId = params['id'];
       } else {
         // Redirect to 'planlist'
         this.router.navigate(['/plans']);
@@ -74,7 +75,7 @@ export class ReupPlanComponent implements OnInit {
   onImport() {
     if (this.file) {
       console.log('Importing file:', this.file);
-      this.planService.importPlan(this.file).subscribe(
+      this.planService.reupPlan(this.file, this.planId).subscribe(
         (data: any) => {
           this.dataSource = data;
           console.log(data);
@@ -109,7 +110,7 @@ export class ReupPlanComponent implements OnInit {
       const decodedToken: any = jwtDecode(token);
       var uid = decodedToken.userId;
       this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-      this.planService.uploadPlan(this.term, this.dataSource).subscribe(
+      this.planService.editPlan(this.planId, this.dataSource).subscribe(
         (data: any) => {
           console.log('Plan uploaded:', data);
           this.messageBar.open(

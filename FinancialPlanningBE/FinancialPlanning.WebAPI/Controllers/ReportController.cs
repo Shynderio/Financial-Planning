@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Amazon.Runtime.Documents;
+using FinancialPlanning.Common;
+using AutoMapper;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Service.Services;
 using FinancialPlanning.Service.Token;
@@ -7,6 +9,9 @@ using FinancialPlanning.WebAPI.Models.Report;
 using FinancialPlanning.WebAPI.Models.Term;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.VisualBasic;
+using System.Xml.Linq;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -127,10 +132,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var report = await _reportService.GetReportById(id);
                 string filename = report.Department.DepartmentName + "/"
                     + report.Term.TermName + "/" + report.Month + "/Report/version_" + version;
-              
+
 
                 //get url from name file
-                var url = await _reportService.GetFileByName(filename+".xlsx");
+                var url = await _reportService.GetFileByName(filename + ".xlsx");
 
                 // return URL
                 return Ok(new { downloadUrl = url });
@@ -141,7 +146,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpGet("export")]
+        [HttpPost("export")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {
@@ -194,8 +199,8 @@ namespace FinancialPlanning.WebAPI.Controllers
                     Month = month
                 };
                 await _reportService.CreateReport(expenses, report, uid);
-                return Ok(new { message = "Report uploaded successfully!"});
-            } 
+                return Ok(new { message = "Report uploaded successfully!" });
+            }
             catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
@@ -221,5 +226,20 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("exportTemplate")]
+        public async Task<IActionResult> ExportTemplate()
+        {
+            var filepath = Path.Combine(Directory.GetCurrentDirectory(), Common.Constants.TemplatePath[1]);
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filepath, out var contenttype))
+            {
+                contenttype = "application/octet-stream";
+            }
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
+            return File(bytes, contenttype, Path.GetFileName(filepath));
+        }
     }
 }
