@@ -68,7 +68,11 @@ main>div {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   padding: 20px;
 }
-
+.btn-disabled {
+  background-color: #5C636A; /* Thay đổi màu nền */
+  color: white; /* Thay đổi màu chữ */
+  cursor: not-allowed; /* Thay đổi kiểu con trỏ */
+}
 main {
   position: absolute;
   height: calc(100vh - 120px);
