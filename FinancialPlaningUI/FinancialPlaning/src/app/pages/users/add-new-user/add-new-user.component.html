@@ -1,9 +1,11 @@
 <link rel="stylesheet" href="add-new-user.component.css">
 <main>
     @if (isEdit) {
-    <h1 class="mb-4">Edit user form</h1>
+    <h3><b>User List</b></h3>
+    <h6>Edit User</h6>
     }@else {
-    <h1 class="mb-4">Create user form</h1>
+    <h3><b>User List</b></h3>
+    <h6>Create User</h6>
     }
     <div class="row d-flex justify-content-center align-items-center ">
 
@@ -43,6 +45,9 @@
                             <span class="text-danger"
                                 *ngIf="addUserF['controls']['fullName'].errors['excessSpaces']">Please enter a valid
                                 name with no excess spaces</span>
+                            <span class="text-danger"
+                                *ngIf="addUserF['controls']['fullName'].errors['containsNumber']">Please enter a valid
+                                name with no numbers</span>
                         </div>
                     </div>
                 </div>
@@ -211,7 +216,7 @@
                         </div>
                         <div class="col-md-5 pe-3">
                             <input class="form-control form-control-lg" type="text" id="status"
-                                value="{{ getStatusLabel('1') }}" readonly>
+                                [value]="getStatusLabel(addUserF.get('status')?.value)" readonly>
                         </div>
                     </div>
                 </div>

@@ -16,6 +16,7 @@ main {
 h6 {
   font-size: smaller;
   color: rgb(17, 17, 17);
+  font-weight: bold;
 }
 
 div:has(#page-title) {
@@ -64,6 +65,7 @@ button {
 
 .searchBar {
   position: relative;
+  
 }
 
 .searchBar input[type="text"] {
@@ -116,6 +118,7 @@ td {
 ::ng-deep .mat-mdc-paginator-outer-container {
   background-color: #B9AAAA;
   color: rgb(15, 15, 15);
+  font-weight: bolder;
 }
 
 ::ng-deep .success .mdc-snackbar__label::before {
@@ -168,7 +171,7 @@ td {
   padding: 9px 13px;
   font-size: 16px;
   border-radius: 10px;
-  background-color: #B9AAAA;
+  background-color: #fafafa;
   color: #0e0d0d;
   cursor: pointer;
   border: none;
@@ -186,4 +189,5 @@ td {
 .h3,
 b {
   color: rgb(14, 13, 13);
+  font-weight: 900;
 }

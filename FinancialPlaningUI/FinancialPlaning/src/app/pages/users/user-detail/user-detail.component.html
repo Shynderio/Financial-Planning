@@ -49,11 +49,11 @@
             <div class="choice-container">
                 <!-- Phần tử "Active" -->
                 <div *ngIf="userForm.get('status')?.value === 1" class="status-option text-success">
-                    <strong  style="font-size: 26px;color:#5bdf57"> Active</strong> 
+                    <strong  style="font-size: 26px;color:#5bdf57"> Active user</strong> 
                 </div>
                 <!-- Phần tử "Deactive" -->
                 <div *ngIf="userForm.get('status')?.value === 0" class="status-option text-danger">
-                    <strong style="font-size: 26px;color:#ff3939"> InActive</strong> 
+                    <strong style="font-size: 26px;color:#ff3939"> InActive user</strong> 
                 </div>
             </div>
             
