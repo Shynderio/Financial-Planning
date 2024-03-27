@@ -3,10 +3,11 @@ form {
     /* Set form width to 100% */
 }
 
-form .col-6 {
-    width: 25%;
+form .col-4 {
+    width: 75%;
     /* Set column width to 50% */
 }
+
 
 h1 {
     font-weight: 750;
@@ -87,5 +88,9 @@ main {
     margin-top: 20px;
     padding: 5px;
 }
+a.user-list-link {
+  color: black; /* Màu chữ đen */
+}
+
 
 

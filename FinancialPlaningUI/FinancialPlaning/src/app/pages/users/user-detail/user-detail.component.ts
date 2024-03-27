@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterLink],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.css'
 })

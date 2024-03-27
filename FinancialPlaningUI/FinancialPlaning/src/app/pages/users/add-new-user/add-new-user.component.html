@@ -1,11 +1,15 @@
 <link rel="stylesheet" href="add-new-user.component.css">
 <main>
     @if (isEdit) {
-    <h3><b>User List</b></h3>
-    <h6>Edit User</h6>
+        <h3><b>User List</b></h3>
+        <h6>
+            <a routerLink="/user-list"class="user-list-link">User List</a> > Edit User
+        </h6>
     }@else {
-    <h3><b>User List</b></h3>
-    <h6>Create User</h6>
+        <h3><b>User List</b></h3>
+        <h6>
+            <a routerLink="/user-list"class="user-list-link">User List</a> > Create User
+        </h6>
     }
     <div class="row d-flex justify-content-center align-items-center ">
 
