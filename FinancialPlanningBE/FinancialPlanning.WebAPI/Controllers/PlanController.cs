@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Reflection;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
+using FinancialPlanning.WebAPI.Models.Expense;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -136,6 +137,61 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
+        // POST: api/plan/
+        [HttpPost("reup")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<ActionResult<List<ExpenseStatusModel>>> ReuploadPlan(IFormFile file, Guid planId)
+        {
+            try
+            {
+                // Check if a file is uploaded
+                if (file.Length == 0)
+                {
+                    return BadRequest(new { message = "No file uploaded" });
+                }
+
+                // Validate the file
+                using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+                var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
+
+                if (!isValid)
+                {
+                    return BadRequest(new { message = "Invalid file format!" });
+                }
+
+                // Get expenses
+                var expenses = _planService.GetExpenses(memoryStream.ToArray());
+                
+                // Check expenses
+                var approvedExpenses = _planService.CheckExpenses(expenses, planId);
+
+                
+                var expenseModels = new List<ExpenseStatusModel>();
+
+                var planStatus = _planService.GetPlanById(planId).Result!.Status;
+                foreach(var expense in expenses)
+                {
+                    var expenseModel = _mapper.Map<ExpenseStatusModel>(expense);
+                    if (planStatus != PlanStatus.New)
+                    {
+                        expenseModel.Status = approvedExpenses.Contains(expense.No) ? "Approved" : "Waiting for approval";
+                    }
+                    expenseModels.Add(expenseModel);
+                }
+
+                return Ok(expenseModels);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                // It's generally not a good practice to return detailed exception messages to clients
+                // return StatusCode(StatusCodes.Status500InternalServerError,
+                //     "An error occurred while importing the plan file.");
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpPost("Upload")]
         [Authorize(Roles = "FinancialStaff")]
         public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
@@ -188,5 +244,20 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
+
+        // [HttpPost("update/{id:guid}")]
+        // public async Task<IActionResult> UpdateExpense(Guid id){
+        //     try{
+        //         var plan = await _planService.GetPlanById(id);
+
+        //         var dataset = new HashSet<int> { 1, 2, 3, 4, 5 };
+        //         plan!.ApprovedExpenses = dataset.ToJson();
+        //         await _planService.UpdatePlan(plan);
+        //         return Ok(new { message = "Plan updated successfully!" });
+        //     }
+        //     catch (Exception ex){
+        //         return StatusCode(500, $"Error : {ex.Message}");
+        //     }
+        // }
     }
 }

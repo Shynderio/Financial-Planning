@@ -1,6 +1,7 @@
 ﻿using FinancialPlanning.Common;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Dynamic;
 
 namespace FinancialPlanning.Data.Entities
 {
@@ -10,6 +11,7 @@ namespace FinancialPlanning.Data.Entities
         [Key] public Guid Id { get; set; }
         [Required] public string PlanName { get; set; } = string.Empty;
         [Required] public PlanStatus Status { get; set; }
+        public string ApprovedExpenses { get; set; } = string.Empty;
         [ForeignKey("Term")] public Guid TermId { get; set; }
         public virtual Term Term { get; set; } = null!;
         [ForeignKey("Department")] public Guid DepartmentId { get; set; }
