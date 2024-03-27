@@ -77,7 +77,7 @@
           </table>
   
           <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
-            [hidden]="dataSource.length==0">
+            [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
           </mat-paginator>
         </div>
         <div>

@@ -32,7 +32,6 @@ import { CommonModule } from '@angular/common';
 })
 export class ListReportComponent {
   displayedColumns: string[] = [
-    'index',
     'reportName',
     'month',
     'termName',
@@ -45,6 +44,7 @@ export class ListReportComponent {
   departmentName: string = '';
   dataSource: any = [];
   reports: any = [];
+  listSearch: any = [];
 
   searchValue: string = '';
 
@@ -61,16 +61,13 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 2;
   pageIndex = 0;
 
   constructor(
     private reportService: ReportService,
-    private fb: FormBuilder,
-    private elementRef: ElementRef,
     private dialog: MatDialog,
     private messageBar: MatSnackBar) {
-
     this.dataSource = new MatTableDataSource<Report>();
   }
 
@@ -99,7 +96,8 @@ export class ListReportComponent {
       this.departments = data.departments;
 
       this.dataSource = this.getPaginatedItems();
-      console.log(data);
+      console.log(this.dataSource)
+    
     });
   }
 
@@ -135,7 +133,8 @@ export class ListReportComponent {
     }
 
     this.listSize = filteredList.length;
-
+    this.listSearch = filteredList;
+    console.log(this.listSearch);
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
@@ -186,7 +185,21 @@ export class ListReportComponent {
       }
     }
   }
-  //
+
+ // Export all report
+exportMutilreport() {
+  const reportIds = this.listSearch.map((report: any) => report.id);
+  this.reportService.exportMutilreport(reportIds).subscribe(
+    (data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'reports.xlsx';
+      link.click();
+    }
+   
+  );
+}
 
 
   openDeleteDialog(id: string) {

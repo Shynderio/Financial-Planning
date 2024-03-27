@@ -70,42 +70,42 @@ export class UserListComponent implements OnInit {
   filterUsers(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
-  
+
     // Apply role filter
     if (this.selectedRole) {
       filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
     }
-  
+
     // Apply search filter
     if (this.searchValue) {
       filteredList = filteredList.filter(user =>
         user.username.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     }
-  
+
     this.userList = filteredList;
     this.getPaginatedItems();
   }
   search(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
-  
+
     // Apply role filter
     if (this.selectedRole) {
       filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
     }
-  
+
     // Apply search filter
     if (this.searchValue) {
       filteredList = filteredList.filter(user =>
         user.username.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     }
-  
+
     this.userList = filteredList;
     this.getPaginatedItems();
   }
-  
+
 
   edit(id: string) {
     console.log(id);

@@ -22,6 +22,7 @@ import { ReupReportComponent } from './pages/report/reup-report/reup-report.comp
 import { ListAnnualReportsComponent } from './pages/annual-report/list-annual-reports/list-annual-reports.component';
 import { AnnualReportDetailsComponent } from './pages/annual-report/annual-report-details/annual-report-details.component';
 import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
+import { AdminGuard } from './services/auth/admin.guard';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -32,7 +33,7 @@ export const routes: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
     // term
     { path: 'terms', component: TermsComponent, canActivate: [AuthGuard]},
-    { path: 'create-term', component: CreateTermComponent, canActivate: [ AccountantGuard] },
+    { path: 'create-term', component: CreateTermComponent, canActivate: [AccountantGuard] },
     { path: 'edit-term/:id', component: EditTermComponent, canActivate: [AccountantGuard] },
     { path: 'term-details/:id', component: TermDetailsComponent, canActivate: [AuthGuard] },
      //report
@@ -45,12 +46,12 @@ export const routes: Routes = [
     { path: 'import-plan', component: ImportPlanComponent, canActivate: [AuthGuard]},
     { path: 'plan-details/:id', component: PlanDetailsComponent, canActivate: [AuthGuard] },
      //user
-    { path: 'user-list', component: UserListComponent },
-    { path: 'add-user', component: AddNewUserComponent },
-    { path: 'edit-user/:id', component: AddNewUserComponent },
-    { path: 'user-detail/:id', component: UserDetailComponent },
+    { path: 'user-list', component: UserListComponent, canActivate:[AdminGuard]},
+    { path: 'add-user', component: AddNewUserComponent,canActivate:[AdminGuard] },
+    { path: 'edit-user/:id', component: AddNewUserComponent,canActivate:[AdminGuard] },
+    { path: 'user-detail/:id', component: UserDetailComponent,canActivate:[AdminGuard] },
     //annual reports
-    { path: 'annual-reports', component: ListAnnualReportsComponent },
-    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent }
+    { path: 'annual-reports', component: ListAnnualReportsComponent, canActivate: [AuthGuard] },
+    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent, canActivate: [AuthGuard] }
   
 ];
