@@ -86,6 +86,7 @@ namespace FinancialPlanning.WebAPI.Helpers
 
             // map Expense
             CreateMap<Expense, ExpenseStatusModel>();
+            CreateMap<ExpenseStatusModel, Expense>();
         }
     }
 }

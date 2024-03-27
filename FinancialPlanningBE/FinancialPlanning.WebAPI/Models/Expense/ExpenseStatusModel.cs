@@ -1,4 +1,5 @@
 using System;
+using FinancialPlanning.Common;
 
 namespace FinancialPlanning.WebAPI.Models.Expense
 {
@@ -19,6 +20,6 @@ namespace FinancialPlanning.WebAPI.Models.Expense
         public string SupplierName { get; set; } = string.Empty;
         public string PIC { get; set; } = string.Empty;
         public string? Note { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public PlanStatus Status { get; set; }
     }
 }

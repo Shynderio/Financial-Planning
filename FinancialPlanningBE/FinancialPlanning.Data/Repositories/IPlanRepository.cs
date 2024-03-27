@@ -20,12 +20,12 @@ namespace FinancialPlanning.Data.Repositories
 
         // Import a new financial plan.
 
-        public Task ImportPlan(Plan plan, Guid userId);
+        public Task<Plan> ImportPlan(Plan plan, Guid userId);
 
 
         // Re-upload an existing financial plan.
 
-        public Task ReupPlan(Guid planId, Guid userId);
+        public Task<Plan> ReupPlan(Plan plan, Guid userId);
 
 
         // Retrieve details of a financial plan based on term and department.

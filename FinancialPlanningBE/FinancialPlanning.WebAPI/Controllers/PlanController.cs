@@ -175,7 +175,9 @@ namespace FinancialPlanning.WebAPI.Controllers
                     var expenseModel = _mapper.Map<ExpenseStatusModel>(expense);
                     if (planStatus != PlanStatus.New)
                     {
-                        expenseModel.Status = approvedExpenses.Contains(expense.No) ? "Approved" : "Waiting for approval";
+                        expenseModel.Status = approvedExpenses.Contains(expense.No) ? PlanStatus.Approved : PlanStatus.WaitingForApproval;
+                    } else {
+                        expenseModel.Status = PlanStatus.New;
                     }
                     expenseModels.Add(expenseModel);
                 }
@@ -192,25 +194,8 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpPost("Upload")]
-        [Authorize(Roles = "FinancialStaff")]
-        public async Task<IActionResult> UploadPlan(List<Expense> expenses, Guid termId, Guid uid)
-        {
-            try
-            {
-                await _planService.SavePlan(expenses, termId, uid);
-                return Ok(new { message = "Plan uploaded successfully!" });
-            }
-            catch (Exception)
-            {
-                // Log the exception
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "An error occurred while uploading the plan file.");
-            }
-        }
-
         [HttpGet("details/{id:guid}")]
-   //     [Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetPlanDetails(Guid id)
         {
             try
@@ -227,7 +212,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 // Get the name of the user who uploaded the file
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
-                var dueDate = plan.Term.PlanDueDate;
+                var dueDate = plan!.Term.PlanDueDate;
 
                 var result = new
                 {
@@ -247,19 +232,44 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        // [HttpPost("update/{id:guid}")]
-        // public async Task<IActionResult> UpdateExpense(Guid id){
-        //     try{
-        //         var plan = await _planService.GetPlanById(id);
-
-        //         var dataset = new HashSet<int> { 1, 2, 3, 4, 5 };
-        //         plan!.ApprovedExpenses = dataset.ToJson();
-        //         await _planService.UpdatePlan(plan);
-        //         return Ok(new { message = "Plan updated successfully!" });
-        //     }
-        //     catch (Exception ex){
-        //         return StatusCode(500, $"Error : {ex.Message}");
-        //     }
-        // }
+        [HttpPost("edit")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId){
+            try{
+                var expenses = new List<Expense>();
+                var approvedNos = new List<int>();
+                foreach(var expenseModel in expenseModels){
+                    var expense = _mapper.Map<Expense>(expenseModel);
+                    expenses.Add(expense);
+                    if (expenseModel.Status == PlanStatus.Approved){
+                        approvedNos.Add(expense.No);
+                    }
+                }
+                await _planService.ReupPlan(expenses, approvedNos, planId, userId);
+                return Ok(new { message = "Plan updated successfully!" });
+            }
+            catch (Exception ex){
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+    
+        [HttpPost("create")]
+        [Authorize(Roles = "FinancialStaff")]
+        public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid){
+            try{
+                var plan = new Plan{
+                    TermId = termId,
+                    Status = PlanStatus.New,   
+                };
+                await _planService.CreatePlan(expenses, plan, uid);
+                return Ok(new { message = "Plan updated successfully!" });
+            }
+            catch (ArgumentException ex){
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex){
+                return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
     }
 }
