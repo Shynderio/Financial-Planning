@@ -61,7 +61,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 2;
+  pageSize = 5;
   pageIndex = 0;
 
   constructor(
@@ -96,8 +96,6 @@ export class ListReportComponent {
       this.departments = data.departments;
 
       this.dataSource = this.getPaginatedItems();
-      console.log(this.dataSource)
-    
     });
   }
 
@@ -134,7 +132,6 @@ export class ListReportComponent {
 
     this.listSize = filteredList.length;
     this.listSearch = filteredList;
-    console.log(this.listSearch);
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
@@ -162,7 +159,6 @@ export class ListReportComponent {
   //Select Quater
   onQuarterSelected(event: any): void {
     this.selectedQuarter = event.value;
-    console.log('Selected quarter ID:', this.selectedQuarter);
     this.dataSource = this.getPaginatedItems();
 
   }

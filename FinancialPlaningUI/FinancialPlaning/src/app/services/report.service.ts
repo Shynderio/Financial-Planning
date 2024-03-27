@@ -42,6 +42,9 @@ export class ReportService {
   exportMutilreport(reportIds: string[]): Observable<Blob> {
     return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, { responseType: 'blob' as 'json' });
   }
+  exportTemplateReport(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
+  }
 
 
   importReport(file: any): Observable<any> {
