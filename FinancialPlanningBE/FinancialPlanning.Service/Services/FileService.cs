@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Globalization;
+using System.Xml.Linq;
 using Amazon.Runtime.Documents;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -44,6 +45,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         {
             BucketName = configuration["AWS:BucketName"],
             Key = key,
+           
         };
 
         await s3Client.DeleteObjectAsync(request);
@@ -265,7 +267,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                 CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
                 TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
                 TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
-                TotalExpense = worksheet.Cells["B5"].Value?.ToString(),
+                TotalExpense = decimal.Parse(worksheet.Cells["B5"].Value?.ToString()),
             };
             for (int row = 8; row <= worksheet.Dimension.End.Row; row++)
             {
@@ -273,8 +275,8 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                 expense.Add(new ExpenseAnnualReport
                 {
                     Department = worksheet.Cells[row, 1].Value?.ToString(),
-                    TotalExpense = long.Parse(worksheet.Cells[row, 2].Value?.ToString()),
-                    BiggestExpenditure = long.Parse(worksheet.Cells[row, 3].Value?.ToString()),
+                    TotalExpense = decimal.Parse(worksheet.Cells[row, 2].Value?.ToString()),
+                    BiggestExpenditure = decimal.Parse(worksheet.Cells[row, 3].Value?.ToString()),
                     CostType = worksheet.Cells[row, 4].Value?.ToString()
                 });
 
@@ -300,7 +302,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                 CreateDate = DateTime.Parse(worksheet.Cells["B2"].Value?.ToString()),
                 TotalTerm = int.Parse(worksheet.Cells["B3"].Value?.ToString()),
                 TotalDepartment = int.Parse(worksheet.Cells["B4"].Value?.ToString()),
-                TotalExpense = worksheet.Cells["B5"].Value?.ToString()
+                TotalExpense = decimal.Parse(worksheet.Cells["B5"].Value?.ToString())
             };
 
 
@@ -316,7 +318,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //Write list of expenses to ExcelPackage
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         using var package =
-            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), @"..\FinancialPlanning.Service\Template\Annual Expense Report.xlsx")));
+            new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), Constants.TemplatePath[2])));
         var worksheet = package.Workbook.Worksheets[0];
 
         //Annual report
