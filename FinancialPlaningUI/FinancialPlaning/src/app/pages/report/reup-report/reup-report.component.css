@@ -276,3 +276,14 @@ td {
     font-size: large;
     margin-top: 15%;
 }
+
+@media screen and (max-width: 1200px) {
+    .import-card {
+        flex-direction: row;
+    }
+
+    .left{
+        width: 100%;
+        min-width: 550px
+    }
+}

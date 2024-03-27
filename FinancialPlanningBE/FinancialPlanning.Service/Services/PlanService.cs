@@ -1,3 +1,4 @@
+using System.Text.Json;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
@@ -51,7 +52,6 @@ namespace FinancialPlanning.Service.Services
             return await _planRepository.GetPlanById(id);
         }
 
-
         public async Task CreatePlan(Plan plan)
         {
             await _planRepository.CreatePlan(plan);
@@ -60,26 +60,6 @@ namespace FinancialPlanning.Service.Services
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
         {
             return await _planRepository.GetFinancialPlans(keyword, department, status);
-        }
-
-        public async Task UpdatePlan(Plan plan)
-        {
-            var existingPlan = await _planRepository.GetPlanById(plan.Id) ?? throw new ArgumentException("Plan not found with the specified ID");
-
-            var status = existingPlan.Status;
-            if (status == (int)PlanStatus.New)
-            {
-                existingPlan.PlanName = plan.PlanName;
-                existingPlan.PlanVersions = plan.PlanVersions;
-                existingPlan.Status = plan.Status;
-                existingPlan.Department = plan.Department;
-                existingPlan.Term = plan.Term;
-                await _planRepository.UpdatePlan(plan);
-            }
-            else
-            {
-                throw new ArgumentException("Plan cannot be updated as it is not in the new status");
-            }
         }
 
         public async Task DeletePlan(Guid id)
@@ -121,53 +101,102 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public bool ValidFileName(string fileName, Guid uid, Guid termId)
-        {
-            var department = _departmentRepository.GetDepartmentByUserId(uid).DepartmentName;
-            var term = _termService.GetTermById(termId).TermName;
-
-            var validName = department + "_" + term + "_Plan";  // e.g. "Finance_2022-2023_Plan" 
-            return fileName.Equals(validName);
-        }
-
-        public async Task SavePlan(List<Expense> expenses, Guid termId, Guid uid)
-        {
-            // Save the plan using PlanRepository
-            try
-            {
-                var department = _departmentRepository.GetDepartmentIdByUid(uid);
-                Plan plan = new()
-                {
-                    PlanName = string.Empty,
-                    DepartmentId = department,
-                    TermId = termId
-                };
-
-                using var saveplan = _planRepository.SavePlan(plan, uid);
-                var result = saveplan.Result;
-                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, "Plan", "version_" + result.PlanVersions.Count + ".xlsx");
-                // Convert list of expenses to Excel file                        
-                var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
-                // Upload the file to AWS S3
-                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
-
-                // Convert list of expenses to Excel file
-            }
-            catch (Exception ex)
-            {
-                // Log exception
-                throw new InvalidOperationException("An error occurred while saving the plan.", ex);
-            }
-        }
-        public async Task<string> GetFileByName(string key)
-        {
-            return await _fileService.GetFileUrlAsync(key);
-        }
-
         public async Task<IEnumerable<PlanVersion>> GetPlanVersionsAsync(Guid planId)
         {
             var planVersions = await _planRepository.GetPlanVersionsByPlanID(planId);
             return planVersions;
         }
+
+        public async Task CreatePlan(List<Expense> expenses, Plan plan, Guid uid)
+
+        {
+            var department = _departmentRepository.GetDepartmentByUserId(uid);
+            plan.DepartmentId = department.Id;
+            var isPlanExist = await _planRepository.IsPlanExist(plan.TermId, plan.DepartmentId);
+            if (isPlanExist)
+            {
+                throw new ArgumentException("Plan already exists with the specified term, department");
+            }
+            else
+            {
+                plan.Status = PlanStatus.New;
+                plan = await _planRepository.ImportPlan(plan, uid);
+
+                var filename = Path.Combine(department.DepartmentName, plan.Term.TermName, "Plan", "version_1" + ".xlsx");
+                // Convert list of expenses to Excel file                        
+                var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+                // Upload the file to AWS S3
+                await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
+            }
+        }
+
+        public async Task ReupPlan(List<Expense> expenses, List<int> approvedNos, Guid planId, Guid uid)
+        {
+            var plan = await _planRepository.GetPlanById(planId);
+            
+            if (plan == null)
+            {
+                throw new ArgumentException("Plan not found with the specified ID");
+            }
+
+            var department = plan!.Department;
+
+            plan.ApprovedExpenses = JsonSerializer.Serialize(approvedNos);
+
+            plan = await _planRepository.ReupPlan(plan, uid);
+
+            var filename = Path.Combine(department.DepartmentName, plan.Term.TermName, "Plan", "version_" + plan.PlanVersions.Count + ".xlsx");
+            // Convert list of expenses to Excel file                        
+            var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 0);
+            // Upload the file to AWS S3
+            await _fileService.UploadFileAsync(filename.Replace('\\', '/'), new MemoryStream(excelFileStream));
+        }
+
+        public List<int> CheckExpenses(List<Expense> expenses, Guid planId)
+        {
+            try {
+                var plan = _planRepository.GetPlanById(planId).Result ?? throw new ArgumentException("Plan not found with the specified ID");
+
+                string planExpenses = plan.ApprovedExpenses;
+
+                var approvedExpenses = JsonSerializer.Deserialize<List<int>>(planExpenses);
+
+                if (approvedExpenses!.Count == 0)
+                {
+                    return [];
+                }
+
+                List<int> checkedExpenses = [];
+
+                string filename = Path.Combine(plan.Department.DepartmentName, plan.Term.TermName, "Plan", "version_" + plan.PlanVersions.Count + ".xlsx");
+
+                var filebytes = _fileService.GetFileAsync(filename.Replace('\\', '/')).Result;
+                var currentExpenses = _fileService.ConvertExcelToList(filebytes, 0);
+
+                foreach (var expense in approvedExpenses)
+                {
+                    if (currentExpenses.Any(e => e.No == expense))
+                    {
+                        var checker = currentExpenses.FirstOrDefault(e => e.No == expense);
+                        if (checker!.Equals(expenses.FirstOrDefault(e => e.No == expense)))
+                        {
+                            checkedExpenses.Add(expense);
+                        }
+                    }
+                }
+
+                return checkedExpenses;
+
+            } catch (Exception ex)
+            {
+                throw new Exception("An error occurred while checking the expenses", ex);
+            }
+        }
+
+        public async Task SubmitPlan(Guid termId, string planName, string departmentOrUid)
+        {
+            await _planRepository.SubmitPlan(termId, planName, departmentOrUid);
+        }
     }
+
 }

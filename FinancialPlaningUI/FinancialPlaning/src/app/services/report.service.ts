@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
 import { Report } from '../models/report.model';
@@ -38,6 +38,14 @@ export class ReportService {
   exportSinglereport(reportId: string,version:number){
     return this.http.get(this.apiUrl+'/export/'+reportId+'/'+version)
   }
+
+  exportMutilreport(reportIds: string[]): Observable<Blob> {
+    return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, { responseType: 'blob' as 'json' });
+  }
+  exportTemplateReport(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
+  }
+
 
   importReport(file: any): Observable<any> {
     const formData = new FormData();

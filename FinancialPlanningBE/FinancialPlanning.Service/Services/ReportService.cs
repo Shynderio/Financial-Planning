@@ -2,6 +2,7 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using OfficeOpenXml;
+using System.Composition;
 
 namespace FinancialPlanning.Service.Services
 {
@@ -48,10 +49,15 @@ namespace FinancialPlanning.Service.Services
         public async Task DeleteReport(Guid id)
         {
             var reportToDelete = await _reportRepository.GetReportById(id);
+            var filename = reportToDelete.Department.DepartmentName + '/' + reportToDelete.Term.TermName + "/"
+                                                  + reportToDelete.Month + "/Report/version_" + reportToDelete.GetMaxVersion()+".xlsx";
             if (reportToDelete != null)
             {
                 await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
                 await _reportRepository.DeleteReport(reportToDelete);
+                //delete file on cloud
+                await _fileService.DeleteFileAsync(filename);
+                
             }
             else
             {
@@ -101,8 +107,8 @@ namespace FinancialPlanning.Service.Services
             foreach (var report in reports)
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
-                    await _fileService.GetFileAsync(report.Department.DepartmentName + '/' + report.Term.TermName +
-                                                    "/Report/" + report.Month + "/version_" + report.GetMaxVersion()),
+                    await _fileService.GetFileAsync(report.Department.DepartmentName + "/"
+                    + report.Term.TermName + "/" + report.Month + "/Report/version_" + report.GetMaxVersion()+ ".xlsx"),
                     1));
             }
             

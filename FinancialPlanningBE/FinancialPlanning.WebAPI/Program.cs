@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSingleton<IHostedService, StartTerm>();
 builder.Services.AddSingleton<IHostedService, AnnualTask>();
-
+builder.Services.AddSingleton<IHostedService, DayEndTasks>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
