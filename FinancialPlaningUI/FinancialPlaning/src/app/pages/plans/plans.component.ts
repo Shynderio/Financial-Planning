@@ -90,6 +90,8 @@ export class PlansComponent implements OnInit {
     'version',
     'action',
   ];
+  filterStatusEnable = false;
+
   showEditDeleteButton(plan: Plan): boolean {
     return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()  || this.role === 'FinancialStaff');
   }
