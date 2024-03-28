@@ -3,10 +3,15 @@ form {
     /* Set form width to 100% */
 }
 
-form .col-6 {
+form .col-md-3{
     width: 25%;
     /* Set column width to 50% */
 }
+form .col-md-9{
+    width: 60%;
+    /* Set column width to 50% */
+}
+
 
 h1 {
     font-weight: 750;
@@ -14,6 +19,7 @@ h1 {
 }
 h4 {
     font-weight: bolder;
+    font-size: larger;
 }
 form input,
 form select {
@@ -22,6 +28,7 @@ form select {
     margin-bottom: 10px;
     padding: 0 15px;
     background-color: #ebeef3;
+    font-weight: bold;
     
 }
 
@@ -33,7 +40,8 @@ form select {
 .card{
     background-color: #0101dd00;
     color: rgb(32, 32, 32);
-    height: 80%;
+    min-height: 80%;
+    
 }
 
 table {
@@ -42,37 +50,44 @@ table {
 }
 
 main {
-    background-color:rgb(194, 194, 194);
+    background-color:#E6E6E6;
     box-shadow: none;
     padding: 30px;
+    
+    
 }
 
 main>div {
     border-radius: 24px;
-    background-color: rgb(194, 194, 194);
+    background-color:#FAF6F6;
     box-shadow: rgba(228, 223, 216, 0.2) 0px 8px 24px;
     padding: 20px;
+
+  
+    
 }
 
 main {
-    position: absolute; 
-    height: calc(100vh - 120px);
+    position: relative; 
+    min-height: calc(100vh - 120px);
     width: calc(100vw - 100px);
-    max-height: calc(100vh - 120px);
+    min-height: calc(100vh - 120px);
     max-width: calc(100vw - 100px);
-    border-radius: 20px;
-    top: 100px;
+    border-radius: 10px;
+    top: 60px;
     left: 80px;
-    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-    /* -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box; */
 }
 /* Trích dẫn phần tử chứa các lựa chọn "Active" và "Deactive" */
 .choice-container {
-    position: fixed; /* Đặt vị trí cố định */
-    top: 100px; /* Căn chỉnh vị trí từ phía trên */
-    right: 100px; /* Căn chỉnh vị trí từ phía bên phải */
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    font-weight: bold;
+    background-color: #E6E6E6;
+    margin-top: 10px;
+    margin-right: 5px;
+    padding: 2px;
+    font-size: larger;
 }
 
 /* Căn chỉnh nút "Change Status" và "Cancel" */
@@ -80,12 +95,10 @@ main {
 .btn-secondary {
     margin-right: 10px; /* Tạo khoảng cách giữa các nút */
 }
-.choice-container{
-    font-weight: bold;
-    background-color: rgb(255, 255, 255);
-    border-radius: 5px 5px 5px 5px;
-    margin-top: 20px;
-    padding: 5px;
+
+a.user-list-link {
+  color: black; /* Màu chữ đen */
 }
+
 
 

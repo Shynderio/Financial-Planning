@@ -13,6 +13,9 @@ using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
 using FinancialPlanning.Service.Token;
+using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using FinancialPlanning.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -122,7 +125,25 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!))
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async context =>
+        {
+            var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
+            var userIdClaim = context.Principal.FindFirst("userid");
+            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            {
+                var user = await userService.GetUserById(userId);
 
+                if (user == null || user.Status== UserStatus.Inactive)
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    context.Response.CompleteAsync();
+                }
+            }
+          
+        }
+    };
 });
 
 var app = builder.Build();

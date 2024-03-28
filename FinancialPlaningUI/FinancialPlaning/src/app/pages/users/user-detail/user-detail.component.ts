@@ -1,17 +1,21 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 @Component({
+  providers: [provideNativeDateAdapter()],
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterLink,MatDatepickerModule,MatInputModule],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.css'
 })
@@ -68,7 +72,7 @@ export class UserDetailComponent implements OnInit {
         this.userForm.patchValue({
           username: userDetails.username,
           fullname: userDetails.fullName,
-          dob: this.convertDdMmYyyyToIsoDate( userDetails.dob),
+          dob:  userDetails.dob,
           email: userDetails.email,
           department: userDetails.departmentName,
           position: userDetails.positionName,

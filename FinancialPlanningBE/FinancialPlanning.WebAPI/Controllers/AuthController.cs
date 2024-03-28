@@ -39,7 +39,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             //Invalid account and returned emtry
             if (string.IsNullOrEmpty(token))
             {
-                response = Unauthorized(new { message = "Invalid email or password" });
+                response = Unauthorized(new { message = "Either email address or password is incorrect. Please try again" });
+            }
+            else if (token.Equals("Inactive"))
+            {
+                response = Unauthorized(new { message = "Your account is disabled. Contact us for help." });
             }
             else
             {
