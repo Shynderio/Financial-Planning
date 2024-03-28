@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -29,6 +29,13 @@ export class AddNewUserComponent implements OnInit {
   positions: IPosition[] = [];
   userId!: string;
   isEdit = false;
+
+  
+   @ViewChild('fullNameInput') fullNameInput!: ElementRef;
+
+    ngAfterViewInit() {
+        this.fullNameInput.nativeElement.focus();
+    }
 
 
   constructor(

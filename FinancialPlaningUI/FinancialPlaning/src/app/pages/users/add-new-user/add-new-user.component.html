@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-5 pe-3">
                             <input class="form-control form-control-lg" type="text" id="fullname"
-                                formControlName="fullName" />
+                                formControlName="fullName" #fullNameInput />
                         </div>
                         <div class="error-message col-md-3 "
                             *ngIf="addUserF['controls']['fullName'].dirty && addUserF['controls']['fullName'].errors">
@@ -262,3 +262,5 @@
         <footer>
 
         </footer>
+    </div>
+</main>
