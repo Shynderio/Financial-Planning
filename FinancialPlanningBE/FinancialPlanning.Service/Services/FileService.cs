@@ -1,14 +1,16 @@
 ﻿using System.Data;
 using System.Globalization;
-using System.Xml.Linq;
 using Amazon.Runtime.Documents;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Aspose.Cells;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic.FileIO;
 using OfficeOpenXml;
+using LoadOptions = System.Xml.Linq.LoadOptions;
 
 namespace FinancialPlanning.Service.Services;
 
@@ -375,5 +377,17 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         }
     }
 
-
+    public MemoryStream ConvertCsvToExcel(MemoryStream csvStream)
+    {
+        var workbook = new Workbook(csvStream, new TxtLoadOptions(LoadFormat.CSV)
+        {
+            Separator = ';',
+            ConvertDateTimeData = false
+        });
+        
+        var excelStream = new MemoryStream();
+        workbook.Save(excelStream, SaveFormat.Xlsx);
+        
+        return excelStream;
+    }
 }
