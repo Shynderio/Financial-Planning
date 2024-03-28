@@ -73,8 +73,19 @@ form {
     /* width: 360px; */
     /* padding: 0 30px 0 30px; */
     /* display: block; */
+    display: flex;
+    flex-direction: row;
     background-color: #222143;
+    align-items: center;
+    width: 100%;
 }
+
+
+a {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 
 /* .buttons {
     position: absolute;
@@ -83,6 +94,14 @@ form {
     justify-content: flex-start;
     margin-top: 20px;
 } */
+
+.import-card .buttons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* margin-top: 20px; */
+    width: 100%;
+}
 
 .back-button {
     background-color: white;
@@ -113,7 +132,7 @@ form {
 }
 
 .preview-card {
-    min-width: 850px;
+    min-width: 900px;
     position: relative;
 }
 
@@ -127,16 +146,38 @@ form {
     align-items: center;
 }
 
+app-upload {
+    width: 100%;
+}
 @media screen and (max-width: 1200px) {
     .import-card {
+        display: flex;
         flex-direction: row;
+        position: relative;
+
     }
 
     .left{
-        width: 100%;
+        /* width: 100%; */
         min-width: 550px
     }
+
+    app-upload {
+        width: 75%;
+    }
+
+    .import-card .buttons{
+        flex-direction: column;
+        width: 20%;
+    }
+
+    .preview-button{
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px;
+    }
 }
+
 
 mat-label {
     color: #4F85F2;
