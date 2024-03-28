@@ -13,6 +13,8 @@
   --closed-status-background: #ececec;
   --closed-status-color: #808080; 
   --button-background: #6F4EFF;
+  --version-background: #fff5cc;
+  --close-button-background: #d4200b;
 }
 
 body {
