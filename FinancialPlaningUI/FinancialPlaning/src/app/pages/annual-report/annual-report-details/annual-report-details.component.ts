@@ -62,7 +62,7 @@ ngOnInit(): void {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.expenses.filter(
       (data: any) =>
-      data.department.toLowerCase().includes(this.searchValue)
+      data.department.toLowerCase().includes(this.searchValue.toLowerCase())
     );;
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
