@@ -15,6 +15,7 @@ using System.Text;
 using FinancialPlanning.Service.Token;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using FinancialPlanning.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -134,17 +135,13 @@ builder.Services.AddAuthentication(options =>
             {
                 var user = await userService.GetUserById(userId);
 
-                if (user == null || user.Status==0)
+                if (user == null || user.Status== UserStatus.Inactive)
                 {
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     context.Response.CompleteAsync();
                 }
             }
-            else
-            {
-                context.Fail("Invalid user ID");
-            }
-
+          
         }
     };
 });
