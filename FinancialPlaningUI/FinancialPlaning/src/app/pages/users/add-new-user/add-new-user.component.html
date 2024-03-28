@@ -1,15 +1,15 @@
 <link rel="stylesheet" href="add-new-user.component.css">
 <main>
     @if (isEdit) {
-        <h3><b>User List</b></h3>
-        <h6>
-            <a routerLink="/user-list"class="user-list-link">User List</a> > Edit User
-        </h6>
+    <h3><b>User List</b></h3>
+    <h6>
+        <a routerLink="/user-list" class="user-list-link">User List</a> > Edit User
+    </h6>
     }@else {
-        <h3><b>User List</b></h3>
-        <h6>
-            <a routerLink="/user-list"class="user-list-link">User List</a> > Create User
-        </h6>
+    <h3><b>User List</b></h3>
+    <h6>
+        <a routerLink="/user-list" class="user-list-link">User List</a> > Create User
+    </h6>
     }
     <div class="row d-flex justify-content-center align-items-center ">
 
@@ -86,7 +86,10 @@
                             <h6 class="mb-0">DOB</h6>
                         </div>
                         <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="date" id="dob" formControlName="dob" />
+                            <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
+                                formControlName="dob">
+                            <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #dobPicker></mat-datepicker>
                         </div>
                         <div class="error-message col-md-3"
                             *ngIf="addUserF['controls']['dob'].dirty && addUserF['controls']['dob'].errors">
@@ -116,6 +119,12 @@
                             <span class="text-danger"
                                 *ngIf="addUserF['controls']['phoneNumber'].errors['pattern']">Phone Number should be
                                 numbers</span>
+                            <span class="text-danger"
+                                *ngIf="addUserF['controls']['phoneNumber'].errors['required']">Phone Number cannot be
+                                empty</span>
+                            <span class="text-danger"
+                                *ngIf="addUserF['controls']['phoneNumber'].errors['maxlength']">Phone Number not exceed
+                                13 digits</span>
                         </div>
                     </div>
                 </div>
