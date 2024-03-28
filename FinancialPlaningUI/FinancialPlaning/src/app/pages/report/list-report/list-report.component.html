@@ -95,7 +95,12 @@
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
       <td mat-cell *matCellDef="let element">
-        {{ element.status === 0 ? 'New' : element.status === 1 ? 'Closed' : '' }}
+        <span class="px-2 py-2 rounded-pill"
+        [ngStyle]="{'background-color': element.status == '0' ? 'var(--new-status-background)'  : 'var(--closed-status-background)'}">
+        <i class="fa-solid fa-circle align-middle me-1"
+          [ngStyle]="{'color': element.status == '0' ? 'var(--new-status-color)' : 'var(--closed-status-color)', 'font-size': '10px'}"></i>
+          {{ element.status === 0 ? 'New' : element.status === 1 ? 'Closed' : '' }} </span>  
+     
       </td>
     </ng-container>
     <ng-container matColumnDef="version">
