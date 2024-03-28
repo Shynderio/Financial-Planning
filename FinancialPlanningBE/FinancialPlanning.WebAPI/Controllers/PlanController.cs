@@ -202,7 +202,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
-                string filename = plan.Department.DepartmentName + "/"
+                string filename = plan!.Department.DepartmentName + "/"
                       + plan.Term.TermName + "/"+plan.PlanName  +"/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);

@@ -29,17 +29,15 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Start date</h6>
                         </div>
-                        <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
-                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-                        <mat-datepicker #startDatePicker></mat-datepicker>
+                        <div class="datepicker-wrapper col-md-5 pe-3">
+                            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                            <input class="form-control form-control-lg"matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+                            <mat-datepicker #startDatePicker></mat-datepicker>
+                          </div>
                         <div class="error-message" *ngIf="termForm.get('startDate')?.errors?.[' '] && termForm.get('startDate')?.touched">
                             <span class="text-danger">Start Date is required</span>
                         </div>
                     </div>
-                
-                 
-                    
-                    
                 </div>
             </div>
 
@@ -66,9 +64,11 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">End date</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="date" id="end-date"
-                                formControlName="endDate" />
+                        <div class="col-md-5 pe-3 datepicker-wrapper">
+                            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                            <input class="form-control form-control-lg"matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+                            <mat-datepicker #endDatePicker></mat-datepicker>
+                                <!-- </div> -->
                             <div class="error-message"
                                 *ngIf="termForm.get('endDate')?.errors?.['required'] && termForm.get('endDate')?.touched">
                                 <span class="text-danger">End Date is required</span>
@@ -86,9 +86,10 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Plan due date</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="date" id="plan-due-date"
-                                formControlName="planDueDate" />
+                        <div class="col-md-5 pe-3 datepicker-wrapper">
+                            <mat-datepicker-toggle matSuffix [for]="planDuePicker"></mat-datepicker-toggle>
+                            <input class="form-control form-control-lg"matInput [matDatepicker]="planDuePicker" formControlName="planDueDate">
+                            <mat-datepicker #planDuePicker></mat-datepicker>
                         </div>
                         <!-- <div class="col-md-3 pe-5"> -->
                         <div class="col-md-3">
@@ -104,9 +105,12 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Report due date</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="date" id="report-due-date"
-                                formControlName="reportDueDate" />
+                        <div class="col-md-5 pe-3 datepicker-wrapper">
+                          
+                            <mat-datepicker-toggle matSuffix [for]="reportDueDate"></mat-datepicker-toggle>
+                            <input class="form-control form-control-lg"matInput [matDatepicker]="reportDueDate" formControlName="reportDueDate">
+                            <mat-datepicker #reportDueDate></mat-datepicker>
+                            
                         </div>
                         <div class="col-md-3">
                             <div class="error-message" *ngIf="termForm.get('reportDueDate')?.touched">

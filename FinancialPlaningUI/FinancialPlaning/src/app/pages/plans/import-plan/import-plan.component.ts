@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
+import e from 'express';
 
 @Component({
   selector: 'app-import-plan',
@@ -31,6 +32,7 @@ import { MatCard } from '@angular/material/card';
   styleUrls: ['./import-plan.component.css']
 })
 export class ImportPlanComponent implements OnInit {
+
 
   termService: TermService;
   planService: PlanService;
@@ -56,6 +58,8 @@ export class ImportPlanComponent implements OnInit {
     'notes'
   ];
   selectedTermId: string = '';
+  isTermSelected: boolean = false;
+  validFileName: string = '';
   constructor(termService: TermService, 
     planService: PlanService, 
     private fb: FormBuilder, 
@@ -82,7 +86,6 @@ export class ImportPlanComponent implements OnInit {
       }
     );
   };
-
 
   onFileSelected(event: any) {
     // debugger;
@@ -142,7 +145,7 @@ export class ImportPlanComponent implements OnInit {
     debugger;
     if (this.planForm.valid) {
       if (this.file){
-        var term = this.planForm.value.term;
+        var term = this.planForm.value.term.value;
         this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
         this.planService.createPlan(term, this.dataSource).subscribe(
           (data: any) => {
@@ -192,9 +195,18 @@ export class ImportPlanComponent implements OnInit {
     }
   }
 
-  onTermSelect(termId: string) {
-    this.selectedTermId = termId;
-    console.log('Selected term:', termId);  
+  onTermSelect(event: any) {
+    debugger;
+    this.selectedTermId = event.value.value;
+    this.isTermSelected = true;
+    var token = localStorage.getItem('token') ?? '';
+    var decodedToken: any = jwtDecode(token);
+    this.validFileName = decodedToken.departmentName + '_' + event.value.viewValue + '_Plan';
+    // console.log('Selected term:', event.viewValue); 
+    console.log('Valid filename:', this.validFileName); 
   }
 
+  exportPlanTemplate() {
+    throw new Error('Method not implemented.');
+    }
 }
