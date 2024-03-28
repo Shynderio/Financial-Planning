@@ -1,59 +1,22 @@
 main {
   position: absolute;
   height: 100vh;
-  width: calc(100vw - 100px);
+  width: calc(100vw - 60px);
   max-height: 100vh;
-  max-width: calc(100vw - 100px);
-  left: 80px;
+  max-width: calc(100vw - 60px);
+  min-width: calc(100vw - 60px);
+  left: 45px;
   padding: 30px;
-  background-color: #070f2b;
-}
-
-.container1 {
-  align-items: center;
-}
-
-th {
-  border-bottom: 1px solid #1b1a55;
-  color: white;
-  font-weight: bold;
-}
-
-.searchBar {
-  flex: 1;
-  /* Ô tìm kiếm sẽ mở rộng để lấp đầy không gian còn trống */
-  position: relative;
-  width: 100%;
-  margin-right: 10px;
-  /* Khoảng cách giữa ô tìm kiếm và các ô filter */
-}
-
-mat-form-field {
-  flex: 1;
-  /* Tất cả các ô filter sẽ có cùng kích thước */
-  margin-right: 10px;
-  /* Khoảng cách giữa các ô filter */
-}
-
-.reset-button {
-  background-color: #535c91;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-mat-label {
-  color: #4F85F2;
 }
 
 .container {
   position: relative;
+  border-bottom: 2px solid var(--white-smoke);
 }
 
 h6 {
   font-size: smaller;
+  color: #676767;
 }
 
 div:has(#page-title) {
@@ -61,131 +24,111 @@ div:has(#page-title) {
 }
 
 button {
-  background: #535c91;
+  /* background: #535c91; */
   border: none;
 }
 
 
-.btIP {
+.abc {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
 }
 
-.btIP button {
-  color: white;
+.abc button {
   padding: 10px 20px;
   border-radius: 10px;
   margin-right: 10px;
 }
 
-.btIP i {
+.abc i {
   margin-right: 10px;
 }
 
 
+#create-button > button {
+  /* color: white; */
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+#create-button i {
+  margin-right: 10px;
+}
 
 .searchBar {
   position: relative;
-  display: inline;
 }
 
 .searchBar input[type="text"] {
-  width: 40%;
-
+  width: 100%;
   line-height: 2.5;
   padding: 0px 35px;
-  border: 1px solid #9290c3;
+  border: 2px solid var(--white-smoke);
   border-radius: 10px;
-  background-color: #070f2b;
-  color: white;
 }
 
 .searchBar .fa-search {
   position: absolute;
   top: 50%;
-  left: 10px;
+  left: 24px;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #9290c3;
+  /* color: #9290c3; */
+}
+
+#filter-button {
+  width: 100px;
+  border: 2px solid var(--white-smoke);
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+mat-form-field {
+  width: 20%;
+}
+
+::ng-deep .mdc-text-field {
+  background-color: transparent !important;
+  overflow: hidden;
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  border: 2px solid var(--white-smoke);
+  border-radius: 10px;
 }
 
 table {
   width: 100%;
   min-height: auto;
-  background-color: #070f2b;
-  border: 1px solid #9290c3;
+  border: 2px solid var(--white-smoke);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   overflow: hidden !important;
-  box-shadow: 0px -5px 2px -4px #9290c3;
+  box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
   flex-shrink: 0;
 }
 
 th {
-  border-bottom: 1px solid #1b1a55;
-  color: white;
+  font-weight:900;
+  background-color: #f2f4f3 !important;
 }
 
-td {
-  border-top: 1px solid #535c91;
-  color: #9290c3;
-}
 
 ::ng-deep .mat-mdc-paginator {
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   overflow: hidden;
-}
-
-::ng-deep .mat-mdc-paginator-outer-container {
-  background-color: #535c91;
-  color: white;
-}
-
-::ng-deep .mat-mdc ::ng-deep .mat-mdc-form-field {
-  height: 50px;
-}
-
-::ng-deep .mat-mdc-text-field-wrapper {
-  margin-top: 20px !important;
-}
-
-::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: #070f2b !important;
-  border: 1px solid #9290c3;
-  border-radius: 10px;
-
-}
-
-::ng-deep .mat-mdc-select-arrow {
-  color: white !important;
-}
-
-::ng-deep .mat-mdc-form-field-infix {
-
-  width: 100px !important;
-}
-
-::ng-deep .mdc-text-field--filled .mdc-floating-label {
-
-  font-size: 14px !important;
-
-}
-
-::ng-deep .mat-mdc-select {
-  color: white !important;
-  font-size: 14px !important;
+  box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1);
 }
 
 ::ng-deep .mat-mdc-form-field {
-
-  margin-left: 30px;
-
+  margin-right: 20px;
+  width: 20%;
 }
 
-.emtry-data-message {
+.emtry-data-message{
   text-align: center;
   font-size: large;
   margin-top: 15%;
