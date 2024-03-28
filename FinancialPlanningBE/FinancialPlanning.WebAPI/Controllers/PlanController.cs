@@ -203,10 +203,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
                 string filename = plan.Department.DepartmentName + "/"
-                      + plan.Term.TermName + "/"+plan.PlanName  +"/version_" + plan.GetMaxVersion() +".xlsx";
+                      + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("HR/Term+1/Plan/version_1.xlsx"), 0);
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 0);
 
                 //mapper
                 var planViewModel = _mapper.Map<PlanViewModel>(plan);
