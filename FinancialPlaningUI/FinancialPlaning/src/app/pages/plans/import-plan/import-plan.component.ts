@@ -201,8 +201,9 @@ export class ImportPlanComponent implements OnInit {
     this.isTermSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken: any = jwtDecode(token);
-    this.validFileName = decodedToken.departmentName + '_' + this.selectedTermId + '_Plan';
-    console.log('Selected term:', event.value);  
+    this.validFileName = decodedToken.departmentName + '_' + event.value.viewValue + '_Plan';
+    // console.log('Selected term:', event.viewValue); 
+    console.log('Valid filename:', this.validFileName); 
   }
 
   exportPlanTemplate() {
