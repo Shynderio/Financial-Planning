@@ -1,21 +1,26 @@
 <main>
-  <div class="container mb-4">
+  <div class="container mb-4 pb-3 mx-0">
     <div id="page-title">
-      <h3><b>Financial Plans</b></h3>
+      <h3><b> Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <a routerLink="/import-plan" id="create-button"  class="btIP" [hidden]="role !== 'FinancialStaff'">
-      <button><i class="fa-solid fa-plus"></i> Import</button>
-    </a>
+    <div class="abc">
+      <a  routerLink="/import-report" class="create-button" >
+        <button> Import</button>
+      </a>
+    </div>
   </div>
-  <div class="mb-4" class="container1">
-    <form class="searchBar">
-      <input type="text" placeholder="Search " [value]="searchValue"  (input)="changeSearchText($event)"/>
-      <i class="fa-solid fa-search"></i>
-    </form>
-    
+    <div class="mb-4 row">
+      <form class="searchBar col-6">
+        <input type="text" placeholder="Search for Plans" (input)="changeSearchText($event)" />
+        <i class="fa-solid fa-search"></i>
+      </form>
+      <button id="filter-button" class="btn col-6 ms-4" (click)="filterStatusEnable = !filterStatusEnable"><mat-icon
+          class="align-middle">filter_list</mat-icon> Filter </button>
+    </div>
+  <div *ngIf="filterStatusEnable">
       <mat-form-field  >
-        <mat-label style="color: white; ">Department</mat-label>
+        <mat-label  >Department</mat-label>
         <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
           <mat-option value="All">All</mat-option>
           @for (depart of departments; track depart) {
@@ -24,7 +29,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field>
-        <mat-label style="color: white;">Term</mat-label>
+        <mat-label >Term</mat-label>
         <mat-select [(value)]="selectedTerm" (selectionChange)="onTermSelected($event)">
           <mat-option value="All">All</mat-option>
           @for (term of terms; track term) {
@@ -34,7 +39,7 @@
       </mat-form-field>  
 
       <mat-form-field [hidden]="role !== 'FinancialStaff'">
-      <mat-label style="color: white;">Status</mat-label>
+      <mat-label >Status</mat-label>
       <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusSelected($event)">
         <mat-option value="All">All</mat-option>
           @for (Status of status; track Status) {
@@ -42,10 +47,7 @@
       </mat-select>
 
     </mat-form-field>
-  <button class="reset-button"  (click)="resetFilters()">Reset</button>
-</div>
-    
-  
+  </div>
   
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
