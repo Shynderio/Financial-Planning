@@ -5,6 +5,7 @@
     </h6>
     <div class="doc-info mb-5 card">
         <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+            <div class="currentUser"> <b *ngIf="isCurrentUser">This is your account information !!!</b></div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="row align-items-center">
@@ -97,8 +98,8 @@
             </div>
             <div class="row mt-4 justify-content-center">
                 <div class="col-12 d-flex justify-content-center">
-                    <button type="button" class="btn btn-primary btn-lg me-2" (click)="openUpdateDialog()">Change
-                        Status</button>
+                    <button *ngIf="!isCurrentUser" type="button" class="btn btn-primary btn-lg me-2"
+                        (click)="openUpdateDialog()">Change Status</button>
                     <button type="button" class="btn btn-secondary btn-lg" (click)="cancel()">Cancel</button>
                 </div>
             </div>
