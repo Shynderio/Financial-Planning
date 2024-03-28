@@ -175,6 +175,7 @@ namespace FinancialPlanning.Service.Services
             } else {
                 report.Status = (int)ReportStatus.New;
                 report.UpdateDate = DateTime.Now;
+                report.ReportName = "";
                 var result = await _reportRepository.CreateReport(report, userId);
 
                 var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
