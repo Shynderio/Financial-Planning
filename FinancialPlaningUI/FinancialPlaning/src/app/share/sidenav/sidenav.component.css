@@ -64,6 +64,7 @@ a:hover i {
   border-top-left-radius: 50px;
   height: 70px;
   background-color: var(--sidenav-secondary-background);
+  width: 210px;
 }
 
 #account > a > i {

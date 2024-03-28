@@ -6,6 +6,7 @@ using FinancialPlanning.Data.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using FinancialPlanning.Service.DTOs;
+using FinancialPlanning.Common;
 
 namespace FinancialPlanning.Service.Services
 {
@@ -96,6 +97,7 @@ namespace FinancialPlanning.Service.Services
             var user = await _authRepository.IsValidUser(userMapper.Email, userMapper.Password);
 
             if (user == null) return string.Empty;
+            if(user.Status == UserStatus.Inactive) return "Inactive";
             //add email to claim
             var authClaims = new List<Claim>
             {

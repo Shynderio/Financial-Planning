@@ -109,7 +109,7 @@ export class ListReportComponent {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.reports.filter(
       (data: any) =>
-        data.reportName.toLowerCase().includes(this.searchValue)
+        data.reportName.toLowerCase().includes(this.searchValue.toLowerCase())
         && (this.selectedDepartment == data.departmentName || this.selectedDepartment == "All")
         && (this.selectedTerm == data.termName || this.selectedTerm == "All")
         && (this.selectstatus == data.status || this.selectstatus == "All")

@@ -12,7 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { UserModel } from "../../../models/user.model";
 import { UserService } from "../../../services/user.service";
-import { SearchListUserPipe } from "./search-list-user.pipe";
 
 @Component({
   selector: 'app-user-list',
@@ -26,7 +25,6 @@ import { SearchListUserPipe } from "./search-list-user.pipe";
     FormsModule,
     HttpClientModule,
     RouterOutlet,
-    SearchListUserPipe,
     MatTableModule,
     MatIconModule
   ],
@@ -104,6 +102,9 @@ export class UserListComponent implements OnInit {
 
     this.userList = filteredList;
     this.getPaginatedItems();
+  }
+  onChange(): void {
+    this.filterUsers();
   }
 
 

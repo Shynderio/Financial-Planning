@@ -12,14 +12,16 @@ namespace FinancialPlanning.Service.Services
         private readonly IAuthRepository _authRepository;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly FileService _fileService;
+        private readonly ITermRepository _termRepository;
 
         public ReportService(IReportRepository reportRepository,
-            IAuthRepository authRepository, IDepartmentRepository departmentRepository, FileService fileService)
+            IAuthRepository authRepository, IDepartmentRepository departmentRepository, FileService fileService, ITermRepository termRepository)
         {
             _reportRepository = reportRepository;
             _fileService = fileService;
             _authRepository = authRepository;
             _departmentRepository = departmentRepository;
+            _termRepository = termRepository;
         }
 
         public async Task<IEnumerable<Report>> GetReportsByEmail(string email)
@@ -107,8 +109,7 @@ namespace FinancialPlanning.Service.Services
             foreach (var report in reports)
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
-                    await _fileService.GetFileAsync(report.Department.DepartmentName + "/"
-                    + report.Term.TermName + "/" + report.Month + "/Report/version_" + report.GetMaxVersion()+ ".xlsx"),
+                    await _fileService.GetFileAsync(report.ReportName.Replace("_", "/") + "/version_" + report.GetMaxVersion()+ ".xlsx"),
                     1));
             }
             
@@ -166,16 +167,22 @@ namespace FinancialPlanning.Service.Services
 
         public async Task CreateReport(List<Expense> expenses, Report report, Guid userId)
         {
-            var departId = _departmentRepository.GetDepartmentIdByUid(userId);
-            report.DepartmentId = departId;
+            //Get department
+            var department = _departmentRepository.GetDepartmentByUserId(userId);
+            report.DepartmentId = department.Id;
+            //Get term
+            var term =_termRepository.GetTermById(report.TermId);
+
+            //check report is exist
             var isReportExist = await _reportRepository.IsReportExist(report.TermId, report.DepartmentId, report.Month);
             if (isReportExist)
             {
                 throw new ArgumentException("Report already exists with the specified term, department and month");
             } else {
+                // add data for report
                 report.Status = (int)ReportStatus.New;
-                report.UpdateDate = DateTime.Now;
-                report.ReportName = "";
+                report.UpdateDate = DateTime.Now; 
+                report.ReportName = department.DepartmentName+"_"+term.TermName+"_"+report.Month+"_Report";
                 var result = await _reportRepository.CreateReport(report, userId);
 
                 var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
@@ -196,7 +203,7 @@ namespace FinancialPlanning.Service.Services
                 await _reportRepository.ReupReport(reportId, userId);
 
                 var report = await _reportRepository.GetReportById(reportId);
-                var filename = Path.Combine(report!.Department.DepartmentName, report.Term.TermName, report.Month, "Report", "version_" + report.GetMaxVersion() + ".xlsx");
+                var filename = Path.Combine(report.ReportName.Replace("_", "/") + "/version_" + report.GetMaxVersion() + ".xlsx");
                 // Convert list of expenses to Excel file
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3

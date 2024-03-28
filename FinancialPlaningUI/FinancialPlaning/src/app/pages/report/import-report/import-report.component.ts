@@ -36,6 +36,7 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 export class ImportReportComponent implements OnInit {
 
 
+
   termService: TermService;
   reportService: ReportService;
   termOptions: SelectTermModel[] = [];
@@ -66,6 +67,11 @@ export class ImportReportComponent implements OnInit {
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
   ];
   selectedTermId: string = '';
+  isMonthSelected: boolean = false;
+  isTermSelected: boolean = false;
+
+
+
   constructor(termService: TermService,
     reportService: ReportService,
     private fb: FormBuilder,
@@ -95,6 +101,7 @@ export class ImportReportComponent implements OnInit {
 
   changeTerm() {
     // debugger;
+    this.isTermSelected = true;
     var term = this.reportForm.value.term;
     if (term) {
       var startMonth = new Date(term.startDate).getMonth();
@@ -113,6 +120,10 @@ export class ImportReportComponent implements OnInit {
       console.log('Month options:', this.monthOptions);
       // this.monthOptions = this.months.slice(0, selectedTerm.duration);
     }
+  }
+
+  onMonthSelected() {
+    this.isMonthSelected = true;
   }
 
   onFileSelected(event: any) {
@@ -140,19 +151,21 @@ export class ImportReportComponent implements OnInit {
         error => {
           console.log(error);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            data: { 
+            data: {
               message: error.error.message,
-              success: false},
+              success: false
+            },
 
-            })
+          })
         }
       );
     } else {
       this.messageBar.openFromComponent(MessageBarComponent, {
-        data: { 
-          message: 'Please select a file to preview.' ,
-          success: false},
-        })
+        data: {
+          message: 'Please select a file to preview.',
+          success: false
+        },
+      })
     }
   }
 
@@ -188,10 +201,11 @@ export class ImportReportComponent implements OnInit {
           error => {
             console.log('Error uploading report:', error);
             this.messageBar.openFromComponent(MessageBarComponent, {
-              data: { 
-                message: error.error.message ,
-                success: false},
-              })
+              data: {
+                message: error.error.message,
+                success: false
+              },
+            })
           }
         );
       } else {
@@ -220,19 +234,19 @@ export class ImportReportComponent implements OnInit {
     console.log('Selected term:', termId);
   }
 
-   // Export all file template
-exportMutilreport() {
- 
-  this.reportService.exportTemplateReport().subscribe(
-    (data: Blob) => {
-      const downloadURL = window.URL.createObjectURL(data);
-      const link = document.createElement('a');
-      link.href = downloadURL;
-      link.download = 'Template Report.xlsx';
-      link.click();
-    }
-   
-  );
-}
+  // Export all file template
+  exportReportTemplate() {
+
+    this.reportService.exportTemplateReport().subscribe(
+      (data: Blob) => {
+        const downloadURL = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Template Report.xlsx';
+        link.click();
+      }
+
+    );
+  }
 
 }
