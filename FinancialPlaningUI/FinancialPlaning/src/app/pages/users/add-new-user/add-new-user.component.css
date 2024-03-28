@@ -2,10 +2,7 @@ form {
   width: 100%;
   /* Set form width to 100% */
 }
-form .col-6 {
-  width: 50%;
-  /* Set column width to 50% */
-}
+
 
 form input,
 form select {
@@ -77,6 +74,7 @@ main>div {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   background-color: #FAF6F6;
   margin: 3%;
+  
 
 
 }
