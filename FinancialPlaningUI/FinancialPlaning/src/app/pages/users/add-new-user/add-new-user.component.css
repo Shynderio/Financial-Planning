@@ -2,7 +2,6 @@ form {
   width: 100%;
   /* Set form width to 100% */
 }
-
 form .col-6 {
   width: 50%;
   /* Set column width to 50% */
@@ -16,6 +15,13 @@ form select {
   height: 50px;
   padding: 0 15px;
   transition: .25s ease;
+  background-color: #EBEEF3;
+  
+}
+.mb-0{
+  font-weight: bolder;
+  color: #070707;
+  font-size: larger;
 }
 
 form input:focus, form select:focus {
@@ -27,6 +33,12 @@ form input:focus, form select:focus {
 }
 a.user-list-link {
   color: black; /* Màu chữ đen */
+}
+#note {
+  background-color: #EBEEF3
+  ; /* Màu nền */
+  color: #070707; /* Màu chữ */
+  border: 2px solid #575757   ;
 }
 
 .form-control:focus + label {
@@ -41,6 +53,7 @@ form div.error-message {
   color: red;
   font-size: 14px;
   padding-left: 10px;
+  font-weight: bolder;
 }
 
 
@@ -49,15 +62,23 @@ table {
   overflow: scroll;
 }
 
+
 main {
   box-shadow: none;
   padding: 30px;
+  background-color: #E6E6E6;
+  
+  
 }
+
 
 main>div {
   border-radius: 24px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  padding: 20px;
+  background-color: #FAF6F6;
+  margin: 3%;
+
+
 }
 .btn-disabled {
   background-color: #5C636A; /* Thay đổi màu nền */
@@ -65,14 +86,9 @@ main>div {
   cursor: not-allowed; /* Thay đổi kiểu con trỏ */
 }
 main {
-  position: absolute;
-  height: calc(100vh - 120px);
-  width: calc(100vw - 100px);
-  max-height: calc(100vh - 120px);
-  max-width: calc(100vw - 100px);
-  border-radius: 20px;
-  top: 100px;
-  left: 80px;
+  position: relative;
+  border-radius: 10px;
+  margin-left: 3%;
   /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
   /* -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;

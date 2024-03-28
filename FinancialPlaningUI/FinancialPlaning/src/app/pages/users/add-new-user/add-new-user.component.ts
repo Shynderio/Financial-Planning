@@ -8,15 +8,22 @@ import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
 import { AddUser } from '../../../models/adduser.model';
 import { UserService } from '../../../services/user.service';
+import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
 
 @Component({
+  providers: [provideNativeDateAdapter()],
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,MatDatepickerModule,MatInputModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
+
 export class AddNewUserComponent implements OnInit {
+  
   departments: IDepartment[] = [];
   roles: IRole[] = [];
   positions: IPosition[] = [];
@@ -67,7 +74,7 @@ export class AddNewUserComponent implements OnInit {
             fullName: userDetail.fullName,
             phoneNumber: userDetail.phoneNumber,
             address: userDetail.address,
-            dob: this.convertDdMmYyyyToIsoDate(userDetail.dob),
+            dob: userDetail.dob,
             status: userDetail.status
            
           });
@@ -127,7 +134,7 @@ export class AddNewUserComponent implements OnInit {
     role: new FormControl('', [Validators.required]),
     notes: new FormControl(''),
     address: new FormControl(''),
-    phoneNumber: new FormControl('', [Validators.minLength(3), Validators.maxLength(12), Validators.pattern('[0-9]*')]),
+    phoneNumber: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(11), Validators.pattern('[0-9]*')]),
     position: new FormControl('', [Validators.required]),
     status: new FormControl('1'),
   });
@@ -179,7 +186,7 @@ export class AddNewUserComponent implements OnInit {
       fullName: this.addUserF.value.fullName,
       email: this.addUserF.value.email,
       phoneNumber: this.addUserF.value.phoneNumber,
-      dob: this.convertIsoDateToDdMmYyyy(this.addUserF.value.dob),
+      dob: this.addUserF.value.dob,
       address: this.addUserF.value.address,
       departmentId: this.addUserF.value.department,
       positionId: this.addUserF.value.position,
@@ -231,3 +238,4 @@ export class AddNewUserComponent implements OnInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 }
+
