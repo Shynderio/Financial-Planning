@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -30,6 +30,13 @@ export class AddNewUserComponent implements OnInit {
   userId!: string;
   isEdit = false;
 
+  
+   @ViewChild('fullNameInput') fullNameInput!: ElementRef;
+
+    ngAfterViewInit() {
+        this.fullNameInput.nativeElement.focus();
+    }
+
 
   constructor(
     private httpService: UserService,
@@ -49,10 +56,12 @@ export class AddNewUserComponent implements OnInit {
       this.getUserById(userId);
     })
   }
-  //Set default status is 1
-  getStatusLabel(status: string): string {
-    return status === '1' ? 'Active' : 'Inactive';
-  }
+// Set default status is 1
+getStatusLabel(status: number): string {
+  return status === 1 ? 'Active' : 'Inactive';
+}
+
+
  
   getUserById(userId: string) {
     if (userId) {
@@ -64,6 +73,7 @@ export class AddNewUserComponent implements OnInit {
           const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
           const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
           const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
+          const statusLabel = this.getStatusLabel(userDetail.status); 
           this.addUserF.patchValue({
             username: userDetail.username,
             department: userDetail.departmentId,
@@ -75,7 +85,7 @@ export class AddNewUserComponent implements OnInit {
             phoneNumber: userDetail.phoneNumber,
             address: userDetail.address,
             dob: userDetail.dob,
-            status: userDetail.status
+            status: statusLabel
            
           });
         },
@@ -191,16 +201,18 @@ export class AddNewUserComponent implements OnInit {
       departmentId: this.addUserF.value.department,
       positionId: this.addUserF.value.position,
       roleId: this.addUserF.value.role,
-      status: this.addUserF.value.status,
+      status: -1 ,
       notes: this.addUserF.value.notes,
     };
     if (this.isEdit) {
+      user.status = -1;
       this.httpService.editUser(this.userId, user).subscribe(() => {
         console.log('success');
         this.toastr.success('Updated user successful', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
       });
     } else {
+      user.status = 1;
       this.httpService.addNewUser(user).subscribe(() => {
         this.toastr.success('Successfully created user', 'Financial Planning');
         this.router.navigateByUrl("/user-list");

@@ -33,7 +33,7 @@
                         </div>
                         <div class="col-md-5 pe-3">
                             <input class="form-control form-control-lg" type="text" id="fullname"
-                                formControlName="fullName" />
+                                formControlName="fullName" #fullNameInput />
                         </div>
                         <div class="error-message col-md-3 "
                             *ngIf="addUserF['controls']['fullName'].dirty && addUserF['controls']['fullName'].errors">
@@ -227,10 +227,15 @@
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Status</h6>
                         </div>
+                        @if (isEdit) {
                         <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="text" id="status"
-                                [value]="getStatusLabel(addUserF.get('status')?.value)" readonly>
+                            <input class="form-control form-control-lg" type="text" id="status" formControlName="status"
+                                readonly />
+                        </div>} @else {
+                        <div class="col-md-5 pe-3">
+                            <div class="form-control form-control-lg custom-background" readonly>Active</div>
                         </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -257,3 +262,5 @@
         <footer>
 
         </footer>
+    </div>
+</main>

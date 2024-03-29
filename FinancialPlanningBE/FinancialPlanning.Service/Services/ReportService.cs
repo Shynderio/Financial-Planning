@@ -203,7 +203,7 @@ namespace FinancialPlanning.Service.Services
                 await _reportRepository.ReupReport(reportId, userId);
 
                 var report = await _reportRepository.GetReportById(reportId);
-                var filename = Path.Combine(report!.Department.DepartmentName, report.Term.TermName, report.Month, "Report", "version_" + report.GetMaxVersion() + ".xlsx");
+                var filename = Path.Combine(report.ReportName.Replace("_", "/") + "/version_" + report.GetMaxVersion() + ".xlsx");
                 // Convert list of expenses to Excel file
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3

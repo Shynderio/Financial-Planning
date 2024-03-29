@@ -114,18 +114,22 @@ namespace FinancialPlanning.WebAPI.Controllers
                 }
 
                 // Validate the file
-                using var memoryStream = new MemoryStream();
+                var memoryStream = new MemoryStream();
                 await file.CopyToAsync(memoryStream);
+                if (Path.GetExtension(file.FileName).Equals(".csv"))
+                    memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
                 if (!isValid)
                 {
+                    memoryStream.Close();
                     return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
-
+                memoryStream.Close();
+                
                 return Ok(expenses);
             }
             catch (Exception)
@@ -151,34 +155,43 @@ namespace FinancialPlanning.WebAPI.Controllers
                 }
 
                 // Validate the file
-                using var memoryStream = new MemoryStream();
+                var memoryStream = new MemoryStream();
                 await file.CopyToAsync(memoryStream);
+                if (Path.GetExtension(file.FileName).Equals(".csv"))
+                    memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
                 if (!isValid)
                 {
+                    memoryStream.Close();
                     return BadRequest(new { message = "Invalid file format!" });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
+                memoryStream.Close();
                 
                 // Check expenses
                 var approvedExpenses = _planService.CheckExpenses(expenses, planId);
 
-                
+
                 var expenseModels = new List<ExpenseStatusModel>();
 
                 var planStatus = _planService.GetPlanById(planId).Result!.Status;
-                foreach(var expense in expenses)
+                foreach (var expense in expenses)
                 {
                     var expenseModel = _mapper.Map<ExpenseStatusModel>(expense);
                     if (planStatus != PlanStatus.New)
                     {
-                        expenseModel.Status = approvedExpenses.Contains(expense.No) ? PlanStatus.Approved : PlanStatus.WaitingForApproval;
-                    } else {
+                        expenseModel.Status = approvedExpenses.Contains(expense.No)
+                            ? PlanStatus.Approved
+                            : PlanStatus.WaitingForApproval;
+                    }
+                    else
+                    {
                         expenseModel.Status = PlanStatus.New;
                     }
+
                     expenseModels.Add(expenseModel);
                 }
 
@@ -202,12 +215,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
-                string filename = plan!.Department.DepartmentName + "/"
-                      + plan.Term.TermName + "/"+plan.PlanName  +"/version_" + plan.GetMaxVersion() +".xlsx";
+                string filename = plan.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync("HR/Term+1/Plan/version_1.xlsx"), 0);
-
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 0);
                 //mapper
                 var planViewModel = _mapper.Map<PlanViewModel>(plan);
                 var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions).ToList();
@@ -220,7 +232,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 {
                     Plan = planViewModel,
                     planDueDate = dueDate,
-                 //   date = date,
+                    //   date = date,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy
@@ -237,40 +249,51 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpPost("edit")]
         [Authorize(Roles = "FinancialStaff")]
-        public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId){
-            try{
+        public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId)
+        {
+            try
+            {
                 var expenses = new List<Expense>();
                 var approvedNos = new List<int>();
-                foreach(var expenseModel in expenseModels){
+                foreach (var expenseModel in expenseModels)
+                {
                     var expense = _mapper.Map<Expense>(expenseModel);
                     expenses.Add(expense);
-                    if (expenseModel.Status == PlanStatus.Approved){
+                    if (expenseModel.Status == PlanStatus.Approved)
+                    {
                         approvedNos.Add(expense.No);
                     }
                 }
+
                 await _planService.ReupPlan(expenses, approvedNos, planId, userId);
                 return Ok(new { message = "Plan updated successfully!" });
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
-    
+
         [HttpPost("create")]
         [Authorize(Roles = "FinancialStaff")]
-        public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid){
-            try{
-                var plan = new Plan{
+        public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
+        {
+            try
+            {
+                var plan = new Plan
+                {
                     TermId = termId,
-                    Status = PlanStatus.New,   
+                    Status = PlanStatus.New,
                 };
                 await _planService.CreatePlan(expenses, plan, uid);
                 return Ok(new { message = "Plan updated successfully!" });
             }
-            catch (ArgumentException ex){
+            catch (ArgumentException ex)
+            {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }

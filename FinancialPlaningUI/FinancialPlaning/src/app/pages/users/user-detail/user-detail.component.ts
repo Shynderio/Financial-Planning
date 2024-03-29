@@ -4,24 +4,27 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
+import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   providers: [provideNativeDateAdapter()],
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule,RouterLink,MatDatepickerModule,MatInputModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterLink, MatDatepickerModule, MatInputModule],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.css'
 })
 export class UserDetailComponent implements OnInit {
   userForm: FormGroup;
   pageIndex = 0;
+  isLoggedIn!: boolean;
+  isCurrentUser!: boolean;
 
   constructor(
     private fb: FormBuilder,
@@ -29,7 +32,8 @@ export class UserDetailComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private dialog: MatDialog,
-    private messageBar: MatSnackBar
+    private messageBar: MatSnackBar,
+    private authService: AuthService
   ) {
 
     this.userForm = this.fb.group({
@@ -72,7 +76,7 @@ export class UserDetailComponent implements OnInit {
         this.userForm.patchValue({
           username: userDetails.username,
           fullname: userDetails.fullName,
-          dob:  userDetails.dob,
+          dob: userDetails.dob,
           email: userDetails.email,
           department: userDetails.departmentName,
           position: userDetails.positionName,
@@ -83,6 +87,7 @@ export class UserDetailComponent implements OnInit {
           address: userDetails.address,
         });
         console.log(userDetails);
+        this.isCurrentUser = this.checkIfCurrentUser(userId);
       },
       error: (error: any) => {
         // Handle error
@@ -91,18 +96,21 @@ export class UserDetailComponent implements OnInit {
     });
 
   }
+  // Check userId login is userId of user detail 
+  checkIfCurrentUser(userId: string): boolean {
+    const loggedInUserId = this.authService.getUserId();//get userId login from AuthService
+    return userId === loggedInUserId;
+  }
   onSubmit() {
-    // Handle form submission if needed
   }
   cancel(): void {
-    // Điều hướng người dùng trở lại trang "user-list" khi nhấp vào nút "Cancel"
     this.router.navigate(['/user-list']);
   }
-  openUpdateDialog():void {
+  openUpdateDialog(): void {
     const userId = this.route.snapshot.paramMap.get('id');
     if (!userId) {
-        console.error('User ID is null');
-        return;
+      console.error('User ID is null');
+      return;
     }
 
     const currentStatus = this.userForm.get('status')?.value;
@@ -133,36 +141,37 @@ export class UserDetailComponent implements OnInit {
         this.loadUserDetail(userId);
       });
   }
-     //Convert date to dd/mm/yyyy
- convertIsoDateToDdMmYyyy(isoDate: string): string {
-  if (!isoDate) return '';
-  const dateParts = isoDate.split('T')[0].split('-');
-  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
-  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-}
-convertDdMmYyyyToIsoDate(ddMmYyyyDate: string): string {
-  if (!ddMmYyyyDate) return '';
-  const dateParts = ddMmYyyyDate.split('/');
-  if (dateParts.length !== 3) return ddMmYyyyDate; // Trả về nguyên bản nếu không phải định dạng dd/mm/yyyy
+  //Convert date to dd/mm/yyyy
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+    if (!isoDate) return '';
+    const dateParts = isoDate.split('T')[0].split('-');
+    if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+  }
+  convertDdMmYyyyToIsoDate(ddMmYyyyDate: string): string {
+    if (!ddMmYyyyDate) return '';
+    const dateParts = ddMmYyyyDate.split('/');
+    if (dateParts.length !== 3) return ddMmYyyyDate; // Trả về nguyên bản nếu không phải định dạng dd/mm/yyyy
 
-  const yyyy = dateParts[2];
-  const mm = dateParts[1].padStart(2, '0'); // Đảm bảo mm luôn có 2 chữ số
-  const dd = dateParts[0].padStart(2, '0'); // Đảm bảo dd luôn có 2 chữ số
+    const yyyy = dateParts[2];
+    const mm = dateParts[1].padStart(2, '0'); // Đảm bảo mm luôn có 2 chữ số
+    const dd = dateParts[0].padStart(2, '0'); // Đảm bảo dd luôn có 2 chữ số
 
-  return `${yyyy}-${mm}-${dd}`;
-}
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
 
 
 }
 @Component({
   selector: 'app-update-user-status',
   standalone: true,
-  imports: [ MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+  imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
   templateUrl: '../update-user-status/update-user-status.component.html',
   styleUrl: '../update-user-status/update-user-status.component.css'
 })
 export class UpdateUserStatusDialog {
-  constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) {}
+  constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) { }
 }
 
 
