@@ -8,29 +8,55 @@
   z-index: 1;
   opacity: 95%;
   overflow: hidden;
-  background-color: #ADB9D1;
+  background-color: #0c317a;
   color: white;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   padding-left: 1%;
   padding-right: 1%;
 }
 
+#sidenav b {
+  margin-top: 10px;
+  font-size: xx-large;
+  position: absolute;
+  margin-left: 40%;
+  min-width: 100%;
+}
+
+.user-management {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  margin-left: 43%;
+  margin-top: 40px;
+  /* Center align horizontally */
+}
+
+.centered-link {
+  display: flex;
+  align-items: center;
+  /* Center align vertically */
+  text-decoration: none;
+  color: white;
+  margin-top: 20px;
+  /* Adjust as needed */
+}
 
 
 #sidenav a {
   display: flex;
   align-items: center;
   text-decoration: none;
-  margin: 20px 15px;
   overflow: hidden;
   white-space: nowrap;
   font-size: small;
   height: 30px;
   color: white;
+  margin-right: 40px;
 }
 
-#sidenav > a:first-child {
+#sidenav>a:first-child {
   margin-top: 15px;
   margin-bottom: 35px;
   font-size: large;
@@ -50,22 +76,28 @@
   background-color: var(--icon-background);
 }
 
+#h1 {
+  justify-content: center;
+}
+
 
 
 #account {
   display: flex;
-  justify-content: flex-end; /* Dịch chuyển phần tử sang bên phải */
+  justify-content: flex-end;
+  /* Dịch chuyển phần tử sang bên phải */
   position: absolute;
-  bottom: 0;
-  right: 0; /* Đặt phần tử ở góc dưới bên phải */
+  bottom: 15px;
+  right: 0;
+  /* Đặt phần tử ở góc dưới bên phải */
   height: 70px;
-  width: 210px;
+  width: 200px;
 }
 
-#account > a > i {
+#account>a>i {
   font-size: large;
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   border-radius: 20px;
 }
 
@@ -76,25 +108,34 @@
   letter-spacing: 1px;
 }
 
-#logout > i {
+#logout>i {
   font-size: medium !important;
   background-color: transparent !important;
 }
 
-#logout:hover > i {
+#logout:hover>i {
   color: #c6e53f;
 }
+
 .logo {
-    width: 80px; /* Đặt chiều rộng của logo */
-    height: auto; /* Chiều cao tự động điều chỉnh tương ứng */
-    margin-top: 20px; /* Khoảng cách từ trên xuống */
-    margin-bottom: 20px; /* Khoảng cách từ dưới lên */
-    display: block; /* Hiển thị hình ảnh dưới dạng block để căn chỉnh */
-    background-color: whitesmoke;
-    padding: 5px;
-  }
-  
-  .logo:hover {
-    opacity: 0.8; /* Giảm độ mờ khi rê chuột vào */
-  }
-  
+  width: 80px;
+  /* Đặt chiều rộng của logo */
+  height: auto;
+  /* Chiều cao tự động điều chỉnh tương ứng */
+  margin-top: 20px;
+  /* Khoảng cách từ trên xuống */
+  margin-bottom: 20px;
+  /* Khoảng cách từ dưới lên */
+  display: block;
+  /* Hiển thị hình ảnh dưới dạng block để căn chỉnh */
+  padding: 5px;
+}
+
+.logo:hover {
+  opacity: 0.8;
+  /* Giảm độ mờ khi rê chuột vào */
+}
+
+.finan {
+  text-align: center;
+}
