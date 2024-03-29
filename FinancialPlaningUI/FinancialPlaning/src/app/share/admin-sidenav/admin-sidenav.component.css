@@ -1,29 +1,22 @@
 #sidenav {
   position: fixed;
   width: 100%;
-  height: 50px;
+  height: 10%;
+  margin-bottom: 5%;
   padding-top: 1px;
   transition: width 0.5s;
   z-index: 1;
   opacity: 95%;
   overflow: hidden;
-  background-color: var(--sidenav-primary-background);
+  background-color: #ADB9D1;
   color: white;
   display: flex;
   justify-content: space-between;
+  padding-left: 1%;
+  padding-right: 1%;
 }
-#sidenav > * {
-    display: flex;
-    align-items: center; /* Canh chỉnh các phần tử con theo trục dọc */
-    margin: 0 10px; /* Khoảng cách giữa các phần tử con */
-  }
 
 
-
-#sidenav img {
-  width: 30px;
-  height: 30px;
-}
 
 #sidenav a {
   display: flex;
@@ -57,16 +50,15 @@
   background-color: var(--icon-background);
 }
 
-a:hover i {
-  background-color: #4d8baf !important;
-}
+
 
 #account {
   display: flex;
+  justify-content: flex-end; /* Dịch chuyển phần tử sang bên phải */
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
+  right: 0; /* Đặt phần tử ở góc dưới bên phải */
   height: 70px;
-  background-color: var(--sidenav-secondary-background);
   width: 210px;
 }
 
@@ -92,3 +84,17 @@ a:hover i {
 #logout:hover > i {
   color: #c6e53f;
 }
+.logo {
+    width: 80px; /* Đặt chiều rộng của logo */
+    height: auto; /* Chiều cao tự động điều chỉnh tương ứng */
+    margin-top: 20px; /* Khoảng cách từ trên xuống */
+    margin-bottom: 20px; /* Khoảng cách từ dưới lên */
+    display: block; /* Hiển thị hình ảnh dưới dạng block để căn chỉnh */
+    background-color: whitesmoke;
+    padding: 5px;
+  }
+  
+  .logo:hover {
+    opacity: 0.8; /* Giảm độ mờ khi rê chuột vào */
+  }
+  
