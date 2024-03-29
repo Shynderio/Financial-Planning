@@ -26,7 +26,7 @@
           </mat-form-field>
         </form>
         <a   style="cursor: pointer; text-decoration: underline;" (click)="exportReportTemplate()">File template</a>
-        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isMonthSelected]="isMonthSelected" [isTermSelected]="isTermSelected"></app-upload>
+        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isMonthSelected]="isMonthSelected" [isTermSelected]="isTermSelected" [validName]="validFileName"></app-upload>
         <div class="buttons">
           <button class="preview-button" (click)="onImport()">
             <span>Preview</span>

@@ -1,5 +1,13 @@
 <main>
-    <h1>Term details</h1>
+    <div class="container mb-4 pb-3 mx-0">
+        <h1><b>Term details</b></h1>
+        <a class="edit-button" (click)="editTerm()">
+            <button>
+                <!-- <i class="fa-solid fa-pen-to-square"></i> -->
+                <span>Edit</span>
+            </button>
+        </a>
+    </div>
     <div class="doc-info mb-5 card">
         <form [formGroup]="termForm" (ngSubmit)="onSubmit()">
             <div class="row">

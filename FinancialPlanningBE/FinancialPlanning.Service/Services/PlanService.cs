@@ -119,6 +119,7 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
+                plan.PlanName = plan.Term.TermName + " - " + department.DepartmentName;
                 plan.Status = PlanStatus.New;
                 plan = await _planRepository.ImportPlan(plan, uid);
 

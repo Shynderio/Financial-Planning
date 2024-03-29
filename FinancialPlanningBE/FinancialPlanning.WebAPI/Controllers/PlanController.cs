@@ -101,8 +101,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         // POST: api/plan
-        [Authorize(Roles = "FinancialStaff")]
         [HttpPost("import")]
+        [Authorize(Roles = "FinancialStaff")]
         public async Task<ActionResult<List<Expense>>> Import(IFormFile file)
         {
             try

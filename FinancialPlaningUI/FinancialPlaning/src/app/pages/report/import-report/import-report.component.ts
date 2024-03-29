@@ -49,7 +49,7 @@ export class ImportReportComponent implements OnInit {
   pageSize = 7;
   pageIndex = 0;
   filedata: any = [];
-
+  validFileName: string = '';
   file: any;
   columnHeaders: string[] = [
     'expense',
@@ -115,7 +115,7 @@ export class ImportReportComponent implements OnInit {
       }
 
       this.monthOptions = monthOptions;
-
+      this.isMonthSelected = false;
       console.log('Selected term:', term);
       console.log('Month options:', this.monthOptions);
       // this.monthOptions = this.months.slice(0, selectedTerm.duration);
@@ -123,7 +123,11 @@ export class ImportReportComponent implements OnInit {
   }
 
   onMonthSelected() {
+    debugger;
     this.isMonthSelected = true;
+    var token = localStorage.getItem('token') ?? '';
+    var decodedToken:any = jwtDecode(token);
+    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + this.reportForm.value.month + '_Report';
   }
 
   onFileSelected(event: any) {

@@ -1,7 +1,9 @@
 <main>
-    <h1 class="mb-4">Create Term</h1>
+    <div class="container mb-4 pb-3 mx-0">
+        <h1><b>Create Term</b></h1>
+    </div>
     <!-- <div class="container h-100"> -->
-    <div class="row d-flex justify-content-center align-items-center ">
+    <div class="row d-flex justify-content-center align-items-center card">
         <!-- <div class="col-xl-9"> -->
         <!-- <div class="card" style="border-radius: 15px;"> -->
         <!-- <div class="card-body"> -->
@@ -34,7 +36,7 @@
                             <input class="form-control form-control-lg"matInput [matDatepicker]="startDatePicker" formControlName="startDate">
                             <mat-datepicker #startDatePicker></mat-datepicker>
                           </div>
-                        <div class="error-message" *ngIf="termForm.get('startDate')?.errors?.[' '] && termForm.get('startDate')?.touched">
+                        <div class="error-message" *ngIf="termForm.get('startDate')?.errors?.['required'] && termForm.get('startDate')?.touched">
                             <span class="text-danger">Start Date is required</span>
                         </div>
                     </div>

@@ -129,10 +129,10 @@ namespace FinancialPlanning.Data.Repositories
             }
         }
 
-        public Task<Plan> ViewPlan(string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<Plan> ViewPlan(string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public async Task<Plan> ImportPlan(Plan plan, Guid userId)
         {
@@ -171,25 +171,25 @@ namespace FinancialPlanning.Data.Repositories
             return GetPlanById(plan.Id).Result!;
         }
 
-        public Task<Plan> GetPlanDetails(Guid termId, string department, int version)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<Plan> GetPlanDetails(Guid termId, string department, int version)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public Task<bool> SubmitPlan(Guid termId, string planName, string departmentOrUid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public Task<bool> ExportPlan(string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<bool> ExportPlan(string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public async Task UpdatePlan(Plan plan)
         {
