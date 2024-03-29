@@ -10,22 +10,20 @@ export class AdminGuard {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-     // Check if localStorage is defined
-     if (typeof localStorage !== 'undefined') {
+    // Check if localStorage is defined
+    if (typeof localStorage !== 'undefined') {
       const localData = localStorage.getItem('token');
       if (localData) {
         const decodedToken: any = jwtDecode(localData);
         const role = decodedToken.role;
         console.log('role')
-        if(role == 'Admin'){
-            return true;
+        if (role == 'Admin') {
+          return true;
         }
-        
       }
     }
     // ROle isn't Admin
-     this.router.navigateByUrl('/home');
-   
+    this.router.navigateByUrl('/home');
     return false;
   }
 }

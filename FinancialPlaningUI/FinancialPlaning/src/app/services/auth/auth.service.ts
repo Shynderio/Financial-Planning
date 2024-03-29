@@ -76,7 +76,18 @@ export class AuthService {
         })
       );
   }
-
+  // Check user isAdmin 
+  isAdmin(): boolean {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        const userRole = decodedToken.role;
+        return userRole === 'Admin'; 
+      }
+    }
+    return false;
+  }
   // Get user Id to check CurrentUser
   getUserId(): string | null {
     const token = localStorage.getItem('token');
