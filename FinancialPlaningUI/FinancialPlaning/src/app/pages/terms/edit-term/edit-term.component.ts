@@ -62,6 +62,18 @@ export class EditTermComponent implements OnInit {
     });
     this.termService.getTerm(this.termId).subscribe(
       (termData: TermViewModel) => {
+        debugger;
+        if (termData.status != 0) {
+          this.router.navigate(['/terms']);
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+            data: {
+              success: false,
+              message:
+                'You can only edit a term with status New'
+            },
+          });
+        }
         this.populateForm(termData);
         console.log(termData);
       },
@@ -69,22 +81,11 @@ export class EditTermComponent implements OnInit {
         console.error('Error fetching term details:', error);
       },
     );
-
-    if (this.termForm.get('status')?.value !== "New") {
-      this.router.navigate(['/terms']);
-      this.messageBar.openFromComponent(MessageBarComponent, {
-        duration: 5000,
-        data: {
-          success: false,
-          message:
-            'You can only edit a term with status New'
-        },
-      });
-    } 
+      // debugger;
     // this.updateEndDate();
   }
 
-  
+
 
   populateForm(termData: TermViewModel): void {
     this.termForm.patchValue({
@@ -117,7 +118,7 @@ export class EditTermComponent implements OnInit {
     }
   }
 
-  closeTerm(){
+  closeTerm() {
     const closeDialog = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
@@ -137,13 +138,13 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-        ).subscribe((response) => {
-          console.log(response)
-          if (response == null){
-            return;
+      ).subscribe((response) => {
+        console.log(response)
+        if (response == null) {
+          return;
         }
         this.messageBar.openFromComponent(MessageBarComponent, {
-          
+
           duration: 5000,
           data: {
             success: true,
@@ -152,15 +153,20 @@ export class EditTermComponent implements OnInit {
           },
         });
       });
-      // this.router.navigate(['/terms']);
+    // this.router.navigate(['/terms']);
   }
 
   planDueDateValidator(control: any): { [key: string]: boolean } | null {
     const planDueDate = new Date(control.value);
     const startDate = new Date(control?.parent?.controls.startDate.value);
+    const endDate = new Date(control?.parent?.controls.endDate.value);
 
-    if (isNaN(planDueDate.getTime()) || planDueDate < startDate) {
-      return { invalidPlanDueDate: true };
+    if (isNaN(planDueDate.getTime())) {
+      return { invalidDate: true };
+    } else if (planDueDate < startDate) {
+      return { invalidRange1: true };
+    } else if (planDueDate > endDate) {
+      return { invalidRange2: true };
     }
     return null;
   }
@@ -171,23 +177,30 @@ export class EditTermComponent implements OnInit {
       if (planDueDateControl.errors['required']) {
         return 'Plan Due Date is required';
       }
-      if (planDueDateControl.errors['invalidPlanDueDate']) {
+      if (planDueDateControl.errors['invalidDate']) {
+        return 'Invalid date format';
+      }
+      if (planDueDateControl.errors['invalidRange1']) {
         return 'Plan Due Date must be after the Start Date';
+      }
+      if (planDueDateControl.errors['invalidRange2']) {
+        return 'Plan Due Date must be before the End Date';
       }
     }
     return '';
   }
+
   reportDueDateValidator(control: any): { [key: string]: boolean } | null {
     const reportDueDate = new Date(control.value);
     const startDate = new Date(control?.parent?.controls.startDate.value);
     const endDate = new Date(control?.parent?.controls.endDate.value);
 
-    if (
-      isNaN(reportDueDate.getTime()) ||
-      reportDueDate < startDate ||
-      reportDueDate > endDate
-    ) {
-      return { invalidReportDueDate: true };
+    if (isNaN(reportDueDate.getTime())) {
+      return { invalidDate: true };
+    } else if (reportDueDate < startDate) {
+      return { invalidRange1: true };
+    } else if (reportDueDate > endDate) {
+      return { invalidRange2: true };
     }
     return null;
   }
@@ -198,8 +211,14 @@ export class EditTermComponent implements OnInit {
       if (reportDueDateControl.errors['required']) {
         return 'Report Due Date is required';
       }
-      if (reportDueDateControl.errors['invalidReportDueDate']) {
-        return 'Report Due Date must be within the Start Date and End Date';
+      if (reportDueDateControl.errors['invalidDate']) {
+        return 'Invalid date format';
+      }
+      if (reportDueDateControl.errors['invalidRange1']) {
+        return 'Report Due Date must be after the Start Date';
+      }
+      if (reportDueDateControl.errors['invalidRange2']) {
+        return 'Report Due Date must be before the End Date';
       }
     }
     return '';
@@ -263,7 +282,7 @@ export class EditTermComponent implements OnInit {
     console.log('Cancel');
   }
 
-  startTerm() {   
+  startTerm() {
     const startDialog = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
@@ -283,10 +302,10 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-        ).subscribe((response) => {
-          console.log(response)
-          if (response == null){
-            return;
+      ).subscribe((response) => {
+        console.log(response)
+        if (response == null) {
+          return;
         }
         this.messageBar.openFromComponent(MessageBarComponent, {
           duration: 5000,
@@ -297,7 +316,7 @@ export class EditTermComponent implements OnInit {
           },
         });
       });
-      // this.router.navigate(['/terms']);
+    // this.router.navigate(['/terms']);
   }
 
 }
@@ -312,6 +331,6 @@ export class EditTermComponent implements OnInit {
   imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
 })
 export class StartTermDialog {
-  constructor(public dialogRef: MatDialogRef<StartTermDialog>) {}
+  constructor(public dialogRef: MatDialogRef<StartTermDialog>) { }
 }
 
