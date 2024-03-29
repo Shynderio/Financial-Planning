@@ -123,15 +123,16 @@ export class ImportReportComponent implements OnInit {
   }
 
   onMonthSelected() {
-    debugger;
+ 
     this.isMonthSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken:any = jwtDecode(token);
     this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + this.reportForm.value.month + '_Report';
+    console.log(this.validFileName);
   }
 
   onFileSelected(event: any) {
-    // debugger;
+   
     this.file = event;
     console.log('Selected file:', this.file);
   }

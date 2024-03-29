@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnnualReportService } from '../../../services/annual-report.service';
 
 @Component({
@@ -14,7 +14,8 @@ import { AnnualReportService } from '../../../services/annual-report.service';
     CommonModule,
     MatTableModule,
     MatSelectModule,
-    MatPaginatorModule],
+    MatPaginatorModule,
+  RouterLink],
   templateUrl: './annual-report-details.component.html',
   styleUrl: './annual-report-details.component.css'
 })

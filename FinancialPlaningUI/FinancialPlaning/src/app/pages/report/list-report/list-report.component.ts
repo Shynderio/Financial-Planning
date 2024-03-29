@@ -185,7 +185,9 @@ export class ListReportComponent {
 
  // Export all report
 exportMutilreport() {
+ 
   const reportIds = this.listSearch.map((report: any) => report.id);
+  console.log(reportIds);
   this.reportService.exportMutilreport(reportIds).subscribe(
     (data: Blob) => {
       const downloadURL = window.URL.createObjectURL(data);
