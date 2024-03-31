@@ -47,7 +47,7 @@ export class UserListComponent implements OnInit {
     'action',
   ];
   pageIndex = 0;
-  pageSize = 5; // Change to 5 for 5 records per page
+  pageSize = 10; // Change to 5 for 5 records per page
   listSize = 0;
 
   constructor(private httpService: UserService) { }
