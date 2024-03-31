@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text;
 using FinancialPlanning.Common;
+using System.Text.RegularExpressions;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -64,14 +65,14 @@ namespace FinancialPlanning.Data.Repositories
                 Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
                 Email = user.Email,
                 FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
+                PhoneNumber = Regex.Replace(user.PhoneNumber, @"\s+", " ").Trim(),
                 DOB = user.DOB,
-                Address = user.Address,
+                Address = Regex.Replace(user.Address, @"\s+", " ").Trim(),
                 DepartmentId = user.DepartmentId,
                 PositionId = user.PositionId,
                 RoleId = user.RoleId,
                 Status = user.Status,
-                Notes = user.Notes
+                Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim()
             };
 
 
