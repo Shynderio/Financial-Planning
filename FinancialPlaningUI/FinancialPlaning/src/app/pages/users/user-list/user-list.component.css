@@ -17,6 +17,10 @@ h6 {
   color: rgb(17, 17, 17);
   font-weight: bold;
 }
+.main>h6>a{
+  text-decoration: none;
+
+}
 
 div:has(#page-title) {
   display: flex;
@@ -29,7 +33,7 @@ button {
 
 #create-button {
   position: absolute;
-  top: 15%;
+  top: 5%;
   right: 2%;
   transform: translateY(-50%);
 }
@@ -207,5 +211,10 @@ td {
 b {
   color: rgb(14, 13, 13);
   font-weight: 900;
+}
+.user-list-link {
+  text-decoration: none; /* Loại bỏ gạch chân */
+  color: black;
+  font-size: medium;
 }
 
