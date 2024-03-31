@@ -36,13 +36,13 @@ namespace FinancialPlanning.Data.Repositories
 
             updateUser.FullName = user.FullName;
             updateUser.Email = user.Email;
-            updateUser.PhoneNumber = user.PhoneNumber;
+            updateUser.PhoneNumber = Regex.Replace(user.PhoneNumber, @"\s+", " ").Trim();
             updateUser.DOB = user.DOB;
-            updateUser.Address = user.Address;
+            updateUser.Address = Regex.Replace(user.Address, @"\s+", " ").Trim();
             updateUser.DepartmentId = user.DepartmentId;
             updateUser.PositionId = user.PositionId;
             updateUser.RoleId = user.RoleId;
-            updateUser.Notes = user.Notes;
+            updateUser.Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim();
             await _context.SaveChangesAsync();
         }
 
