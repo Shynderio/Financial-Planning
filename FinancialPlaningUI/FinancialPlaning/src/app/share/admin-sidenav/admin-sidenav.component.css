@@ -1,0 +1,158 @@
+#sidenav {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  opacity: 95%;
+  overflow: hidden;
+  background-color: #ADB9D1;
+  color: white;
+  display: flex;
+  /* justify-content: space-between; */
+
+}
+
+#sidenav b {
+  margin-top: 1%;
+  font-size: xx-large;
+  position: absolute;
+  margin-left: 40%;
+  min-width: 100%;
+  color: black;
+  font-weight: 900;
+}
+
+.user-management {
+  display: flex;
+  justify-content: center;
+  position: inherit;
+  background-color: #BCBFD2;
+  width: 100%;
+  padding: 0.5%;
+  text-decoration: none;
+
+  /* Center align horizontally */
+}
+.centered-link {
+  display: flex;
+  align-items: center;
+}
+
+.link-text {
+  margin-left: 8px; /* Có thể điều chỉnh giá trị này để tăng hoặc giảm khoảng cách */
+}
+
+
+.centered-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: rgb(17, 1, 1);
+  margin-right: 4%;
+  font-weight: bold;
+}
+
+
+#sidenav a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: small;
+  height: 30px;
+  color: white;
+  margin-right: 40px;
+}
+
+#sidenav>a:first-child {
+  margin-top: 15px;
+  margin-bottom: 35px;
+  font-size: large;
+}
+
+#sidenav i {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  margin-right: 20px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 20px;
+  color: white;
+  background-color: var(--icon-background);
+ 
+}
+
+#h1 {
+  justify-content: center;
+}
+
+
+
+#account {
+  display: flex;
+  justify-content: flex-end;
+  /* Dịch chuyển phần tử sang bên phải */
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+  /* Đặt phần tử ở góc dưới bên phải */
+  height: 70px;
+  width: 200px;
+  color: black;
+  
+}
+
+#account>a>i {
+  font-size: large;
+  height: 50px;
+  width: 50px;
+  border-radius: 20px;
+  color: black;
+}
+
+#role {
+  text-transform: uppercase;
+  font-size: xx-small;
+  color: var(--white-smoke);
+  letter-spacing: 1px;
+  color: black;
+}
+
+#logout>i {
+  font-size: medium !important;
+  background-color: transparent !important;
+}
+
+#logout:hover>i {
+  color: #c6e53f;
+}
+
+.logo {
+  width: 3%;
+  /* Đặt chiều rộng của logo */
+  height: auto;
+  /* Chiều cao tự động điều chỉnh tương ứng */
+  margin-top: 10px;
+  /* Khoảng cách từ trên xuống */
+  margin-bottom: 10px;
+  margin-left: 1%;
+  /* Khoảng cách từ dưới lên */
+  display: block;
+  /* Hiển thị hình ảnh dưới dạng block để căn chỉnh */
+  background-color: black;
+  padding: 10px;
+  border-radius: 6px;
+  
+}
+
+.logo:hover {
+  opacity: 0.8;
+  /* Giảm độ mờ khi rê chuột vào */
+}
+
+.finan {
+  text-align: center;
+}

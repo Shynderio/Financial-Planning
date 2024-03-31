@@ -52,22 +52,12 @@ table {
     overflow: scroll;
 }
 
-main {
-    background-color: #E6E6E6;
-    box-shadow: none;
-    padding: 30px;
-
-
-}
 
 main>div {
     border-radius: 24px;
     background-color: #FAF6F6;
     box-shadow: rgba(228, 223, 216, 0.2) 0px 8px 24px;
     padding: 20px;
-
-
-
 }
 
 main {
@@ -76,9 +66,10 @@ main {
     width: calc(100vw - 100px);
     min-height: calc(100vh - 120px);
     max-width: calc(100vw - 100px);
-    border-radius: 10px;
-    top: 60px;
-    left: 80px;
+    background-color: #E6E6E6;
+    box-shadow: none;
+    padding: 30px;
+    margin-left: 2%;
 }
 
 /* Trích dẫn phần tử chứa các lựa chọn "Active" và "Deactive" */
@@ -103,6 +94,7 @@ main {
 
 a.user-list-link {
     color: black;
+    text-decoration: none;
     /* Màu chữ đen */
 }
 
