@@ -152,12 +152,16 @@ getStatusLabel(status: number): string {
   validateName(control: FormControl): { [key: string]: any } | null {
     const vietnameseCharactersRegex = /[^\x00-\x7F]+/; // Biểu thức chính quy để kiểm tra ký tự tiếng Việt
     const containsNumbers = /\d/.test(control.value); // Kiểm tra xem có chứa số không
+    const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
     if (vietnameseCharactersRegex.test(control.value)) {
       return { containsVietnamese: true }; // Có chứa ký tự tiếng Việt
     }
     if (containsNumbers) {
       return { containsNumber: true }; // Có chứa số
+    }
+    if (specialCharactersRegex.test(control.value)) {
+      return { containsSpecialCharacters: true }; // Có chứa ký tự đặc biệt
     }
 
     return null;
@@ -166,7 +170,7 @@ getStatusLabel(status: number): string {
     const value = control.value;
 
     // Kiểm tra nếu có nhiều hơn một khoảng trắng giữa các từ hoặc có khoảng trắng ở đầu hoặc cuối
-    if (/^\s|\s\s+|\s$/.test(value)) {
+    if (/^\s|\s\s+/.test(value)) {
       return { excessSpaces: true };
     }
 
