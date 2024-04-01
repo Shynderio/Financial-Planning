@@ -261,7 +261,7 @@ th {
 }
 
 ::ng-deep .mat-mdc-select {
-    color: white !important;
+    color: black !important;
     font-size: 14px !important;
 }
 

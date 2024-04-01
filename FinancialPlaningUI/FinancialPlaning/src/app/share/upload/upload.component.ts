@@ -27,6 +27,11 @@ export class UploadComponent implements OnInit {
   ngOnInit() {
   }
 
+  reset(){
+    this.file = null;
+    
+  }
+
   onClick() 
   {
     if (this.isTermSelected == false) {

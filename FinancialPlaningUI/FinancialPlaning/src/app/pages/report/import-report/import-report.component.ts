@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -34,8 +34,6 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
   styleUrls: ['./import-report.component.css']
 })
 export class ImportReportComponent implements OnInit {
-
-
 
   termService: TermService;
   reportService: ReportService;
@@ -76,7 +74,8 @@ export class ImportReportComponent implements OnInit {
     reportService: ReportService,
     private fb: FormBuilder,
     private elementRef: ElementRef,
-    private messageBar: MatSnackBar, private router: Router) {
+    private messageBar: MatSnackBar, 
+    private router: Router, ) {
     this.termService = termService;
     this.reportService = reportService;
     this.reportForm = this.fb.group({
@@ -122,6 +121,13 @@ export class ImportReportComponent implements OnInit {
       // this.monthOptions = this.months.slice(0, selectedTerm.duration);
     }
   }
+
+  reset() {
+    this.file = null;
+    this.dataSource = [];
+    this.isPreview = false;
+    this.reportForm.reset();
+    }
 
   onMonthSelected() {
  
