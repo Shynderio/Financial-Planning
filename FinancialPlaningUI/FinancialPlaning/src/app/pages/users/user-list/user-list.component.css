@@ -1,6 +1,6 @@
 main {
   position: absolute;
-  height: 100vh;
+  min-height:86vh;
   width: 100%;
   background-color: #E6E6E6;
   padding-left: 1%;

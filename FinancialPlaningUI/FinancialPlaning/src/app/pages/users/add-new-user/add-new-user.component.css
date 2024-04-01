@@ -25,6 +25,14 @@ form input:focus, form select:focus {
   border-color: rgb(133, 68, 165);
 }
 
+mat-datepicker-toggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-320%);
+  right: 67%;
+}
+
+
 
 /* HTML: <div class="loader"></div> */
 .loader {
