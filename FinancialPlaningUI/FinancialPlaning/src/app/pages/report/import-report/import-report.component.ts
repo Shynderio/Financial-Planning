@@ -115,6 +115,7 @@ export class ImportReportComponent implements OnInit {
       }
 
       this.monthOptions = monthOptions;
+      this.reportForm.controls['month'].setValue('');
       this.isMonthSelected = false;
       console.log('Selected term:', term);
       console.log('Month options:', this.monthOptions);

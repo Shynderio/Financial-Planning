@@ -16,6 +16,7 @@ import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialo
 import { concatMap, of } from 'rxjs';
 import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { DialogComponent } from '../../../share/dialog/dialog.component';
+import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
@@ -62,7 +63,6 @@ export class EditTermComponent implements OnInit {
     });
     this.termService.getTerm(this.termId).subscribe(
       (termData: TermViewModel) => {
-        debugger;
         if (termData.status != 0) {
           this.router.navigate(['/terms']);
           this.messageBar.openFromComponent(MessageBarComponent, {
@@ -89,7 +89,7 @@ export class EditTermComponent implements OnInit {
 
   populateForm(termData: TermViewModel): void {
     this.termForm.patchValue({
-      termName: termData.termName.slice(0, 10),
+      termName: termData.termName,
       startDate: termData.startDate.slice(0, 10),
       duration: this.durationReverseMap[termData.duration],
       planDueDate: termData.planDueDate.slice(0, 10),
@@ -241,9 +241,18 @@ export class EditTermComponent implements OnInit {
       planDueDate: this.termForm.get('planDueDate')?.value,
       reportDueDate: this.termForm.get('reportDueDate')?.value,
     });
-    const termId = ''; // You need to set the termId
+    const termId = this.termId; // You need to set the termId
     this.termService.updateTerm(termId, termData).subscribe((response) => {
-      console.log(response);
+      
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        duration: 5000,
+        data: {
+          success: true,
+          message:
+            MESSAGE_CONSTANTS.ME014
+        },
+      });
+      this.router.navigate(['/terms']);
     });
   }
 
@@ -270,7 +279,9 @@ export class EditTermComponent implements OnInit {
       }
       console.log(this.termForm.value);
       // Call the service to create the term
+      this.termForm.disable();
       this.editTerm();
+      this.termForm.enable();
     } else {
       // Mark all fields as touched to trigger validation messages
       this.termForm.markAllAsTouched();

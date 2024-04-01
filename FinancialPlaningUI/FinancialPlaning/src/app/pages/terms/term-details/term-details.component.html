@@ -1,7 +1,8 @@
 <main>
+    <a [routerLink]="['/terms']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
     <div class="container mb-4 pb-3 mx-0">
         <h1><b>Term details</b></h1>
-        <a class="edit-button" (click)="editTerm()">
+        <a class="edit-button" (click)="editTerm()" [hidden]="termStatus != 0 || role!='Accountant'">
             <button>
                 <!-- <i class="fa-solid fa-pen-to-square"></i> -->
                 <span>Edit</span>

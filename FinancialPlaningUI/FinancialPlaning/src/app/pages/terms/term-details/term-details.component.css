@@ -89,3 +89,16 @@ button {
     border-radius: 10px;
     margin-right: 10px;
 }
+
+a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  #back-link {
+    font-size: 18px;
+  }
+  
+  #back-link:hover {
+    color: var(--button-background);
+  }

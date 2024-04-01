@@ -15,6 +15,7 @@
   import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
   import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
   import { provideNativeDateAdapter } from '@angular/material/core';
+import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
   @Component({
     selector: 'app-create-term',
     standalone: true,
@@ -200,12 +201,12 @@
           // Redirect to the terms page
           // this.router.navigate(['/terms']);
           const data = { success: false, message: 'Operation failed!' };
-          this._snackBar.openFromComponent(MessageBarComponent, { data });
+          this._snackBar.openFromComponent(MessageBarComponent, { data});
         } else {
           // Redirect to the terms page
           this.router.navigate(['/terms']);
-          const data = { success: true, message: 'Term created successful!' };
-          this._snackBar.openFromComponent(MessageBarComponent, { data });
+          const data = { success: true, message: MESSAGE_CONSTANTS.ME011 };
+          this._snackBar.openFromComponent(MessageBarComponent, { data});
         }
       });
     }
