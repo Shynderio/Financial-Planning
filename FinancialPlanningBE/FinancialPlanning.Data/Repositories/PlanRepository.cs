@@ -24,7 +24,18 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task DeletePlan(Plan plan)
         {
+            // Load các PlanVersions của Plan cần xóa để đảm bảo rằng các đối tượng này được theo dõi bởi DbContext
+            await _context.Entry(plan)
+                .Collection(p => p.PlanVersions)
+                .LoadAsync();
+
+            // Xóa tất cả các PlanVersions của Plan
+            _context.PlanVersions!.RemoveRange(plan.PlanVersions);
+
+            // Xóa Plan chính thức
             _context.Plans!.Remove(plan);
+
+            // Ghi lại thay đổi
             await _context.SaveChangesAsync();
         }
 
