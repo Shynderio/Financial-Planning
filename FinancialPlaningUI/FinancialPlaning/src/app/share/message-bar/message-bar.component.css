@@ -11,3 +11,11 @@ button {
   float: right; /* Added this line to float the button to the left */
   margin-left: 10px; /* Added this line to add some space between the buttons */
 }
+::ng-deep .mdc-snackbar__surface {
+  background-color: white !important;
+  
+}
+.message-bar{
+  background-color: rgb(245, 181, 181)(253, 161, 161);
+  margin: 0;
+}
