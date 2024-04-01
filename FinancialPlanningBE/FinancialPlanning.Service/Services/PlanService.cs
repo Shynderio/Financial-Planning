@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text.Json;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
@@ -65,6 +66,14 @@ namespace FinancialPlanning.Service.Services
         public async Task DeletePlan(Guid id)
         {
             var planToDelete = await _planRepository.GetPlanById(id);
+
+            // Xóa in S3
+            foreach (var version in planToDelete.PlanVersions!)
+            {
+                var filename = planToDelete.Department.DepartmentName + '/' + planToDelete.Term.TermName + "/Plan/version_" + version.Version + ".xlsx";
+                //delete file on cloud
+                await _fileService.DeleteFileAsync(filename);
+            }
             if (planToDelete != null)
             {
                 await _planRepository.DeletePlan(planToDelete);
