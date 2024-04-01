@@ -72,11 +72,17 @@ export class UserDetailComponent implements OnInit {
     // debugger;
     this.userService.getUserById(userId).subscribe({
       next: (userDetails: any) => {
+        const dobDate = new Date(userDetails.dob);
+        const day = dobDate.getDate().toString().padStart(2, '0'); // Thêm số 0 nếu chỉ có 1 số
+        const month = (dobDate.getMonth() + 1).toString().padStart(2, '0'); // Thêm số 0 nếu chỉ có 1 số
+        const year = dobDate.getFullYear();
+        const formattedDob = `${day} / ${month} / ${year}`;
+
         // Assuming termDetails contains the required data
         this.userForm.patchValue({
           username: userDetails.username,
           fullname: userDetails.fullName,
-          dob: userDetails.dob,
+          dob: formattedDob,
           email: userDetails.email,
           department: userDetails.departmentName,
           position: userDetails.positionName,

@@ -29,10 +29,7 @@
                             <h4><label for="dob" class="form-label">Date of birth</label></h4>
                         </div>
                         <div class="col-md-9">
-                            <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
-                                formControlName="dob">
-                            <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
-                            <mat-datepicker #dobPicker></mat-datepicker>
+                            <input class="form-control" type="text" id="dob" formControlName="dob" />
                         </div>
                     </div>
                     <div class="row align-items-center">
