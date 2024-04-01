@@ -198,6 +198,10 @@ namespace FinancialPlanning.Service.Services
         {
             await _planRepository.SubmitPlan(termId, planName, departmentOrUid);
         }
+        public async Task<string> GetFileByName(string key)
+        {
+            return await _fileService.GetFileUrlAsync(key);
+        }
     }
 
 }
