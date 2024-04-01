@@ -53,7 +53,7 @@ namespace FinancialPlanning.Service.Services
         {
             var reportToDelete = await _reportRepository.GetReportById(id);
             
-            if (reportToDelete != null)
+            if (reportToDelete != null && reportToDelete.Status== ReportStatus.New)
             {
                 foreach (var version in reportToDelete.ReportVersions!)
                 {
@@ -80,9 +80,9 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
-        public async Task<string> GetFileByName(string key)
+        public async Task<byte[]> GetFileByName(string key)
         {
-            return await _fileService.GetFileUrlAsync(key);
+            return await _fileService.GetFileAsync(key);
         }
 
         public async Task<Report?> GetReportById(Guid id)
