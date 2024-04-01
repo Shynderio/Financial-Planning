@@ -70,7 +70,7 @@ button {
 }
 
 #filter-button {
-  width: 100px;
+  width: 150px;
   border: 2px solid var(--white-smoke);
   border-radius: 10px;
   background-color: transparent;

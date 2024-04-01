@@ -4,9 +4,10 @@
       <h3><b> Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <div class="abc">
-      <a  routerLink="/import-plan" class="create-button" >
-        <button> Import</button>
+    <div class="top-button">
+    
+      <a class="create-button" routerLink="/import-plan">
+        <button><i class="fa-solid fa-upload me-1"></i> Import</button>
       </a>
     </div>
   </div>
@@ -15,11 +16,12 @@
         <input type="text" placeholder="Search for Plans" (input)="changeSearchText($event)" />
         <i class="fa-solid fa-search"></i>
       </form>
-      <button id="filter-button" class="btn col-6 ms-4" (click)="filterStatusEnable = !filterStatusEnable"><mat-icon
-          class="align-middle">filter_list</mat-icon> Filter </button>
+      <button id="filter-button" class="btn col-6 ms-4" (click)="filterStatusEnable = !filterStatusEnable"
+      [ngStyle]="filterStatusEnable ? {'box-shadow': 'inset 0px 5px 17px -6px rgba(0,0,0,0.2)'} : {}"><mat-icon
+        class="align-middle">filter_list</mat-icon>More Filter </button>
     </div>
   <div *ngIf="filterStatusEnable">
-      <mat-form-field  >
+      <mat-form-field  [hidden]="role == 'FinancialStaff'">
         <mat-label  >Department</mat-label>
         <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
           <mat-option value="All">All</mat-option>
@@ -51,10 +53,7 @@
   
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <ng-container matColumnDef="no">
-      <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let plan, let i = index"> {{ i + 1 }} </td>
-    </ng-container>
+   
     <ng-container matColumnDef="plan">
       <th mat-header-cell *matHeaderCellDef>Plan</th>
       <td mat-cell *matCellDef="let plan">{{plan.plan}}</td>

@@ -23,39 +23,32 @@ div:has(#page-title) {
   display: flex;
 }
 
+
 button {
-  /* background: #535c91; */
+  background: var(--button-background);
   border: none;
 }
 
-
-.abc {
+.top-button {
   position: absolute;
   top: 50%;
   right: 0;
   transform: translateY(-50%);
 }
 
-.abc button {
-  padding: 10px 20px;
+.top-button button {
+  width: 110px;
+  color: white;
+  padding: 10px 15px;
   border-radius: 10px;
   margin-right: 10px;
 }
 
-.abc i {
-  margin-right: 10px;
+.top-button button:hover {
+  background-color: #553cb9;
 }
 
 
-#create-button > button {
-  /* color: white; */
-  padding: 10px 20px;
-  border-radius: 10px;
-}
-
-#create-button i {
-  margin-right: 10px;
-}
 
 .searchBar {
   position: relative;
@@ -79,7 +72,7 @@ button {
 }
 
 #filter-button {
-  width: 100px;
+  width: 150px;
   border: 2px solid var(--white-smoke);
   border-radius: 10px;
   background-color: transparent;
