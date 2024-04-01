@@ -112,7 +112,7 @@ namespace FinancialPlanning.Service.Services
             foreach (var term in terms)
             {
                 var endDate = term.StartDate.AddMonths(term.Duration);
-                if (endDate < DateTime.Now || term.Status == TermStatus.Closed) 
+                if (endDate > DateTime.Now || term.Status == TermStatus.Closed) 
                     continue;
                 term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
