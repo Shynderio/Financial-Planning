@@ -9,4 +9,5 @@ button {
   padding: 0;
   font-weight: bolder;
   float: right; /* Added this line to float the button to the left */
+  margin-left: 10px; /* Added this line to add some space between the buttons */
 }

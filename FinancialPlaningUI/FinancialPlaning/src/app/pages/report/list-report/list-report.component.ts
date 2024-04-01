@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { ReportService } from '../../../services/report.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -109,7 +109,7 @@ export class ListReportComponent {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.reports.filter(
       (data: any) =>
-        data.reportName.toLowerCase().includes(this.searchValue)
+        data.reportName.toLowerCase().includes(this.searchValue.toLowerCase())
         && (this.selectedDepartment == data.departmentName || this.selectedDepartment == "All")
         && (this.selectedTerm == data.termName || this.selectedTerm == "All")
         && (this.selectstatus == data.status || this.selectstatus == "All")
@@ -185,7 +185,9 @@ export class ListReportComponent {
 
  // Export all report
 exportMutilreport() {
+ 
   const reportIds = this.listSearch.map((report: any) => report.id);
+  console.log(reportIds);
   this.reportService.exportMutilreport(reportIds).subscribe(
     (data: Blob) => {
       const downloadURL = window.URL.createObjectURL(data);
@@ -217,9 +219,15 @@ exportMutilreport() {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
-          
-          panelClass: ['success'],
+        this.messageBar.openFromComponent(MessageBarReport, {
+          duration: 5000,
+          data: {
+            httpStatusCode: response,
+            message:
+              response == 200
+                ? 'Report deleted successfully'
+                : 'Failed to delete report',
+          },
         });
         this.pageIndex = 0;
         this.fetchData();
@@ -238,3 +246,18 @@ export class DeleteReportDialog {
   constructor(public dialogRef: MatDialogRef<DeleteReportDialog>) {}
 }
 
+
+@Component({
+  selector: 'message-bar-report',
+  standalone: true,
+  templateUrl: './message-bar-report.component.html',
+  styles: `
+    i {
+      margin-right: 5px;
+    }
+  `,
+  imports: [CommonModule],
+})
+export class MessageBarReport {
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
+}

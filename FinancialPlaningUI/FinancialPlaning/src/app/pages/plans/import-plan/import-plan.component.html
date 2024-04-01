@@ -10,15 +10,19 @@
             </p> -->
           <mat-form-field>
             <mat-label>Term</mat-label>
-            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term" formControlName="term">
-              <mat-option *ngFor="let option of termOptions" [value]="option.value">
+            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="term" formControlName="term" (selectionChange)="onTermSelect($event)">
+              <mat-option *ngFor="let option of termOptions" [value]="option">
                 {{option.viewValue}}
               </mat-option>
             </mat-select>
           </mat-form-field>
+          <a style="cursor: pointer; text-decoration: underline;" (click)="exportPlanTemplate()">File template</a>
         </form>
-        <app-upload class="w-100" (fileSelected)="onFileSelected($event)"></app-upload>
+        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isTermSelected]="isTermSelected" [validName]="validFileName"></app-upload>
         <div class="buttons">
+          <!-- <button class="preview-button">
+            <span>Template</span>
+          </button> -->
           <button class="preview-button" (click)="onImport()">
             <span>Preview</span>
           </button>

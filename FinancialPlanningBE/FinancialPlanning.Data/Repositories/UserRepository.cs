@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text;
 using FinancialPlanning.Common;
+using System.Text.RegularExpressions;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -35,13 +36,13 @@ namespace FinancialPlanning.Data.Repositories
 
             updateUser.FullName = user.FullName;
             updateUser.Email = user.Email;
-            updateUser.PhoneNumber = user.PhoneNumber;
+            updateUser.PhoneNumber = Regex.Replace(user.PhoneNumber, @"\s+", " ").Trim();
             updateUser.DOB = user.DOB;
-            updateUser.Address = user.Address;
+            updateUser.Address = Regex.Replace(user.Address, @"\s+", " ").Trim();
             updateUser.DepartmentId = user.DepartmentId;
             updateUser.PositionId = user.PositionId;
             updateUser.RoleId = user.RoleId;
-            updateUser.Notes = user.Notes;
+            updateUser.Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim();
             await _context.SaveChangesAsync();
         }
 
@@ -64,14 +65,14 @@ namespace FinancialPlanning.Data.Repositories
                 Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
                 Email = user.Email,
                 FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
+                PhoneNumber = Regex.Replace(user.PhoneNumber, @"\s+", " ").Trim(),
                 DOB = user.DOB,
-                Address = user.Address,
+                Address = Regex.Replace(user.Address, @"\s+", " ").Trim(),
                 DepartmentId = user.DepartmentId,
                 PositionId = user.PositionId,
                 RoleId = user.RoleId,
                 Status = user.Status,
-                Notes = user.Notes
+                Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim()
             };
 
 

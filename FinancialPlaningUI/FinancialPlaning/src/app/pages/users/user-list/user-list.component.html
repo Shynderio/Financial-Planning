@@ -1,9 +1,10 @@
 <link rel="stylesheet" href="user-list.component.css">
 <main>
-  <div class="container mb-4">
+
+  <div>
     <div id="page-title">
       <h3><b>User List</b></h3>
-      <h6>Users management</h6>
+      <h6><a routerLink="/user-list" class="user-list-link">User Management</a> > User List </h6>
     </div>
     <a routerLink="/add-user" id="create-button">
       <button><i class="fa-solid fa-plus"></i> Add</button>
@@ -12,12 +13,11 @@
   <div class="mb-4">
     <div class="searchBar">
       <i class="fa-solid fa-search"></i>
-      <input type="text" [(ngModel)]="searchValue" placeholder="Search by username">
-      <select class="custom-select" [(ngModel)]="selectedRole">
+      <input type="text" [(ngModel)]="searchValue" placeholder="Search by username" (ngModelChange)="onChange()">
+      <select class="custom-select" [(ngModel)]="selectedRole" (ngModelChange)="onChange()">
         <option value="">All Roles</option>
         <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
       </select>
-      <button class="custom-button" (click)="search()">Search</button>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -8,20 +8,34 @@ import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
 import { AddUser } from '../../../models/adduser.model';
 import { UserService } from '../../../services/user.service';
+import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
 
 @Component({
+  providers: [provideNativeDateAdapter()],
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,MatDatepickerModule,MatInputModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
+
 export class AddNewUserComponent implements OnInit {
+  
   departments: IDepartment[] = [];
   roles: IRole[] = [];
   positions: IPosition[] = [];
   userId!: string;
   isEdit = false;
+
+  
+   @ViewChild('fullNameInput') fullNameInput!: ElementRef;
+
+    ngAfterViewInit() {
+        this.fullNameInput.nativeElement.focus();
+    }
 
 
   constructor(
@@ -42,10 +56,12 @@ export class AddNewUserComponent implements OnInit {
       this.getUserById(userId);
     })
   }
-  //Set default status is 1
-  getStatusLabel(status: string): string {
-    return status === '1' ? 'Active' : 'Inactive';
-  }
+// Set default status is 1
+getStatusLabel(status: number): string {
+  return status === 1 ? 'Active' : 'Inactive';
+}
+
+
  
   getUserById(userId: string) {
     if (userId) {
@@ -57,6 +73,7 @@ export class AddNewUserComponent implements OnInit {
           const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
           const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
           const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
+          const statusLabel = this.getStatusLabel(userDetail.status); 
           this.addUserF.patchValue({
             username: userDetail.username,
             department: userDetail.departmentId,
@@ -67,8 +84,8 @@ export class AddNewUserComponent implements OnInit {
             fullName: userDetail.fullName,
             phoneNumber: userDetail.phoneNumber,
             address: userDetail.address,
-            dob: this.convertDdMmYyyyToIsoDate(userDetail.dob),
-            status: userDetail.status
+            dob: userDetail.dob,
+            status: statusLabel
            
           });
         },
@@ -127,7 +144,7 @@ export class AddNewUserComponent implements OnInit {
     role: new FormControl('', [Validators.required]),
     notes: new FormControl(''),
     address: new FormControl(''),
-    phoneNumber: new FormControl('', [Validators.minLength(3), Validators.maxLength(12), Validators.pattern('[0-9]*')]),
+    phoneNumber: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(11), Validators.pattern('[0-9]*')]),
     position: new FormControl('', [Validators.required]),
     status: new FormControl('1'),
   });
@@ -135,12 +152,16 @@ export class AddNewUserComponent implements OnInit {
   validateName(control: FormControl): { [key: string]: any } | null {
     const vietnameseCharactersRegex = /[^\x00-\x7F]+/; // Biểu thức chính quy để kiểm tra ký tự tiếng Việt
     const containsNumbers = /\d/.test(control.value); // Kiểm tra xem có chứa số không
+    const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
 
     if (vietnameseCharactersRegex.test(control.value)) {
       return { containsVietnamese: true }; // Có chứa ký tự tiếng Việt
     }
     if (containsNumbers) {
       return { containsNumber: true }; // Có chứa số
+    }
+    if (specialCharactersRegex.test(control.value)) {
+      return { containsSpecialCharacters: true }; // Có chứa ký tự đặc biệt
     }
 
     return null;
@@ -149,7 +170,7 @@ export class AddNewUserComponent implements OnInit {
     const value = control.value;
 
     // Kiểm tra nếu có nhiều hơn một khoảng trắng giữa các từ hoặc có khoảng trắng ở đầu hoặc cuối
-    if (/^\s|\s\s+|\s$/.test(value)) {
+    if (/^\s|\s\s+/.test(value)) {
       return { excessSpaces: true };
     }
 
@@ -179,21 +200,23 @@ export class AddNewUserComponent implements OnInit {
       fullName: this.addUserF.value.fullName,
       email: this.addUserF.value.email,
       phoneNumber: this.addUserF.value.phoneNumber,
-      dob: this.convertIsoDateToDdMmYyyy(this.addUserF.value.dob),
+      dob: this.addUserF.value.dob,
       address: this.addUserF.value.address,
       departmentId: this.addUserF.value.department,
       positionId: this.addUserF.value.position,
       roleId: this.addUserF.value.role,
-      status: this.addUserF.value.status,
+      status: -1 ,
       notes: this.addUserF.value.notes,
     };
     if (this.isEdit) {
+      user.status = -1;
       this.httpService.editUser(this.userId, user).subscribe(() => {
         console.log('success');
         this.toastr.success('Updated user successful', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
       });
     } else {
+      user.status = 1;
       this.httpService.addNewUser(user).subscribe(() => {
         this.toastr.success('Successfully created user', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
@@ -231,3 +254,4 @@ export class AddNewUserComponent implements OnInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 }
+

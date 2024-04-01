@@ -85,7 +85,7 @@ export class LoginComponent {
             window.location.reload();
           });
         } else {
-          this.errorMessage = MESSAGE_CONSTANTS.ME001;
+          this.errorMessage = response.value.message;
           this.isLoading =
             false;
         }

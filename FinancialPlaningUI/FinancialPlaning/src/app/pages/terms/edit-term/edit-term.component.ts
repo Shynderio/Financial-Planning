@@ -67,8 +67,20 @@ export class EditTermComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching term details:', error);
-      }
+      },
     );
+
+    if (this.termForm.get('status')?.value !== "New") {
+      this.router.navigate(['/terms']);
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        duration: 5000,
+        data: {
+          success: false,
+          message:
+            'You can only edit a term with status New'
+        },
+      });
+    } 
     // this.updateEndDate();
   }
 

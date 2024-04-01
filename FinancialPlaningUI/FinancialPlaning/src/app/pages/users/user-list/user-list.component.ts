@@ -12,7 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { UserModel } from "../../../models/user.model";
 import { UserService } from "../../../services/user.service";
-import { SearchListUserPipe } from "./search-list-user.pipe";
 
 @Component({
   selector: 'app-user-list',
@@ -26,7 +25,6 @@ import { SearchListUserPipe } from "./search-list-user.pipe";
     FormsModule,
     HttpClientModule,
     RouterOutlet,
-    SearchListUserPipe,
     MatTableModule,
     MatIconModule
   ],
@@ -49,7 +47,7 @@ export class UserListComponent implements OnInit {
     'action',
   ];
   pageIndex = 0;
-  pageSize = 5; // Change to 5 for 5 records per page
+  pageSize = 10; // Change to 5 for 5 records per page
   listSize = 0;
 
   constructor(private httpService: UserService) { }
@@ -104,6 +102,9 @@ export class UserListComponent implements OnInit {
 
     this.userList = filteredList;
     this.getPaginatedItems();
+  }
+  onChange(): void {
+    this.filterUsers();
   }
 
 

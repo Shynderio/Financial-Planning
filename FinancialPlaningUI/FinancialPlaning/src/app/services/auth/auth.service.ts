@@ -15,11 +15,12 @@ import { response } from 'express';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl + '/Auth';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(model: LoginModel): Observable<any> {
     return this.http.post(this.apiUrl + '/Login', model);
   }
+
 
   IsLoggedIn() {
     if (typeof localStorage !== 'undefined') {
@@ -37,6 +38,7 @@ export class AuthService {
     }
     return false;
   }
+
 
   logout(): void {
     localStorage.removeItem('token');
@@ -73,5 +75,26 @@ export class AuthService {
           throw error;
         })
       );
+  }
+  // Check user isAdmin 
+  isAdmin(): boolean {
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        const userRole = decodedToken.role;
+        return userRole === 'Admin'; 
+      }
+    }
+    return false;
+  }
+  // Get user Id to check CurrentUser
+  getUserId(): string | null {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.userId;
+    }
+    return null;
   }
 }

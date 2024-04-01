@@ -39,7 +39,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetTermById(Guid id)
         {
             var term = await _termService.GetTermByIdAsync(id);
-            return Ok(term);
+            var termViewModel = _mapper.Map<TermViewModel>(term);
+            return Ok(termViewModel );
         }
 
         [HttpGet("all")]
@@ -47,7 +48,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetAllTerms()
         {
             var terms = await _termService.GetAllTerms();
-            var termListModels = terms.Select(t => _mapper.Map<TermListModel>(t)).ToList();
+            var termListModels = terms.Select(_mapper.Map<TermListModel>).ToList().OrderByDescending(t => t.StartDate);
             return Ok(termListModels);
         }
 

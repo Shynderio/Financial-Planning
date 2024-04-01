@@ -18,15 +18,15 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>Month</mat-label>
-            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="month" formControlName="month">
+            <mat-select disableOptionCentering panelClass="dropDown-seasons-panel" id="month" formControlName="month" (selectionChange)="onMonthSelected()">
               <mat-option *ngFor="let option of monthOptions" [value]="option">
                 {{option}}
               </mat-option>
             </mat-select>
           </mat-form-field>
         </form>
-        <a   style="cursor: pointer; text-decoration: underline;" (click)="exportMutilreport()">File template</a>
-        <app-upload class="w-100" (fileSelected)="onFileSelected($event)"></app-upload>
+        <a   style="cursor: pointer; text-decoration: underline;" (click)="exportReportTemplate()">File template</a>
+        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isMonthSelected]="isMonthSelected" [isTermSelected]="isTermSelected" [validName]="validFileName"></app-upload>
         <div class="buttons">
           <button class="preview-button" (click)="onImport()">
             <span>Preview</span>

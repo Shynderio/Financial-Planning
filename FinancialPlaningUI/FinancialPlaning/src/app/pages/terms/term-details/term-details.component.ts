@@ -16,6 +16,7 @@ import { TermViewModel } from '../../../models/termview.model';
 })
 
 export class TermDetailsComponent implements OnInit {
+
   termForm: FormGroup;
 
   durationReverseMap: { [key: number]: string } = {
@@ -76,6 +77,11 @@ export class TermDetailsComponent implements OnInit {
       // Populate other form controls
     });
     this.updateEndDate();
+  }
+
+  editTerm() {
+    // Handle edit term
+    this.router.navigate(['/edit-term', this.route.snapshot.params['id']]);
   }
 
   durationMap: { [key: string]: number } = {

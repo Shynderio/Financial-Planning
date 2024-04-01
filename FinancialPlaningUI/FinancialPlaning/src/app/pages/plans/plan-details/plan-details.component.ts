@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { PlanService } from '../../../services/plan.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDial
     CommonModule,
     MatTableModule,
     MatSelectModule,
+    RouterLink,
     MatPaginatorModule],
   templateUrl: './plan-details.component.html',
   styleUrl: './plan-details.component.css'

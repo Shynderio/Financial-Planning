@@ -41,7 +41,7 @@ export class ReportDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 8;
   pageIndex = 0;
 
   constructor(

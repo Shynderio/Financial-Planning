@@ -19,7 +19,7 @@ export const MESSAGE_CONSTANTS = {
   ME014: 'The term has been updated successfully',
   ME015: 'Term has been successfully deleted',
   ME016:
-    'The file uploaded doesn’t meet the requirement. Please use download the file',
+    'The file uploaded doesn’t meet the requirement. Please use download the file template and try again.',
   ME017: 'Your file has exceeded the maximum limit, please try again.',
   ME018: 'This term no longer accepts new plan. Please try again.',
   ME019: 'Financial plan successfully imported.',
