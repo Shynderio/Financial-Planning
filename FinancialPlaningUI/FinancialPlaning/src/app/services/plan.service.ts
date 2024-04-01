@@ -43,6 +43,10 @@ export class PlanService {
     return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
   }
 
+  getPlanById(planId: string): Observable<Plan> {
+    return this.http.get<Plan>(`${this.apiUrl}/${planId}`);
+  }
+
   importPlan(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
