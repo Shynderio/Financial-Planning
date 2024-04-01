@@ -52,10 +52,10 @@ namespace FinancialPlanning.Service.Services
             return await _planRepository.GetPlanById(id);
         }
 
-        public async Task CreatePlan(Plan plan)
-        {
-            await _planRepository.CreatePlan(plan);
-        }
+        // public async Task CreatePlan(Plan plan)
+        // {
+        //     await _planRepository.CreatePlan(plan);
+        // }
 
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
         {
@@ -107,20 +107,25 @@ namespace FinancialPlanning.Service.Services
             return planVersions;
         }
 
-        public async Task CreatePlan(List<Expense> expenses, Plan plan, Guid uid)
+        public async Task CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
 
         {
             var department = _departmentRepository.GetDepartmentByUserId(uid);
-            plan.DepartmentId = department.Id;
-            var isPlanExist = await _planRepository.IsPlanExist(plan.TermId, plan.DepartmentId);
+            var term = _termService.GetTermById(termId);
+            var isPlanExist = await _planRepository.IsPlanExist(term.Id, department.Id);
             if (isPlanExist)
             {
                 throw new ArgumentException("Plan already exists with the specified term, department");
             }
             else
             {
-                plan.PlanName = plan.Term.TermName + " - " + department.DepartmentName;
-                plan.Status = PlanStatus.New;
+                var plan = new Plan
+                {
+                    DepartmentId = department.Id,
+                    TermId = term.Id,
+                    PlanName = department.DepartmentName + " - " + term.TermName,
+                    Status = PlanStatus.New
+                };
                 plan = await _planRepository.ImportPlan(plan, uid);
 
                 var filename = Path.Combine(department.DepartmentName, plan.Term.TermName, "Plan", "version_1" + ".xlsx");

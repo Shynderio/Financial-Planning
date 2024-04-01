@@ -56,7 +56,7 @@
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let term">
         <a [routerLink]="[ '/term-details/', term.id ]"><mat-icon>visibility</mat-icon></a>
-        <a [routerLink]="[ '/edit-term/', term.id ]" [hidden]="role !== 'Accountant'"><mat-icon>edit</mat-icon></a>
+        <a [routerLink]="[ '/edit-term/', term.id ]" [hidden]="role !== 'Accountant' || term.status != 'New'"><mat-icon>edit</mat-icon></a>
         <a [hidden]="role !== 'Accountant' || term.status !== 'New'"
           (click)="openDeleteDialog(term.id)"><mat-icon>delete</mat-icon></a>
       </td>

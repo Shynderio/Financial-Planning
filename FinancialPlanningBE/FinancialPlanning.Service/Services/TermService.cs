@@ -111,8 +111,8 @@ namespace FinancialPlanning.Service.Services
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             foreach (var term in terms)
             {
-                var endDate = term.StartDate.AddMonths(term.Duration).Day;
-                if (endDate < DateTime.Now.Day || term.Status == TermStatus.Closed) 
+                var endDate = term.StartDate.AddMonths(term.Duration);
+                if (endDate > DateTime.Now || term.Status == TermStatus.Closed) 
                     continue;
                 term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);

@@ -49,8 +49,8 @@ h5 {
     height: 100%;
 } */
 mat-card {
-    background-color: #222143;
-    color: white;
+    background-color: #F2F4F3;
+    color: black;
     /* height: 500px; */
     /* width: 100%; */
     display: flex;
@@ -107,8 +107,8 @@ mat-label {
 }
 
 .preview-button {
-    background-color: #4F85F2;
-    color: white;
+    background-color: white;
+    color: #4F85F2;
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
@@ -192,38 +192,33 @@ button {
     color: #9290c3;
 }
 
+
 table {
     width: 100%;
     min-height: auto;
-    background-color: #070f2b !important;
-    border: 1px solid #9290c3;
+    border: 2px solid var(--white-smoke) !important;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     overflow: hidden !important;
-    box-shadow: 0px -5px 2px -4px #9290c3;
+    /* box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1); */
     flex-shrink: 0;
-}
-
-tr {
-    background-color: #1b1a55;
-    color: white;
+    
 }
 
 th {
-    border-bottom: 1px solid #1b1a55;
-    color: white;
+    font-weight: 900;
+    background-color: #f2f4f3 !important;
 }
 
-td {
-    border-top: 1px solid #535c91;
-    color: #9290c3;
-}
 
 ::ng-deep .mat-mdc-paginator {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     overflow: hidden;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
+
+
 
 ::ng-deep .mat-mdc-paginator-outer-container {
     background-color: #535c91;

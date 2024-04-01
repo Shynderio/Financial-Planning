@@ -24,7 +24,7 @@ body {
     /* background: #4F85F2; */
     border-radius: 5px;
     padding-bottom: 30px;
-    box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.05); */
 }
 
 .wrapper header {
@@ -43,7 +43,7 @@ body {
     justify-content: center;
     flex-direction: column;
     border-radius: 5px;
-    border: 2px dashed white;
+    border: 2px dashed black;
 }
 
 @media screen and (max-width: 1200px) {
@@ -87,7 +87,7 @@ body {
 }
 
 form :where(i, p) {
-    color: white;
+    color: black;
 }
 
 form i {
@@ -117,7 +117,7 @@ form p {
 section .row {
     margin-top: 20px;
     /* margin-bottom: 20px; */
-    background: #3E6AC2;
+    background: white;
     list-style: none;
     padding: 15px 20px;
     border-radius: 5px;
@@ -127,7 +127,7 @@ section .row {
 }
 
 section .row i {
-    color: white;
+    color: #4F85F2;
     font-size: 30px;
 }
 

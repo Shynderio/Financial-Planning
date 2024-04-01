@@ -57,7 +57,7 @@ export class ReupReportComponent implements OnInit {
     'pic',
     'notes'
   ];
-
+  validFileName: string = '';
   constructor(
     reportService: ReportService,
     private fb: FormBuilder,
@@ -89,6 +89,12 @@ export class ReupReportComponent implements OnInit {
           });
         } else {
           this.reportId = reportId;
+          var term = data.report.termName;
+          var month = data.report.month;
+          var department = data.report.departmentName;
+          this.validFileName = `${department}_${term}_${month}_Report`;
+          console.log('Report data:', data);
+          console.log('validFileName:', this.validFileName);
         }
       });
       // Use the reportId as needed

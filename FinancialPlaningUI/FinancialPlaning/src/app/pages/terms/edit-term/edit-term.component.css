@@ -102,3 +102,17 @@ table {
     text-align: center;
     overflow: scroll;
 }
+
+
+a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  #back-link {
+    font-size: 18px;
+  }
+  
+  #back-link:hover {
+    color: var(--button-background);
+  }

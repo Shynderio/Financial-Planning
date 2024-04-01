@@ -79,18 +79,14 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetPlanById(Guid id)
         {
             var plan = await _planService.GetPlanById(id);
-            return Ok(plan);
+            if (plan == null)
+            {
+                return NotFound(new { message = $"Plan with id {id} not found" });
+            }
+            var planViewModel = _mapper.Map<PlanViewModel>(plan);
+            return Ok(planViewModel);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
-        public async Task<IActionResult> CreatePlan(PlanListModel planModel)
-        {
-            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
-            var plan = _mapper.Map<Plan>(planModel);
-            await _planService.CreatePlan(plan);
-            return Ok(new { message = "Plan created successfully!" });
-        }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -215,7 +211,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
-                string filename = plan.Department.DepartmentName + "/"
+                string filename = plan!.Department.DepartmentName + "/"
                       + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
@@ -247,7 +243,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         [Authorize(Roles = "FinancialStaff")]
         public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId)
         {
@@ -280,12 +276,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                var plan = new Plan
-                {
-                    TermId = termId,
-                    Status = PlanStatus.New,
-                };
-                await _planService.CreatePlan(expenses, plan, uid);
+                await _planService.CreatePlan(expenses, termId, uid);
                 return Ok(new { message = "Plan updated successfully!" });
             }
             catch (ArgumentException ex)
@@ -297,5 +288,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
+
+        
     }
 }
