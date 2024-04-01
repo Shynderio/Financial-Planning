@@ -1,4 +1,7 @@
 <link rel="stylesheet" href="add-new-user.component.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div *ngIf="isSubmitting" class="loader">
+</div>
 <main>
     @if (isEdit) {
     <h3><b>User List</b></h3>
