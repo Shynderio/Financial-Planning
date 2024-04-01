@@ -11,12 +11,10 @@ namespace FinancialPlanning.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
-        private readonly IEmailRepository _emailRepository;
 
-        public UserRepository(DataContext context, IEmailRepository emailRepository)
+        public UserRepository(DataContext context)
         {
             _context = context;
-            _emailRepository = emailRepository;
         }
 
 
