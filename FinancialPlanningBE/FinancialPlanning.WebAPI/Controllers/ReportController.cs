@@ -96,14 +96,14 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get report
                 var report = await _reportService.GetReportById(id);
-                string filename = report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      + report.GetMaxVersion();
+                string filename = $"{report.Department.DepartmentName}/{report.Term.TermName}/" +
+                    $"{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx";
+
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
 
                 //Download file report form cloud
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename + ".xlsx"), 1);
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 1);
 
                 //mapper
                 var reportViewModel = _mapper.Map<ReportViewModel>(report);
@@ -138,12 +138,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //from reportVersion Id -> get name report + version
                 var report = await _reportService.GetReportById(id);
-                string filename = report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      + version;
+                string filename = $"{report.Department.DepartmentName}/{report.Term.TermName}/{report.Month}/Report/version_{version}.xlsx";
+
 
                 //get file
-                var reports = await _reportService.GetFileByName(filename + ".xlsx");
+                var reports = await _reportService.GetFileByName(filename);
 
                 return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
               report.ReportName+".xlsx");
