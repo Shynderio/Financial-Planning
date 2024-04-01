@@ -201,12 +201,12 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
           // Redirect to the terms page
           // this.router.navigate(['/terms']);
           const data = { success: false, message: 'Operation failed!' };
-          this._snackBar.openFromComponent(MessageBarComponent, { data});
+          this._snackBar.openFromComponent(MessageBarComponent, { duration: 5000, data});
         } else {
           // Redirect to the terms page
           this.router.navigate(['/terms']);
           const data = { success: true, message: MESSAGE_CONSTANTS.ME011 };
-          this._snackBar.openFromComponent(MessageBarComponent, { data});
+          this._snackBar.openFromComponent(MessageBarComponent, { duration: 5000, data});
         }
       });
     }

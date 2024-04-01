@@ -69,7 +69,15 @@ main {
 main>h6>a{
   text-decoration: none;
 }
-
+.required-star {
+  color: red; /* Màu đỏ */
+  font-weight: bolder;
+}
+#username::placeholder {
+  font-size: 16px; /* Kích thước chữ mong muốn */
+  color: red;
+  font-weight: bold;
+}
 
 main>div {
   border-radius: 24px;
