@@ -165,7 +165,19 @@ export class ImportPlanComponent implements OnInit {
           },
           error => {
             console.log('Error uploading plan:', error);
+            this.messageBar.open(
+              'Error uploading plan.',
+              undefined,
+              {
+                duration: 5000,
+                panelClass: ['messageBar', 'successMessage'],
+                verticalPosition: 'top',
+                horizontalPosition: 'end',
+              }
+            );
+            this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
           }
+
         );
       } else {
         // console.log('Please select a file to upload.');
@@ -185,7 +197,7 @@ export class ImportPlanComponent implements OnInit {
       // console.log('Form is invalid.');
       this.messageBar.open(
         "Please select a term.",
-        undefined,
+        undefined, 
         {
           duration: 5000,
           panelClass: ['messageBar', 'successMessage'],
@@ -202,8 +214,9 @@ export class ImportPlanComponent implements OnInit {
     this.isTermSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken: any = jwtDecode(token);
-    this.validFileName = decodedToken.departmentName + '_' + this.selectedTermId + '_Plan';
-    console.log('Selected term:', event.value);  
+    this.validFileName = decodedToken.departmentName + '_' + event.value.viewValue + '_Plan';
+    // console.log('Selected term:', event.viewValue); 
+    console.log('Valid filename:', this.validFileName); 
   }
 
   exportPlanTemplate() {

@@ -79,18 +79,14 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetPlanById(Guid id)
         {
             var plan = await _planService.GetPlanById(id);
-            return Ok(plan);
+            if (plan == null)
+            {
+                return NotFound(new { message = $"Plan with id {id} not found" });
+            }
+            var planViewModel = _mapper.Map<PlanViewModel>(plan);
+            return Ok(planViewModel);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
-        public async Task<IActionResult> CreatePlan(PlanListModel planModel)
-        {
-            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
-            var plan = _mapper.Map<Plan>(planModel);
-            await _planService.CreatePlan(plan);
-            return Ok(new { message = "Plan created successfully!" });
-        }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -101,8 +97,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         // POST: api/plan
-        [Authorize(Roles = "FinancialStaff")]
         [HttpPost("import")]
+        [Authorize(Roles = "FinancialStaff")]
         public async Task<ActionResult<List<Expense>>> Import(IFormFile file)
         {
             try
@@ -216,14 +212,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
                 string filename = plan!.Department.DepartmentName + "/"
-                                                                  + plan.Term.TermName + "/" + plan.PlanName +
-                                                                  "/version_" + plan.GetMaxVersion() + ".xlsx";
+                      + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
-                var expenses =
-                    _fileService.ConvertExcelToList(await _fileService.GetFileAsync("HR/Term+1/Plan/version_1.xlsx"),
-                        0);
-
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 0);
                 //mapper
                 var planViewModel = _mapper.Map<PlanViewModel>(plan);
                 var planVersionModel = _mapper.Map<IEnumerable<PlanVersionModel>>(planVersions).ToList();
@@ -231,12 +223,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
                 var dueDate = plan.Term.PlanDueDate;
+                var date = firstPlanVersion?.ImportDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
                     planDueDate = dueDate,
-                    //   date = date,
+                    date = date,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy
@@ -251,7 +244,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpPost("edit")]
+        [HttpPut("edit")]
         [Authorize(Roles = "FinancialStaff")]
         public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId)
         {
@@ -284,12 +277,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         {
             try
             {
-                var plan = new Plan
-                {
-                    TermId = termId,
-                    Status = PlanStatus.New,
-                };
-                await _planService.CreatePlan(expenses, plan, uid);
+                await _planService.CreatePlan(expenses, termId, uid);
                 return Ok(new { message = "Plan updated successfully!" });
             }
             catch (ArgumentException ex)
@@ -299,6 +287,30 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+        [HttpGet("export/{id:guid}/{version:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSinglePlan(Guid id, int version)
+        {
+            try
+            {
+                //from planVersion Id -> get name plan + version
+                var plan = await _planService.GetPlanById(id);
+                string filename = plan.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/Plan/version_"
+                      + version;
+
+
+                //get url from name file
+                var url = await _planService.GetFileByName(filename + ".xlsx");
+
+                // return URL
+                return Ok(new { downloadUrl = url });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
             }
         }
     }

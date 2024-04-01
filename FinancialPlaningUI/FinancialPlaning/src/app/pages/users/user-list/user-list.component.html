@@ -1,9 +1,10 @@
 <link rel="stylesheet" href="user-list.component.css">
 <main>
-  <div class="container mb-4">
+
+  <div>
     <div id="page-title">
       <h3><b>User List</b></h3>
-      <h6>Users management</h6>
+      <h6><a routerLink="/user-list" class="user-list-link">User Management</a> > User List </h6>
     </div>
     <a routerLink="/add-user" id="create-button">
       <button><i class="fa-solid fa-plus"></i> Add</button>
@@ -56,7 +57,7 @@
   <div *ngIf="userList.length == 0" class="empty-data-message">
     No items match your credentials, please try again.
   </div>
-  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
+  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)" [hidden]="dataSource.length==0  || (dataSource.length<pageSize && pageIndex==0)">
   </mat-paginator>
 </main>
 <footer>

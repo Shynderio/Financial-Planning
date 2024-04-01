@@ -34,7 +34,6 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
@@ -131,14 +130,13 @@ builder.Services.AddAuthentication(options =>
         {
             var userService = context.HttpContext.RequestServices.GetRequiredService<UserService>();
             var userIdClaim = context.Principal.FindFirst("userid");
-            if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out Guid userId))
+            if (Guid.TryParse(userIdClaim!.Value, out Guid userId))
             {
                 var user = await userService.GetUserById(userId);
 
-                if (user == null || user.Status== UserStatus.Inactive)
+                if (user.Status== UserStatus.Inactive)
                 {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    context.Response.CompleteAsync();
+                    context.Fail("Unauthorized");
                 }
             }
           

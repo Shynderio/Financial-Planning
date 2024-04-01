@@ -2,14 +2,14 @@
   <div class="container mb-4 margin">
     <div id="page-title">
       <h4><b>Financial Plan</b></h4>
-      <h6>  <a style="color: white"   href="/plans">Plan list</a> > Plan Details</h6>
+      <h6>  <a style="color: black"   href="/plans">Plan list</a> > Plan Details</h6>
     </div>
 
   </div>
   <div  class="plan-details d-flex justify-content-between">
 
     <div class="left-item">
-      <h6>Plan: {{plan.plan}}</h6>
+      <h6>Plan: {{plan.department}}_{{plan.term}} </h6>
       <h6>Term: {{plan.term}}</h6>
       <h6>Department: {{plan.department}}</h6>
       <h6>Status: {{plan.status}}</h6>
@@ -17,7 +17,7 @@
     <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
       <h6>Plan Due Date: {{convertIsoDateToDdMmYyyy(planDueDate)}}</h6>
-      <h6>Date: {{convertIsoDateToDdMmYyyy(plan.updateDate)}}</h6>
+      <h6>Date: {{convertIsoDateToDdMmYyyy(date)}}</h6>
       <h6 class="underline" (click)="openPlanVersionsDialog()">Version: v.{{plan.version}}</h6>
     </div>
 
@@ -28,6 +28,19 @@
   <div class="plan-details d-flex justify-content-between">
     <h6 class="left-item"><b>Total plan: {{totalExpense | number:'1.0-0'}} VND</b></h6>
   </div>
+
+  
+  <div class="abc">
+    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
+      <button> Reup</button>
+    </a>
+    
+    <a   class="create-button" >
+      <button (click)="downloadFile(plan.id, plan.version)"> Export</button>
+    </a>
+  </div>
+
+ <div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="No">
@@ -93,4 +106,15 @@
   <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
     [hidden]="dataSource.length==0">
   </mat-paginator>
+</div>
+
+<div class="abc" >
+  <a  routerLink="/plans" class="create-button" >
+    <button> Back</button>
+  </a>
+
+  <a  routerLink="/import-plan"  >
+    <button> Submit for approval</button>
+  </a>
+</div>
 </main>

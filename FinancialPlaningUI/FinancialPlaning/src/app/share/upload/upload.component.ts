@@ -26,6 +26,11 @@ export class UploadComponent implements OnInit {
   ngOnInit() {
   }
 
+  reset(){
+    this.file = null;
+    
+  }
+
   onClick() 
   {
     if (this.isTermSelected == false) {
@@ -42,8 +47,9 @@ export class UploadComponent implements OnInit {
 
   onChange(event: any) {
     const file: File = event.target.files[0];
+    debugger;
     if (file) {
-      if (file.name.split('.').pop() != this.validName) {
+      if (file.name.split('.')[0] != this.validName) {
         this.messagebar.open(MESSAGE_CONSTANTS.ME016, "Close", {});
         return;
       }

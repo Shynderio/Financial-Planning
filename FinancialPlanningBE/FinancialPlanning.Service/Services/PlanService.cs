@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text.Json;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
@@ -52,10 +53,10 @@ namespace FinancialPlanning.Service.Services
             return await _planRepository.GetPlanById(id);
         }
 
-        public async Task CreatePlan(Plan plan)
-        {
-            await _planRepository.CreatePlan(plan);
-        }
+        // public async Task CreatePlan(Plan plan)
+        // {
+        //     await _planRepository.CreatePlan(plan);
+        // }
 
         public async Task<List<Plan>> GetFinancialPlans(string keyword = "", string department = "", string status = "")
         {
@@ -65,6 +66,14 @@ namespace FinancialPlanning.Service.Services
         public async Task DeletePlan(Guid id)
         {
             var planToDelete = await _planRepository.GetPlanById(id);
+
+            // Xóa in S3
+            foreach (var version in planToDelete.PlanVersions!)
+            {
+                var filename = planToDelete.Department.DepartmentName + '/' + planToDelete.Term.TermName + "/Plan/version_" + version.Version + ".xlsx";
+                //delete file on cloud
+                await _fileService.DeleteFileAsync(filename);
+            }
             if (planToDelete != null)
             {
                 await _planRepository.DeletePlan(planToDelete);
@@ -107,19 +116,25 @@ namespace FinancialPlanning.Service.Services
             return planVersions;
         }
 
-        public async Task CreatePlan(List<Expense> expenses, Plan plan, Guid uid)
+        public async Task CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
 
         {
             var department = _departmentRepository.GetDepartmentByUserId(uid);
-            plan.DepartmentId = department.Id;
-            var isPlanExist = await _planRepository.IsPlanExist(plan.TermId, plan.DepartmentId);
+            var term = _termService.GetTermById(termId);
+            var isPlanExist = await _planRepository.IsPlanExist(term.Id, department.Id);
             if (isPlanExist)
             {
                 throw new ArgumentException("Plan already exists with the specified term, department");
             }
             else
             {
-                plan.Status = PlanStatus.New;
+                var plan = new Plan
+                {
+                    DepartmentId = department.Id,
+                    TermId = term.Id,
+                    PlanName = department.DepartmentName + " - " + term.TermName,
+                    Status = PlanStatus.New
+                };
                 plan = await _planRepository.ImportPlan(plan, uid);
 
                 var filename = Path.Combine(department.DepartmentName, plan.Term.TermName, "Plan", "version_1" + ".xlsx");
@@ -196,6 +211,10 @@ namespace FinancialPlanning.Service.Services
         public async Task SubmitPlan(Guid termId, string planName, string departmentOrUid)
         {
             await _planRepository.SubmitPlan(termId, planName, departmentOrUid);
+        }
+        public async Task<string> GetFileByName(string key)
+        {
+            return await _fileService.GetFileUrlAsync(key);
         }
     }
 

@@ -24,7 +24,18 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task DeletePlan(Plan plan)
         {
+            // Load các PlanVersions của Plan cần xóa để đảm bảo rằng các đối tượng này được theo dõi bởi DbContext
+            await _context.Entry(plan)
+                .Collection(p => p.PlanVersions)
+                .LoadAsync();
+
+            // Xóa tất cả các PlanVersions của Plan
+            _context.PlanVersions!.RemoveRange(plan.PlanVersions);
+
+            // Xóa Plan chính thức
             _context.Plans!.Remove(plan);
+
+            // Ghi lại thay đổi
             await _context.SaveChangesAsync();
         }
 
@@ -129,10 +140,10 @@ namespace FinancialPlanning.Data.Repositories
             }
         }
 
-        public Task<Plan> ViewPlan(string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<Plan> ViewPlan(string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public async Task<Plan> ImportPlan(Plan plan, Guid userId)
         {
@@ -171,25 +182,25 @@ namespace FinancialPlanning.Data.Repositories
             return GetPlanById(plan.Id).Result!;
         }
 
-        public Task<Plan> GetPlanDetails(Guid termId, string department, int version)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<Plan> GetPlanDetails(Guid termId, string department, int version)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public Task<bool> SubmitPlan(Guid termId, string planName, string departmentOrUid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<bool> Approve(Guid termId, string planName, string departmentOrUid, string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public Task<bool> ExportPlan(string file)
-        {
-            throw new NotImplementedException();
-        }
+        // public Task<bool> ExportPlan(string file)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public async Task UpdatePlan(Plan plan)
         {

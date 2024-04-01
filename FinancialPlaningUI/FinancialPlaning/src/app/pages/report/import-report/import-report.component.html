@@ -22,11 +22,11 @@
               <mat-option *ngFor="let option of monthOptions" [value]="option">
                 {{option}}
               </mat-option>
-            </mat-select>
+            </mat-select> 
           </mat-form-field>
         </form>
         <a   style="cursor: pointer; text-decoration: underline;" (click)="exportReportTemplate()">File template</a>
-        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isMonthSelected]="isMonthSelected" [isTermSelected]="isTermSelected"></app-upload>
+        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isMonthSelected]="isMonthSelected" [isTermSelected]="isTermSelected" [validName]="validFileName"></app-upload>
         <div class="buttons">
           <button class="preview-button" (click)="onImport()">
             <span>Preview</span>
@@ -37,7 +37,7 @@
     <div class="col-md-12 col-lg-8">
       <mat-card class="preview-card">
         <h3 class="mb-3">Preview</h3>
-        <div class="table mat-elevation-z8">
+        <div class="table">
           <table mat-table [dataSource]="dataSource" class="">
             <ng-container matColumnDef="expense">
               <th mat-header-cell *matHeaderCellDef> Expense </th>

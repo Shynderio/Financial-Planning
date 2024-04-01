@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { PlanService } from '../../../services/plan.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDial
     CommonModule,
     MatTableModule,
     MatSelectModule,
+    RouterLink,
     MatPaginatorModule],
   templateUrl: './plan-details.component.html',
   styleUrl: './plan-details.component.css'
@@ -33,6 +34,8 @@ export class PlanDetailsComponent {
   planVersions: any;
   uploadedBy: any;
   planDueDate: any;
+  date: any;
+
 
 
   totalExpense: number = 0;
@@ -68,9 +71,11 @@ export class PlanDetailsComponent {
       //data of plan
       this.plan = data.plan;
       this.planVersions = data.planVersions;
+      this.date= data.date;
       //Name of account uploaded
       this.uploadedBy = data.uploadedBy;
       this.planDueDate= data.planDueDate;
+
       //filter
       this.dataSource = this.getPaginatedItems();
 
@@ -110,6 +115,24 @@ export class PlanDetailsComponent {
     });
     PlanVersionsDialog
   }
+  downloadFile(reportId: string, version: number) {
+    this.planService.exportPlan(reportId, version).subscribe((data: any) => {
+        const downloadUrl = data.downloadUrl;
+         // create hidden link to download
+         const link = document.createElement('a');
+         link.href = downloadUrl;
+         link.setAttribute('download', '');
+  
+         // Add link into web and click it to download
+         document.body.appendChild(link);
+         link.click();
+  
+         // remove link after download 
+         document.body.removeChild(link)
+      }, 
+    );
+  }
+  
 }
 
 @Component({
@@ -154,5 +177,23 @@ export class PlanVersionsDialog {
     if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }  
+
+  downloadFile(planId: string, version: number) {
+    this.planService.exportPlan(planId, version).subscribe((data: any) => {
+        const downloadUrl = data.downloadUrl;
+         // create hidden link to download
+         const link = document.createElement('a');
+         link.href = downloadUrl;
+         link.setAttribute('download', '');
+
+         // Add link into web and click it to download
+         document.body.appendChild(link);
+         link.click();
+
+         // remove link after download 
+         document.body.removeChild(link)
+      }, 
+    );
+  }
 
 }

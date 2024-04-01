@@ -2,6 +2,7 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using OfficeOpenXml;
+using System;
 using System.Composition;
 
 namespace FinancialPlanning.Service.Services
@@ -49,21 +50,28 @@ namespace FinancialPlanning.Service.Services
         public async Task DeleteReport(Guid id)
         {
             var reportToDelete = await _reportRepository.GetReportById(id);
-            // Todo: Convert to string interpolation
-            var filename = reportToDelete.Department.DepartmentName + '/' + reportToDelete.Term.TermName + "/"
-                                                  + reportToDelete.Month + "/Report/version_" + reportToDelete.GetMaxVersion()+".xlsx";
-            if (reportToDelete != null)
+            
+            if (reportToDelete != null && reportToDelete.Status== ReportStatus.New)
             {
+                foreach (var version in reportToDelete.ReportVersions!)
+                {
+                    var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month}/Report/version_{version.Version}.xlsx";
+
+                    //delete file on cloud
+                    await _fileService.DeleteFileAsync(filename);
+                }
+                
                 await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
                 await _reportRepository.DeleteReport(reportToDelete);
-                //delete file on cloud
-                await _fileService.DeleteFileAsync(filename);
+               
+              
                 
             }
             else
             {
-                throw new ArgumentException("Report not found with the specified ID");
+                throw new ArgumentException("Report not found with the specified ID or Status isn't New");
             }
+
         }
 
         public async Task<IEnumerable<Department>> GetAllDepartment()
@@ -71,9 +79,9 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
-        public async Task<string> GetFileByName(string key)
+        public async Task<byte[]> GetFileByName(string key)
         {
-            return await _fileService.GetFileUrlAsync(key);
+            return await _fileService.GetFileAsync(key);
         }
 
         public async Task<Report?> GetReportById(Guid id)
@@ -108,7 +116,8 @@ namespace FinancialPlanning.Service.Services
             foreach (var report in reports)
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
-                    await _fileService.GetFileAsync(report.ReportName.Replace("_", "/") + "/version_" + report.GetMaxVersion()+ ".xlsx"),
+                    await _fileService.GetFileAsync($"{report.Department.DepartmentName}/" +
+                    $"{report.Term.TermName}/{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx"),
                     1));
             }
             
@@ -180,8 +189,8 @@ namespace FinancialPlanning.Service.Services
             } else {
                 // add data for report
                 report.Status = (int)ReportStatus.New;
-                report.UpdateDate = DateTime.Now; 
-                report.ReportName = department.DepartmentName+"_"+term.TermName+"_"+report.Month+"_Report";
+                report.UpdateDate = DateTime.Now;
+                report.ReportName = $"{department.DepartmentName}_{term.TermName}_{report.Month}_Report";
                 var result = await _reportRepository.CreateReport(report, userId);
 
                 var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
@@ -202,7 +211,8 @@ namespace FinancialPlanning.Service.Services
                 await _reportRepository.ReupReport(reportId, userId);
 
                 var report = await _reportRepository.GetReportById(reportId);
-                var filename = Path.Combine(report!.Department.DepartmentName, report.Term.TermName, report.Month, "Report", "version_" + report.GetMaxVersion() + ".xlsx");
+                var filename = Path.Combine($"{report.Department.DepartmentName}/{report.Term.TermName}/" +
+                    $"{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx");
                 // Convert list of expenses to Excel file
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3
@@ -220,5 +230,8 @@ namespace FinancialPlanning.Service.Services
         {
             await Task.CompletedTask;
         }
+
+       
+
     }
 }

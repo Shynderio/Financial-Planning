@@ -11,7 +11,7 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
     </div>
     <div class="mb-4 row">
         <form class="searchBar col-6">
-          <input type="text" placeholder="Search" (input)="changeSearchText($event)" />
+          <input type="text" placeholder="Search by year" (input)="changeSearchText($event)" />
           <i class="fa-solid fa-search"></i>
         </form>
       </div>
@@ -37,7 +37,7 @@ displayedColumns: string[] = ['Index','Year','TotalExpense','TotalDepartment','C
         </ng-container>
 
         <ng-container matColumnDef="Create-Date">
-            <th mat-header-cell *matHeaderCellDef> Create-Date </th>
+            <th mat-header-cell *matHeaderCellDef> Created Date </th>
             <td mat-cell *matCellDef="let element"> {{convertIsoDateToDdMmYyyy(element.createDate)}} </td>
         </ng-container>
         

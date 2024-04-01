@@ -6,6 +6,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Term;
+using System.Security.Claims;
+using FinancialPlanning.Common;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -39,7 +41,8 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetTermById(Guid id)
         {
             var term = await _termService.GetTermByIdAsync(id);
-            return Ok(term);
+            var termViewModel = _mapper.Map<TermViewModel>(term);
+            return Ok(termViewModel );
         }
 
         [HttpGet("all")]
@@ -47,7 +50,12 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetAllTerms()
         {
             var terms = await _termService.GetAllTerms();
-            var termListModels = terms.Select(t => _mapper.Map<TermListModel>(t)).ToList();
+            var role = User.FindFirst(ClaimTypes.Role)!.Value;
+            if (role == "FinancialStaff")
+            {
+                terms = terms.Where(t => t.Status != TermStatus.New);
+            }
+            var termListModels = terms.Select(_mapper.Map<TermListModel>).ToList().OrderByDescending(t => t.StartDate);
             return Ok(termListModels);
         }
 

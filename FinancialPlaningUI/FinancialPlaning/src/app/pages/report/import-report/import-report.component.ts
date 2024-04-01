@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -35,8 +35,6 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 })
 export class ImportReportComponent implements OnInit {
 
-
-
   termService: TermService;
   reportService: ReportService;
   termOptions: SelectTermModel[] = [];
@@ -49,7 +47,7 @@ export class ImportReportComponent implements OnInit {
   pageSize = 7;
   pageIndex = 0;
   filedata: any = [];
-
+  validFileName: string = '';
   file: any;
   columnHeaders: string[] = [
     'expense',
@@ -76,7 +74,8 @@ export class ImportReportComponent implements OnInit {
     reportService: ReportService,
     private fb: FormBuilder,
     private elementRef: ElementRef,
-    private messageBar: MatSnackBar, private router: Router) {
+    private messageBar: MatSnackBar, 
+    private router: Router, ) {
     this.termService = termService;
     this.reportService = reportService;
     this.reportForm = this.fb.group({
@@ -115,19 +114,32 @@ export class ImportReportComponent implements OnInit {
       }
 
       this.monthOptions = monthOptions;
-
+      this.reportForm.controls['month'].setValue('');
+      this.isMonthSelected = false;
       console.log('Selected term:', term);
       console.log('Month options:', this.monthOptions);
       // this.monthOptions = this.months.slice(0, selectedTerm.duration);
     }
   }
 
+  reset() {
+    this.file = null;
+    this.dataSource = [];
+    this.isPreview = false;
+    this.reportForm.reset();
+    }
+
   onMonthSelected() {
+ 
     this.isMonthSelected = true;
+    var token = localStorage.getItem('token') ?? '';
+    var decodedToken:any = jwtDecode(token);
+    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + this.reportForm.value.month + '_Report';
+    console.log(this.validFileName);
   }
 
   onFileSelected(event: any) {
-    // debugger;
+   
     this.file = event;
     console.log('Selected file:', this.file);
   }

@@ -30,7 +30,7 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent},    
     { path: 'forgot-password', component: ForgotPasswordComponent },
     { path: 'reset-password', component: ResetPasswordComponent },
-    { path: '', component: SidenavComponent, canActivate: [AuthGuard]},
+    { path: '', component: SidenavComponent},
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
     // term
     { path: 'terms', component: TermsComponent, canActivate: [AuthGuard]},

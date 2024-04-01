@@ -7,7 +7,12 @@ import { catchError, throwError } from 'rxjs';
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req) .pipe(catchError((error) =>{
     console.log(error.status);
-    if([401].includes(error.status)){
+
+    if([404,500].includes(error.status)){
+      window.history.back(); 
+    }
+
+    if([403].includes(error.status)){
       console.log('Unauthrized request ');
       const token = localStorage.getItem('token');
       if(token){
@@ -15,9 +20,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       }else{
         window.location.href = '/login';
       }
-      
     }
-    if([403].includes(error.status)){
+
+    if([401].includes(error.status)){
       localStorage.removeItem('token');
       window.location.href = '/login';
     }

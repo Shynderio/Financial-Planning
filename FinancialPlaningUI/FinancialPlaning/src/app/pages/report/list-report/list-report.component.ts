@@ -13,6 +13,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-list-report',
@@ -32,6 +33,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ListReportComponent {
   displayedColumns: string[] = [
+    'No',
     'reportName',
     'month',
     'termName',
@@ -61,7 +63,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 8;
   pageIndex = 0;
 
   constructor(
@@ -185,13 +187,14 @@ export class ListReportComponent {
 
  // Export all report
 exportMutilreport() {
+ 
   const reportIds = this.listSearch.map((report: any) => report.id);
   this.reportService.exportMutilreport(reportIds).subscribe(
     (data: Blob) => {
       const downloadURL = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = 'reports.xlsx';
+      link.download = 'Reports.xlsx';
       link.click();
     }
    
@@ -201,7 +204,7 @@ exportMutilreport() {
 
   openDeleteDialog(id: string) {
     const deleteDialog = this.dialog.open(DeleteReportDialog, {
-      width: '400px',
+      width: '430px',
       height: '250px',
     });
 
@@ -217,10 +220,13 @@ exportMutilreport() {
         })
       )
       .subscribe((response) => {
-        this.messageBar.openFromComponent(MessageBarReport, {
-          duration: 5000,
+        this.messageBar.openFromComponent(MessageBarComponent, {
+           duration: 5000,
+       
           data: {
             httpStatusCode: response,
+            success:response == 200 ,
+            rmclose: true ,
             message:
               response == 200
                 ? 'Report deleted successfully'
@@ -242,20 +248,4 @@ exportMutilreport() {
 })
 export class DeleteReportDialog {
   constructor(public dialogRef: MatDialogRef<DeleteReportDialog>) {}
-}
-
-
-@Component({
-  selector: 'message-bar-report',
-  standalone: true,
-  templateUrl: './message-bar-report.component.html',
-  styles: `
-    i {
-      margin-right: 5px;
-    }
-  `,
-  imports: [CommonModule],
-})
-export class MessageBarReport {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 }

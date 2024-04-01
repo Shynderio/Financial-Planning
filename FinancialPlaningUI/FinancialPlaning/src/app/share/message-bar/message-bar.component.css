@@ -8,5 +8,19 @@ button {
   color: white;
   padding: 0;
   font-weight: bolder;
-  float: right; /* Added this line to float the button to the left */
+  float: right; 
+  margin-left: 10px; 
+}
+
+
+::ng-deep .success-snackbar .mdc-snackbar__surface{
+  background-color: #4CAF50;
+}
+::ng-deep .error-snackbar .mdc-snackbar__surface{
+  background-color: #FF5E5E;
+}
+
+span {
+  color: white;
+  font-weight: bolder;
 }

@@ -1,12 +1,11 @@
 main {
   position: absolute;
   height: 100vh;
-  width: calc(100vw - 100px);
-  max-height: 100vh;
-  max-width: calc(100vw - 100px);
-  left: 80px;
-  padding: 30px;
+  width: 100%;
   background-color: #E6E6E6;
+  padding-left: 1%;
+  padding-right: 1%;
+  
 }
 
 .container {
@@ -17,6 +16,10 @@ h6 {
   font-size: smaller;
   color: rgb(17, 17, 17);
   font-weight: bold;
+}
+.main>h6>a{
+  text-decoration: none;
+
 }
 
 div:has(#page-title) {
@@ -30,8 +33,8 @@ button {
 
 #create-button {
   position: absolute;
-  top: 50%;
-  right: 0;
+  top: 5%;
+  right: 2%;
   transform: translateY(-50%);
 }
 
@@ -40,10 +43,12 @@ button {
   padding: 10px 20px;
   border-radius: 10px;
   background-color: #B9AAAA;
+  
 }
 
 #create-button i {
   margin-right: 10px;
+
 }
 
 #status-filter {
@@ -86,16 +91,34 @@ button {
 }
 
 table {
-  width: 100%;
-  min-height: auto;
+  width: 100%; /* Đặt chiều rộng của bảng là 100% để nó tương thích với phần tử cha (main) */
+  min-width: 100%; /* Đặt chiều rộng tối thiểu của bảng */
+  max-width: 100%; /* Đặt chiều rộng tối đa của bảng là 90% của phần tử cha (main) */
+  height: auto; /* Chiều cao tự động điều chỉnh theo nội dung */
   background-color: #FAF6F6;
   border: 1px solid #0b0b0c;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   overflow: hidden !important;
   box-shadow: 0px -5px 2px -4px #020202;
   flex-shrink: 0;
+  
 }
+table td,
+table th {
+  max-width: 100%; /* Đảm bảo các ô và tiêu đề không vượt quá độ rộng của bảng */
+  word-break: break-word; /* Phá vỡ từ khi cần thiết */
+}
+.table-container {
+  width: calc(100% - 60px); /* Độ rộng của bảng sẽ lớn hơn 60px so với main để chứa thanh cuộn */
+  max-width: calc(100% - 60px); /* Đảm bảo bảng không tràn ra khỏi main */
+  overflow-x: auto; /* Tạo thanh cuộn ngang khi cần thiết */
+  height: auto;
+  margin-top: 30px; /* Thêm khoảng cách giữa bảng và các phần tử khác */
+}
+
 
 th {
   border-bottom: 1px solid #1b1a55;
@@ -191,3 +214,9 @@ b {
   color: rgb(14, 13, 13);
   font-weight: 900;
 }
+.user-list-link {
+  text-decoration: none; /* Loại bỏ gạch chân */
+  color: black;
+  font-size: medium;
+}
+

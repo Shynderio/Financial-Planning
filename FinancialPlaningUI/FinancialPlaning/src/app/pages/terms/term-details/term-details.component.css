@@ -8,9 +8,6 @@ form .col-6 {
     /* Set column width to 50% */
 }
 
-h1 {
-    font-weight: bolder;
-}
 form input,
 form select {
     /* border: 2px solid #575757   ; */
@@ -19,7 +16,7 @@ form select {
     border: 0;
     height: 50px;
     padding: 0 15px;
-    background-color: #3E6AC2;
+    background-color: #F2F4F3;
     
 }
 
@@ -28,11 +25,11 @@ form select {
     position: relative;
 }
 
-.card{
+/* .card{
     background-color: #222143;
     color: white;
     height: 80%;
-}
+} */
 
 table {
     text-align: center;
@@ -44,23 +41,64 @@ main {
     padding: 30px;
 }
 
-main>div {
+/* main>div {
     border-radius: 24px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     padding: 20px;
+} */
+
+.container {
+    position: relative;
+    max-width: 100%;
+    border-bottom: 2px solid var(--white-smoke);
 }
 
 main {
-    position: absolute; 
-    height: calc(100vh - 120px);
-    width: calc(100vw - 100px);
-    max-height: calc(100vh - 120px);
-    max-width: calc(100vw - 100px);
-    border-radius: 20px;
-    top: 100px;
-    left: 80px;
-    /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-    /* -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box; */
+    position: absolute;
+    height: 100vh;
+    width: calc(100vw - 60px);
+    max-height: 100vh;
+    max-width: calc(100vw - 60px);
+    min-width: calc(100vw - 60px);
+    left: 45px;
+    padding: 30px;
 }
+
+
+.card {
+    left: 5%;
+    top: 5%;
+    width: 90%;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.edit-button{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+
+button {
+    background: #535c91;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  #back-link {
+    font-size: 18px;
+  }
+  
+  #back-link:hover {
+    color: var(--button-background);
+  }

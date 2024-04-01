@@ -2,10 +2,7 @@ form {
   width: 100%;
   /* Set form width to 100% */
 }
-form .col-6 {
-  width: 50%;
-  /* Set column width to 50% */
-}
+
 
 form input,
 form select {
@@ -33,6 +30,7 @@ form input:focus, form select:focus {
 }
 a.user-list-link {
   color: black; /* Màu chữ đen */
+  text-decoration: none;
 }
 #note {
   background-color: #EBEEF3
@@ -65,19 +63,28 @@ table {
 
 main {
   box-shadow: none;
-  padding: 30px;
+  padding: 20px;
   background-color: #E6E6E6;
-  
-  
 }
-
+main>h6>a{
+  text-decoration: none;
+}
+.required-star {
+  color: red; /* Màu đỏ */
+  font-weight: bolder;
+}
+#username::placeholder {
+  font-size: 16px; /* Kích thước chữ mong muốn */
+  color: red;
+  font-weight: bold;
+}
 
 main>div {
   border-radius: 24px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   background-color: #FAF6F6;
   margin: 3%;
-
+  height: 50%;
 
 }
 .btn-disabled {
@@ -87,8 +94,8 @@ main>div {
 }
 main {
   position: relative;
-  border-radius: 10px;
-  margin-left: 3%;
+  margin-left: 2%;
+  margin-right: 2%;
   /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
   /* -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -97,4 +104,7 @@ main {
  .mb-4{
   font-weight: bolder;
 
+}
+.custom-background {
+  background-color:#EBEEF3;
 }

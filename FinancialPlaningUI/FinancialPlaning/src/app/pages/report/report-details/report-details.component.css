@@ -35,6 +35,11 @@ div:has(#page-title) {
 
 #version:hover {
   color: #616577;
+
+}
+#version {
+  
+  text-decoration: underline;
 }
 
 button {

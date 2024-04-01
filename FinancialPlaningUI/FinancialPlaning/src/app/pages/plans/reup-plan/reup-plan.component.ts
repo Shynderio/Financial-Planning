@@ -9,8 +9,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PlanService } from '../../../services/plan.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-reup-plan',
@@ -23,7 +24,8 @@ import { MatCard } from '@angular/material/card';
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
-    MatCard
+    MatCard,
+    RouterLink
   ],
   templateUrl: './reup-plan.component.html',
   styleUrls: ['./reup-plan.component.css']
@@ -36,6 +38,10 @@ export class ReupPlanComponent implements OnInit {
   pageIndex = 0;
   file: any;
   planId: string = '';
+  term: string = '';
+  department: string = '';
+  validFileName: string = '';
+  status: string = '';
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -48,6 +54,12 @@ export class ReupPlanComponent implements OnInit {
     'notes',
     'status'
   ];
+  expense_status: string[] = [
+    "New", 
+    'Waiting for approval',
+    'Approved',
+  ];
+
   constructor(planService: PlanService, private elementRef: ElementRef,
     private messageBar: MatSnackBar, private route: ActivatedRoute, private router: Router) {
     this.planService = planService;
@@ -59,11 +71,48 @@ export class ReupPlanComponent implements OnInit {
       // Check if 'term' parameter exists
       if (params && params['id']) {
         this.planId = params['id'];
+        // Get the plan details
+        this.planService.getPlanById(this.planId).subscribe(
+          (data: any) => {
+            // this.dataSource = data;
+            this.term = data.term;
+            this.department = data.department;
+            this.status = data.status;
+            this.validFileName = `${this.department}_${this.term}_Plan`;
+            // console.log(data);
+          },
+          error => {
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              data: {
+                message: 'Error getting plan details.',
+                success: false
+              },
+              duration: 5000,
+            })
+            
+            this.router.navigate(['/plans']);
+          }
+        );
       } else {
         // Redirect to 'planlist'
         this.router.navigate(['/plans']);
       }
     });
+
+    if (this.status == 'Closed'){
+      this.messageBar.open(
+        "This plan is closed and cannot be edited.",
+        undefined,
+        {
+          duration: 5000,
+          panelClass: ['messageBar', 'successMessage'],
+          verticalPosition: 'top',
+          horizontalPosition: 'end',
+        }
+      );
+
+      this.router.navigate(['/plans']);
+    }
   }
 
   onFileSelected(event: any) {
@@ -123,10 +172,21 @@ export class ReupPlanComponent implements OnInit {
               horizontalPosition: 'end',
             }
           );
-
+          this.router.navigate(['/plan-details/' + this.planId]);
         },
         error => {
           console.log('Error uploading plan:', error);
+          this.messageBar.open(
+            'Error uploading plan.',
+            undefined,
+            {
+              duration: 5000,
+              panelClass: ['messageBar', 'successMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            }
+          );
+          this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
         }
       );
     } else {
