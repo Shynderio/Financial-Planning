@@ -2,6 +2,7 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using OfficeOpenXml;
+using System;
 using System.Composition;
 
 namespace FinancialPlanning.Service.Services
@@ -51,14 +52,21 @@ namespace FinancialPlanning.Service.Services
         public async Task DeleteReport(Guid id)
         {
             var reportToDelete = await _reportRepository.GetReportById(id);
-            var filename = reportToDelete.Department.DepartmentName + '/' + reportToDelete.Term.TermName + "/"
-                                                  + reportToDelete.Month + "/Report/version_" + reportToDelete.GetMaxVersion()+".xlsx";
-            if (reportToDelete != null)
+            
+            if (reportToDelete != null && reportToDelete.Status== ReportStatus.New)
             {
+                foreach (var version in reportToDelete.ReportVersions!)
+                {
+                    var filename = reportToDelete.Department.DepartmentName + '/' + reportToDelete.Term.TermName + "/"
+                                                  + reportToDelete.Month + "/Report/version_" + version.Version + ".xlsx";
+                    //delete file on cloud
+                    await _fileService.DeleteFileAsync(filename);
+                }
+                
                 await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
                 await _reportRepository.DeleteReport(reportToDelete);
-                //delete file on cloud
-                await _fileService.DeleteFileAsync(filename);
+               
+              
                 
             }
             else
@@ -72,9 +80,9 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
-        public async Task<string> GetFileByName(string key)
+        public async Task<byte[]> GetFileByName(string key)
         {
-            return await _fileService.GetFileUrlAsync(key);
+            return await _fileService.GetFileAsync(key);
         }
 
         public async Task<Report?> GetReportById(Guid id)
@@ -225,5 +233,8 @@ namespace FinancialPlanning.Service.Services
         {
             await Task.CompletedTask;
         }
+
+       
+
     }
 }

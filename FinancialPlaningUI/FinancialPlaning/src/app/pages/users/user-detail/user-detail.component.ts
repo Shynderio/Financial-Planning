@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -135,10 +135,14 @@ export class UserDetailComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Change status successfully' : 'Something went wrong', 'Close', {
-          panelClass: ['success'],
-        });
-        this.loadUserDetail(userId);
+        // Check if response is null, if yes, it means user cancelled, so don't open any message bar
+        if (response !== null && response === 200) {
+          this.messageBar.open('Change status successfully', 'Close', {
+            duration: 1000,
+            panelClass: ['success'],
+          });
+          this.loadUserDetail(userId);
+        }
       });
   }
   //Convert date to dd/mm/yyyy
@@ -173,6 +177,9 @@ export class UserDetailComponent implements OnInit {
 export class UpdateUserStatusDialog {
   constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) { }
 }
+
+
+
 
 
 

@@ -4,13 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
 
-import { Router, ActivatedRoute} from '@angular/router';
+import { Router, ActivatedRoute, RouterLink} from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
+import e from 'express';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-edit-term',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './term-details.component.html',
   styleUrl: './term-details.component.css'
 })
@@ -18,17 +20,19 @@ import { TermViewModel } from '../../../models/termview.model';
 export class TermDetailsComponent implements OnInit {
 
   termForm: FormGroup;
-
   durationReverseMap: { [key: number]: string } = {
     1: '1_month',
     3: 'quarter',
     6: 'half_year'
   };
+  termStatus?: number;
+  role: string = '';
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private termService: TermService
+    private termService: TermService,
+
   ) {
 
     this.termService = termService;
@@ -58,6 +62,7 @@ export class TermDetailsComponent implements OnInit {
     });
     this.termService.getTerm(termId).subscribe(
       (termData: TermViewModel) => {
+        this.termStatus = termData.status;
         this.populateForm(termData);
         console.log(termData);
       },
@@ -65,6 +70,15 @@ export class TermDetailsComponent implements OnInit {
         console.error('Error fetching term details:', error);
       }
     );
+
+    //Get role
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        this.role = decodedToken.role;
+      }
+    }
   }
 
   populateForm(termData: TermViewModel): void {

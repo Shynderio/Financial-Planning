@@ -3,6 +3,7 @@
     <button (click)="startTerm()">
         Start Term
     </button> -->
+    <a [routerLink]="['/terms']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
     <div class="container mb-4">
         <div id="page-title">
           <h3><b>Term Manager</b></h3>
@@ -11,9 +12,6 @@
         <div class="abc">
           <a  class="create-button" (click)="startTerm()">
             <button> Start Term</button>
-          </a>
-          <a  class="export-button" (click)="closeTerm()">
-            <button> Close Term</button>
           </a>
         </div>
       </div>

@@ -76,8 +76,15 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeleteReport(Guid id)
         {
-            await _reportService.DeleteReport(id);
-            return Ok(new { message = $"Report with id {id} deleted successfully!" });
+            try
+            {
+                await _reportService.DeleteReport(id);
+                return Ok(new { message = $"Report with id {id} deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
 
@@ -123,7 +130,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         //export report 
-        [HttpGet("export/{id:guid}/{version:int}")]
+        [HttpPost("export/{id:guid}/{version:int}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportSingleReport(Guid id, int version)
         {
@@ -135,12 +142,11 @@ namespace FinancialPlanning.WebAPI.Controllers
                       + report.Term.TermName + "/" + report.Month + "/Report/version_"
                       + version;
 
+                //get file
+                var reports = await _reportService.GetFileByName(filename + ".xlsx");
 
-                //get url from name file
-                var url = await _reportService.GetFileByName(filename + ".xlsx");
-
-                // return URL
-                return Ok(new { downloadUrl = url });
+                return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              report.ReportName+".xlsx");
             }
             catch (Exception ex)
             {
