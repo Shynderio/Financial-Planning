@@ -1,25 +1,14 @@
-
-<div class="wrapper w-100">
-  
-  <form action="#" (click)="onClick()">
+<div id="upload" class="w-100 border border-3 rounded-4 border-primary mb-2" [ngStyle]="{'height': '81%'}">
+  <form action="#" role="button" class="w-100 h-100 d-flex justify-content-center" (click)="onClick()">
     <input type="file" class="file-input" (change)="onChange($event)" hidden />
-    <!-- <input class="file-input" type="file" name="file" hidden> -->
-    <i class="fas fa-cloud-upload-alt"></i>
-    <p>Browse File to Upload</p>
+    <p class="text-center my-auto">
+      <i class="fa-solid fa-cloud-upload-alt text-primary"></i><br />
+      <b>Browse File to Upload</b>
+    </p>
   </form>
+</div>
 
-  <div class="containter" *ngIf="file">
-    <section class="uploaded-area">
-      <li class="row">
-        <div class="content upload">
-          <i class="fas fa-file-alt"></i>
-          <div class="details">
-            <span class="name">{{file.name}}</span>
-            <span class="size">{{ (file.size / 1024) | number:'1.2-2' }} KB</span>
-          </div>
-        </div>
-        <!-- <i class="fas fa-check"></i> -->
-      </li>
-    </section>
-  </div>
+<div id="instruction-text" class="row text-secondary" [ngStyle]="{'height': '9%'}">
+  <p class="col-6">Allowed file type: xls, xlsx, csv</p>
+  <p class="col-6 text-end">Maximum volume: 500MB</p>
 </div>

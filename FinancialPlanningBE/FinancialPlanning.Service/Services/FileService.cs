@@ -367,12 +367,12 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         }
         catch (AmazonS3Exception e)
         {
-            Console.WriteLine("Error encountered on server. Message:'{0}'", e.Message);
+            //Console.WriteLine("Error encountered on server. Message:'{0}'", e.Message);
             return null;
         }
         catch (Exception e)
         {
-            Console.WriteLine("Unknown encountered on server. Message:'{0}'", e.Message);
+            //Console.WriteLine("Unknown encountered on server. Message:'{0}'", e.Message);
             return null;
         }
     }

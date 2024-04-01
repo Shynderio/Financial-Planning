@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
 import { RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
-import e from 'express';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-import-plan',
@@ -26,7 +26,8 @@ import e from 'express';
     MatTableModule,
     ReactiveFormsModule,
     RouterLink, 
-    MatCard
+    MatCard,
+    MatRadioModule,
   ],
   templateUrl: './import-plan.component.html',
   styleUrls: ['./import-plan.component.css']
@@ -41,7 +42,7 @@ export class ImportPlanComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 5;
   pageIndex = 0;
   filedata: any = [];
 
