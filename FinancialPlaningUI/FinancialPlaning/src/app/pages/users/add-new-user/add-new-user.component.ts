@@ -152,7 +152,7 @@ getStatusLabel(status: number): string {
   validateName(control: FormControl): { [key: string]: any } | null {
     const vietnameseCharactersRegex = /[^\x00-\x7F]+/; // Biểu thức chính quy để kiểm tra ký tự tiếng Việt
     const containsNumbers = /\d/.test(control.value); // Kiểm tra xem có chứa số không
-    const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const specialCharactersRegex = /[^\w\s]/;
 
     if (vietnameseCharactersRegex.test(control.value)) {
       return { containsVietnamese: true }; // Có chứa ký tự tiếng Việt
