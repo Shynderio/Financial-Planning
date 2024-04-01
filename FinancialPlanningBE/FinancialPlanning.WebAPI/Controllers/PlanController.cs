@@ -204,7 +204,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpGet("details/{id:guid}")]
-       // [Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> GetPlanDetails(Guid id)
         {
             try
