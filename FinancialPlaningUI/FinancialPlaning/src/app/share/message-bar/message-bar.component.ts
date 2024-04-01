@@ -10,9 +10,16 @@ import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
   styleUrls: ['./message-bar.component.css']
 })
 export class MessageBarComponent implements OnInit {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {
+    if (!this.data.success) {
+      this.snackBarRef.containerInstance.snackBarConfig.panelClass = ['error-snackbar'];
+    } else {
+      this.snackBarRef.containerInstance.snackBarConfig.panelClass = ['success-snackbar'];
+    }
+  }
   snackBarRef = inject(MatSnackBarRef);
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   // Helper method to determine icon class based on message type
   getIconClass() {
@@ -20,7 +27,9 @@ export class MessageBarComponent implements OnInit {
   }
 
   // Helper method to determine message color based on message type
-  getMessageColor() {
-    return this.data.success ? '#16ff00' : '#ff204e';
-  }
+  // getMessageColor() {
+  //   return this.data.success ? '#16ff00' : '#ff204e';
+  // }
+
+  // Helper method to determine message color based on message type
 }
