@@ -5,31 +5,43 @@
       <h1><b> Import Plan</b></h1>
     </div>
     <div class="row border border-2 rounded-5 py-3 px-2 h-100" [ngStyle]="{'border': 'var(--white-smoke)'}">
-      <div class="col-2 border-end border-2" [ngStyle]="{'border': 'var(--white-smoke)'}">
-        <h4><b>Term</b></h4>
-        <mat-radio-group aria-label="Term">
-          <mat-radio-button *ngFor="let option of termOptions" value="option"> {{option.viewValue}} </mat-radio-button>
-        </mat-radio-group>
-      </div>
-      <div class="col-10">
-        <h4 [ngStyle]="{'height': '5%'}"><b>Upload file</b></h4>
-        <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isTermSelected]="isTermSelected"
-          [validName]="validFileName" [ngStyle]="{'height': '27%'}"></app-upload>
-        <div id="template" class="row rounded-3 mx-1 my-2 px-2" [ngStyle]="{'height': '9%'}">
-          <div class="col-10 my-auto">
-            <a role="button" (click)="exportPlanTemplate()"><b>File template</b></a>
-            <p class="mb-0">You can download the attached template and use it as a starting point for your own file.</p>
-          </div>
-          <div class="col-2 my-auto text-center">
-            <button class="border-0 rounded-3"><b>Download</b></button>
+      <div class="row" [ngStyle]="{'height': '30%'}">
+        <div class="col-2 border-end border-2" [ngStyle]="{'border': 'var(--white-smoke)'}">
+          <h4><b>Step 1</b></h4>
+          <form [formGroup]="planForm">
+            <mat-form-field hideRequiredMarker>
+              <mat-label>Term</mat-label>
+              <mat-select disableOptionCentering id="term" formControlName="term" (selectionChange)="onTermSelect($event)">
+                <mat-option *ngFor="let option of termOptions" [value]="option">
+                  {{option.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </form>
+        </div>
+        <div class="col-10">
+          <h4><b>Step 2</b></h4>
+          <app-upload class="w-100" (fileSelected)="onFileSelected($event)" [isTermSelected]="isTermSelected"
+            [validName]="validFileName" [loading]="loading" (change)="onImport()" [ngStyle]="{'height': '54%'}"></app-upload>
+          <div id="template" class="row rounded-3 mx-1 my-2 px-2" [ngStyle]="{'height': '27%'}">
+            <div class="col-10 my-auto">
+              <a role="button" (click)="exportPlanTemplate()"><b>File template</b></a>
+              <p class="mb-0">You can download the attached template and use it as a starting point for your own file.
+              </p>
+            </div>
+            <div class="col-2 my-auto text-center">
+              <button class="border-0 rounded-3"><b>Download</b></button>
+            </div>
           </div>
         </div>
-        <div id="data" class="px-2 mt-4">
-          <div class="table mat-elevation-z8 rounded-top-4">
+      </div>
+      <div class="row" [ngStyle]="{'height': '70%'}">
+        <div id="data" class="px-2 mt-4 h-100">
+          <div class="table mat-elevation-z8 rounded-top-4" [ngStyle]="dataSource.length<=pageSize ? {'border-radius': '20px'} : {}">
             <table mat-table [dataSource]="dataSource" class="rounded-top-4">
               <ng-container matColumnDef="expense">
                 <th mat-header-cell *matHeaderCellDef> Expense </th>
-                <td mat-cell *matCellDef="let element"> {{element.expense}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.expenseName}} </td>
               </ng-container>
               <ng-container matColumnDef="costType">
                 <th mat-header-cell *matHeaderCellDef> Cost Type </th>
@@ -45,7 +57,7 @@
               </ng-container>
               <ng-container matColumnDef="total">
                 <th mat-header-cell *matHeaderCellDef> Total(VND) </th>
-                <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.totalAmount}} </td>
               </ng-container>
               <ng-container matColumnDef="projectName">
                 <th mat-header-cell *matHeaderCellDef> Project Name </th>
@@ -61,7 +73,7 @@
               </ng-container>
               <ng-container matColumnDef="notes">
                 <th mat-header-cell *matHeaderCellDef> Notes </th>
-                <td mat-cell *matCellDef="let element"> {{element.notes}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.note == null ? 'N/A' : element.note}} </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
@@ -69,12 +81,13 @@
             </table>
 
             <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex"
-              (page)="onPageChange($event)" [hidden]="dataSource.length==0">
+              (page)="onPageChange($event)" [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
             </mat-paginator>
           </div>
           <button id="submit-button" [ngStyle]="{'height': '9%'}"
-            class="border-0 rounded-3 float-end"><b>Submit</b></button>
+            class="border-0 rounded-3 float-end" [disabled]="filedata === undefined || filedata.length == 0" (click)="onSubmit()"><b>Submit</b></button>
         </div>
       </div>
     </div>
+  </div>
 </main>

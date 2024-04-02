@@ -46,17 +46,9 @@ button {
   padding: .5rem 1rem;
 }
 
-button:hover {
+button:hover:not(:disabled) {
   background-color: var(--button-background) !important;
   color: white;
-}
-
-#data {
-  height: 58%;
-}
-
-.table {
-  height: 81%;
 }
 
 ::ng-deep .mdc-text-field {
@@ -67,6 +59,10 @@ button:hover {
 ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
   border: 2px solid var(--white-smoke);
   border-radius: 10px;
+}
+
+.table {
+  height: 81%;
 }
 
 table {
@@ -91,5 +87,15 @@ th {
 }
 
 #submit-button {
+  width: 150px;
+  background-color: var(--button-background);
+  color: white;
+}
+
+#submit-button:hover:not(:disabled) {
+  background-color: var(--button-hover) !important;
+}
+
+#submit-button:disabled {
   background-color: var(--white-smoke);
 }

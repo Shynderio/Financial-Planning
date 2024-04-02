@@ -7,10 +7,15 @@ import { TermService } from '../../../services/term.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { PlanService } from '../../../services/plan.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
 
@@ -21,23 +26,22 @@ import { MatRadioModule } from '@angular/material/radio';
     UploadComponent,
     MatFormFieldModule,
     MatSelect,
-    MatOption, CommonModule,
+    MatOption,
+    CommonModule,
     MatPaginatorModule,
     MatTableModule,
     ReactiveFormsModule,
-    RouterLink, 
+    RouterLink,
     MatCard,
     MatRadioModule,
   ],
   templateUrl: './import-plan.component.html',
-  styleUrls: ['./import-plan.component.css']
+  styleUrls: ['./import-plan.component.css'],
 })
 export class ImportPlanComponent implements OnInit {
-
-
   termService: TermService;
   planService: PlanService;
-  termOptions: { value: string, viewValue: string }[] = [];
+  termOptions: { value: string; viewValue: string }[] = [];
   planForm: FormGroup;
   dataSource: any = [];
   //paging
@@ -47,6 +51,7 @@ export class ImportPlanComponent implements OnInit {
   filedata: any = [];
 
   file: any;
+  loading: boolean = false;
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -56,16 +61,19 @@ export class ImportPlanComponent implements OnInit {
     'projectName',
     'supplierName',
     'pic',
-    'notes'
+    'notes',
   ];
   selectedTermId: string = '';
   isTermSelected: boolean = false;
   validFileName: string = '';
-  constructor(termService: TermService, 
-    planService: PlanService, 
-    private fb: FormBuilder, 
+  constructor(
+    termService: TermService,
+    planService: PlanService,
+    private fb: FormBuilder,
     private elementRef: ElementRef,
-    private messageBar: MatSnackBar) {
+    private messageBar: MatSnackBar,
+    private router: Router,
+  ) {
     this.termService = termService;
     this.planService = planService;
     this.planForm = this.fb.group({
@@ -77,16 +85,16 @@ export class ImportPlanComponent implements OnInit {
   ngOnInit() {
     this.termService.getStartedTerms().subscribe(
       (data: any[]) => {
-        this.termOptions = data.map(term => {
+        this.termOptions = data.map((term) => {
           return { value: term.id, viewValue: term.termName };
         });
         console.log(this.termOptions);
       },
-      error => {
+      (error) => {
         console.log(error);
       }
     );
-  };
+  }
 
   onFileSelected(event: any) {
     // debugger;
@@ -102,38 +110,33 @@ export class ImportPlanComponent implements OnInit {
   }
   onImport() {
     if (this.file) {
+      this.loading = true;
       console.log('Importing file:', this.file);
       this.planService.importPlan(this.file).subscribe(
         (data: any) => {
+          this.loading = false;
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
           console.log(data);
         },
-        error => {
+        (error) => {
+          this.loading = false;
           console.log(error);
-          this.messageBar.open(
-            error.error.message,
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          this.messageBar.open(error.error.message, undefined, {
+            duration: 3000,
+            panelClass: ['messageBar', 'successMessage'],
+            verticalPosition: 'top',
+            horizontalPosition: 'end',
+          });
         }
       );
     } else {
-      this.messageBar.open(
-        "Please select a file to preview.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.open('Please select a file to preview.', undefined, {
+        duration: 3000,
+        panelClass: ['messageBar', 'successMessage'],
+        verticalPosition: 'top',
+        horizontalPosition: 'end',
+      });
     }
   }
 
@@ -143,83 +146,69 @@ export class ImportPlanComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger;
     if (this.planForm.valid) {
-      if (this.file){
+      if (this.file) {
         var term = this.planForm.value.term.value;
-        this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
+        this.elementRef.nativeElement.querySelector('#submit-button').disabled =
+          true;
         this.planService.createPlan(term, this.dataSource).subscribe(
           (data: any) => {
             console.log('Plan uploaded:', data);
-            this.messageBar.open(
-              "Uploaded successfully.",
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
-            
+            this.messageBar.open('Uploaded successfully.', undefined, {
+              duration: 3000,
+              panelClass: ['messageBar', 'successMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            });
+            this.router.navigate(['/plans']);
           },
-          error => {
+          (error) => {
             console.log('Error uploading plan:', error);
-            this.messageBar.open(
-              'Error uploading plan.',
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
-            this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
+            this.messageBar.open('Error uploading plan.', undefined, {
+              duration: 3000,
+              panelClass: ['messageBar', 'successMessage'],
+              verticalPosition: 'top',
+              horizontalPosition: 'end',
+            });
+            this.elementRef.nativeElement.querySelector(
+              '.submit-button'
+            ).disabled = false;
           }
-
         );
       } else {
         // console.log('Please select a file to upload.');
-        this.messageBar.open(
-          "Please select a file to upload.",
-          undefined,
-          {
-            duration: 5000,
-            panelClass: ['messageBar', 'successMessage'],
-            verticalPosition: 'top',
-            horizontalPosition: 'end',
-          }
-        );
-        this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
-      }
-    } else {
-      // console.log('Form is invalid.');
-      this.messageBar.open(
-        "Please select a term.",
-        undefined, 
-        {
-          duration: 5000,
+        this.messageBar.open('Please select a file to upload.', undefined, {
+          duration: 3000,
           panelClass: ['messageBar', 'successMessage'],
           verticalPosition: 'top',
           horizontalPosition: 'end',
-        }
-      );
+        });
+        this.elementRef.nativeElement.querySelector('.submit-button').disabled =
+          false;
+      }
+    } else {
+      // console.log('Form is invalid.');
+      this.messageBar.open('Please select a term.', undefined, {
+        duration: 3000,
+        panelClass: ['messageBar', 'successMessage'],
+        verticalPosition: 'top',
+        horizontalPosition: 'end',
+      });
     }
   }
 
   onTermSelect(event: any) {
-    debugger;
     this.selectedTermId = event.value.value;
     this.isTermSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken: any = jwtDecode(token);
-    this.validFileName = decodedToken.departmentName + '_' + event.value.viewValue + '_Plan';
-    // console.log('Selected term:', event.viewValue); 
-    console.log('Valid filename:', this.validFileName); 
+    this.validFileName =
+      decodedToken.departmentName + '_' + event.value.viewValue + '_Plan';
+    // console.log('Selected term:', event.viewValue);
+    console.log('Valid filename:', this.validFileName);
   }
 
   exportPlanTemplate() {
     throw new Error('Method not implemented.');
-    }
+  }
 }
