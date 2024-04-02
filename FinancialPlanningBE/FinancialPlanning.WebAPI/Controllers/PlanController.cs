@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Reflection;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -116,10 +117,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid});
                 }
 
                 // Get expenses
@@ -157,10 +158,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid});
                 }
 
                 // Get expenses

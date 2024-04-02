@@ -2,6 +2,7 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using OfficeOpenXml;
+using Serilog;
 using System;
 using System.Composition;
 
@@ -49,29 +50,36 @@ namespace FinancialPlanning.Service.Services
 
         public async Task DeleteReport(Guid id)
         {
-            var reportToDelete = await _reportRepository.GetReportById(id);
-            
-            if (reportToDelete != null && reportToDelete.Status== ReportStatus.New)
+            try
             {
-                foreach (var version in reportToDelete.ReportVersions!)
+                var reportToDelete = await _reportRepository.GetReportById(id);
+
+                if (reportToDelete != null && reportToDelete.Status == ReportStatus.New)
                 {
-                    var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month}/Report/version_{version.Version}.xlsx";
+                    foreach (var version in reportToDelete.ReportVersions!)
+                    {
+                        var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month}/Report/version_{version.Version}.xlsx";
 
-                    //delete file on cloud
-                    await _fileService.DeleteFileAsync(filename);
+                        //delete file on cloud
+                        await _fileService.DeleteFileAsync(filename);
+                    }
+
+                    await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
+                    await _reportRepository.DeleteReport(reportToDelete);
+
+
+
                 }
-                
-                await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
-                await _reportRepository.DeleteReport(reportToDelete);
-               
-              
-                
+                else
+                {
+                    throw new ArgumentException("Report not found with the specified ID or Status isn't New");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new ArgumentException("Report not found with the specified ID or Status isn't New");
+                Log.Error(ex, "An error occurred while deleting the report with ID {ReportId}", id);
+                throw; 
             }
-
         }
 
         public async Task<IEnumerable<Department>> GetAllDepartment()
@@ -145,7 +153,7 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.ConvertListToExcelAsync(expenses, 1);
         }
 
-        public bool ValidateReportFile(byte[] file){
+        public string ValidateReportFile(byte[] file){
             try
             {
                 // Assuming plan documents have document type 0
@@ -224,6 +232,8 @@ namespace FinancialPlanning.Service.Services
         {
             var reports = await _reportRepository.GetAllDueReports();
             await _reportRepository.CloseAllDueReports(reports);
+            Log.Information("Closed {Count} due reports.", reports.Count());
+
         }
 
         internal async Task GenerateAnnualReport()
