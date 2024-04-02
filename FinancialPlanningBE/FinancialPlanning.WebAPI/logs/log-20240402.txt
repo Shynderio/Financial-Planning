@@ -1,0 +1,20 @@
+{"@t":"2024-04-02T03:49:44.9798123Z","@mt":"Failed to determine the https port for redirect.","@l":"Warning","@tr":"ed0015b5f4637dc82d4396260d3cb792","@sp":"4cc44c43541989e8","EventId":{"Id":3,"Name":"FailedToDeterminePort"},"SourceContext":"Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware","RequestId":"0HN2IOVL1CE7A:00000001","RequestPath":"/api/Report/reports","ConnectionId":"0HN2IOVL1CE7A"}
+{"@t":"2024-04-02T03:49:45.0231721Z","@mt":"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms","@r":["48.9818"],"@tr":"ed0015b5f4637dc82d4396260d3cb792","@sp":"4cc44c43541989e8","RequestMethod":"OPTIONS","RequestPath":"/api/Report/reports","StatusCode":204,"Elapsed":48.9818,"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware"}
+{"@t":"2024-04-02T03:49:46.1386217Z","@mt":"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms","@r":["1.0592"],"@tr":"5e41e3616f70e6af79e67af4a33cc83a","@sp":"d6436f6f555789da","RequestMethod":"OPTIONS","RequestPath":"/api/Term/all","StatusCode":204,"Elapsed":1.0592,"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware"}
+{"@t":"2024-04-02T03:49:46.3766500Z","@mt":"Using AWS credentials specified with the AWSOptions.Credentials property","@tr":"f849314d198758f4af9b988f067618ab","@sp":"df35dd690c24f238","SourceContext":"AWSSDK","ActionId":"8e6a579e-89ea-4c01-9971-d3dcda3e579a","ActionName":"FinancialPlanning.WebAPI.Controllers.ReportController.GetListReport (FinancialPlanning.WebAPI)","RequestId":"0HN2IOVL1CE7A:00000002","RequestPath":"/api/Report/reports","ConnectionId":"0HN2IOVL1CE7A"}
+{"@t":"2024-04-02T03:49:46.4741377Z","@mt":"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms","@r":["327.5107"],"@tr":"46269e53734d2cc7758b626157c4d4fd","@sp":"3ee69e5d8309d2f5","RequestMethod":"GET","RequestPath":"/api/Term/all","StatusCode":200,"Elapsed":327.5107,"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware"}
+{"@t":"2024-04-02T03:49:48.0810711Z","@mt":"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms","@r":["3046.4174"],"@tr":"f849314d198758f4af9b988f067618ab","@sp":"df35dd690c24f238","RequestMethod":"GET","RequestPath":"/api/Report/reports","StatusCode":200,"Elapsed":3046.4174,"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware"}
+{"@t":"2024-04-02T03:49:48.1495338Z","@mt":"HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms","@r":["66.5596"],"@tr":"d290cda6b9af8bf383cac74df306a477","@sp":"dc516c0baa980ed5","RequestMethod":"GET","RequestPath":"/api/Report/reports","StatusCode":200,"Elapsed":66.5596,"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware"}
+{"@t":"2024-04-02T03:51:00.8026061Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T03:51:00.8175236Z","@mt":"Closed {Count} due plans.","Count":0}
+{"@t":"2024-04-02T03:54:00.8464060Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T03:54:00.8542181Z","@mt":"Closed {Count} due plans.","Count":0}
+{"@t":"2024-04-02T03:57:00.9114662Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T03:57:00.9174423Z","@mt":"Closed {Count} due plans.","Count":0}
+{"@t":"2024-04-02T04:00:00.9750267Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T04:00:00.9797642Z","@mt":"Closed {Count} due plans.","Count":0}
+{"@t":"2024-04-02T04:03:01.0080723Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T04:03:01.0153828Z","@mt":"Closed {Count} due plans.","Count":0}
+{"@t":"2024-04-02T04:06:00.9057260Z","@mt":"Using AWS credentials specified with the AWSOptions.Credentials property","SourceContext":"AWSSDK"}
+{"@t":"2024-04-02T04:06:02.6225556Z","@mt":"Closed {Count} due reports.","Count":0}
+{"@t":"2024-04-02T04:06:02.6393935Z","@mt":"Closed {Count} due plans.","Count":0}

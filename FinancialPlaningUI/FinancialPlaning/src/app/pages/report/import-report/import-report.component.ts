@@ -100,6 +100,7 @@ export class ImportReportComponent implements OnInit {
 
   changeTerm() {
     // debugger;
+    this.file = null;
     this.isTermSelected = true;
     var term = this.reportForm.value.term;
     if (term) {
@@ -123,7 +124,7 @@ export class ImportReportComponent implements OnInit {
   }
 
   reset() {
-    this.file = null;
+  
     this.dataSource = [];
     this.isPreview = false;
     this.reportForm.reset();

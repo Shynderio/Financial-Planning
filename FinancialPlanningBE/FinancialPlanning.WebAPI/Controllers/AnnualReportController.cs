@@ -53,7 +53,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 string filename = "AnnualExpenseReport/AnnualReport_" + year + ".xlsx";
-                var url = _annualReportService.GetURLFile(filename);
+                var url = await _annualReportService.GetURLFile(filename);
                 return Ok(url);
 
             }
@@ -63,32 +63,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpGet("Geturlfile")]
-        public async Task<IActionResult> GetUrlFile(string key)
-        {
-            var url = await _fileService.GetFileUrlAsync(key);
-            return Ok(url);
-
-        }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteFile(string key)
-        {
-            try
-            {
-                await _fileService.DeleteFileAsync(key);
-                return Ok();
-            }
-            catch (AmazonS3Exception ex)
-            {
-                return BadRequest($"Error deleting file: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-
-
-        }
+      
 
        
 

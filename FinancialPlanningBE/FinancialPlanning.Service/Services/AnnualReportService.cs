@@ -2,6 +2,7 @@
 using FinancialPlanning.Data.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using OfficeOpenXml;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,7 +25,7 @@ namespace FinancialPlanning.Service.Services
             _reportRepository = reportRepository;
         }
 
-        public async Task<string> GenerateAnnualReport()
+        public async Task GenerateAnnualReport()
         {
             try
             {
@@ -44,7 +45,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     string fileName = report.Department.DepartmentName + '/' + report.Term.TermName + "/"
                                                   + report.Month + "/Report/version_" + report.GetMaxVersion();
-                    byte[] file = await _fileService.GetFileAsync(fileName+".xlsx");
+                    byte[] file = await _fileService.GetFileAsync(fileName + ".xlsx");
 
                     //Get expense of report
                     List<Expense> expenses = _fileService.ConvertExcelToList(file, 1);
@@ -80,10 +81,10 @@ namespace FinancialPlanning.Service.Services
                     else
                     {
                         //add new row
-                      expenseAnnualReports.Add(expenseAnnualReport);
+                        expenseAnnualReports.Add(expenseAnnualReport);
                     }
 
-                   
+
                 }
                 //get total Expense of annual report
                 var totalExpenseOflist = expenseAnnualReports.Sum(e => e.TotalExpense);
@@ -100,16 +101,16 @@ namespace FinancialPlanning.Service.Services
                 //Convert list to exel
                 var annualFile = await _fileService.ConvertAnnualReportToExcel(expenseAnnualReports, annualreport);
                 //Import file to cloud
-                string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_"+year+".xlsx");
+                string filePath = Path.Combine("AnnualExpenseReport", "AnnualReport_" + year + ".xlsx");
 
                 await _fileService.UploadFileAsync(filePath.Replace('\\', '/'), new MemoryStream(annualFile));
 
-                return "Import successfully!";
+                Log.Information("Import Annual Expense Report successfully!");
 
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                Log.Error(ex.Message);
             }
 
         }
@@ -131,7 +132,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     //Get file by year
                     var file = await _fileService.GetFileAsync("AnnualExpenseReport/AnnualReport_" + currentYear + ".xlsx");
-                    List<ExpenseAnnualReport> expenses;
+
                     //Convert file to list
                     var annual = _fileService.ConvertExelToListAnnualReport(new ExcelPackage(new MemoryStream(file)));
                     annualReports.Add(annual);

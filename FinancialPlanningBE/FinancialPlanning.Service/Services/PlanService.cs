@@ -3,6 +3,7 @@ using System.Text.Json;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using Serilog;
 namespace FinancialPlanning.Service.Services
 {
     public class PlanService
@@ -93,6 +94,7 @@ namespace FinancialPlanning.Service.Services
         {
             var plans = await _planRepository.GetAllDuePlans();
             await _planRepository.CloseAllDuePlans(plans);
+            Log.Information("Closed {Count} due plans.", plans.Count());
         }
 
         public List<Expense> GetExpenses(byte[] file)
