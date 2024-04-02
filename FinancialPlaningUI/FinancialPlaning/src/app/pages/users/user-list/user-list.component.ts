@@ -46,7 +46,7 @@ export class UserListComponent implements OnInit {
     'position',
     'action',
   ];
-  @ViewChild(MatPaginator) paginator?: MatPaginator; 
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
   pageIndex = 0;
   pageSize = 10;
   listSize = 0;
@@ -121,6 +121,7 @@ export class UserListComponent implements OnInit {
   }
 
   onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.getPaginatedItems();
   }

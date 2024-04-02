@@ -13,6 +13,7 @@ form select {
   padding: 0 15px;
   transition: .25s ease;
   background-color: #EBEEF3;
+  width: 100%;
 
 }
 
