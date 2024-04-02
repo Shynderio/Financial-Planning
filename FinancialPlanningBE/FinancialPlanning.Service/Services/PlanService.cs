@@ -21,7 +21,7 @@ namespace FinancialPlanning.Service.Services
             _termService = termRepository ?? throw new ArgumentNullException(nameof(termRepository));
         }
 
-        public bool ValidatePlanFile(byte[] file)
+        public string ValidatePlanFile(byte[] file)
         {
             // Validate the file using FileService
             try

@@ -80,12 +80,13 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
      *  report: 1
      * }
      */
-    public bool ValidateFile(byte[] file, byte documentType)
+    public string ValidateFile(byte[] file, byte documentType)
     {
+        string mess = String.Empty;
         //check file is not empty and not bigger than 500MB 
         if (file.Length is 0 or > Constants.MaxFileSize)
         {
-            return false;
+            mess+= "file is not empty and not bigger than 500MB;";
         }
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -98,39 +99,39 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //check number of column is sufficient
         var numOfColumns = worksheet.Dimension?.Columns ?? 0;
         if (numOfColumns != Constants.TemplateHeader[documentType].Length)
-            return false;
+             mess+= "number of column is sufficient;";
 
         //remove empty row (all cell in row is empty)
 
         //check file has data
         if (numOfRows < 3)
-            return false;
+            mess += "file hasn't data;";
 
         //check cell content is not null and has valid format
         for (var i = 1; i <= numOfColumns; i++)
         {
             if (!(worksheet.Cells[2, i].Value?.ToString() ?? "").Equals(Constants.TemplateHeader[documentType][i - 1]))
-                return false;
+                mess+= $"cell {2}, {i} content is null and has invalid format;";
 
             for (var j = 3; j <= numOfRows; j++)
             {
                 var cellContext = worksheet.Cells[j, i].Value?.ToString()?.Trim();
                 if ((documentType == 0 ? i != 11 && i != 15 : i != 12) && cellContext.IsNullOrEmpty())
-                    return false;
+                    mess+= $"cell {j}, {i} content is null and has invalid format;";
 
                 switch (i)
                 {
                     case 1:
                         if (!DateTime.TryParseExact(cellContext!, ["dd/MM/yyyy", "dd/MM/yyyy hh:mm:ss tt"], null,
                                 DateTimeStyles.None, out _))
-                            return false;
+                            mess += $"cell {j}, {i} content is null and has invalid dateformat;";
                         break;
                     case 6:
                     case 7:
                     case 8 when documentType != 0:
                     case 10 when documentType == 0:
                         if (!decimal.TryParse(cellContext!, NumberStyles.Currency, null, out _))
-                            return false;
+                            mess += $"cell {j}, {i} content is null and has invalid numberformat;";;
                         break;
                 }
             }
@@ -143,10 +144,10 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             var amount = decimal.Parse(worksheet.Cells[i, 7].Value.ToString()!);
             var totalAmount = decimal.Parse(worksheet.Cells[i, documentType != 0 ? 8 : 10].Value.ToString()!);
             if (totalAmount != unitPrice * amount)
-                return false;
+                mess+= "TotalAmount != UnitPrice * Amount;";
         }
 
-        return true;
+        return mess;
     }
 
     /*
