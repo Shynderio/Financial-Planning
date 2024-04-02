@@ -47,7 +47,7 @@ button {
 }
 
 #create-button:hover > button {
-  background-color: #553cb9;
+  background-color: var(--button-hover);
 }
 
 .searchBar {
