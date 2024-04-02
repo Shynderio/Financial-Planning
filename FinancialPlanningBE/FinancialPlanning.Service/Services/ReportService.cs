@@ -147,7 +147,7 @@ namespace FinancialPlanning.Service.Services
             return await _fileService.ConvertListToExcelAsync(expenses, 1);
         }
 
-        public bool ValidateReportFile(byte[] file){
+        public string ValidateReportFile(byte[] file){
             try
             {
                 // Assuming plan documents have document type 0

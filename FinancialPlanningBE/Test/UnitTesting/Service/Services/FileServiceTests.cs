@@ -80,16 +80,16 @@ public class FileServiceTests
     }
 
     [Theory]
-    [InlineData("EmptyFile.xlsx", 0, false)]
-    [InlineData("WrongExtension.txt", 0, false)]
-    [InlineData("NoContent.xlsx", 0, false)]
-    [InlineData("MissingColumn.xlsx", 0, false)]
-    [InlineData("WrongColumnFormat.xlsx", 0, false)]
-    [InlineData("CorrectPlan.xlsx", 0, true)]
-    [InlineData("CorrectPlan.xls", 0, true)]
-    [InlineData("CorrectPlan.csv", 0, true)]
-    [InlineData("CorrectReport.xlsx", 1, true)]
-    public void ValidateFileTests(string fileName, byte documentType, bool expectedResult)
+    [InlineData("EmptyFile.xlsx", 0, "")]
+    [InlineData("WrongExtension.txt", 0, "")]
+    [InlineData("NoContent.xlsx", 0, "")]
+    [InlineData("MissingColumn.xlsx", 0, "")]
+    [InlineData("WrongColumnFormat.xlsx", 0, "")]
+    [InlineData("CorrectPlan.xlsx", 0, "")]
+    [InlineData("CorrectPlan.xls", 0, "")]
+    [InlineData("CorrectPlan.csv", 0, "")]
+    [InlineData("CorrectReport.xlsx", 1, "")]
+    public void ValidateFileTests(string fileName, byte documentType, string expectedResult)
     {
         // Arrange 
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\Test\UnitTesting\File\" + fileName);

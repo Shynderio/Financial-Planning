@@ -177,11 +177,11 @@ namespace FinancialPlanning.WebAPI.Controllers
                 using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
                 var fileBytes = ms.ToArray();
-                bool isValid = _reportService.ValidateReportFile(fileBytes);
+                string isValid = _reportService.ValidateReportFile(fileBytes);
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid });
                 }
 
                 var expenses = _reportService.GetExpenses(fileBytes);
