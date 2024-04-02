@@ -20,7 +20,7 @@
           class="align-middle">filter_list</mat-icon> More </button>
     </div>
   <div *ngIf="filterStatusEnable">
-      <mat-form-field  [hidden]="role == 'FinancialStaff'">
+      <mat-form-field  >
         <mat-label  >Department</mat-label>
         <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
           <mat-option value="All">All</mat-option>
@@ -29,7 +29,7 @@
           }
         </mat-select>
       </mat-form-field>
-      <mat-form-field>
+      <mat-form-field [hidden]="role !== 'FinancialStaff'">
         <mat-label >Term</mat-label>
         <mat-select [(value)]="selectedTerm" (selectionChange)="onTermSelected($event)">
           <mat-option value="All">All</mat-option>
@@ -39,7 +39,7 @@
         </mat-select>
       </mat-form-field>  
 
-      <mat-form-field [hidden]="role !== 'FinancialStaff'">
+      <mat-form-field >
       <mat-label >Status</mat-label>
       <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusSelected($event)">
         <mat-option value="All">All</mat-option>
