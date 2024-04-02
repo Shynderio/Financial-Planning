@@ -23,3 +23,10 @@ form i {
 ::ng-deep svg.mdc-circular-progress__indeterminate-circle-graphic {
   stroke: rgb(13, 110, 253) !important;
 }
+
+::ng-deep .success-snackbar .mdc-snackbar__surface{
+  background-color: #4CAF50;
+}
+::ng-deep .error-snackbar .mdc-snackbar__surface{
+  background-color: #FF5E5E;
+}

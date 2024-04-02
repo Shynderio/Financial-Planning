@@ -19,6 +19,7 @@
                             <input class="form-control form-control-lg" type="text" id="term-name"
                                 formControlName="termName" />
                         </div>
+                        
                         <div class="error-message col-md-3"
                             *ngIf="termForm.get('termName')?.errors?.['required'] && termForm.get('termName')?.touched">
                             <span class="text-danger">
@@ -37,12 +38,12 @@
                             <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                             <input class="form-control form-control-lg"matInput [matDatepicker]="startDatePicker" formControlName="startDate">
                             <mat-datepicker #startDatePicker></mat-datepicker>
+                            @if (termForm.get('startDate')?.invalid){
+                                <mat-error>
+                                    Start date is required
+                                </mat-error>
+                            }
                           </div>
-                        <div class="error-message col-md-3" *ngIf="termForm.get('startDate')?.errors?.['required'] && termForm.get('startDate')?.touched">
-                            <span class="text-danger">
-                                Start Date is required
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -75,10 +76,15 @@
                             <input class="form-control form-control-lg"matInput [matDatepicker]="endDatePicker" formControlName="endDate">
                             <mat-datepicker #endDatePicker></mat-datepicker>
                                 <!-- </div> -->
-                            <div class="error-message"
+                            @if(termForm.get('endDate')?.invalid){
+                                <mat-error>
+                                    End date is required
+                                </mat-error>
+                            }
+                            <!-- <div class="error-message"
                                 *ngIf="termForm.get('endDate')?.errors?.['required'] && termForm.get('endDate')?.touched">
                                 <span class="text-danger">End Date is required</span>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -96,15 +102,20 @@
                             <mat-datepicker-toggle matSuffix [for]="planDuePicker"></mat-datepicker-toggle>
                             <input class="form-control form-control-lg"matInput [matDatepicker]="planDuePicker" formControlName="planDueDate">
                             <mat-datepicker #planDuePicker></mat-datepicker>
+                            @if(termForm.get('planDueDate')?.invalid){
+                                <mat-error>
+                                    {{getPlanDueDateErrorMessage}}
+                                </mat-error>
+                            }
                         </div>
                         <!-- <div class="col-md-3 pe-5"> -->
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <div class="error-message" *ngIf="termForm.get('planDueDate')?.touched">
                                 <span class="text-danger">
                                     {{ getPlanDueDateErrorMessage() }}
                                 </span>
                             </div>
-                        </div>
+                        </div> -->
                         <!-- Add more error messages as needed -->
                     </div>
                 </div>
@@ -118,15 +129,19 @@
                             <mat-datepicker-toggle matSuffix [for]="reportDueDate"></mat-datepicker-toggle>
                             <input class="form-control form-control-lg"matInput [matDatepicker]="reportDueDate" formControlName="reportDueDate">
                             <mat-datepicker #reportDueDate></mat-datepicker>
-                            
+                            @if(termForm.get('reportDueDate')?.invalid){
+                                <mat-error>
+                                    {{getReportDueDateErrorMessage()}}
+                                </mat-error>
+                            }
                         </div>
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <div class="error-message" *ngIf="termForm.get('reportDueDate')?.touched">
                                 <span class="text-danger">
                                     {{getReportDueDateErrorMessage() }}
                                 </span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- </div> -->
                     <!-- Report Due Date -->

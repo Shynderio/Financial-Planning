@@ -8,8 +8,8 @@
       <div class="row" [ngStyle]="{'height': '30%'}">
         <div class="col-2 border-end border-2" [ngStyle]="{'border': 'var(--white-smoke)'}">
           <h4><b>Step 1</b></h4>
-          <form [formGroup]="planForm">
-            <mat-form-field hideRequiredMarker>
+          <form [formGroup]="planForm" class="w-100">
+            <mat-form-field hideRequiredMarker class="w-100">
               <mat-label>Term</mat-label>
               <mat-select disableOptionCentering id="term" formControlName="term" (selectionChange)="onTermSelect($event)">
                 <mat-option *ngFor="let option of termOptions" [value]="option">
