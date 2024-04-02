@@ -198,17 +198,25 @@ export class ImportReportComponent implements OnInit {
         this.reportService.uploadReport(this.dataSource, id, month).subscribe(
           (data: any) => {
 
-            console.log('report uploaded:', data);
-            this.messageBar.open(
-              "Uploaded successfully.",
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
+            // console.log('report uploaded:', data);
+            // this.messageBar.open(
+            //   "Uploaded successfully.",
+            //   undefined,
+            //   {
+            //     duration: 5000,
+            //     panelClass: ['messageBar', 'successMessage'],
+            //     verticalPosition: 'top',
+            //     horizontalPosition: 'end',
+            //   }
+            // );
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
+             data: {
+              success: true,
+               rmclose: true ,
+               message: 'Uploaded successfully',
+             },
+           });
             this.router.navigate(['/reports']);
           },
           error => {

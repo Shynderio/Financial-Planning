@@ -24,6 +24,7 @@ import { AnnualReportDetailsComponent } from './pages/annual-report/annual-repor
 import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.component';
 import { AdminGuard } from './services/auth/admin.guard';
 import { ReupPlanComponent } from './pages/plans/reup-plan/reup-plan.component';
+import { UploadComponent } from './share/upload/upload.component';
 
 export const routes: Routes = [
     { path:'',redirectTo:'login',pathMatch:'full'},
@@ -54,6 +55,7 @@ export const routes: Routes = [
     { path: 'user-detail/:id', component: UserDetailComponent,canActivate:[AdminGuard] },
     //annual reports
     { path: 'annual-reports', component: ListAnnualReportsComponent, canActivate: [AuthGuard] },
-    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent, canActivate: [AuthGuard] }
-  
+    { path: 'annualreport-details/:year', component: AnnualReportDetailsComponent, canActivate: [AuthGuard] },
+    // component
+    { path: 'upload', component: UploadComponent}
 ];
