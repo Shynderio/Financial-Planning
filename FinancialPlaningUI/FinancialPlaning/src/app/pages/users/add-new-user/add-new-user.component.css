@@ -6,35 +6,34 @@ form {
 
 form input,
 form select {
-  border: 2px solid #575757   ;
+  border: 2px solid #575757;
   border-radius: 4px;
   /* width: 60%; */
   height: 50px;
   padding: 0 15px;
   transition: .25s ease;
   background-color: #EBEEF3;
-  
+
 }
-.mb-0{
+
+.mb-0 {
   font-weight: bolder;
   color: #070707;
   font-size: larger;
 }
 
-form input:focus, form select:focus {
+form input:focus,
+form select:focus {
   border-color: rgb(133, 68, 165);
 }
 
 mat-datepicker-toggle {
   position: absolute;
-  top: 50%;
+  top: 43.9%;
   transform: translateY(-320%);
-  right: 67%;
+  right: 20%;
 }
 
-
-
-/* HTML: <div class="loader"></div> */
 .loader {
   width: 35px;
   align-items: center;
@@ -45,37 +44,74 @@ mat-datepicker-toggle {
     l20-1 0.8s infinite linear alternate,
     l20-2 1.6s infinite linear;
 }
-@keyframes l20-1{
-   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
-   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
-   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
-   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
-   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
-}
-@keyframes l20-2{ 
-  0%    {transform:scaleY(1)  rotate(0deg)}
-  49.99%{transform:scaleY(1)  rotate(135deg)}
-  50%   {transform:scaleY(-1) rotate(0deg)}
-  100%  {transform:scaleY(-1) rotate(-135deg)}
+
+@keyframes l20-1 {
+  0% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%)
+  }
+
+  12.5% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 0%, 100% 0%, 100% 0%)
+  }
+
+  25% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 100% 100%, 100% 100%)
+  }
+
+  50% {
+    clip-path: polygon(50% 50%, 0 0, 50% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%)
+  }
+
+  62.5% {
+    clip-path: polygon(50% 50%, 100% 0, 100% 0%, 100% 0%, 100% 100%, 50% 100%, 0% 100%)
+  }
+
+  75% {
+    clip-path: polygon(50% 50%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50% 100%, 0% 100%)
+  }
+
+  100% {
+    clip-path: polygon(50% 50%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 50% 100%, 0% 100%)
+  }
 }
 
-.form-field{
+@keyframes l20-2 {
+  0% {
+    transform: scaleY(1) rotate(0deg)
+  }
+
+  49.99% {
+    transform: scaleY(1) rotate(135deg)
+  }
+
+  50% {
+    transform: scaleY(-1) rotate(0deg)
+  }
+
+  100% {
+    transform: scaleY(-1) rotate(-135deg)
+  }
+}
+
+.form-field {
   position: relative;
 }
+
 a.user-list-link {
-  color: black; /* Màu chữ đen */
+  color: black;
+  /* Màu chữ đen */
   text-decoration: none;
 }
+
 #note {
-  background-color: #EBEEF3
-  ; /* Màu nền */
-  color: #070707; /* Màu chữ */
-  border: 2px solid #575757   ;
+  background-color: #EBEEF3;
+  /* Màu nền */
+  color: #070707;
+  /* Màu chữ */
+  border: 2px solid #575757;
 }
 
-.form-control:focus + label {
+.form-control:focus+label {
   top: 0px;
   padding: 10px;
   display: inline-block;
@@ -99,18 +135,25 @@ table {
 
 main {
   box-shadow: none;
-  padding: 20px;
+  padding: 1%;
   background-color: #E6E6E6;
+  position: relative;
+
 }
-main>h6>a{
+
+main>h6>a {
   text-decoration: none;
 }
+
 .required-star {
-  color: red; /* Màu đỏ */
+  color: red;
+  /* Màu đỏ */
   font-weight: bolder;
 }
+
 #username::placeholder {
-  font-size: 16px; /* Kích thước chữ mong muốn */
+  font-size: 16px;
+  /* Kích thước chữ mong muốn */
   color: red;
   font-weight: bold;
 }
@@ -119,28 +162,33 @@ main>div {
   border-radius: 24px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   background-color: #FAF6F6;
-  margin: 3%;
-  height: 50%;
+  margin-left: 3%;
+  margin-right: 3%;
+  /* height: 50%; */
 
 }
+
 .btn-disabled {
-  background-color: #5C636A; /* Thay đổi màu nền */
-  color: white; /* Thay đổi màu chữ */
-  cursor: not-allowed; /* Thay đổi kiểu con trỏ */
+  background-color: #5C636A;
+  /* Thay đổi màu nền */
+  color: white;
+  /* Thay đổi màu chữ */
+  cursor: not-allowed;
+  /* Thay đổi kiểu con trỏ */
 }
-main {
-  position: relative;
-  margin-left: 2%;
-  margin-right: 2%;
-  /* box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; */
-  /* -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box; */
-}
- .mb-4{
+
+.mb-4 {
   font-weight: bolder;
 
 }
+
 .custom-background {
-  background-color:#EBEEF3;
+  background-color: #EBEEF3;
+}
+
+.button {
+  position: relative;
+  width: 70%;
+  margin-left: 30%;
+  margin-bottom: 1%;
 }
