@@ -1,4 +1,7 @@
 <link rel="stylesheet" href="add-new-user.component.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<div *ngIf="isSubmitting" class="loader">
+</div>
 <main>
     @if (isEdit) {
     <h3><b>User List</b></h3>
@@ -95,8 +98,8 @@
                             <h6 class="mb-0">DOB<span class="required-star">*</span></h6>
                         </div>
                         <div class="col-md-5 pe-3">
-                            <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
-                                formControlName="dob">
+                            <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date" formControlName="dob"
+                                class="form-control form-control-lg">
                             <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
                             <mat-datepicker #dobPicker></mat-datepicker>
                         </div>
