@@ -82,7 +82,7 @@ export class PlansComponent implements OnInit {
   dataSource: any = [];
 
   columnHeaders: string[] = [
-    'no',
+    
     'plan',
     'term',
     'department',

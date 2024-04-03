@@ -1,5 +1,5 @@
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -46,8 +46,9 @@ export class UserListComponent implements OnInit {
     'position',
     'action',
   ];
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
   pageIndex = 0;
-  pageSize = 10; // Change to 5 for 5 records per page
+  pageSize = 10;
   listSize = 0;
 
   constructor(private httpService: UserService) { }
@@ -121,6 +122,7 @@ export class UserListComponent implements OnInit {
 
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.getPaginatedItems();
   }
 }

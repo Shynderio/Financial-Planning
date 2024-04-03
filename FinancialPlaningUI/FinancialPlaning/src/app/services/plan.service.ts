@@ -99,4 +99,8 @@ export class PlanService {
   getPlan(planId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/details/' + planId);
   }
+  exportPlan(planId: string,version:number){
+    return this.http.get(this.apiUrl+'/export/'+planId+'/'+version)
+  }
+
 }

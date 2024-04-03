@@ -9,7 +9,7 @@
   <div  class="plan-details d-flex justify-content-between">
 
     <div class="left-item">
-      <h6>Plan: {{plan.plan}}</h6>
+      <h6>Plan: {{plan.department}}_{{plan.term}} </h6>
       <h6>Term: {{plan.term}}</h6>
       <h6>Department: {{plan.department}}</h6>
       <h6>Status: {{plan.status}}</h6>
@@ -17,7 +17,7 @@
     <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
       <h6>Plan Due Date: {{convertIsoDateToDdMmYyyy(planDueDate)}}</h6>
-      <h6>Date: {{convertIsoDateToDdMmYyyy(plan.updateDate)}}</h6>
+      <h6>Date: {{convertIsoDateToDdMmYyyy(date)}}</h6>
       <h6 class="underline" (click)="openPlanVersionsDialog()">Version: v.{{plan.version}}</h6>
     </div>
 
@@ -34,8 +34,9 @@
     <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
       <button> Reup</button>
     </a>
-    <a  routerLink="/import-plan" class="create-button" >
-      <button> Export</button>
+    
+    <a   class="create-button" >
+      <button (click)="downloadFile(plan.id, plan.version)"> Export</button>
     </a>
   </div>
 

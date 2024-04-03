@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDial
     CommonModule,
     MatTableModule,
     MatSelectModule,
-    MatPaginatorModule, 
+    MatPaginatorModule,
     RouterLink
   ],
   templateUrl: './report-details.component.html',
@@ -34,7 +34,7 @@ export class ReportDetailsComponent {
   report: any;
   reportVersions: any;
   uploadedBy: any;
-  
+
   totalExpense: number = 0;
   biggestExpenditure: number = 0;
 
@@ -92,38 +92,31 @@ export class ReportDetailsComponent {
     this.dataSource = this.getPaginatedItems();
   }
 
- //Convert date to dd/mm/yyyy
- convertIsoDateToDdMmYyyy(isoDate: string): string {
-  if (!isoDate) return '';
-  const dateParts = isoDate.split('T')[0].split('-');
-  if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
-  return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-}
-//export file
-downloadFile(reportId: string, version: number) {
-  this.reportService.exportSinglereport(reportId, version).subscribe((data: any) => {
-      const downloadUrl = data.downloadUrl;
-       // create hidden link to download
-       const link = document.createElement('a');
-       link.href = downloadUrl;
-       link.setAttribute('download', '');
-
-       // Add link into web and click it to download
-       document.body.appendChild(link);
-       link.click();
-
-       // remove link after download 
-       document.body.removeChild(link)
-    }, 
-  );
-}
- //open dialog report history
+  //Convert date to dd/mm/yyyy
+  convertIsoDateToDdMmYyyy(isoDate: string): string {
+    if (!isoDate) return '';
+    const dateParts = isoDate.split('T')[0].split('-');
+    if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
+    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+  }
+  //export file
+  downloadFile(reportId: string, version: number) {
+    this.reportService.exportSinglereport(reportId, version).subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = this.report.reportName + '.xlsx';
+      link.click();
+    }
+    );
+  }
+  //open dialog report history
   openReportVersionsDialog() {
     const reportVersionsDialog = this.dialog.open(ReportVersionsDialog, {
       width: '500px',
       height: '350px',
       data: this.reportVersions,
- 
+
     });
     reportVersionsDialog
   }
@@ -137,11 +130,13 @@ downloadFile(reportId: string, version: number) {
   imports: [MatDialogActions, MatDialogTitle, MatDialogContent, MatTableModule],
 })
 export class ReportVersionsDialog {
-  
+
   displayedColumns: string[] = ['Version', 'Published data', 'Changed by'];
-  dataSource: any = [];
+  dataSource: MatTableDataSource<any>;
+
   currentVersion: any;
   isFirstRow: boolean = true;
+  reportname: any;
 
   constructor(
     public reportService: ReportService,
@@ -149,7 +144,7 @@ export class ReportVersionsDialog {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.dataSource = new MatTableDataSource<any>(data);
-    this.currentVersion = data.currentVersion; 
+
   }
 
   closeDialog() {
@@ -171,23 +166,16 @@ export class ReportVersionsDialog {
     if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
-  
+
   //download file when click version
   downloadFile(reportId: string, version: number) {
-    this.reportService.exportSinglereport(reportId, version).subscribe((data: any) => {
-        const downloadUrl = data.downloadUrl;
-         // create hidden link to download
-         const link = document.createElement('a');
-         link.href = downloadUrl;
-         link.setAttribute('download', '');
-
-         // Add link into web and click it to download
-         document.body.appendChild(link);
-         link.click();
-
-         // remove link after download 
-         document.body.removeChild(link)
-      }, 
+    this.reportService.exportSinglereport(reportId, version).subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'version'+version;
+      link.click();
+    }
     );
   }
 }

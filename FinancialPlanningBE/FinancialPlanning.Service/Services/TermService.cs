@@ -1,6 +1,7 @@
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using Serilog;
 
 namespace FinancialPlanning.Service.Services
 {
@@ -124,6 +125,7 @@ namespace FinancialPlanning.Service.Services
                     continue;
                 term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
+               Log.Information("Closed term with ID {TermId}.", term.Id);
             }
         }
 

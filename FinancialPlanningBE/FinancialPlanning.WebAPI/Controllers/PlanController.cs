@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Reflection;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -116,10 +117,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid});
                 }
 
                 // Get expenses
@@ -157,10 +158,10 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid});
                 }
 
                 // Get expenses
@@ -223,12 +224,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
                 var dueDate = plan.Term.PlanDueDate;
+                var date = firstPlanVersion?.ImportDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
                     planDueDate = dueDate,
-                    //   date = date,
+                    date = date,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy
@@ -288,7 +290,29 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
+        [HttpGet("export/{id:guid}/{version:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSinglePlan(Guid id, int version)
+        {
+            try
+            {
+                //from planVersion Id -> get name plan + version
+                var plan = await _planService.GetPlanById(id);
+                string filename = plan.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/Plan/version_"
+                      + version;
 
-        
+
+                //get url from name file
+                var url = await _planService.GetFileByName(filename + ".xlsx");
+
+                // return URL
+                return Ok(new { downloadUrl = url });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
+        }
     }
 }

@@ -12,12 +12,11 @@ import { MatDatepickerModule} from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-
 @Component({
   providers: [provideNativeDateAdapter()],
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,MatDatepickerModule,MatInputModule],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,MatDatepickerModule,MatInputModule ],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
@@ -29,6 +28,7 @@ export class AddNewUserComponent implements OnInit {
   positions: IPosition[] = [];
   userId!: string;
   isEdit = false;
+  isSubmitting: boolean = false;
 
   
    @ViewChild('fullNameInput') fullNameInput!: ElementRef;
@@ -152,7 +152,7 @@ getStatusLabel(status: number): string {
   validateName(control: FormControl): { [key: string]: any } | null {
     const vietnameseCharactersRegex = /[^\x00-\x7F]+/; // Biểu thức chính quy để kiểm tra ký tự tiếng Việt
     const containsNumbers = /\d/.test(control.value); // Kiểm tra xem có chứa số không
-    const specialCharactersRegex = /[!@#$%^&*(),.?":{}|<>]/;
+    const specialCharactersRegex = /[^\w\s]/;
 
     if (vietnameseCharactersRegex.test(control.value)) {
       return { containsVietnamese: true }; // Có chứa ký tự tiếng Việt
@@ -191,6 +191,7 @@ getStatusLabel(status: number): string {
 
   //Submit form
   onSubmit() {
+    this.isSubmitting = true;
     if (this.addUserF.invalid) {
       return;
     }
@@ -214,12 +215,14 @@ getStatusLabel(status: number): string {
         console.log('success');
         this.toastr.success('Updated user successful', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
+        this.isSubmitting = false;
       });
     } else {
       user.status = 1;
       this.httpService.addNewUser(user).subscribe(() => {
         this.toastr.success('Successfully created user', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
+        this.isSubmitting = false;
       }, (error: any) => {
         if (error.status === 400) {
           // Handle bad request error
@@ -230,6 +233,7 @@ getStatusLabel(status: number): string {
           console.error('Error:', error);
           this.toastr.error('An error occurred while creating user', 'Financial Planning');
         }
+        this.isSubmitting = false;
       }
       );
     }

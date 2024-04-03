@@ -33,6 +33,7 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 })
 export class ListReportComponent {
   displayedColumns: string[] = [
+    'No',
     'reportName',
     'month',
     'termName',
@@ -62,7 +63,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 8;
   pageIndex = 0;
 
   constructor(
@@ -188,7 +189,6 @@ export class ListReportComponent {
 exportMutilreport() {
  
   const reportIds = this.listSearch.map((report: any) => report.id);
-  console.log(reportIds);
   this.reportService.exportMutilreport(reportIds).subscribe(
     (data: Blob) => {
       const downloadURL = window.URL.createObjectURL(data);

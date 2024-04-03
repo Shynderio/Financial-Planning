@@ -14,16 +14,15 @@ namespace FinancialPlanning.Service.ScheduleTasks
             _logger = logger;
         }
 
-        //protected override string Schedule => "*/1 * * * *"; // every 3 minute for testing
+
         protected override string Schedule => "0 0 20 12 *";
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {
-
+            _logger.LogInformation("Starting processing AnnualTask...");
             var termService = serviceProvider.GetRequiredService<AnnualReportService>();
-           await termService.GenerateAnnualReport();
+            await termService.GenerateAnnualReport();
 
-            
         }
     }
 }

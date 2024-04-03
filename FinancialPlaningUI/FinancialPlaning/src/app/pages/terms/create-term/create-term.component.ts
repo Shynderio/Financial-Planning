@@ -16,6 +16,7 @@
   import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
   import { provideNativeDateAdapter } from '@angular/material/core';
 import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
+import { MatInputModule } from '@angular/material/input';
   @Component({
     selector: 'app-create-term',
     standalone: true,
@@ -25,7 +26,7 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
       RouterLink,
       MatFormField,
       MatLabel,
-      MatHint, MatDatepickerModule,
+      MatHint, MatDatepickerModule, MatInputModule,
     ],
     providers: [provideNativeDateAdapter()],
     templateUrl: './create-term.component.html',
