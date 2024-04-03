@@ -90,7 +90,7 @@ export class UserDetailComponent implements OnInit {
           position: userDetails.positionName,
           role: userDetails.roleName,
           status: userDetails.status,
-          note: userDetails.notes,
+          note: userDetails.notes || 'N/A',
           phonenumber: userDetails.phoneNumber,
           address: userDetails.address,
         });
