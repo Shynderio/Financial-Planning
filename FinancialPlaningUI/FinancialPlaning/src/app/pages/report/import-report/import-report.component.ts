@@ -44,7 +44,7 @@ export class ImportReportComponent implements OnInit {
   isPreview = false;
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 5;
   pageIndex = 0;
   filedata: any = [];
   validFileName: string = '';
@@ -194,21 +194,8 @@ export class ImportReportComponent implements OnInit {
       if (this.file) {
         var id = term.id;
         var month = this.reportForm.value.month;
-        this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
         this.reportService.uploadReport(this.dataSource, id, month).subscribe(
-          (data: any) => {
-
-            // console.log('report uploaded:', data);
-            // this.messageBar.open(
-            //   "Uploaded successfully.",
-            //   undefined,
-            //   {
-            //     duration: 5000,
-            //     panelClass: ['messageBar', 'successMessage'],
-            //     verticalPosition: 'top',
-            //     horizontalPosition: 'end',
-            //   }
-            // );
+          () => {
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,
              data: {

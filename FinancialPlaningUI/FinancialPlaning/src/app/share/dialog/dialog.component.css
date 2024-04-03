@@ -21,7 +21,7 @@
 }
 
 ::ng-deep .mat-mdc-dialog-title {
-  color: #ff6181 !important;
+  color: #3b99e7 !important;
   font-weight: bolder !important;
   font-size: 30px !important;
   text-transform: uppercase !important;
@@ -40,7 +40,6 @@
 }
 
 .note {
- 
   font-weight: lighter !important;
   font-size: 12px;
 }
@@ -60,8 +59,8 @@ button {
   border: none;
 }
 
-#confirm-button {
-  background: #3190fd;
+#start-button {
+  background: #2088ff;
   color: white;
   border: none;
 }

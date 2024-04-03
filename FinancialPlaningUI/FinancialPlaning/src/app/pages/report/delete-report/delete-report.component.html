@@ -4,6 +4,6 @@
     <p class="note">Please, rethink your decision because you will not be able to undo this action</p>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button mat-dialog-close id="cancel-button">Cancel</button>
     <button mat-button [mat-dialog-close]="'delete'" cdkFocusInitial id="delete-button">Delete</button>
+    <button mat-button mat-dialog-close id="cancel-button">Cancel</button>
 </mat-dialog-actions>

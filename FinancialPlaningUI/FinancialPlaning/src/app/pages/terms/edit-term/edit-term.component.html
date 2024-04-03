@@ -3,17 +3,15 @@
     <button (click)="startTerm()">
         Start Term
     </button> -->
-    <a [routerLink]="['/terms']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
-    <div class="container mb-4">
+    <a [routerLink]="['/terms']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>     
+    <div class="container mb-4 pb-3 mx-0">
         <div id="page-title">
-          <h3><b>Term Manager</b></h3>
-          <h6>Edit Term</h6>
+          <h1><b>Term Manager</b></h1>
+          
         </div>
-        <div class="abc">
-          <a  class="create-button" (click)="startTerm()">
-            <button> Start Term</button>
-          </a>
-        </div>
+        <a  id="start-button" (click)="startTerm()">
+          <button><i class="fa-solid fa-pen-to-square"></i> Start Term</button>
+        </a>
       </div>
     <!-- <div class="container h-100"> -->
     <div class="row d-flex justify-content-center align-items-center ">
@@ -172,7 +170,15 @@
                         <!-- Report Due Date -->
                     </div>
     
+
+            </div>
+
+            <div class="row align-items-center justify-content-center py-3">
+                <div class="col-md-6 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg me-3 backgroundbutton">Update</button>
+                    <button routerLink="/terms" type="button" class="btn btn-secondary btn-lg" (click)="onCancel()">Cancel</button>
                 </div>
+            </div>
     
                 <!-- <div class="row align-items-center justify-content-center py-3">
                     <div class="col-md-6 text-center">
@@ -183,12 +189,12 @@
                     </div>
                 </div> -->
     
-                <div class="row align-items-center justify-content-center py-3">
+                <!-- <div class="row align-items-center justify-content-center py-3">
                     <div class="col-md-6 text-center">
                         <button type="submit" class="btn btn-primary btn-lg me-3">Update</button>
                         <button routerLink="/terms" type="button" class="btn btn-secondary btn-lg" (click)="onCancel()">Cancel</button>
                     </div>
-                </div>
+                </div> -->
     
             </form>
         <!-- </div> -->
