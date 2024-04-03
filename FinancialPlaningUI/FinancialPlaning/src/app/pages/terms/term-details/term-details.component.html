@@ -12,6 +12,14 @@
         </a>
     </div>
     
+    <div class="float-end abc">
+        Status: 
+        <span class="px-2 py-2 rounded-pill"
+     [ngStyle]="{'background-color': termStatus === 'New' ? 'var(--new-status-background)' : termStatus === 'In Progress' ? 'var(--inprogress-status-background)' : 'var(--closed-status-background)'}">
+           <i class="fa-solid fa-circle align-middle me-1" [ngStyle]="{'color': termStatus === 'New' ? 'var(--new-status-color)' : termStatus === 'In Progress' ? 'var(--inprogress-status-color)' : 'var(--closed-status-color)', 'font-size': '10px'}"></i>
+           {{termStatus}}
+       </span>
+   </div>
     <div class="doc-info mb-5 card">
         <form [formGroup]="termForm" (ngSubmit)="onSubmit()">
             <div class="row">

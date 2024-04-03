@@ -175,11 +175,12 @@ export class ListReportComponent {
   getQuarters() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-
+    this.quarters.push(`Q1 ${currentYear+1}`);
     // Lặp từ năm trước đến năm tiếp theo và từ quý 1 đến quý 4
-    for (let year = currentYear - 2; year <= currentYear + 1; year++) {
-      for (let quarter = 1; quarter <= 4; quarter++) {
+    for (let year = currentYear; year > currentYear -3; year--) {
+      for (let quarter = 4; quarter > 0; quarter--) {
         // Thêm vào mảng
+        
         this.quarters.push(`Q${quarter} ${year}`);
       }
     }
@@ -221,7 +222,7 @@ exportMutilreport() {
       )
       .subscribe((response) => {
         this.messageBar.openFromComponent(MessageBarComponent, {
-           duration: 5000,
+           duration: 3000,
        
           data: {
             httpStatusCode: response,

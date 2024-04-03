@@ -71,7 +71,7 @@ export class EditTermComponent implements OnInit {
     });
     this.termService.getTerm(this.termId).subscribe(
       (termData: TermViewModel) => {
-        if (termData.status != 0) {
+        if (termData.status != 'New') {
           this.router.navigate(['/terms']);
           this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 5000,

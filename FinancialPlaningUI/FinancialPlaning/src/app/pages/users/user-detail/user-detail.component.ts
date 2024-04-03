@@ -11,6 +11,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { AuthService } from '../../../services/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   providers: [provideNativeDateAdapter()],
@@ -33,7 +34,8 @@ export class UserDetailComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private messageBar: MatSnackBar,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {
 
     this.userForm = this.fb.group({
@@ -143,9 +145,8 @@ export class UserDetailComponent implements OnInit {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.open('Change status successfully', 'Close', {
-            duration: 1000,
-            panelClass: ['success'],
+          this.toastr.success('Successfully updated user status', 'Financial Planning', {
+            timeOut: 2000 
           });
           this.loadUserDetail(userId);
         }
