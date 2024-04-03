@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ToastrService } from 'ngx-toastr';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   providers: [provideNativeDateAdapter()],
@@ -145,8 +146,14 @@ export class UserDetailComponent implements OnInit {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.toastr.success('Successfully updated user status', 'Financial Planning', {
-            timeOut: 2000 
+          this.messageBar.openFromComponent(MessageBarComponent, {
+
+            duration: 3000,
+            data: {
+              success: true,
+              message:
+                'User status updated successfully'
+            },
           });
           this.loadUserDetail(userId);
         }
