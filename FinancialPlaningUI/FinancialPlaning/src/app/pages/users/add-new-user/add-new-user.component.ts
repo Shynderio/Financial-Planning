@@ -8,21 +8,24 @@ import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
 import { AddUser } from '../../../models/adduser.model';
 import { UserService } from '../../../services/user.service';
-import { MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
+import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
 
 @Component({
   providers: [provideNativeDateAdapter()],
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule,MatDatepickerModule,MatInputModule ],
+  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule, MatDatepickerModule, MatInputModule],
   templateUrl: './add-new-user.component.html',
   styleUrl: './add-new-user.component.css'
 })
 
 export class AddNewUserComponent implements OnInit {
-  
+
   departments: IDepartment[] = [];
   roles: IRole[] = [];
   positions: IPosition[] = [];
@@ -30,19 +33,20 @@ export class AddNewUserComponent implements OnInit {
   isEdit = false;
   isSubmitting: boolean = false;
 
-  
-   @ViewChild('fullNameInput') fullNameInput!: ElementRef;
 
-    ngAfterViewInit() {
-        this.fullNameInput.nativeElement.focus();
-    }
+  @ViewChild('fullNameInput') fullNameInput!: ElementRef;
+
+  ngAfterViewInit() {
+    this.fullNameInput.nativeElement.focus();
+  }
 
 
   constructor(
     private httpService: UserService,
     private toastr: ToastrService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageBar: MatSnackBar,
   ) { }
 
 
@@ -56,24 +60,24 @@ export class AddNewUserComponent implements OnInit {
       this.getUserById(userId);
     })
   }
-// Set default status is 1
-getStatusLabel(status: number): string {
-  return status === 1 ? 'Active' : 'Inactive';
-}
+  // Set default status is 1
+  getStatusLabel(status: number): string {
+    return status === 1 ? 'Active' : 'Inactive';
+  }
 
 
- 
+
   getUserById(userId: string) {
     if (userId) {
       this.isEdit = true;
       this.userId = userId;
-      
+
       this.httpService.getUserById(userId).subscribe({
         next: (userDetail: any) => {
           const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
           const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
           const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
-          const statusLabel = this.getStatusLabel(userDetail.status); 
+          const statusLabel = this.getStatusLabel(userDetail.status);
           this.addUserF.patchValue({
             username: userDetail.username,
             department: userDetail.departmentId,
@@ -86,7 +90,7 @@ getStatusLabel(status: number): string {
             address: userDetail.address,
             dob: userDetail.dob,
             status: statusLabel
-           
+
           });
         },
         error: (error: any) => {
@@ -206,32 +210,59 @@ getStatusLabel(status: number): string {
       departmentId: this.addUserF.value.department,
       positionId: this.addUserF.value.position,
       roleId: this.addUserF.value.role,
-      status: -1 ,
+      status: -1,
       notes: this.addUserF.value.notes,
     };
     if (this.isEdit) {
       user.status = -1;
       this.httpService.editUser(this.userId, user).subscribe(() => {
         console.log('success');
-        this.toastr.success('Change has been successfully updated', 'Financial Planning');
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 4000,
+          data: {
+            success: true,
+            message:
+              MESSAGE_CONSTANTS.ME029
+          },
+        });
         this.router.navigateByUrl("/user-list");
         this.isSubmitting = false;
       });
     } else {
       user.status = 1;
       this.httpService.addNewUser(user).subscribe(() => {
-        this.toastr.success('Successfully created user', 'Financial Planning');
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 4000,
+          data: {
+            success: true,
+            message: MESSAGE_CONSTANTS.ME027
+          },
+        });
         this.router.navigateByUrl("/user-list");
         this.isSubmitting = false;
       }, (error: any) => {
         if (error.status === 400) {
           // Handle bad request error
           console.log('Bad Request Error:', error);
-          this.toastr.error('Email is exist: Please check your email', 'Financial Planning');
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 4000,
+            data: {
+              success: false,
+              message:
+                'Email is exist: Please check your email'
+            },
+          });
         } else {
           // Handle other errors
           console.error('Error:', error);
-          this.toastr.error('An error occurred while creating user', 'Financial Planning');
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 4000,
+            data: {
+              success: false,
+              message:
+                'An error occurred while creating user'
+            },
+          });
         }
         this.isSubmitting = false;
       }
@@ -250,11 +281,11 @@ getStatusLabel(status: number): string {
     if (!ddMmYyyyDate) return '';
     const dateParts = ddMmYyyyDate.split('/');
     if (dateParts.length !== 3) return ddMmYyyyDate; // Trả về nguyên bản nếu không phải định dạng dd/mm/yyyy
-  
+
     const yyyy = dateParts[2];
     const mm = dateParts[1].padStart(2, '0'); // Đảm bảo mm luôn có 2 chữ số
     const dd = dateParts[0].padStart(2, '0'); // Đảm bảo dd luôn có 2 chữ số
-  
+
     return `${yyyy}-${mm}-${dd}`;
   }
 }
