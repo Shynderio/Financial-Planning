@@ -11,7 +11,8 @@
           <form [formGroup]="planForm" class="w-100">
             <mat-form-field hideRequiredMarker class="w-100">
               <mat-label>Term</mat-label>
-              <mat-select disableOptionCentering id="term" formControlName="term" (selectionChange)="onTermSelect($event)">
+              <mat-select disableOptionCentering id="term" formControlName="term"
+                (selectionChange)="onTermSelect($event)">
                 <mat-option *ngFor="let option of termOptions" [value]="option">
                   {{option.viewValue}}
                 </mat-option>
@@ -21,12 +22,9 @@
         </div>
         <div class="col-10">
           <h4><b>Step 2</b></h4>
-          <app-upload class="w-100" (fileSelected)="onImport($event)" 
-          [isTermSelected]="isTermSelected" 
-          [validName]="validFileName" 
-          [dueDate]="dueDate"
-          [loading]="loading" 
-          [ngStyle]="{'height': '54%'}"></app-upload>
+          <app-upload class="w-100" (fileSelected)="onImport($event)" [isTermSelected]="isTermSelected"
+            [validName]="validFileName" [dueDate]="dueDate" [loading]="loading"
+            [ngStyle]="{'height': '54%'}"></app-upload>
           <div id="template" class="row rounded-3 mx-1 my-2 px-2" [ngStyle]="{'height': '27%'}">
             <div class="col-10 my-auto">
               <a role="button" (click)="exportPlanTemplate()"><b>File template</b></a>
@@ -34,14 +32,15 @@
               </p>
             </div>
             <div class="col-2 my-auto text-center">
-              <button class="border-0 rounded-3" (click)="exportPlanTemplate()"><b>Download</b></button>
+              <button role="button" class="border-0 rounded-3" (click)="exportPlanTemplate()"><b>Download</b></button>
             </div>
           </div>
         </div>
       </div>
       <div class="row" [ngStyle]="{'height': '70%'}">
         <div id="data" class="px-2 mt-4 h-100">
-          <div class="table mat-elevation-z8 rounded-top-4" [ngStyle]="dataSource.length<=pageSize ? {'border-radius': '20px'} : {}">
+          <div class="table mat-elevation-z8 rounded-top-4"
+            [ngStyle]="dataSource.length<=pageSize ? {'border-radius': '20px'} : {}">
             <table mat-table [dataSource]="dataSource" class="rounded-top-4">
               <ng-container matColumnDef="expense">
                 <th mat-header-cell *matHeaderCellDef> Expense </th>
@@ -85,11 +84,12 @@
             </table>
 
             <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex"
-              (page)="onPageChange($event)" [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
+              (page)="onPageChange($event)"
+              [hidden]="dataSource.length==0 || (dataSource.length<pageSize && pageIndex==0)">
             </mat-paginator>
           </div>
-          <button id="submit-button" [ngStyle]="{'height': '9%'}"
-            class="border-0 rounded-3 float-end" [disabled]="filedata === undefined || filedata.length == 0" (click)="onSubmit()"><b>Submit</b></button>
+          <button id="submit-button" [ngStyle]="{'height': '9%'}" class="border-0 rounded-3 float-end"
+            [disabled]="filedata === undefined || filedata.length == 0" (click)="onSubmit()"><b>Submit</b></button>
         </div>
       </div>
     </div>
