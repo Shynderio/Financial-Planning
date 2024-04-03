@@ -56,7 +56,8 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
                 .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.Term.PlanDueDate));
             CreateMap<Term, SelectTermModel>();
 
             CreateMap<RoleViewModel, Role>().ReverseMap();

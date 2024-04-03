@@ -77,25 +77,26 @@ export class ReupReportComponent implements OnInit {
     this.route.params.subscribe(params => {
       const reportId = params['id'];
       this.reportService.getReport(reportId).subscribe((data: any) => {
-        if (!data) {
-          // Redirect to 'reportlist'
-          this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
-            data: {
-              success: false,
-              message:
-                'Report not found. Redirecting to report list.'
-            },
-          });
-        } else {
           this.reportId = reportId;
           var term = data.report.termName;
           var month = data.report.month;
           var department = data.report.departmentName;
+          var dueDate = new Date(data.report.reportDureDate);
+          var currentDate = new Date();
+          if (currentDate > dueDate) {
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
+              data: {
+                rmclose: true,
+                message: 'Report is overdue.',
+              },
+            });
+            this.router.navigate(['/report-details/' + data.report.id]);
+          }
           this.validFileName = `${department}_${term}_${month}_Report`;
           console.log('Report data:', data);
           console.log('validFileName:', this.validFileName);
-        }
+          
       });
       // Use the reportId as needed
     });

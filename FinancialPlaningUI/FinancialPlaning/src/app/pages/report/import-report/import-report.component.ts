@@ -43,6 +43,7 @@ export class ImportReportComponent implements OnInit {
   dataSource: any = [];
   isPreview = false;
   //paging
+  dueDate: Date = new Date();
   listSize: number = 0;
   pageSize = 5;
   pageIndex = 0;
@@ -86,7 +87,7 @@ export class ImportReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.termService.getStartedTerms().subscribe(
+    this.termService.getTermsToImportReport().subscribe(
       (data: SelectTermModel[]) => {
         this.termOptions = data;
         console.log(this.termOptions);
@@ -103,6 +104,7 @@ export class ImportReportComponent implements OnInit {
     this.file = null;
     this.isTermSelected = true;
     var term = this.reportForm.value.term;
+    this.dueDate = new Date(term.reportDueDate);
     if (term) {
       var startMonth = new Date(term.startDate).getMonth();
       var startYear = new Date(term.startDate).getFullYear();
@@ -131,7 +133,6 @@ export class ImportReportComponent implements OnInit {
     }
 
   onMonthSelected() {
- 
     this.isMonthSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken:any = jwtDecode(token);

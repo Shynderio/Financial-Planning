@@ -41,7 +41,7 @@ import { MatRadioModule } from '@angular/material/radio';
 export class ImportPlanComponent implements OnInit {
   termService: TermService;
   planService: PlanService;
-  termOptions: { value: string; viewValue: string }[] = [];
+  termOptions: { value: string; viewValue: string; dueDate: Date }[] = [];
   planForm: FormGroup;
   dataSource: any = [];
   //paging
@@ -49,7 +49,7 @@ export class ImportPlanComponent implements OnInit {
   pageSize = 5;
   pageIndex = 0;
   filedata: any = [];
-
+  dueDate: Date = new Date();
   file: any;
   loading: boolean = false;
   columnHeaders: string[] = [
@@ -83,11 +83,12 @@ export class ImportPlanComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.termService.getStartedTerms().subscribe(
+    this.termService.getTermsToImportPlan().subscribe(
       (data: any[]) => {
         this.termOptions = data.map((term) => {
-          return { value: term.id, viewValue: term.termName };
+          return { value: term.id, viewValue: term.termName, dueDate: term.planDueDate };
         });
+        // this.dueDate = new Date(data[0].dueDate);
         console.log(this.termOptions);
       },
       (error) => {
@@ -108,8 +109,11 @@ export class ImportPlanComponent implements OnInit {
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
-  onImport() {
+  onImport(event: any) {
+    // console.log(, this.file);
+    this.file = event;
     if (this.file) {
+      debugger;
       this.loading = true;
       console.log('Importing file:', this.file);
       this.planService.importPlan(this.file).subscribe(
@@ -199,6 +203,7 @@ export class ImportPlanComponent implements OnInit {
 
   onTermSelect(event: any) {
     this.selectedTermId = event.value.value;
+    this.dueDate = new Date(event.value.dueDate);
     this.isTermSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken: any = jwtDecode(token);
@@ -209,6 +214,15 @@ export class ImportPlanComponent implements OnInit {
   }
 
   exportPlanTemplate() {
-    throw new Error('Method not implemented.');
+    this.planService.exportPlanTemplate().subscribe(
+      (data: Blob) => {
+        const downloadURL = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Template Plan.xlsx';
+        link.click();
+      }
+
+    );
   }
 }
