@@ -223,6 +223,17 @@ namespace FinancialPlanning.Service.Services
         {
             return await _fileService.GetFileUrlAsync(key);
         }
+
+        public async Task UpdatePlanStatus(Guid id, PlanStatus status)
+        {
+            await _planRepository.UpdatePlanStatus(id, status);
+
+        }
+
+        public async Task UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        {
+            await _planRepository.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
+        }
     }
 
 }

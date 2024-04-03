@@ -14,6 +14,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class PlanService {
+  
   private apiUrl = environment.apiUrl + '/Plan';
 
 
@@ -102,5 +103,33 @@ export class PlanService {
   exportPlan(planId: string,version:number){
     return this.http.get(this.apiUrl+'/export/'+planId+'/'+version)
   }
+  
+  submitPlan(PlanId : string, status: number): Observable<number> {
+    return this.http.put(this.apiUrl + '/' + PlanId+'/'+ status ,{}, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
+  submitExpense(PlanId: string, approvedExpenses: any): any {
+    return this.http.put(this.apiUrl + '/' + PlanId+'/'+approvedExpenses ,{}, {
+      observe: 'response',
+      responseType: 'text',
+    })
+    .pipe(
+      map((response: HttpResponse<any>) => response.status),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error occurred:', error);
+        throw error;
+      })
+    );
+  }
+  
 
 }

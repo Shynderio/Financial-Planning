@@ -12,7 +12,7 @@
       <h6>Plan: {{plan.department}}_{{plan.term}} </h6>
       <h6>Term: {{plan.term}}</h6>
       <h6>Department: {{plan.department}}</h6>
-      <h6>Status: {{plan.status}}</h6>
+      <h6>Status: {{getStatus(plan.status)}}</h6>
     </div>
     <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
@@ -32,7 +32,7 @@
   
   <div class="abc">
     <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
-      <button> Reup</button>
+      <button *ngIf="!isPlanApproved"> Reup</button>
     </a>
     
     <a   class="create-button" >
@@ -42,6 +42,15 @@
 
  <div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="Checkbox">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <mat-checkbox *ngIf="showCheckbox"
+                      [checked]="isExpenseApproved(element.no)"
+                      (change)="toggleCheckbox(element.no)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="No">
       <th mat-header-cell *matHeaderCellDef> No. </th>
@@ -95,8 +104,8 @@
       <td mat-cell *matCellDef="let element"> {{ element.note ? element.note : 'N/A' }}</td>
     </ng-container>
     <ng-container matColumnDef="Expense Status">
-      <th mat-header-cell *matHeaderCellDef>Expense Status </th>
-      <td mat-cell *matCellDef="let element"> New</td>
+      <th mat-header-cell *matHeaderCellDef>Expense Status</th>
+      <td mat-cell *matCellDef="let element">{{ getExpenseStatus(element.no) }}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -112,9 +121,15 @@
   <a  routerLink="/plans" class="create-button" >
     <button> Back</button>
   </a>
-
-  <a  routerLink="/import-plan"  >
-    <button> Submit for approval</button>
+  <a *ngIf="showCheckbox" class="create-button">
+    <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="isApprove" >Approve Expense</button>
+  </a>
+  <a>
+    <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="isPlanNew"> Submit for approval</button>   
+  </a>
+  <a>
+    <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="isApprove" > Approve Plan</button>   
   </a>
 </div>
+
 </main>

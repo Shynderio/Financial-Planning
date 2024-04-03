@@ -9,6 +9,7 @@ using System.Reflection;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
 using Microsoft.IdentityModel.Tokens;
+using FinancialPlanning.Common;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace FinancialPlanning.WebAPI.Controllers
@@ -331,5 +332,36 @@ namespace FinancialPlanning.WebAPI.Controllers
             var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
             return File(bytes, contenttype, Path.GetFileName(filepath));
         }
+        [HttpPut("{id:guid}/{status:int}")]
+        public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)
+        {
+            try
+            {
+                await _planService.UpdatePlanStatus(id, status);
+                return Ok(new { message = $"Plan with id {id} updated successfully!" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
+            }
+        }
+        [HttpPut("{id:guid}/{planApprovedExpenses}")]
+        public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        {
+            try
+            {
+                await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
+                return Ok(new { message = $"Plan with id {id} updated successfully!" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
+            }
+        }
+
+
+
     }
 }

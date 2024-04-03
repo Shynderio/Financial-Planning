@@ -78,7 +78,7 @@ export class UserListComponent implements OnInit {
     // Apply search filter
     if (this.searchValue) {
       filteredList = filteredList.filter(user =>
-        user.username.toLowerCase().includes(this.searchValue.toLowerCase())
+        user.username.toLowerCase().includes(this.searchValue.toLowerCase().trim())
       );
     }
 

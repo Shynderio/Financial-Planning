@@ -124,6 +124,14 @@ export class PlansComponent implements OnInit {
       this.planList = data;
 
       // Lọc dữ liệu dựa trên vai trò
+    if (this.role === 'Accountant') {
+      // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
+      this.planList = this.planList.filter((plan: Plan) =>
+        plan.status.toLowerCase() !== 'new'
+      );
+    }
+
+      // Lọc dữ liệu dựa trên vai trò
       if (this.role === 'FinancialStaff') {
         // Hiển thị chỉ các kế hoạch trong phòng ban của người dùng
         this.planList = this.planList.filter((plan: Plan) =>
@@ -255,10 +263,6 @@ export class PlansComponent implements OnInit {
       });
   }
 }
-
-
-
-
 @Component({
     selector: 'delete-plan',
     standalone: true,
@@ -271,5 +275,5 @@ export class PlansComponent implements OnInit {
     constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
   }
   
- 
+  
 

@@ -1,7 +1,5 @@
 <link rel="stylesheet" href="add-new-user.component.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<div *ngIf="isSubmitting" class="loader">
-</div>
 <main>
     @if (isEdit) {
     <h3><b>User List</b></h3>
@@ -258,12 +256,15 @@
                         <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
                     </div>}
                     @else { <div class="col-md-6 text-center">
-                        <button type="submit" class="btn btn-primary btn-lg me-3"
-                            [ngClass]="{'btn-disabled': !addUserF.valid}">
-                            Create
+                        <button type="submit" class="btn btn-primary btn-lg me-3" [ngClass]="{'btn-disabled': !addUserF.valid}" [disabled]="isSubmitting">
+                            <span *ngIf="!isSubmitting">Create</span>
+                            <span *ngIf="isSubmitting">
+                                <span class="loader"></span>
+                            </span>
                         </button>
                         <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
-                    </div>}
+                    </div>
+                    }
                 </div>
             </div>
 
