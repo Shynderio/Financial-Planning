@@ -18,31 +18,38 @@ div:has(#page-title) {
 }
 
 button {
-    background: #535c91;
     border: none;
 }
+.backgroundbutton{
+    background-color: var(--button-background) !important;
+    color: white;
+}
 
-
-.abc {
+#start-button {
     position: absolute;
     top: 50%;
     right: 0;
     transform: translateY(-50%);
 }
 
-.abc button {
+#start-button>button {
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
-    margin-right: 10px;
+    background-color: var(--button-background);
 }
 
-.abc i {
-    margin-right: 10px;
+#start-button i {
+    margin-right: 5px;
 }
 
-
-
+#start-button:hover>button {
+    background-color: var(--button-hover);
+}
+.container {
+    position: relative;
+    border-bottom: 2px solid var(--white-smoke);
+  }
 form {
     width: 100%;
     /* Set form width to 100% */
@@ -107,12 +114,12 @@ table {
 a {
     text-decoration: none;
     color: black;
-  }
-  
-  #back-link {
+}
+
+#back-link {
     font-size: 18px;
-  }
-  
-  #back-link:hover {
+}
+
+#back-link:hover {
     color: var(--button-background);
-  }
+}

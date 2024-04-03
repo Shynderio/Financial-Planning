@@ -326,8 +326,9 @@ export class EditTermComponent implements OnInit {
               'Start term successfully'
           },
         });
+        this.router.navigate(['/terms']);
       });
-    this.router.navigate(['/terms']);
+   
   }
 
 }
