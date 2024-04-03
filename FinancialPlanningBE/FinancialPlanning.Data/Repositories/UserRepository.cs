@@ -87,7 +87,7 @@ namespace FinancialPlanning.Data.Repositories
             var nameParts = fullName.Split(' ');
 
             // Extract last name
-            var lastName = nameParts[^1];
+            var lastName = nameParts[^1].ToUpper();
 
             // Extract initials
             var initials = string.Empty;
@@ -97,7 +97,7 @@ namespace FinancialPlanning.Data.Repositories
             }
 
             // Combine initials and last name
-            var userName = $"{lastName}{initials}";
+            var userName = $"{char.ToUpper(lastName[0])}{lastName.Substring(1).ToLower()}{initials}";
 
             // Check username existence
             if (_context.Users == null) throw new Exception(string.Empty);
