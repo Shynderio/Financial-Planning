@@ -21,6 +21,7 @@ export class UploadComponent implements OnInit {
   @Input() isTermSelected: boolean = true; // Variable to store validName
   @Input() isMonthSelected: boolean = true; // Variable to store validName
   @Input() validName: string = ''; // Variable to store validName
+  @Input() dueDate: Date = new Date();
   @Input() state : number = 1;
   @Input() loading: boolean = false;
   file: File | null = null; // Variable to store file
@@ -51,6 +52,17 @@ export class UploadComponent implements OnInit {
         data: {
           rmclose: true,
           message: 'Please select month first',
+        },
+      });
+      return;
+    }
+    var currentDate = new Date();
+    if (currentDate > this.dueDate) {
+      this.messagebar.openFromComponent(MessageBarComponent, {
+        duration: 5000,
+        data: {
+          rmclose: true,
+          message: this.validName.endsWith('Plan') ? MESSAGE_CONSTANTS.ME018 : MESSAGE_CONSTANTS.ME022,
         },
       });
       return;
@@ -97,10 +109,12 @@ export class UploadComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
-    if (changes['state'].currentValue != changes['state'].previousValue) {
+    if (changes['state']){
       this.file = null;
+      // console.log('state changed');
     }
+    // if (changes['state'].currentValue != changes['state'].previousValue) {
+    //   this.file = null;
+    // }
   }
 }

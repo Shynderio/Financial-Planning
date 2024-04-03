@@ -10,8 +10,8 @@
 .mat-mdc-dialog-title,
 .mat-mdc-dialog-content,
 .mat-mdc-dialog-actions {
-  background-color:white;
-  
+  background-color: #070f2b;
+  color: white;
   margin: 0;
   text-align: center;
 }
@@ -21,7 +21,7 @@
 }
 
 ::ng-deep .mat-mdc-dialog-title {
-  /* color: #3b99e7; */
+  color: #ff204e !important;
   font-weight: bolder !important;
   font-size: 30px !important;
   text-transform: uppercase !important;
@@ -40,6 +40,7 @@
 }
 
 .note {
+  color: #9db2bf;
   font-weight: lighter !important;
   font-size: 12px;
 }
@@ -59,20 +60,8 @@ button {
   border: none;
 }
 
-#start-button {
-  background: #553CB9;
-  color: white;
-  border: none;
-}
-
 #cancel-button {
   background: transparent;
-  
+  color: #9db2bf;
   border: 1px solid #9db2bf;
 }
-.background{
-  background-color: white;
-}
-
-
-

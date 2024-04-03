@@ -23,7 +23,11 @@ namespace Test.UnitTesting.Service.Services
         {
             // Arrange
             var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             var startDate = DateTime.Now.AddDays(-5); // Start date within the past 7 days
             var startingTerm = new Term { StartDate = startDate, Status = (TermStatus)1, Id = Guid.NewGuid() };
@@ -45,7 +49,12 @@ namespace Test.UnitTesting.Service.Services
         {
             // Arrange
             var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
+
             mockRepository.Setup(repo => repo.GetTermByIdAsync(_testTerm.Id)).ReturnsAsync(_testTerm);
             // Act
             await termService.StartTerm(_testTerm.Id);
@@ -74,8 +83,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task CreateTerm_Successfully_Creates_Term()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var service = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var service = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             // Act
             await service.CreateTerm(_testTerm);
@@ -88,8 +101,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task CreateTerm_CreatesNewTerm_AutomaticallySetStatus()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             var term = new Term();
             term.Status = 0;
@@ -109,11 +126,15 @@ namespace Test.UnitTesting.Service.Services
         {
             // Arrange
             _testTerm.ReportDueDate = DateTime.Now.AddMonths(7); // Report due date after end date
-            var mockRepository = new Mock<ITermRepository>();
-            var service = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => service.CreateTerm(_testTerm));
+            await Assert.ThrowsAsync<ArgumentException>(() => termService.CreateTerm(_testTerm));
         }
 
         [Fact]
@@ -121,19 +142,27 @@ namespace Test.UnitTesting.Service.Services
         {
             // Arrange
             _testTerm.PlanDueDate = DateTime.Now.AddMonths(7); // Plan due date after end date
-            var mockRepository = new Mock<ITermRepository>();
-            var service = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => service.CreateTerm(_testTerm));
+            await Assert.ThrowsAsync<ArgumentException>(() => termService.CreateTerm(_testTerm));
         }
 
         [Fact]
         public async Task UpdateTerm_NonExistentTerm_ShouldThrowException()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
             var nonExistentTerm = new Term { Id = Guid.NewGuid(), TermName = "Non-Existent Term" };
 
             mockRepository.Setup(repo => repo.GetTermByIdAsync(nonExistentTerm.Id)).ReturnsAsync((Term)null!);
@@ -147,8 +176,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task UpdateTerm_UpdatesExistingTerm()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
             var termToUpdate = new Term { Id = Guid.NewGuid(), TermName = "Existing Term", Status = (TermStatus)1 };
             var updatedTerm = new Term { Id = termToUpdate.Id, TermName = "Updated Term" };
 
@@ -166,8 +199,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task DeleteTerm_WithValidId_DeletesTerm()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
             var id = Guid.NewGuid();
             var termToDelete = new Term { Id = id };
 
@@ -184,8 +221,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task DeleteTerm_WithInvalidId_ThrowsArgumentException()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
             var id = Guid.NewGuid();
 
             mockRepository.Setup(repo => repo.GetTermByIdAsync(id)).ReturnsAsync((Term)null!);
@@ -198,8 +239,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task CloseTerms_ClosesTermsWithEndDateBeforeCurrentDateAndStatusIs2()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             var currentDate = DateTime.Now;
             var closingDate = currentDate.AddDays(-10); // A date before the current date
@@ -226,8 +271,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task CloseTerms_DoesNotCloseTermsWithEndDateAfterCurrentDate()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             var currentDate = DateTime.Now;
             var nonClosingTerm1 = new Term { StartDate = currentDate.AddMonths(-1).AddDays(2), Duration = 1, Status = (TermStatus)2 }; // End date is after current date
@@ -248,8 +297,12 @@ namespace Test.UnitTesting.Service.Services
         public async Task CloseTerms_DoesNotCloseTermsWithStatusNotEqualTo2()
         {
             // Arrange
-            var mockRepository = new Mock<ITermRepository>();
-            var termService = new TermService(mockRepository.Object);
+                        var mockRepository = new Mock<ITermRepository>();
+            var departmentRepository = new Mock<IDepartmentRepository>();
+            var planRepository = new Mock<IPlanRepository>();
+            var reportRepository = new Mock<IReportRepository>();
+
+            var termService = new TermService(mockRepository.Object, departmentRepository.Object, planRepository.Object, reportRepository.Object);
 
             var currentDate = DateTime.Now;
             var nonClosingTerm1 = new Term { StartDate = currentDate.AddDays(-5), Duration = 1, Status = (TermStatus)1 }; // Status not equal to 2

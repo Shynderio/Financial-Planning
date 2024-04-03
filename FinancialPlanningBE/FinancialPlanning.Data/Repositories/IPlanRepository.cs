@@ -1,4 +1,5 @@
-﻿using FinancialPlanning.Data.Entities;
+﻿using FinancialPlanning.Common;
+using FinancialPlanning.Data.Entities;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -27,6 +28,8 @@ namespace FinancialPlanning.Data.Repositories
         public Task CloseAllDuePlans(List<Plan> plans);
         public Task<List<PlanVersion>> GetPlanVersionsByPlanID(Guid planId);
         public Task<bool> IsPlanExist(Guid termId, Guid departmentId);
+        public Task UpdatePlanStatus(Guid id, PlanStatus status);
+        Task UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses);
     }
 
 }

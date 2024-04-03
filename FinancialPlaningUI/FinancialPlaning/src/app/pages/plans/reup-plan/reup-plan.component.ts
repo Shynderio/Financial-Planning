@@ -55,7 +55,7 @@ export class ReupPlanComponent implements OnInit {
     'status'
   ];
   expense_status: string[] = [
-    "New", 
+    "New",
     'Waiting for approval',
     'Approved',
   ];
@@ -79,7 +79,21 @@ export class ReupPlanComponent implements OnInit {
             this.department = data.department;
             this.status = data.status;
             this.validFileName = `${this.department}_${this.term}_Plan`;
-            // console.log(data);
+            var planDueDate = new Date(data.dueDate);
+            var currentDate = new Date();
+            if (currentDate > planDueDate) {
+              this.router.navigate(['/plan-details/' + data['id']]);
+              this.messageBar.openFromComponent(MessageBarComponent, {
+                data: {
+                  message: 'This plan is overdue.',
+                  success: false
+                },
+                horizontalPosition: 'end',
+                verticalPosition: 'bottom',
+                duration: 5000,
+              })
+            }
+            console.log(data);
           },
           error => {
             this.messageBar.openFromComponent(MessageBarComponent, {
@@ -89,7 +103,7 @@ export class ReupPlanComponent implements OnInit {
               },
               duration: 5000,
             })
-            
+
             this.router.navigate(['/plans']);
           }
         );
@@ -99,7 +113,7 @@ export class ReupPlanComponent implements OnInit {
       }
     });
 
-    if (this.status == 'Closed'){
+    if (this.status == 'Closed') {
       this.messageBar.open(
         "This plan is closed and cannot be edited.",
         undefined,

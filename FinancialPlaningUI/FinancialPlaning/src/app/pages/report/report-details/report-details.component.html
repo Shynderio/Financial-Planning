@@ -19,7 +19,7 @@
       <a class="create-button" (click)="downloadFile(report.id,report.version)">
         <button><i class="fa-solid fa-download me-1"></i> Export</button>
       </a>
-      <a *ngIf="report" [routerLink]="['/reup-report/', report.id ]" class="export-button" [hidden]="report.status==1">
+      <a *ngIf="report" [routerLink]="['/reup-report/', report.id ]" class="export-button" [hidden]="report.status==1 || report.departmentName!=departmentAcc" >
         <button><i class="fa-solid fa-upload me-1"></i> Reup</button>
       </a>
     </div>

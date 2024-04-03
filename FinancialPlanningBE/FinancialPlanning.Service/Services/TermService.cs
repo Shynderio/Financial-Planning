@@ -8,10 +8,15 @@ namespace FinancialPlanning.Service.Services
     public class TermService
     {
         private readonly ITermRepository _termRepository;
-
-        public TermService(ITermRepository termRepository)
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IPlanRepository _planRepository;
+        private readonly IReportRepository _reportRepository;
+        public TermService(ITermRepository termRepository, IDepartmentRepository departmentRepository, IPlanRepository planRepository, IReportRepository reportRepository)
         {
             _termRepository = termRepository;
+            _departmentRepository = departmentRepository;
+            _planRepository = planRepository;
+            _reportRepository = reportRepository;
         }
 
         public async Task<IEnumerable<Term>> GetTermsToStart()
@@ -143,7 +148,7 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public async Task<IEnumerable<Term>> GetStartedTerms()
+        public async Task<IEnumerable<Term>> GetStartedTerms(Guid departId)
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             List<Term> startedTerms = [];
@@ -155,6 +160,43 @@ namespace FinancialPlanning.Service.Services
                 }
             }
             return startedTerms;
+        }
+
+        public async Task<IEnumerable<Term>> GetTermsWithNoPlanByUserId(Guid userId)
+        {
+            var department =  _departmentRepository.GetDepartmentByUserId(userId);
+            var terms = await _termRepository.GetAllTerms();
+            List<Term> termsWithNoPlan = [];
+            foreach (var term in terms)
+            {
+                var isPlanExist = await _planRepository.IsPlanExist(term.Id, department.Id);
+                if (term.Status == TermStatus.InProgress && !isPlanExist)
+                {
+                    termsWithNoPlan.Add(term);
+                }
+            }
+            return termsWithNoPlan;
+        }
+
+        public async Task<IEnumerable<Term>> GetTermsWithUnFullFilledReports(Guid userId)
+        {
+            var department =  _departmentRepository.GetDepartmentByUserId(userId);
+            var terms = await _termRepository.GetAllTerms();
+            List<Term> result = [];
+            foreach (var term in terms)
+            {
+                var duration = term.Duration;
+                foreach (var no in Enumerable.Range(0, duration))
+                {
+                    var month = term.StartDate.AddMonths(no).Month + '_' + term.StartDate.AddMonths(no).Year;
+                    if (!await _reportRepository.IsReportExist(term.Id, department.Id, month.ToString()))
+                    {
+                       result.Add(term);
+                       break;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

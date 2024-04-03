@@ -68,7 +68,7 @@ namespace FinancialPlanning.Service.Services
         {
             var planToDelete = await _planRepository.GetPlanById(id);
 
-            // Xóa in S3
+            // Xï¿½a in S3
             foreach (var version in planToDelete.PlanVersions!)
             {
                 var filename = planToDelete.Department.DepartmentName + '/' + planToDelete.Term.TermName + "/Plan/version_" + version.Version + ".xlsx";
@@ -130,6 +130,11 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
+                var planDueDate = term.PlanDueDate;
+                if (DateTime.Now > planDueDate)
+                {
+                    throw new ArgumentException("Plan due date has passed");
+                }
                 var plan = new Plan
                 {
                     DepartmentId = department.Id,
@@ -217,6 +222,17 @@ namespace FinancialPlanning.Service.Services
         public async Task<string> GetFileByName(string key)
         {
             return await _fileService.GetFileUrlAsync(key);
+        }
+
+        public async Task UpdatePlanStatus(Guid id, PlanStatus status)
+        {
+            await _planRepository.UpdatePlanStatus(id, status);
+
+        }
+
+        public async Task UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        {
+            await _planRepository.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
         }
     }
 

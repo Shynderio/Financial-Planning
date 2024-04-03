@@ -8,7 +8,9 @@ main {
   left: 45px;
   padding: 30px;
 }
-
+a{
+  cursor: pointer;
+}
 .containerr {
   position: relative;
   width: 100%;

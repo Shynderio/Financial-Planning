@@ -314,6 +314,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     {
         try
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelWorksheet worksheet = package.Workbook.Worksheets.FirstOrDefault();
 
             if (worksheet != null)

@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import { jwtDecode } from 'jwt-decode';
 
 
 @Component({
@@ -35,6 +36,7 @@ export class ReportDetailsComponent {
   reportVersions: any;
   uploadedBy: any;
 
+  departmentAcc :any;
   totalExpense: number = 0;
   biggestExpenditure: number = 0;
 
@@ -56,7 +58,12 @@ export class ReportDetailsComponent {
     this.route.params.subscribe(params => {
       const reportId = params['id']; // Assuming 'id' is the parameter name
       this.getReport(reportId);
-
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        this.departmentAcc = decodedToken.departmentName;
+      }
+      
     });
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;

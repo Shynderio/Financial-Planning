@@ -35,6 +35,11 @@ form select {
 
 }
 
+form textarea{
+    font-weight: bold;
+    background-color: #ebeef3;
+}
+
 
 .form-field {
     position: relative;
