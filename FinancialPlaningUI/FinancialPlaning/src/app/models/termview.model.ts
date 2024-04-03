@@ -6,7 +6,7 @@ export class TermViewModel {
   startDate: string;
   planDueDate: string;
   reportDueDate: string;
-  status: number;
+  status: string;
   user: any; // You might want to define a UserViewModel here if needed
 
   constructor(data: any = {}) {

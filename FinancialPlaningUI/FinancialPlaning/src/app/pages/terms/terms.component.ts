@@ -34,7 +34,6 @@ import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { DialogComponent } from '../../share/dialog/dialog.component';
 import { MessageBarComponent } from '../../share/message-bar/message-bar.component';
 
 @Component({
@@ -101,7 +100,7 @@ export class TermsComponent implements OnInit {
     this.termService.getAllTerms().subscribe((data: any) => {
       this.termList = data;
       this.dataSource = this.getPaginatedItems();
-      console.log('Fetch data');
+      console.log(this.dataSource);
     });
   }
 
@@ -114,7 +113,7 @@ export class TermsComponent implements OnInit {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.termList.filter(
       (data: any) =>
-        data.termName.toLowerCase().includes(this.searchValue) &&
+        data.termName.toLowerCase().includes(this.searchValue.toLowerCase()) &&
         (this.statusOption === 'All' || data.status === this.statusOption)
     );
     this.listSize = filteredList.length;
@@ -141,31 +140,41 @@ export class TermsComponent implements OnInit {
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
   openDeleteDialog(id: string) {
-    const deleteDialog = this.dialog.open(DialogComponent, {
-      data: {
-        title: 'Delete Term',
-        content: 'Are you sure you want to delete this term?',
-        action: 'delete',
-        note: 'This action cannot be undone',
-      },
+    const deleteDialog = this.dialog.open(DeleteTermDialog, {
       width: '400px',
       height: '250px',
-    }).afterClosed().pipe().subscribe((result) => {
-      if (result === 'confirm') {
-        this.termService.deleteTerm(id).subscribe((response) => {
-          this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
-            data: {
-              success: true,
-              message: 'Term deleted successfully',
-            },
-          });
-          this.pageIndex = 0;
-          this.fetchData();
-        });
-      }
     });
+
+    deleteDialog
+      .afterClosed()
+      .pipe(
+        concatMap((result) => {
+          if (result === 'delete') {
+            return this.termService.deleteTerm(id);
+          } else {
+            return of(null);
+          }
+        })
+      )
+      .subscribe((response) => {
+        if (response == null) {
+          return;
+        }
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 3000,
+          data: {
+            httpStatusCode: response,
+            message:
+              response == 200
+                ? 'Term deleted successfully'
+                : 'Failed to delete term',
+          },
+        });
+        this.pageIndex = 0;
+        this.fetchData();
+      });
   }
+  
 }
 
 @Component({
@@ -179,17 +188,3 @@ export class DeleteTermDialog {
   constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
 }
 
-@Component({
-  selector: 'message-bar-term',
-  standalone: true,
-  templateUrl: './message-bar-term.component.html',
-  styles: `
-    i {
-      margin-right: 5px;
-    }
-  `,
-  imports: [CommonModule],
-})
-export class MessageBarTerm {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
-}

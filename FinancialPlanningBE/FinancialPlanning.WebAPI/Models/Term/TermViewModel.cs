@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FinancialPlanning.WebAPI.Models.Term
 {
-    public class TermViewModel(Guid id, string termName, Guid creatorId, int duration, DateTime startDate, DateTime planDueDate, DateTime reportDueDate, int status)
+    public class TermViewModel(Guid id, string termName, Guid creatorId, int duration, DateTime startDate, DateTime planDueDate, DateTime reportDueDate, string status)
     {
        
         public Guid Id { get; set; } = id;
@@ -28,6 +28,6 @@ namespace FinancialPlanning.WebAPI.Models.Term
 
         // [Required(ErrorMessage = "Status is required")]
         // [Range(1, 3, ErrorMessage = "Status must be set to 1, 2, or 3")]
-        public int Status { get; } = status;
+        public string Status { get; } = status;
     }
 }
