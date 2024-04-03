@@ -37,4 +37,4 @@ Desktop.ini
 .DS_Store
 .fake
 .vscode/
-FinancialPlanningBE/FinancialPlanning.WebAPI/logs/log-20240403.txt
+logs/

@@ -70,7 +70,7 @@ namespace FinancialPlanning.Data.Repositories
                 PositionId = user.PositionId,
                 RoleId = user.RoleId,
                 Status = user.Status,
-                Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim()
+                Notes = string.IsNullOrWhiteSpace(user.Notes) ? "N/A" : Regex.Replace(user.Notes, @"\s+", " ").Trim()
             };
 
 
