@@ -37,5 +37,4 @@ Desktop.ini
 .DS_Store
 .fake
 .vscode/
-FinancialPlanningBE/FinancialPlanning.WebAPI/
-.logs/
+FinancialPlanningBE/FinancialPlanning.WebAPI/logs/
