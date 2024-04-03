@@ -74,7 +74,12 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeleteTerm(Guid id)
         {
-            await _termService.DeleteTerm(id);
+            try{
+                await _termService.DeleteTerm(id);
+            } catch (ArgumentException ex)
+            {
+                return BadRequest( ex.Message );
+            }
             return Ok(new { message = $"Term with id {id} deleted successfully!" });
         }
 

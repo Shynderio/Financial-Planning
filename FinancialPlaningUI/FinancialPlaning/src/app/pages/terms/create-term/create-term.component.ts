@@ -56,16 +56,15 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
 
       this.termForm.get('startDate')?.valueChanges.subscribe(() => {
         this.updateEndDate();
+        this.termForm.get('planDueDate')?.updateValueAndValidity();
+        this.termForm.get('reportDueDate')?.updateValueAndValidity();
       });
 
       this.termForm.get('duration')?.valueChanges.subscribe(() => {
         this.updateEndDate();
+        this.termForm.get('planDueDate')?.updateValueAndValidity();
+        this.termForm.get('reportDueDate')?.updateValueAndValidity();
       });
-    }
-
-    onStartDateSelected(event: MatDatepickerInputEvent<Date>) {
-      // Update value of startDate form control
-      this.termForm.get('startDate')!.setValue(event.value);
     }
 
     updateEndDate(): void {
@@ -100,21 +99,22 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
 
         const endDate = new Date(startDate);
         endDate.setMonth(endDate.getMonth() + monthsToAdd);
-
+        endDate.setHours(0, 0, 0, 0);
         endDateControl.setValue(this.formatDate(endDate));
       }
     }
 
     planDueDateValidator(control: any): { [key: string]: boolean } | null {
-      const planDueDate = new Date(control.value);
-      const startDate = new Date(control?.parent?.controls.startDate.value);
-      const endDate = new Date(control?.parent?.controls.endDate.value);
+      // debugger;
+      const planDueDate = new Date(control.value).setHours(0, 0, 0, 0);
+      const startDate = new Date(control?.parent?.controls.startDate.value).setHours(0, 0, 0, 0);
+      const endDate = new Date(control?.parent?.controls.endDate.value).setHours(0, 0, 0, 0);
 
-      if (isNaN(planDueDate.getTime())) {
+      if (isNaN(planDueDate)) {
         return { invalidDate: true };
       } else if (planDueDate < startDate) {
         return { invalidRange1: true };
-      } else if (planDueDate > endDate) {
+      } else if (planDueDate >= endDate) {
         return { invalidRange2: true };
       }
       return null;
@@ -140,15 +140,15 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
     }
     
     reportDueDateValidator(control: any): { [key: string]: boolean } | null {
-      const reportDueDate = new Date(control.value);
-      const startDate = new Date(control?.parent?.controls.startDate.value);
-      const endDate = new Date(control?.parent?.controls.endDate.value);
+      const reportDueDate = new Date(control.value).setHours(0, 0, 0, 0);
+      const startDate = new Date(control?.parent?.controls.startDate.value).setHours(0, 0, 0, 0);
+      const endDate = new Date(control?.parent?.controls.endDate.value).setHours(0, 0, 0, 0);
 
-      if (isNaN(reportDueDate.getTime())){
+      if (isNaN(reportDueDate)){
         return { invalidDate: true };
       } else if (reportDueDate < startDate){
         return { invalidRange1: true }; 
-      } else if (reportDueDate > endDate){
+      } else if (reportDueDate >= endDate){
         return { invalidRange2: true };
       }
       return null;
@@ -214,24 +214,6 @@ import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
     onSubmit(): void {
       if (this.termForm.valid) {
         // Submit form data
-        const startDate = new Date(this.termForm.get('startDate')?.value);
-        const endDate = new Date(this.termForm.get('endDate')?.value);
-        const planDueDate = new Date(this.termForm.get('planDueDate')?.value);
-        const reportDueDate = new Date(this.termForm.get('reportDueDate')?.value);
-
-        if (planDueDate < startDate || planDueDate > endDate) {
-          // Plan due date is not within the range
-          // Handle error or display message
-          console.log('Plan due date is not within the range.');
-          return;
-        }
-
-        if (reportDueDate < startDate || reportDueDate > endDate) {
-          // Report due date is not within the range
-          // Handle error or display message
-          console.log('Report due date is not within the range.');
-          return;
-        }
         console.log(this.termForm.value);
         // Call the service to create the term
         this.createTerm();

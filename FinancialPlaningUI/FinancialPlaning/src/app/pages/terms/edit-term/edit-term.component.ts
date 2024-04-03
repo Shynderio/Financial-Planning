@@ -17,10 +17,18 @@ import { concatMap, of } from 'rxjs';
 import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { DialogComponent } from '../../../share/dialog/dialog.component';
 import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 @Component({
   selector: 'app-edit-term',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [
+    FormsModule, 
+    ReactiveFormsModule, 
+    CommonModule, 
+    RouterLink,
+    MatDatepickerModule,],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './edit-term.component.html',
   styleUrl: './edit-term.component.css',
 })
@@ -263,18 +271,25 @@ export class EditTermComponent implements OnInit {
       const endDate = new Date(this.termForm.get('endDate')?.value);
       const planDueDate = new Date(this.termForm.get('planDueDate')?.value);
       const reportDueDate = new Date(this.termForm.get('reportDueDate')?.value);
-
+      var message = '';
       if (planDueDate < startDate || planDueDate > endDate) {
-        // Plan due date is not within the range
-        // Handle error or display message
-        console.log('Plan due date is not within the range.');
-        return;
+        message = 'Plan due date is not within the range.';
+      }
+      else 
+      if (reportDueDate < startDate || reportDueDate > endDate) {
+        message = 'Report due date is not within the range.';
       }
 
-      if (reportDueDate < startDate || reportDueDate > endDate) {
-        // Report due date is not within the range
-        // Handle error or display message
-        console.log('Report due date is not within the range.');
+      if (message != '') {
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 5000,
+          data: {
+            success: false,
+            message: message
+          },
+          horizontalPosition: 'end',
+          verticalPosition: 'bottom'
+        });
         return;
       }
       console.log(this.termForm.value);
@@ -313,21 +328,21 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-      ).subscribe((response) => {
-        console.log(response)
-        if (response == null) {
-          return;
-        }
-        this.messageBar.openFromComponent(MessageBarComponent, {
-          duration: 5000,
-          data: {
-            success: true,
-            message:
+        ).subscribe((response) => {
+          console.log(response)
+          if (response == null) {
+            return;
+          }
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+            data: {
+              success: true,
+              message:
               'Start term successfully'
-          },
-        });
+            },
+          });
+          this.router.navigate(['/terms']);
       });
-    // this.router.navigate(['/terms']);
   }
 
 }

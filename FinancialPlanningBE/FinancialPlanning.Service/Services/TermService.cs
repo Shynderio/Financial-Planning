@@ -19,7 +19,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startingTerms = [];
             foreach (var term in terms)
             {
-                
+
                 if (term.StartDate.AddDays(-7) <= DateTime.Now && (int)term.Status == (int)TermStatus.New)
                 {
                     startingTerms.Add(term);
@@ -60,7 +60,8 @@ namespace FinancialPlanning.Service.Services
                 throw new ArgumentException("Report due date cannot be after the end date");
             }
 
-            if (endDate < term.PlanDueDate){
+            if (endDate < term.PlanDueDate)
+            {
                 throw new ArgumentException("Plan due date cannot be after the end date");
             }
 
@@ -93,7 +94,14 @@ namespace FinancialPlanning.Service.Services
             var termToDelete = await _termRepository.GetTermByIdAsync(id);
             if (termToDelete != null)
             {
-                await _termRepository.DeleteTerm(termToDelete);
+                if (termToDelete.Status == TermStatus.New)
+                {
+                    await _termRepository.DeleteTerm(termToDelete);
+                }
+                else
+                {
+                    throw new ArgumentException("Term cannot be deleted as it is not in the new status");
+                }
             }
             else
             {
@@ -112,7 +120,7 @@ namespace FinancialPlanning.Service.Services
             foreach (var term in terms)
             {
                 var endDate = term.StartDate.AddMonths(term.Duration);
-                if (endDate > DateTime.Now || term.Status == TermStatus.Closed) 
+                if (endDate > DateTime.Now || term.Status == TermStatus.Closed)
                     continue;
                 term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);

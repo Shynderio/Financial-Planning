@@ -63,6 +63,23 @@ form select {
     transition: .25s ease;
 }
 
+mat-datepicker-toggle {
+    order: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 50px;
+    right: 20px;
+}
+
+
+.datepicker-wrapper {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
 form input:focus, form select:focus {
     border-color: rgb(133, 68, 165);
 }

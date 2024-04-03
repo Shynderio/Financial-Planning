@@ -34,6 +34,8 @@ import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { DialogComponent } from '../../share/dialog/dialog.component';
+import { MessageBarComponent } from '../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-terms',
@@ -139,39 +141,30 @@ export class TermsComponent implements OnInit {
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
   }
   openDeleteDialog(id: string) {
-    const deleteDialog = this.dialog.open(DeleteTermDialog, {
+    const deleteDialog = this.dialog.open(DialogComponent, {
+      data: {
+        title: 'Delete Term',
+        content: 'Are you sure you want to delete this term?',
+        action: 'delete',
+        note: 'This action cannot be undone',
+      },
       width: '400px',
       height: '250px',
-    });
-
-    deleteDialog
-      .afterClosed()
-      .pipe(
-        concatMap((result) => {
-          if (result === 'delete') {
-            return this.termService.deleteTerm(id);
-          } else {
-            return of(null);
-          }
-        })
-      )
-      .subscribe((response) => {
-        if (response == null) {
-          return;
-        }
-        this.messageBar.openFromComponent(MessageBarTerm, {
-          duration: 5000,
-          data: {
-            httpStatusCode: response,
-            message:
-              response == 200
-                ? 'Term deleted successfully'
-                : 'Failed to delete term',
-          },
+    }).afterClosed().pipe().subscribe((result) => {
+      if (result === 'confirm') {
+        this.termService.deleteTerm(id).subscribe((response) => {
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+            data: {
+              success: true,
+              message: 'Term deleted successfully',
+            },
+          });
+          this.pageIndex = 0;
+          this.fetchData();
         });
-        this.pageIndex = 0;
-        this.fetchData();
-      });
+      }
+    });
   }
 }
 
