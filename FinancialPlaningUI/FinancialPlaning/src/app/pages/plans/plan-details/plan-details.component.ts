@@ -114,7 +114,7 @@ export class PlanDetailsComponent {
       this.isPlanNew = this.plan.status === 'New';
       this.isPlanApproved = this.plan.plan.status === 'Approved';
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
-      this.showCheckbox = !this.isPlanNew  && !this.isPlanApproved;
+      this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
 
       // Caculate totalExpense and biggestExpenditure
       this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
@@ -296,10 +296,14 @@ export class PlanDetailsComponent {
             this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
             console.log(this.areAllExpensesApproved());
             if (this.areAllExpensesApproved()) {
-            this.status=2;
-              this.planService.submitPlan(id,this.status);
-            }
+              this.status = 2;
+              return this.planService.submitPlan(id, this.status).pipe(
+                concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
+              );
+            } else {
             return this.planService.submitExpense(id, this.plan.approvedExpenses);
+             
+            }
           } else {
             return of(null);
           }

@@ -127,7 +127,8 @@ export class PlansComponent implements OnInit {
     if (this.role === 'Accountant') {
       // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
       this.planList = this.planList.filter((plan: Plan) =>
-        plan.status.toLowerCase() !== 'new'
+      (plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) ||
+      (plan.status.toLowerCase() === 'new')
       );
     }
 
