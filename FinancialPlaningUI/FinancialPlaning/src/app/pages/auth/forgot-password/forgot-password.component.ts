@@ -60,8 +60,9 @@ export class ForgotPasswordComponent {
     if (this.emailFormControl.invalid) return;
     this.isLoading = true;
     this.authService.forgotPassword(this.emailFormControl.value!).subscribe({
-      next: (response) => {
-        this.messageBar.open(
+      next: (response:any) => {
+        if(response.statusCode ==200){
+           this.messageBar.open(
           "We've sent an email with the link to reset your password.",
           undefined,
           {
@@ -70,20 +71,21 @@ export class ForgotPasswordComponent {
             verticalPosition: 'top',
           }
         );
+        }else{
+          this.messageBar.open(
+            'The email address doesn’t exist. Please try again.',
+            undefined,
+            {
+              duration: 5000,
+              panelClass: ['messageBar', 'failMessage'],
+              verticalPosition: 'top',
+            }
+          );
+         
+        }
+       
         this.isLoading = false;
-        console.log(response);
-      },
-      error: (error) => {
-        this.messageBar.open(
-          'The email address doesn’t exist. Please try again.',
-          undefined,
-          {
-            duration: 5000,
-            panelClass: ['messageBar', 'failMessage'],
-            verticalPosition: 'top',
-          }
-        );
-        this.isLoading = false;
+       
       },
     });
   }

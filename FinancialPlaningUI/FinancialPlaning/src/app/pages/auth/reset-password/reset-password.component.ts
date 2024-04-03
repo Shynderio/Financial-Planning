@@ -104,6 +104,10 @@ export class ResetPasswordComponent {
 
   onSubmit() {
     if (!this.resetPasswordForm.valid) return;
+    if(this.resetPasswordForm.value.password!=this.resetPasswordForm.value.confirmPassword){
+      this.resetPasswordForm.get('confirmPassword')?.setErrors({ passwordMismatch: true });
+      return;
+    }
     this.isLoading = true;
     this.authService
       .resetPassword(this.resetPasswordForm.value.password!, this.token)

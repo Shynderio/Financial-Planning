@@ -53,7 +53,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             try
             {
                 string filename = "AnnualExpenseReport/AnnualReport_" + year + ".xlsx";
-                var url = await _annualReportService.GetURLFile(filename);
+                var url = _annualReportService.GetURLFile(filename);
                 return Ok(url);
 
             }
@@ -63,9 +63,9 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-      
 
-       
+
+
 
     }
 

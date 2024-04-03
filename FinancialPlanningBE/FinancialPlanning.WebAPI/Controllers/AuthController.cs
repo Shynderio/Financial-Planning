@@ -57,16 +57,24 @@ namespace FinancialPlanning.WebAPI.Controllers
         [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(string email)
         {
-            if (string.IsNullOrEmpty(email))
-                return BadRequest(new { message = "Email cannot be empty" });
+            IActionResult response;
 
             var isUser = await _authService.IsUser(email);
 
-            if (!isUser) return NotFound(new { message = "Email not found" });
+            if (!isUser)
+            {
+             response = NotFound(new { message = "Email not found" });
+            }
+            else
+            {
+
             var token = _authService.GenerateToken(email);
 
             _authService.SendResetPasswordEmail(email, token);
-            return Ok(new { message = "Email sent" });
+                response = Ok(new { message = "Email sent" });
+            }
+
+            return Ok(response);
 
         }
 
