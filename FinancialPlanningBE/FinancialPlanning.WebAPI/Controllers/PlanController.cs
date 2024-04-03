@@ -98,7 +98,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan
         [HttpPost("import")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<Expense>>> Import(IFormFile file)
         {
             try
@@ -139,7 +139,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan/
         [HttpPost("reup")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<ExpenseStatusModel>>> ReuploadPlan(IFormFile file, Guid planId)
         {
             try
@@ -271,7 +271,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
         {
             try
