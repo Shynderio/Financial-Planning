@@ -28,11 +28,15 @@ form select:focus {
   border-color: rgb(133, 68, 165);
 }
 
-mat-datepicker-toggle {
+.mat-input-group {
+  position: relative;
+}
+
+.mat-datepicker-toggle {
   position: absolute;
-  top: 43.9%;
-  transform: translateY(-320%);
-  right: 20%;
+  top: 50%;
+  right: 10px; /* Điều chỉnh giá trị phù hợp */
+  transform: translateY(-54%);
 }
 
 .loader {
@@ -120,7 +124,22 @@ a.user-list-link {
   color: rgb(133, 68, 165);
 }
 
-form div.error-message {
+/* form div.error-message {
+  color: red;
+  font-size: 14px;
+  padding-left: 10px;
+  font-weight: bolder;
+} */
+.error-message {
+  margin-top: 6px; /* Tạo một khoảng trống giữa ô và thông báo lỗi */
+  position: relative; /* Đảm bảo vị trí tương đối */
+}
+
+.error-message .error-text {
+  position: absolute;
+  bottom: 1px; /* Đặt vị trí cố định của thông báo lỗi */
+  left: 0;
+  width: 100%; /* Đảm bảo thông báo lỗi có chiều rộng 100% */
   color: red;
   font-size: 14px;
   padding-left: 10px;
@@ -136,7 +155,10 @@ table {
 
 main {
   box-shadow: none;
-  padding: 1%;
+  padding-top: 1%;
+  padding-left: 1%;
+  padding-right: 1%;
+  padding-bottom: 2.3%;
   background-color: #E6E6E6;
   position: relative;
 
@@ -191,5 +213,25 @@ main>div {
   position: relative;
   width: 70%;
   margin-left: 30%;
+  margin-top: 1%;
   margin-bottom: 1%;
+}
+.custom-row {
+  padding-top: 1rem; /* Thay đổi giá trị padding trên */
+}
+#banIcon::after {
+  content: "This field cannot be edited";
+  position: absolute;
+  color: #ee0000; 
+  font-size: 12px; 
+  display: none;
+  white-space: nowrap; 
+  font-variant: small-caps; 
+  letter-spacing: 2px; 
+}
+
+
+
+#banIcon:hover::after {
+  display: block;
 }

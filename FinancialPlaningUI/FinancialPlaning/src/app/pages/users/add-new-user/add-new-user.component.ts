@@ -213,7 +213,7 @@ getStatusLabel(status: number): string {
       user.status = -1;
       this.httpService.editUser(this.userId, user).subscribe(() => {
         console.log('success');
-        this.toastr.success('Updated user successful', 'Financial Planning');
+        this.toastr.success('Change has been successfully updated', 'Financial Planning');
         this.router.navigateByUrl("/user-list");
         this.isSubmitting = false;
       });
