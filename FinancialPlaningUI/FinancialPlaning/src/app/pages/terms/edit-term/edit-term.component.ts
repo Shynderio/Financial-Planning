@@ -91,11 +91,23 @@ export class EditTermComponent implements OnInit {
     );
       // debugger;
     // this.updateEndDate();
+    this.termForm.get('startDate')?.valueChanges.subscribe(() => {
+      this.updateEndDate();
+      this.termForm.get('planDueDate')?.updateValueAndValidity();
+      this.termForm.get('reportDueDate')?.updateValueAndValidity();
+    });
+
+    this.termForm.get('duration')?.valueChanges.subscribe(() => {
+      this.updateEndDate();
+      this.termForm.get('planDueDate')?.updateValueAndValidity();
+      this.termForm.get('reportDueDate')?.updateValueAndValidity();
+    });
   }
 
 
 
   populateForm(termData: TermViewModel): void {
+    
     this.termForm.patchValue({
       termName: termData.termName,
       startDate: termData.startDate.slice(0, 10),
@@ -165,15 +177,15 @@ export class EditTermComponent implements OnInit {
   }
 
   planDueDateValidator(control: any): { [key: string]: boolean } | null {
-    const planDueDate = new Date(control.value);
-    const startDate = new Date(control?.parent?.controls.startDate.value);
-    const endDate = new Date(control?.parent?.controls.endDate.value);
+    const planDueDate = new Date(control.value).setHours(0, 0, 0, 0);
+    const startDate = new Date(control?.parent?.controls.startDate.value).setHours(0, 0, 0, 0);
+    const endDate = new Date(control?.parent?.controls.endDate.value).setHours(0, 0, 0, 0);
 
-    if (isNaN(planDueDate.getTime())) {
+    if (isNaN(planDueDate)) {
       return { invalidDate: true };
     } else if (planDueDate < startDate) {
       return { invalidRange1: true };
-    } else if (planDueDate > endDate) {
+    } else if (planDueDate >= endDate) {
       return { invalidRange2: true };
     }
     return null;
@@ -207,7 +219,7 @@ export class EditTermComponent implements OnInit {
       return { invalidDate: true };
     } else if (reportDueDate < startDate) {
       return { invalidRange1: true };
-    } else if (reportDueDate > endDate) {
+    } else if (reportDueDate >= endDate) {
       return { invalidRange2: true };
     }
     return null;
