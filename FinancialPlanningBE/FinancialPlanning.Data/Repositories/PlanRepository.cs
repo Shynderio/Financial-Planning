@@ -2,6 +2,7 @@ using FinancialPlanning.Common;
 using FinancialPlanning.Data.Data;
 using FinancialPlanning.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FinancialPlanning.Data.Repositories
 {
@@ -116,7 +117,7 @@ namespace FinancialPlanning.Data.Repositories
             {
                 plan.Status = (int)PlanStatus.New;
                 plan.Id = Guid.NewGuid();
-                plan.ApprovedExpenses = "[]"; 
+                plan.ApprovedExpenses = "[]";
 
                 var planVersion = new PlanVersion
                 {
@@ -254,7 +255,8 @@ namespace FinancialPlanning.Data.Repositories
         {
             foreach (var plan in plans)
             {
-                if (plan.Status == PlanStatus.New){
+                if (plan.Status == PlanStatus.New)
+                {
                     plan.Status = PlanStatus.Closed;
                 }
             }
@@ -275,8 +277,34 @@ namespace FinancialPlanning.Data.Repositories
         {
             var plan = await _context.Plans!
                 .FirstOrDefaultAsync(p => p.TermId == termId && p.DepartmentId == departmentId);
-                
+
             return plan != null;
+        }
+
+        public async Task UpdatePlanStatus(Guid id, PlanStatus status)
+        {
+            var plan = await _context.Plans!.FindAsync(id);
+
+            if (plan == null)
+            {
+                throw new Exception("Plan not found.");
+            }
+
+            plan.Status = status;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        {
+            var plan = await _context.Plans!.FindAsync(id);
+
+            if (plan == null)
+            {
+                throw new Exception("Plan not found.");
+            }
+
+            plan.ApprovedExpenses = planApprovedExpenses;
+            await _context.SaveChangesAsync();
         }
     }
 }
