@@ -68,7 +68,7 @@ namespace FinancialPlanning.Service.Services
         {
             var planToDelete = await _planRepository.GetPlanById(id);
 
-            // Xóa in S3
+            // Xï¿½a in S3
             foreach (var version in planToDelete.PlanVersions!)
             {
                 var filename = planToDelete.Department.DepartmentName + '/' + planToDelete.Term.TermName + "/Plan/version_" + version.Version + ".xlsx";
@@ -130,6 +130,11 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
+                var planDueDate = term.PlanDueDate;
+                if (DateTime.Now > planDueDate)
+                {
+                    throw new ArgumentException("Plan due date has passed");
+                }
                 var plan = new Plan
                 {
                     DepartmentId = department.Id,

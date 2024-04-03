@@ -1,7 +1,5 @@
 <link rel="stylesheet" href="add-new-user.component.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<div *ngIf="isSubmitting" class="loader">
-</div>
 <main>
     @if (isEdit) {
     <h3><b>User List</b></h3>
@@ -19,13 +17,13 @@
         <form [formGroup]="addUserF" (ngSubmit)="onSubmit()">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">User Name<span class="required-star">*</span></h6>
                         </div>
-                        @if (isEdit) {<div class="col-md-5 pe-3">
+                        @if (isEdit) {<div class="col-md-5 pe-3 position-relative">
                             <input class="form-control form-control-lg" type="text" id="username"
-                                formControlName="username" readonly />
+                                formControlName="username" readonly /> <i class="fa-solid fa-ban position-absolute top-50 start-100 translate-middle" id="banIcon"></i>
                         </div>}
                         @else {<div class="col-md-5 pe-3">
                             <input class="form-control form-control-lg" type="text" id="username"
@@ -35,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Full Name<span class="required-star">*</span></h6>
                         </div>
@@ -43,33 +41,21 @@
                             <input class="form-control form-control-lg" type="text" id="fullname"
                                 formControlName="fullName" #fullNameInput />
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['fullName'].dirty && addUserF['controls']['fullName'].errors">
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['required']">FullName cannot be
-                                Empty.<br></span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['pattern']">FullName cannot include
-                                number.<br></span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['containsVietnamese']">Please
-                                do not enter Vietnamese characters.<br></span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['excessSpaces']">Please enter a valid
-                                name with no excess spaces.<br></span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['containsNumber']">Please enter a valid
-                                name with no numbers.<br></span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['fullName'].errors['containsSpecialCharacters']">Please
-                                enter a valid
-                                name with no special characters.<br></span>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-5 offset-md-3">
+                            <div class="error-message">
+                                <span class="text-danger"
+                                    *ngIf="addUserF['controls']['fullName'].dirty && addUserF['controls']['fullName'].errors">
+                                    <span class="error-text">Please enter valid Full Name</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Email<span class="required-star">*</span></h6>
                         </div>
@@ -77,38 +63,40 @@
                             <input class="form-control form-control-lg" type="text" id="email"
                                 formControlName="email" />
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['email'].dirty && addUserF['controls']['email'].errors">
-                            <span class="text-danger" *ngIf="addUserF['controls']['email'].errors['required']">Email
-                                cannot be
-                                Empty.</span>
-                            <span class="text-danger" *ngIf="addUserF['controls']['email'].errors['email']">Please
-                                enter a valid email address.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['email'].dirty && addUserF['controls']['email'].errors">
+                                        <span class="error-text">Please enter valid Email</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">DOB<span class="required-star">*</span></h6>
                         </div>
                         <div class="datepicker-wrapper col-md-5 pe-3">
-                            <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
-                                formControlName="dob" class="form-control form-control-lg">
-                            <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
-                            <mat-datepicker #dobPicker></mat-datepicker>
+                            <div class="form-group mat-input-group">
+                                <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
+                                    formControlName="dob" class="form-control form-control-lg">
+                                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                                <mat-datepicker #dobPicker></mat-datepicker>
+                            </div>
                         </div>
-                        <div class="error-message col-md-3"
-                            *ngIf="addUserF['controls']['dob'].dirty && addUserF['controls']['dob'].errors">
-                            <span class="text-danger" *ngIf="addUserF['controls']['dob'].errors['required']">Please
-                                choose date.</span>
-                            <span class="text-danger" *ngIf="addUserF['controls']['dob'].errors['futureDate']">Date must
-                                be before current
-                                date.</span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['dob'].errors['invalidDateFormat']">Date must be before
-                                current
-                                date.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['dob'].dirty && addUserF['controls']['dob'].errors">
+                                        <span class="error-text">Date of Birth must be in the past</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -119,7 +107,7 @@
             <div class="row">
 
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Phone Number<span class="required-star">*</span></h6>
                         </div>
@@ -127,22 +115,20 @@
                             <input class="form-control form-control-lg" type="text" id="phonenumber"
                                 formControlName="phoneNumber" />
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['phoneNumber'].dirty && addUserF['controls']['phoneNumber'].errors">
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['phoneNumber'].errors['pattern']">Phone Number should be
-                                numbers.</span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['phoneNumber'].errors['required']">Phone Number cannot be
-                                empty.</span>
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['phoneNumber'].errors['maxlength']">Phone Number not exceed
-                                13 digits.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['phoneNumber'].dirty && addUserF['controls']['phoneNumber'].errors">
+                                        <span class="error-text">Please enter valid Phone Number</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Address</h6>
                         </div>
@@ -154,7 +140,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Department<span class="required-star">*</span></h6>
                         </div>
@@ -166,16 +152,20 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['department'].dirty && addUserF['controls']['department'].errors">
-                            <span class="text-danger"
-                                *ngIf="addUserF['controls']['department'].errors['required']">Please choose
-                                department.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['department'].dirty && addUserF['controls']['department'].errors">
+                                        <span class="error-text">Please choose a Department</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Position<span class="required-star">*</span></h6>
                         </div>
@@ -189,11 +179,15 @@
                             </select>
 
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['position'].dirty && addUserF['controls']['position'].errors">
-                            <span class="text-danger" *ngIf="addUserF['controls']['position'].errors['required']">Please
-                                choose
-                                position.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['position'].dirty && addUserF['controls']['position'].errors">
+                                        <span class="error-text">Please choose a Position</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -203,7 +197,7 @@
             <hr class="mx-n3">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Role<span class="required-star">*</span></h6>
                         </div>
@@ -214,32 +208,36 @@
                             </select>
 
                         </div>
-                        <div class="error-message col-md-3 "
-                            *ngIf="addUserF['controls']['role'].dirty && addUserF['controls']['role'].errors">
-                            <span class="text-danger" *ngIf="addUserF['controls']['role'].errors['required']">Please
-                                choose
-                                role.</span>
+                        <div class="row mt-3">
+                            <div class="col-md-5 offset-md-3">
+                                <div class="error-message">
+                                    <span class="text-danger"
+                                        *ngIf="addUserF['controls']['role'].dirty && addUserF['controls']['role'].errors">
+                                        <span class="error-text">Please choose a Role</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Status</h6>
                         </div>
                         @if (isEdit) {
-                        <div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="text" id="status" formControlName="status"
-                                readonly />
+                        <div class="col-md-5 pe-3 position-relative">
+                            <input class="form-control form-control-lg" type="text" id="status" formControlName="status" 
+                                readonly /> <i class="fa-solid fa-ban position-absolute top-50 start-100 translate-middle" id="banIcon"></i>
                         </div>} @else {
                         <div class="col-md-5 pe-3">
-                            <div class="form-control form-control-lg custom-background" readonly>Active</div>
+                            <div class="form-control form-control-lg custom-background" readonly>Active </div>
                         </div>
                         }
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="row align-items-center pt-4 pb-3">
+                    <div class="row align-items-center custom-row">
                         <div class="col-md-3 ps-5">
                             <h6 class="mb-0">Note</h6>
                         </div>
@@ -251,23 +249,24 @@
 
             </div>
             <div>
-                    <div class="button">
-                        @if (isEdit) { <div class="col-md-6 text-center">
-                            <button type="submit" class="btn btn-primary btn-lg me-3"
-                                [ngClass]="{'btn-disabled': !addUserF.valid}">Update</button>
-                            <button routerLink="/user-list" type="button"
-                                class="btn btn-secondary btn-lg">Cancel</button>
-                        </div>}
-                        @else { <div class="col-md-6 text-center">
-                            <button type="submit" class="btn btn-primary btn-lg me-3"
-                                [ngClass]="{'btn-disabled': !addUserF.valid}">
-                                Create
-                            </button>
-                            <button routerLink="/user-list" type="button"
-                                class="btn btn-secondary btn-lg">Cancel</button>
-                        </div>}
+                <div class="button">
+                    @if (isEdit) { <div class="col-md-6 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg me-3"
+                            [ngClass]="{'btn-disabled': !addUserF.valid}">Update</button>
+                        <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
+                    </div>}
+                    @else { <div class="col-md-6 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg me-3" [ngClass]="{'btn-disabled': !addUserF.valid}" [disabled]="isSubmitting">
+                            <span *ngIf="!isSubmitting">Create</span>
+                            <span *ngIf="isSubmitting">
+                                <span class="loader"></span>
+                            </span>
+                        </button>
+                        <button routerLink="/user-list" type="button" class="btn btn-secondary btn-lg">Cancel</button>
                     </div>
+                    }
                 </div>
+            </div>
 
         </form>
 
@@ -277,4 +276,5 @@
 
         </footer>
     </div>
+    
 </main>

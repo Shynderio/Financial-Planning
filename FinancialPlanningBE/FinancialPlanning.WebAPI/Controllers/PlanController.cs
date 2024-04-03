@@ -10,6 +10,7 @@ using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
 using Microsoft.IdentityModel.Tokens;
 using FinancialPlanning.Common;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -100,7 +101,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan
         [HttpPost("import")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<Expense>>> Import(IFormFile file)
         {
             try
@@ -141,7 +142,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan/
         [HttpPost("reup")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<ExpenseStatusModel>>> ReuploadPlan(IFormFile file, Guid planId)
         {
             try
@@ -274,7 +275,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
         {
             try
@@ -314,6 +315,22 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 return StatusCode(500, new { message = ex });
             }
+        }
+
+        [HttpGet]
+        [Route("exportTemplate")]
+        public async Task<IActionResult> ExportTemplate()
+        {
+            var filepath = Path.Combine(Directory.GetCurrentDirectory(), Common.Constants.TemplatePath[0]);
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filepath, out var contenttype))
+            {
+                contenttype = "application/octet-stream";
+            }
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
+            return File(bytes, contenttype, Path.GetFileName(filepath));
         }
         [HttpPut("{id:guid}/{status:int}")]
         public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)

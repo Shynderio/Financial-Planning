@@ -8,9 +8,12 @@ main {
   left: 45px;
   padding: 30px;
 }
-
-.container {
+a{
+  cursor: pointer;
+}
+.containerr {
   position: relative;
+  width: 100%;
   border-bottom: 2px solid var(--white-smoke);
 }
 

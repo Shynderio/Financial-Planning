@@ -15,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -81,9 +82,19 @@ export class LoginComponent {
           localStorage.setItem('token', token);
 
           //Go to home page
-          this.router.navigateByUrl('/home').then(() => {
-            window.location.reload();
-          });
+          const decodedToken: any = jwtDecode(token);
+          const role = decodedToken.role;
+          console.log(role)
+          if(role!='Admin'){
+            this.router.navigateByUrl('/terms').then(() => {
+              window.location.reload();
+            });
+          }else{
+            this.router.navigateByUrl('/user-list').then(() => {
+              window.location.reload();
+            });
+          }
+        
         } else {
           this.errorMessage = response.value.message;
           this.isLoading =

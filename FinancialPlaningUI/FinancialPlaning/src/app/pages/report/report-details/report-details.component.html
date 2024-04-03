@@ -1,6 +1,6 @@
 <main>
   <a [routerLink]="['/reports']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
-  <div class="container mb-1" *ngIf="report">
+  <div class="containerr mb-1" *ngIf="report">
     <div id="page-title">
       <h3><b > {{report.reportName}} </b>
         <span id="status" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1 me-2"
@@ -19,7 +19,7 @@
       <a class="create-button" (click)="downloadFile(report.id,report.version)">
         <button><i class="fa-solid fa-download me-1"></i> Export</button>
       </a>
-      <a *ngIf="report" [routerLink]="['/reup-report/', report.id ]" class="export-button" [hidden]="report.status==1">
+      <a *ngIf="report" [routerLink]="['/reup-report/', report.id ]" class="export-button" [hidden]="report.status==1 || report.departmentName!=departmentAcc" >
         <button><i class="fa-solid fa-upload me-1"></i> Reup</button>
       </a>
     </div>

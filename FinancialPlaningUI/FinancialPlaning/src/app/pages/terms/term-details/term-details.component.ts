@@ -25,7 +25,7 @@ export class TermDetailsComponent implements OnInit {
     3: 'quarter',
     6: 'half_year'
   };
-  termStatus?: number;
+  termStatus?: any;
   role: string = '';
   constructor(
     private fb: FormBuilder,
@@ -63,8 +63,9 @@ export class TermDetailsComponent implements OnInit {
     this.termService.getTerm(termId).subscribe(
       (termData: TermViewModel) => {
         this.termStatus = termData.status;
+        if(this.termStatus=='InProgress')  this.termStatus = 'In Progress';
         this.populateForm(termData);
-        console.log(termData);
+       
       },
       (error) => {
         console.error('Error fetching term details:', error);

@@ -17,11 +17,10 @@ form select {
     height: 50px;
     padding: 0 15px;
     background-color: #F2F4F3;
-    
+
 }
 
-
-.form-field{
+.form-field {
     position: relative;
 }
 
@@ -73,32 +72,44 @@ main {
     padding: 20px;
 }
 
-.edit-button{
+button {
+    border: none;
+}
+
+#edit-button {
     position: absolute;
     top: 50%;
     right: 0;
     transform: translateY(-50%);
 }
 
-
-button {
-    background: #535c91;
-    border: none;
+#edit-button>button {
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
-    margin-right: 10px;
+    background-color: var(--button-background);
+}
+
+#edit-button i {
+    margin-right: 5px;
+}
+
+#edit-button:hover>button {
+    background-color: var(--button-hover);
 }
 
 a {
     text-decoration: none;
     color: black;
-  }
-  
-  #back-link {
+}
+
+#back-link {
     font-size: 18px;
-  }
-  
-  #back-link:hover {
+}
+
+#back-link:hover {
     color: var(--button-background);
-  }
+}
+.abc{
+margin-right: 5%;
+}

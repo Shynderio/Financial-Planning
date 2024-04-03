@@ -43,8 +43,9 @@ export class ImportReportComponent implements OnInit {
   dataSource: any = [];
   isPreview = false;
   //paging
+  dueDate: Date = new Date();
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 5;
   pageIndex = 0;
   filedata: any = [];
   validFileName: string = '';
@@ -86,7 +87,7 @@ export class ImportReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.termService.getStartedTerms().subscribe(
+    this.termService.getTermsToImportReport().subscribe(
       (data: SelectTermModel[]) => {
         this.termOptions = data;
         console.log(this.termOptions);
@@ -103,6 +104,7 @@ export class ImportReportComponent implements OnInit {
     this.file = null;
     this.isTermSelected = true;
     var term = this.reportForm.value.term;
+    this.dueDate = new Date(term.reportDueDate);
     if (term) {
       var startMonth = new Date(term.startDate).getMonth();
       var startYear = new Date(term.startDate).getFullYear();
@@ -131,7 +133,6 @@ export class ImportReportComponent implements OnInit {
     }
 
   onMonthSelected() {
- 
     this.isMonthSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken:any = jwtDecode(token);
@@ -194,21 +195,16 @@ export class ImportReportComponent implements OnInit {
       if (this.file) {
         var id = term.id;
         var month = this.reportForm.value.month;
-        this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
         this.reportService.uploadReport(this.dataSource, id, month).subscribe(
-          (data: any) => {
-
-            console.log('report uploaded:', data);
-            this.messageBar.open(
-              "Uploaded successfully.",
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
+          () => {
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
+             data: {
+              success: true,
+               rmclose: true ,
+               message: 'Uploaded successfully',
+             },
+           });
             this.router.navigate(['/reports']);
           },
           error => {

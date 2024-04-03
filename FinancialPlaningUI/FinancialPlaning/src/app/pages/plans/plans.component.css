@@ -9,11 +9,11 @@ main {
   padding: 30px;
 }
 
-.container {
+.containerr {
   position: relative;
+  width: 100%;
   border-bottom: 2px solid var(--white-smoke);
 }
-
 h6 {
   font-size: smaller;
   color: #676767;

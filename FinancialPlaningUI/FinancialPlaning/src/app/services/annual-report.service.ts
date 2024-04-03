@@ -19,7 +19,7 @@ export class AnnualReportService {
   }
 
   exportAnnualReport(year: number){
-    return this.http.get(this.apiUrl+'/export/'+year)
+    return this.http.get(this.apiUrl+'/export/'+year);
   }
   
 }
