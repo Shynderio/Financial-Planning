@@ -9,7 +9,7 @@ main {
   padding: 30px;
 }
 
-.containerr {
+.container {
   position: relative;
   width: 100%;
   border-bottom: 2px solid var(--white-smoke);
@@ -126,6 +126,6 @@ th {
   font-size: large;
   margin-top: 15%;
 }
-.a{
+a{
   cursor: pointer;
 }

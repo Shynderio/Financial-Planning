@@ -46,7 +46,7 @@ button {
   width: 105px;
   height: 40px;
   background-color: white;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
 }
 
 button:hover:not(:disabled) {
@@ -64,11 +64,6 @@ button:hover:not(:disabled) {
   border-radius: 10px;
 }
 
-.table {
-  height: 641px;
-
-}
-
 table {
   width: 100%;
   border: 2px solid var(--white-smoke);
@@ -76,7 +71,7 @@ table {
   border-top-right-radius: 20px;
   overflow: hidden !important;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
+  flex-shrink: 1;
 }
 
 th {

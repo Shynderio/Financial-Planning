@@ -31,8 +31,8 @@
 
 
   <div class="abc">
-    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" [hidden]="overdue" class="create-button">
-      <button *ngIf="!isPlanApproved"> Reup</button>
+    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
+      <button *ngIf="isReup"> Reup</button>
     </a>
 
     <a class="create-button">

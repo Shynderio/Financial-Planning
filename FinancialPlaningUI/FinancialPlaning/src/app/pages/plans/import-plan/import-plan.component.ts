@@ -117,11 +117,8 @@ export class ImportPlanComponent implements OnInit {
   }
   
   onImport(event: any) {
-    // console.log(, this.file);
-    // this.file = event;
     if (event) {
       this.file = event;
-      debugger;
       this.loading = true;
       console.log('Importing file:', this.file);
       this.planService.importPlan(this.file).subscribe(
