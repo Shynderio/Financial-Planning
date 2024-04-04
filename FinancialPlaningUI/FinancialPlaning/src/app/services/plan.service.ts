@@ -100,8 +100,8 @@ export class PlanService {
   getPlan(planId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/details/' + planId);
   }
-  exportPlan(planId: string,version:number){
-    return this.http.get(this.apiUrl+'/export/'+planId+'/'+version)
+  exportPlan(planId: string,version:number): Observable<Blob>{
+    return this.http.post<Blob>(`${this.apiUrl}/export/${planId}/${version}`, null, { responseType: 'blob' as 'json' });
   }
   
   submitPlan(PlanId : string, status: number): Observable<number> {

@@ -192,20 +192,14 @@ export class PlanDetailsComponent {
     });
     PlanVersionsDialog;
   }
-  downloadFile(reportId: string, version: number) {
-    this.planService.exportPlan(reportId, version).subscribe((data: any) => {
-      const downloadUrl = data.downloadUrl;
-      // create hidden link to download
+  downloadFile(planId: string, version: number) {
+    this.planService.exportPlan(planId, version).subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      console.log(downloadURL);
       const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', '');
-
-      // Add link into web and click it to download
-      document.body.appendChild(link);
+      link.href = downloadURL;
+      link.download = this.plan.planName + '.xlsx';
       link.click();
-
-      // remove link after download 
-      document.body.removeChild(link);
     }
     );
   }
