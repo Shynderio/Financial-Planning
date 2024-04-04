@@ -41,7 +41,7 @@
         <div id="data" class="px-2 mt-4 h-100">
           <div class="table mat-elevation-z8 rounded-top-4"
             [ngStyle]="dataSource.length<=pageSize ? {'border-radius': '20px'} : {}">
-            <table mat-table [dataSource]="dataSource" class="rounded-top-4">
+            <table mat-table [dataSource]="dataSource" class="rounded-top-4" [ngStyle]="dataSource.length == 0 ? {'height': '500px'} : {}">
               <ng-container matColumnDef="expense">
                 <th mat-header-cell *matHeaderCellDef> Expense </th>
                 <td mat-cell *matCellDef="let element"> {{element.expenseName}} </td>

@@ -48,7 +48,7 @@ export class ImportPlanComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 10;
   pageIndex = 0;
   filedata: any = [];
   dueDate: Date = new Date();
@@ -120,7 +120,6 @@ export class ImportPlanComponent implements OnInit {
     // console.log(, this.file);
     this.file = event;
     if (this.file) {
-      debugger;
       this.loading = true;
       console.log('Importing file:', this.file);
       this.planService.importPlan(this.file).subscribe(
