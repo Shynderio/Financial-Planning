@@ -136,13 +136,14 @@ export class ReupPlanComponent implements OnInit {
     }
   }
 
-  onFileSelected(event: any) {
-    // debugger;
-    this.file = event;
-    console.log('Selected file:', this.file);
-  }
+  // onFileSelected(event: any) {
+  //   // debugger;
+  //   this.file = event;
+  //   console.log('Selected file:', this.file);
+  // }
 
   onImport(event: any) {
+    this.file = event;
     if (this.file) {
       console.log('Importing file:', this.file);
       this.loading = true;
