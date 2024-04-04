@@ -1,5 +1,5 @@
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, ViewChild, inject } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -46,8 +46,9 @@ export class UserListComponent implements OnInit {
     'position',
     'action',
   ];
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
   pageIndex = 0;
-  pageSize = 10; // Change to 5 for 5 records per page
+  pageSize = 10;
   listSize = 0;
 
   constructor(private httpService: UserService) { }
@@ -68,7 +69,8 @@ export class UserListComponent implements OnInit {
   filterUsers(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
-
+    this.pageIndex = 0;
+    
     // Apply role filter
     if (this.selectedRole) {
       filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
@@ -77,7 +79,7 @@ export class UserListComponent implements OnInit {
     // Apply search filter
     if (this.searchValue) {
       filteredList = filteredList.filter(user =>
-        user.username.toLowerCase().includes(this.searchValue.toLowerCase())
+        user.username.toLowerCase().includes(this.searchValue.toLowerCase().trim())
       );
     }
 
@@ -87,6 +89,7 @@ export class UserListComponent implements OnInit {
   search(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
+    
 
     // Apply role filter
     if (this.selectedRole) {
@@ -99,7 +102,6 @@ export class UserListComponent implements OnInit {
         user.username.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     }
-
     this.userList = filteredList;
     this.getPaginatedItems();
   }
@@ -121,6 +123,7 @@ export class UserListComponent implements OnInit {
 
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
     this.getPaginatedItems();
   }
 }

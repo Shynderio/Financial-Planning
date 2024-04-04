@@ -8,5 +8,8 @@
         public string Department { get; set; } = String.Empty;
         public string Status { get; set; } = String.Empty;
         public int Version { get; set; }
+        public DateTime DueDate { get; set; }
+        public string ApprovedExpenses { get; set; } = string.Empty;
+
     }
 }

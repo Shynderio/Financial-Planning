@@ -21,7 +21,10 @@ namespace FinancialPlanning.WebAPI.Helpers
                     opt => opt.MapFrom(src => src.StartDate.AddMonths(src.Duration)))
                 .ForMember(dest => dest.Status,
                     opt => opt.MapFrom(src => GetEnumDescription(src.Status)));
-            CreateMap<Term, TermViewModel>().ReverseMap();
+            CreateMap<Term, TermViewModel>()
+                .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => GetEnumDescription(src.Status)))
+                ;
             CreateMap<CreateTermModel, Term>();
 
             CreateMap<LoginModel, User>();
@@ -55,7 +58,9 @@ namespace FinancialPlanning.WebAPI.Helpers
                 .ForMember(dest => dest.Plan, opt => opt.MapFrom(src => src.PlanName))
                 .ForMember(dest => dest.Term, opt => opt.MapFrom(src => src.Term.TermName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Version, opt => opt.MapFrom(src => src.GetMaxVersion()))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.Term.PlanDueDate));
             CreateMap<Term, SelectTermModel>();
 
             CreateMap<RoleViewModel, Role>().ReverseMap();

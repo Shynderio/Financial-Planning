@@ -10,8 +10,8 @@
 .mat-mdc-dialog-title,
 .mat-mdc-dialog-content,
 .mat-mdc-dialog-actions {
-  background-color: #070f2b;
-  color: white;
+  background-color:white;
+  
   margin: 0;
   text-align: center;
 }
@@ -21,7 +21,7 @@
 }
 
 ::ng-deep .mat-mdc-dialog-title {
-  color: #ff204e !important;
+  color: #ff6181 !important;
   font-weight: bolder !important;
   font-size: 30px !important;
   text-transform: uppercase !important;
@@ -40,7 +40,7 @@
 }
 
 .note {
-  color: #9db2bf;
+ 
   font-weight: lighter !important;
   font-size: 12px;
 }
@@ -62,7 +62,7 @@ button {
 
 #cancel-button {
   background: transparent;
-  color: #9db2bf;
+  
   border: 1px solid #9db2bf;
 }
 .background{

@@ -6,8 +6,12 @@ using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.Json;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
+using Microsoft.IdentityModel.Tokens;
+using FinancialPlanning.Common;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -79,18 +83,15 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetPlanById(Guid id)
         {
             var plan = await _planService.GetPlanById(id);
-            return Ok(plan);
+            if (plan == null)
+            {
+                return NotFound(new { message = $"Plan with id {id} not found" });
+            }
+
+            var planViewModel = _mapper.Map<PlanViewModel>(plan);
+            return Ok(planViewModel);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Accountant, FinancialStaff, Admin")]
-        public async Task<IActionResult> CreatePlan(PlanListModel planModel)
-        {
-            if (!ModelState.IsValid) return BadRequest(new { error = "Invalid model state!" });
-            var plan = _mapper.Map<Plan>(planModel);
-            await _planService.CreatePlan(plan);
-            return Ok(new { message = "Plan created successfully!" });
-        }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -102,7 +103,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan
         [HttpPost("import")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<Expense>>> Import(IFormFile file)
         {
             try
@@ -120,16 +121,16 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
                 memoryStream.Close();
-                
+
                 return Ok(expenses);
             }
             catch (Exception)
@@ -143,7 +144,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // POST: api/plan/
         [HttpPost("reup")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<ActionResult<List<ExpenseStatusModel>>> ReuploadPlan(IFormFile file, Guid planId)
         {
             try
@@ -161,16 +162,16 @@ namespace FinancialPlanning.WebAPI.Controllers
                     memoryStream = fileService.ConvertCsvToExcel(memoryStream);
                 var isValid = _planService.ValidatePlanFile(memoryStream.ToArray());
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
                 memoryStream.Close();
-                
+
                 // Check expenses
                 var approvedExpenses = _planService.CheckExpenses(expenses, planId);
 
@@ -215,8 +216,9 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
-                string filename = plan.Department.DepartmentName + "/"
-                      + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
+                string filename = plan!.Department.DepartmentName + "/"
+                                                                  + plan.Term.TermName + "/Plan/version_" +
+                                                                  plan.GetMaxVersion() + ".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
                 var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 0);
@@ -227,12 +229,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 var firstPlanVersion = planVersionModel.FirstOrDefault();
                 var uploadedBy = firstPlanVersion?.UploadedBy;
                 var dueDate = plan.Term.PlanDueDate;
+                var date = firstPlanVersion?.ImportDate;
 
                 var result = new
                 {
                     Plan = planViewModel,
                     planDueDate = dueDate,
-                    //   date = date,
+                    date = date,
                     Expenses = expenses,
                     PlanVersions = planVersionModel,
                     UploadedBy = uploadedBy
@@ -247,8 +250,8 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpPost("edit")]
-        [Authorize(Roles = "FinancialStaff")]
+        [HttpPut("edit")]
+        [Authorize(Roles = "FinancialStaff, Accountant")]
         public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId)
         {
             try
@@ -275,17 +278,12 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> CreatePlan(List<Expense> expenses, Guid termId, Guid uid)
         {
             try
             {
-                var plan = new Plan
-                {
-                    TermId = termId,
-                    Status = PlanStatus.New,
-                };
-                await _planService.CreatePlan(expenses, plan, uid);
+                await _planService.CreatePlan(expenses, termId, uid);
                 return Ok(new { message = "Plan updated successfully!" });
             }
             catch (ArgumentException ex)
@@ -295,6 +293,81 @@ namespace FinancialPlanning.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"Error : {ex.Message}");
+            }
+        }
+
+        [HttpPost("export/{id:guid}/{version:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportSinglePlan(Guid id, int version)
+        {
+            try
+            {
+                //from planVersion Id -> get name plan + version
+                var plan = await _planService.GetPlanById(id);
+                string filename = plan!.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/Plan/version_"
+                      + version;
+
+
+                //get url from name file
+                var file = await _fileService.GetFileAsync(filename + ".xlsx");
+
+                file = _fileService.AddNoColumn(file, _fileService.ConvertExcelToList(file, 0));
+                file = _fileService.AddStatusColumn(file, plan?.Status != PlanStatus.New, JsonSerializer.Deserialize<List<int>>(plan.ApprovedExpenses));
+                file = _fileService.RemoveFirstRow(file);
+                
+                
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", plan.PlanName + ".xlsx");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex });
+            }
+        }
+
+        [HttpGet]
+        [Route("exportTemplate")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ExportTemplate()
+        {
+            var filepath = Path.Combine(Directory.GetCurrentDirectory(), Common.Constants.TemplatePath[0]);
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filepath, out var contenttype))
+            {
+                contenttype = "application/octet-stream";
+            }
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
+            return File(bytes, contenttype, Path.GetFileName(filepath));
+        }
+
+        [HttpPut("{id:guid}/{status:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)
+        {
+            try
+            {
+                await _planService.UpdatePlanStatus(id, status);
+                return Ok(new { message = $"Plan with id {id} updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
+            }
+        }
+
+        [HttpPut("{id:guid}/{planApprovedExpenses}")]
+        public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        {
+            try
+            {
+                await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
+                return Ok(new { message = $"Plan with id {id} updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
             }
         }
     }

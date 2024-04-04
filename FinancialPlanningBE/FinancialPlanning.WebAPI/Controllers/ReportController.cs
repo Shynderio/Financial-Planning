@@ -76,8 +76,15 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> DeleteReport(Guid id)
         {
-            await _reportService.DeleteReport(id);
-            return Ok(new { message = $"Report with id {id} deleted successfully!" });
+            try
+            {
+                await _reportService.DeleteReport(id);
+                return Ok(new { message = $"Report with id {id} deleted successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
 
@@ -89,14 +96,14 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //Get report
                 var report = await _reportService.GetReportById(id);
-                string filename = report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      + report.GetMaxVersion();
+                string filename = $"{report!.Department.DepartmentName}/{report.Term.TermName}/" +
+                    $"{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx";
+
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
 
                 //Download file report form cloud
-                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename + ".xlsx"), 1);
+                var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 1);
 
                 //mapper
                 var reportViewModel = _mapper.Map<ReportViewModel>(report);
@@ -123,7 +130,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         //export report 
-        [HttpGet("export/{id:guid}/{version:int}")]
+        [HttpPost("export/{id:guid}/{version:int}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportSingleReport(Guid id, int version)
         {
@@ -131,16 +138,16 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //from reportVersion Id -> get name report + version
                 var report = await _reportService.GetReportById(id);
-                string filename = report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      + version;
+                string filename = $"{report!.Department.DepartmentName}/{report.Term.TermName}/{report.Month.Split(' ')[0]}/Report/version_{version}.xlsx";
 
 
-                //get url from name file
-                var url = await _reportService.GetFileByName(filename + ".xlsx");
+                //get file
+                var reports = await _reportService.GetFileByName(filename);
+                reports = _fileService.AddNoColumn(reports, _fileService.ConvertExcelToList(reports, 1));
+                reports = _fileService.RemoveFirstRow(reports);
 
-                // return URL
-                return Ok(new { downloadUrl = url });
+                return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              report.ReportName+".xlsx");
             }
             catch (Exception ex)
             {
@@ -153,6 +160,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {
             var reports = await _reportService.MergeExcelFiles(reportIds);
+            reports = _fileService.RemoveFirstRow(reports);
 
             return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 DateTime.Now.ToString("ddMMyyyyHHmmss") + "_reports.xlsx");
@@ -172,11 +180,11 @@ namespace FinancialPlanning.WebAPI.Controllers
                 using MemoryStream ms = new();
                 await file.CopyToAsync(ms);
                 var fileBytes = ms.ToArray();
-                bool isValid = _reportService.ValidateReportFile(fileBytes);
+                string isValid = _reportService.ValidateReportFile(fileBytes);
 
-                if (!isValid)
+                if (!String.IsNullOrEmpty(isValid))
                 {
-                    return BadRequest(new { message = "Invalid file format!" });
+                    return BadRequest(new { message = isValid });
                 }
 
                 var expenses = _reportService.GetExpenses(fileBytes);

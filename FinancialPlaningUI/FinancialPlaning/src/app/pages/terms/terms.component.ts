@@ -34,6 +34,7 @@ import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MessageBarComponent } from '../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-terms',
@@ -99,7 +100,7 @@ export class TermsComponent implements OnInit {
     this.termService.getAllTerms().subscribe((data: any) => {
       this.termList = data;
       this.dataSource = this.getPaginatedItems();
-      console.log('Fetch data');
+      console.log(this.dataSource);
     });
   }
 
@@ -112,7 +113,7 @@ export class TermsComponent implements OnInit {
     const startIndex = this.pageIndex * this.pageSize;
     let filteredList = this.termList.filter(
       (data: any) =>
-        data.termName.toLowerCase().includes(this.searchValue) &&
+        data.termName.toLowerCase().includes(this.searchValue.toLowerCase()) &&
         (this.statusOption === 'All' || data.status === this.statusOption)
     );
     this.listSize = filteredList.length;
@@ -159,10 +160,11 @@ export class TermsComponent implements OnInit {
         if (response == null) {
           return;
         }
-        this.messageBar.openFromComponent(MessageBarTerm, {
-          duration: 5000,
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 3000,
           data: {
             httpStatusCode: response,
+            success:response == 200 ,
             message:
               response == 200
                 ? 'Term deleted successfully'
@@ -173,6 +175,7 @@ export class TermsComponent implements OnInit {
         this.fetchData();
       });
   }
+  
 }
 
 @Component({
@@ -186,17 +189,3 @@ export class DeleteTermDialog {
   constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
 }
 
-@Component({
-  selector: 'message-bar-term',
-  standalone: true,
-  templateUrl: './message-bar-term.component.html',
-  styles: `
-    i {
-      margin-right: 5px;
-    }
-  `,
-  imports: [CommonModule],
-})
-export class MessageBarTerm {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
-}

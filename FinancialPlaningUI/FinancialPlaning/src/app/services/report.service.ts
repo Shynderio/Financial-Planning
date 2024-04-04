@@ -35,10 +35,10 @@ export class ReportService {
     return this.http.get(this.apiUrl + '/details/' + reportId);
   }
   
-  exportSinglereport(reportId: string,version:number){
-    return this.http.get(this.apiUrl+'/export/'+reportId+'/'+version)
+  
+  exportSinglereport(reportId: string, version: number): Observable<Blob> {
+    return this.http.post<Blob>(`${this.apiUrl}/export/${reportId}/${version}`, null, { responseType: 'blob' as 'json' });
   }
-
   exportMutilreport(reportIds: string[]): Observable<Blob> {
     return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, { responseType: 'blob' as 'json' });
   }

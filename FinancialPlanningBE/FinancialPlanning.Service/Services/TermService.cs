@@ -1,16 +1,22 @@
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using Serilog;
 
 namespace FinancialPlanning.Service.Services
 {
     public class TermService
     {
         private readonly ITermRepository _termRepository;
-
-        public TermService(ITermRepository termRepository)
+        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IPlanRepository _planRepository;
+        private readonly IReportRepository _reportRepository;
+        public TermService(ITermRepository termRepository, IDepartmentRepository departmentRepository, IPlanRepository planRepository, IReportRepository reportRepository)
         {
             _termRepository = termRepository;
+            _departmentRepository = departmentRepository;
+            _planRepository = planRepository;
+            _reportRepository = reportRepository;
         }
 
         public async Task<IEnumerable<Term>> GetTermsToStart()
@@ -19,7 +25,7 @@ namespace FinancialPlanning.Service.Services
             List<Term> startingTerms = [];
             foreach (var term in terms)
             {
-                
+
                 if (term.StartDate.AddDays(-7) <= DateTime.Now && (int)term.Status == (int)TermStatus.New)
                 {
                     startingTerms.Add(term);
@@ -60,7 +66,8 @@ namespace FinancialPlanning.Service.Services
                 throw new ArgumentException("Report due date cannot be after the end date");
             }
 
-            if (endDate < term.PlanDueDate){
+            if (endDate < term.PlanDueDate)
+            {
                 throw new ArgumentException("Plan due date cannot be after the end date");
             }
 
@@ -93,7 +100,14 @@ namespace FinancialPlanning.Service.Services
             var termToDelete = await _termRepository.GetTermByIdAsync(id);
             if (termToDelete != null)
             {
-                await _termRepository.DeleteTerm(termToDelete);
+                if (termToDelete.Status == TermStatus.New)
+                {
+                    await _termRepository.DeleteTerm(termToDelete);
+                }
+                else
+                {
+                    throw new ArgumentException("Term cannot be deleted as it is not in the new status");
+                }
             }
             else
             {
@@ -111,11 +125,12 @@ namespace FinancialPlanning.Service.Services
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             foreach (var term in terms)
             {
-                var endDate = term.StartDate.AddMonths(term.Duration).Day;
-                if (endDate < DateTime.Now.Day || term.Status == TermStatus.Closed) 
+                var endDate = term.StartDate.AddMonths(term.Duration);
+                if (endDate > DateTime.Now || term.Status == TermStatus.Closed)
                     continue;
                 term.Status = TermStatus.Closed;
                 await _termRepository.UpdateTerm(term);
+               Log.Information("Closed term with ID {TermId}.", term.Id);
             }
         }
 
@@ -133,7 +148,7 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public async Task<IEnumerable<Term>> GetStartedTerms()
+        public async Task<IEnumerable<Term>> GetStartedTerms(Guid departId)
         {
             IEnumerable<Term> terms = await _termRepository.GetAllTerms();
             List<Term> startedTerms = [];
@@ -145,6 +160,46 @@ namespace FinancialPlanning.Service.Services
                 }
             }
             return startedTerms;
+        }
+
+        public async Task<IEnumerable<Term>> GetTermsWithNoPlanByUserId(Guid userId)
+        {
+            var department =  _departmentRepository.GetDepartmentByUserId(userId);
+            var terms = await _termRepository.GetAllTerms();
+            List<Term> termsWithNoPlan = [];
+            foreach (var term in terms)
+            {
+                var isPlanExist = await _planRepository.IsPlanExist(term.Id, department.Id);
+                if (term.Status == TermStatus.InProgress && !isPlanExist)
+                {
+                    termsWithNoPlan.Add(term);
+                }
+            }
+            return termsWithNoPlan;
+        }
+
+        public async Task<IEnumerable<Term>> GetTermsWithUnFullFilledReports(Guid userId)
+        {
+            var department =  _departmentRepository.GetDepartmentByUserId(userId);
+            var terms = await _termRepository.GetAllTerms();
+            List<Term> result = [];
+            foreach (var term in terms)
+            {
+                var duration = term.Duration;
+                if (term.Status != TermStatus.InProgress){
+                    continue;
+                }
+                foreach (var no in Enumerable.Range(0, duration))
+                {
+                    var month = term.StartDate.AddMonths(no).Month + '_' + term.StartDate.AddMonths(no).Year;
+                    if (!await _reportRepository.IsReportExist(term.Id, department.Id, month.ToString()))
+                    {
+                       result.Add(term);
+                       break;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

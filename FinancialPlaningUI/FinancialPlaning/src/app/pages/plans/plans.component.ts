@@ -33,6 +33,7 @@ import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { MatSelectModule } from '@angular/material/select';
 import { Plan } from '../../models/planviewlist.model';
+import { MessageBarComponent } from '../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-terms',
@@ -77,7 +78,7 @@ export class PlansComponent implements OnInit {
 
 
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   dataSource: any = [];
 
@@ -122,6 +123,15 @@ export class PlansComponent implements OnInit {
     console.log(this.role);
     this.planService.getAllPlans().subscribe((data: any) => {
       this.planList = data;
+
+      // Lọc dữ liệu dựa trên vai trò
+    if (this.role === 'Accountant') {
+      // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
+      this.planList = this.planList.filter((plan: Plan) =>
+      (plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) ||
+      (plan.department.toLowerCase() !== this.getUsersDepartment().toLowerCase() && plan.status !== 'New')
+      );
+    }
 
       // Lọc dữ liệu dựa trên vai trò
       if (this.role === 'FinancialStaff') {
@@ -246,19 +256,27 @@ export class PlansComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
-          
-          panelClass: ['success'],
-        });
-        this.pageIndex = 0;
-        this.fetchData();
-      });
+        if (response == null) {
+          return;
+        }
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 3000,
+      
+         data: {
+           httpStatusCode: response,
+           success:response == 200 ,
+           rmclose: true ,
+           message:
+             response == 200
+               ? 'Plan deleted successfully'
+               : 'Failed to delete Plan',
+         },
+       });
+       this.pageIndex = 0;
+       this.fetchData();
+     });
   }
 }
-
-
-
-
 @Component({
     selector: 'delete-plan',
     standalone: true,
@@ -271,5 +289,5 @@ export class PlansComponent implements OnInit {
     constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
   }
   
- 
+  
 

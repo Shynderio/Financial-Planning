@@ -63,34 +63,9 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
         }
 
-        [HttpGet("Geturlfile")]
-        public async Task<IActionResult> GetUrlFile(string key)
-        {
-            var url = await _fileService.GetFileUrlAsync(key);
-            return Ok(url);
-
-        }
-        [HttpDelete]
-        public async Task<IActionResult> DeleteFile(string key)
-        {
-            try
-            {
-                await _fileService.DeleteFileAsync(key);
-                return Ok();
-            }
-            catch (AmazonS3Exception ex)
-            {
-                return BadRequest($"Error deleting file: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
 
 
-        }
 
-       
 
     }
 

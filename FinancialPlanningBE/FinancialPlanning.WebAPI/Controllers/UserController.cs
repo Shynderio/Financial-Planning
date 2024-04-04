@@ -55,9 +55,24 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> AddNewUser(AddUserModel userModel)
         {
 
-            var user = _mapper.Map<User>(userModel);
-            await _userService.AddNewUser(user);
-            return Ok(user);
+            try
+            {
+                var user = _mapper.Map<User>(userModel);
+                await _userService.AddNewUser(user);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Email already exists"))
+                {
+                    return BadRequest("Email already exists");
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nếu cần thiết
+                    return StatusCode(500, "An error occurred while processing your request");
+                }
+            }
         }
 
         // Update User

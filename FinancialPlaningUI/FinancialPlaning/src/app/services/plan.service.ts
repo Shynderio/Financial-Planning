@@ -14,6 +14,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class PlanService {
+  
   private apiUrl = environment.apiUrl + '/Plan';
 
 
@@ -41,6 +42,10 @@ export class PlanService {
   
   exportPlanTemplate(): Observable<Blob> {
     return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
+  }
+
+  getPlanById(planId: string): Observable<Plan> {
+    return this.http.get<Plan>(`${this.apiUrl}/${planId}`);
   }
 
   importPlan(file: File): Observable<any> {
@@ -95,4 +100,36 @@ export class PlanService {
   getPlan(planId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/details/' + planId);
   }
+  exportPlan(planId: string,version:number): Observable<Blob>{
+    return this.http.post<Blob>(`${this.apiUrl}/export/${planId}/${version}`, null, { responseType: 'blob' as 'json' });
+  }
+  
+  submitPlan(PlanId : string, status: number): Observable<number> {
+    return this.http.put(this.apiUrl + '/' + PlanId+'/'+ status ,{}, {
+        observe: 'response',
+        responseType: 'text',
+      })
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
+  submitExpense(PlanId: string, approvedExpenses: any): any {
+    return this.http.put(this.apiUrl + '/' + PlanId+'/'+approvedExpenses ,{}, {
+      observe: 'response',
+      responseType: 'text',
+    })
+    .pipe(
+      map((response: HttpResponse<any>) => response.status),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error occurred:', error);
+        throw error;
+      })
+    );
+  }
+  
+
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
@@ -6,11 +6,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { AuthService } from '../../../services/auth/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   providers: [provideNativeDateAdapter()],
@@ -33,7 +35,8 @@ export class UserDetailComponent implements OnInit {
     private userService: UserService,
     private dialog: MatDialog,
     private messageBar: MatSnackBar,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastr: ToastrService
   ) {
 
     this.userForm = this.fb.group({
@@ -72,17 +75,23 @@ export class UserDetailComponent implements OnInit {
     // debugger;
     this.userService.getUserById(userId).subscribe({
       next: (userDetails: any) => {
+        const dobDate = new Date(userDetails.dob);
+        const day = dobDate.getDate().toString().padStart(2, '0'); // Thêm số 0 nếu chỉ có 1 số
+        const month = (dobDate.getMonth() + 1).toString().padStart(2, '0'); // Thêm số 0 nếu chỉ có 1 số
+        const year = dobDate.getFullYear();
+        const formattedDob = `${day} / ${month} / ${year}`;
+
         // Assuming termDetails contains the required data
         this.userForm.patchValue({
           username: userDetails.username,
           fullname: userDetails.fullName,
-          dob: userDetails.dob,
+          dob: formattedDob,
           email: userDetails.email,
           department: userDetails.departmentName,
           position: userDetails.positionName,
           role: userDetails.roleName,
           status: userDetails.status,
-          note: userDetails.notes,
+          note: userDetails.notes || 'N/A',
           phonenumber: userDetails.phoneNumber,
           address: userDetails.address,
         });
@@ -135,10 +144,19 @@ export class UserDetailComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Change status successfully' : 'Something went wrong', 'Close', {
-          panelClass: ['success'],
-        });
-        this.loadUserDetail(userId);
+        // Check if response is null, if yes, it means user cancelled, so don't open any message bar
+        if (response !== null && response === 200) {
+          this.messageBar.openFromComponent(MessageBarComponent, {
+
+            duration: 3000,
+            data: {
+              success: true,
+              message:
+                'User status updated successfully'
+            },
+          });
+          this.loadUserDetail(userId);
+        }
       });
   }
   //Convert date to dd/mm/yyyy
@@ -173,6 +191,9 @@ export class UserDetailComponent implements OnInit {
 export class UpdateUserStatusDialog {
   constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) { }
 }
+
+
+
 
 
 

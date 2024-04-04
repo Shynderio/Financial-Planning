@@ -6,6 +6,9 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using FinancialPlanning.WebAPI.Models.Term;
+using System.Security.Claims;
+using FinancialPlanning.Common;
+using FluentAssertions;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -48,6 +51,11 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetAllTerms()
         {
             var terms = await _termService.GetAllTerms();
+            var role = User.FindFirst(ClaimTypes.Role)!.Value;
+            if (role == "FinancialStaff")
+            {
+                terms = terms.Where(t => t.Status != TermStatus.New);
+            }
             var termListModels = terms.Select(_mapper.Map<TermListModel>).ToList().OrderByDescending(t => t.StartDate);
             return Ok(termListModels);
         }
@@ -67,15 +75,33 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> DeleteTerm(Guid id)
         {
-            await _termService.DeleteTerm(id);
+            try{
+                await _termService.DeleteTerm(id);
+            } catch (ArgumentException ex)
+            {
+                return BadRequest( ex.Message );
+            }
             return Ok(new { message = $"Term with id {id} deleted successfully!" });
         }
 
-        [HttpGet("started")]
+        [HttpGet("noplan")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> GetStartedTerms()
+        public async Task<IActionResult> GetTermsToImportPlan()
         {
-            var terms = await _termService.GetStartedTerms();
+            var userId = Guid.Parse(User.FindFirst("userId")!.Value);
+            var terms = await _termService.GetTermsWithNoPlanByUserId(userId);
+
+            var selectTermModels = _mapper.Map<List<SelectTermModel>>(terms);
+            return Ok(selectTermModels);
+        }
+
+        [HttpGet("noreport")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> GetTermsToImportReport()
+        {
+            var userId = Guid.Parse(User.FindFirst("userId")!.Value);
+            var terms = await _termService.GetTermsWithUnFullFilledReports(userId);
+
             var selectTermModels = _mapper.Map<List<SelectTermModel>>(terms);
             return Ok(selectTermModels);
         }

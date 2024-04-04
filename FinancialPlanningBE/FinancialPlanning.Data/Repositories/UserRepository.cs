@@ -11,12 +11,10 @@ namespace FinancialPlanning.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
-        private readonly IEmailRepository _emailRepository;
 
-        public UserRepository(DataContext context, IEmailRepository emailRepository)
+        public UserRepository(DataContext context)
         {
             _context = context;
-            _emailRepository = emailRepository;
         }
 
 
@@ -72,7 +70,7 @@ namespace FinancialPlanning.Data.Repositories
                 PositionId = user.PositionId,
                 RoleId = user.RoleId,
                 Status = user.Status,
-                Notes = Regex.Replace(user.Notes, @"\s+", " ").Trim()
+                Notes = string.IsNullOrWhiteSpace(user.Notes) ? "N/A" : Regex.Replace(user.Notes, @"\s+", " ").Trim()
             };
 
 
@@ -89,7 +87,7 @@ namespace FinancialPlanning.Data.Repositories
             var nameParts = fullName.Split(' ');
 
             // Extract last name
-            var lastName = nameParts[^1];
+            var lastName = nameParts[^1].ToUpper();
 
             // Extract initials
             var initials = string.Empty;
@@ -99,7 +97,7 @@ namespace FinancialPlanning.Data.Repositories
             }
 
             // Combine initials and last name
-            var userName = $"{lastName}{initials}";
+            var userName = $"{char.ToUpper(lastName[0])}{lastName.Substring(1).ToLower()}{initials}";
 
             // Check username existence
             if (_context.Users == null) throw new Exception(string.Empty);

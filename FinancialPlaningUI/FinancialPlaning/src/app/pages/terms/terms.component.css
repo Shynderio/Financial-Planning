@@ -8,9 +8,12 @@ main {
   left: 45px;
   padding: 30px;
 }
-
-.container {
+a{
+  cursor: pointer;
+}
+.containerr {
   position: relative;
+  width: 100%;
   border-bottom: 2px solid var(--white-smoke);
 }
 
@@ -47,7 +50,7 @@ button {
 }
 
 #create-button:hover > button {
-  background-color: #553cb9;
+  background-color: var(--button-hover);
 }
 
 .searchBar {

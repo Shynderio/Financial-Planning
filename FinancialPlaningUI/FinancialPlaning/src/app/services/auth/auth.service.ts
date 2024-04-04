@@ -45,21 +45,13 @@ export class AuthService {
     return;
   }
 
-  forgotPassword(email: string): Observable<number> {
+  forgotPassword(email: string): Observable<any> {
     let urlParams = new URLSearchParams();
     urlParams.append('email', email);
     return this.http
-      .post(this.apiUrl + '/ForgotPassword?' + urlParams, null, {
-        observe: 'response',
-        responseType: 'text',
-      })
-      .pipe(
-        map((response: HttpResponse<any>) => response.status),
-        catchError((error: HttpErrorResponse) => {
-          console.error('Error occurred:', error);
-          throw error;
-        })
-      );
+      .post(this.apiUrl + '/ForgotPassword?' + urlParams, email)
+   
+      ;
   }
 
   resetPassword(password: string, token: string): Observable<number> {

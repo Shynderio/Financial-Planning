@@ -53,12 +53,15 @@ namespace FinancialPlanning.Service.Services
         {
             // Validate token
             var token = user.Token ?? throw new Exception("Token not found");
-            try {
+            try
+            {
                 var email = await ValidateToken(token);
                 user.Email = email;
                 // If token is valid, proceed with password reset
                 await _authRepository.ResetPassword(user);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 throw new Exception(e.Message);
             }
         }
@@ -79,7 +82,9 @@ namespace FinancialPlanning.Service.Services
             {
                 To = userEmail,
                 Subject = "Password Reset",
-                Body = $"Click <a href=\"{resetUrl}\">here</a> to reset your password."
+                Body = $"We have just received a password reset request for {userEmail}.<br><br>" +
+                $"Please click <a href=\"{resetUrl}\">here</a> to reset your password.<br><br>" +
+                $"For your security, the link will expire in 24 hours or immediately after you reset your password."
             };
 
             _emailService.SendEmail(email);
@@ -97,7 +102,7 @@ namespace FinancialPlanning.Service.Services
             var user = await _authRepository.IsValidUser(userMapper.Email, userMapper.Password);
 
             if (user == null) return string.Empty;
-            if(user.Status == UserStatus.Inactive) return "Inactive";
+            if (user.Status == UserStatus.Inactive) return "Inactive";
             //add email to claim
             var authClaims = new List<Claim>
             {
@@ -115,7 +120,7 @@ namespace FinancialPlanning.Service.Services
             authClaims.Add(new Claim("departmentName", departmentname));
 
             var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
-              
+
             //Create token
             var tokenDescriptor = new SecurityTokenDescriptor
             {

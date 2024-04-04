@@ -13,6 +13,7 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-list-report',
@@ -32,6 +33,7 @@ import { CommonModule } from '@angular/common';
 })
 export class ListReportComponent {
   displayedColumns: string[] = [
+    'No',
     'reportName',
     'month',
     'termName',
@@ -61,7 +63,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 10;
   pageIndex = 0;
 
   constructor(
@@ -173,11 +175,12 @@ export class ListReportComponent {
   getQuarters() {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
-
+    this.quarters.push(`Q1 ${currentYear+1}`);
     // Lặp từ năm trước đến năm tiếp theo và từ quý 1 đến quý 4
-    for (let year = currentYear - 2; year <= currentYear + 1; year++) {
-      for (let quarter = 1; quarter <= 4; quarter++) {
+    for (let year = currentYear; year > currentYear -3; year--) {
+      for (let quarter = 4; quarter > 0; quarter--) {
         // Thêm vào mảng
+        
         this.quarters.push(`Q${quarter} ${year}`);
       }
     }
@@ -187,13 +190,12 @@ export class ListReportComponent {
 exportMutilreport() {
  
   const reportIds = this.listSearch.map((report: any) => report.id);
-  console.log(reportIds);
   this.reportService.exportMutilreport(reportIds).subscribe(
     (data: Blob) => {
       const downloadURL = window.URL.createObjectURL(data);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = 'reports.xlsx';
+      link.download = 'Reports.xlsx';
       link.click();
     }
    
@@ -203,7 +205,7 @@ exportMutilreport() {
 
   openDeleteDialog(id: string) {
     const deleteDialog = this.dialog.open(DeleteReportDialog, {
-      width: '400px',
+      width: '430px',
       height: '250px',
     });
 
@@ -219,10 +221,17 @@ exportMutilreport() {
         })
       )
       .subscribe((response) => {
-        this.messageBar.openFromComponent(MessageBarReport, {
-          duration: 5000,
+        if (response == null) {
+          return;
+        }
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          
+           duration: 3000,
+       
           data: {
             httpStatusCode: response,
+            success:true ,
+            rmclose: true ,
             message:
               response == 200
                 ? 'Report deleted successfully'
@@ -244,20 +253,4 @@ exportMutilreport() {
 })
 export class DeleteReportDialog {
   constructor(public dialogRef: MatDialogRef<DeleteReportDialog>) {}
-}
-
-
-@Component({
-  selector: 'message-bar-report',
-  standalone: true,
-  templateUrl: './message-bar-report.component.html',
-  styles: `
-    i {
-      margin-right: 5px;
-    }
-  `,
-  imports: [CommonModule],
-})
-export class MessageBarReport {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any) {}
 }

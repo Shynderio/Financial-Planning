@@ -2,6 +2,8 @@
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
 using OfficeOpenXml;
+using Serilog;
+using System;
 using System.Composition;
 
 namespace FinancialPlanning.Service.Services
@@ -33,15 +35,13 @@ namespace FinancialPlanning.Service.Services
             {
                 //Get departmentId
                 var departIdRaw = await _departmentRepository.GetDepartmentIdByEmail(email);
-                Console.WriteLine(departIdRaw);
                 var src = departIdRaw;
                 var departId = Guid.Parse(src);
                 //Get report by DepartmentId
                 var reports = await _reportRepository.GetReportsByDepartId(departId);
                 return reports;
             }
-            else
-            {
+            else {
                 //If role is accountant - getAll
                 var reports = await _reportRepository.GetAllReports();
                 return reports;
@@ -50,20 +50,35 @@ namespace FinancialPlanning.Service.Services
 
         public async Task DeleteReport(Guid id)
         {
-            var reportToDelete = await _reportRepository.GetReportById(id);
-            var filename = reportToDelete.Department.DepartmentName + '/' + reportToDelete.Term.TermName + "/"
-                                                  + reportToDelete.Month + "/Report/version_" + reportToDelete.GetMaxVersion()+".xlsx";
-            if (reportToDelete != null)
+            try
             {
-                await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
-                await _reportRepository.DeleteReport(reportToDelete);
-                //delete file on cloud
-                await _fileService.DeleteFileAsync(filename);
-                
+                var reportToDelete = await _reportRepository.GetReportById(id);
+
+                if (reportToDelete != null && reportToDelete.Status == ReportStatus.New)
+                {
+                    foreach (var version in reportToDelete.ReportVersions!)
+                    {
+                        var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month.Split(' ')[0]}/Report/version_{version.Version}.xlsx";
+
+                        //delete file on cloud
+                        await _fileService.DeleteFileAsync(filename);
+                    }
+
+                    await _reportRepository.DeleteReportVersions(reportToDelete.ReportVersions!);
+                    await _reportRepository.DeleteReport(reportToDelete);
+
+
+
+                }
+                else
+                {
+                    throw new ArgumentException("Report not found with the specified ID or Status isn't New");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                throw new ArgumentException("Report not found with the specified ID");
+                Log.Error(ex, "An error occurred while deleting the report with ID {ReportId}", id);
+                throw; 
             }
         }
 
@@ -72,9 +87,9 @@ namespace FinancialPlanning.Service.Services
             return await _departmentRepository.GetAllDepartment();
         }
 
-        public async Task<string> GetFileByName(string key)
+        public async Task<byte[]> GetFileByName(string key)
         {
-            return await _fileService.GetFileUrlAsync(key);
+            return await _fileService.GetFileAsync(key);
         }
 
         public async Task<Report?> GetReportById(Guid id)
@@ -109,37 +124,38 @@ namespace FinancialPlanning.Service.Services
             foreach (var report in reports)
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
-                    await _fileService.GetFileAsync(report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      +report.GetMaxVersion()+ ".xlsx"),
+                    await _fileService.GetFileAsync($"{report.Department.DepartmentName}/" +
+                    $"{report.Term.TermName}/{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx"),
                     1));
             }
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package =
-                new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),
-                    Constants.TemplatePath[1])));
+                new ExcelPackage(new MemoryStream(await _fileService.ConvertListToExcelAsync(expenses, 1)));
             var worksheet = package.Workbook.Worksheets[0];
             worksheet.InsertColumn(1, 1); // Add a column to the left of the worksheet
-            worksheet.Cells[1, 1].Value = "No.";
+            worksheet.Cells[2, 1].Value = "NO.";
             
             var currentDepartment = expenses[0].Department;
             var currentIndex = 1;
 
-            foreach (var expense in expenses)
+            foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
             {
                 if (!expense.Department.Equals(currentDepartment))
                 {
                     currentDepartment = expense.Department;
                     currentIndex = 1;
                 }
-                expense.No = currentIndex++;
+                worksheet.Cells[index + 3, 1].Value = currentIndex++;
             }
 
-            return await _fileService.ConvertListToExcelAsync(expenses, 1);
+            using var memoryStream = new MemoryStream();
+            await package.SaveAsAsync(memoryStream);
+
+            return memoryStream.ToArray();
         }
 
-        public bool ValidateReportFile(byte[] file){
+        public string ValidateReportFile(byte[] file){
             try
             {
                 // Assuming plan documents have document type 0
@@ -183,11 +199,12 @@ namespace FinancialPlanning.Service.Services
             } else {
                 // add data for report
                 report.Status = (int)ReportStatus.New;
-                report.UpdateDate = DateTime.Now; 
-                report.ReportName = department.DepartmentName+"_"+term.TermName+"_"+report.Month+"_Report";
+                report.UpdateDate = DateTime.Now;
+                var month = report.Month.Split(' ')[0];
+                report.ReportName = $"{department.DepartmentName}_{term.TermName}_{month}_Report";
                 var result = await _reportRepository.CreateReport(report, userId);
 
-                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
+                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
                 // Convert list of expenses to Excel file                        
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3
@@ -203,11 +220,10 @@ namespace FinancialPlanning.Service.Services
                 throw new ArgumentException("Report not found with the specified ID");
             } else {
                 await _reportRepository.ReupReport(reportId, userId);
-
                 var report = await _reportRepository.GetReportById(reportId);
-                var filename = Path.Combine(report.Department.DepartmentName + "/"
-                      + report.Term.TermName + "/" + report.Month + "/Report/version_"
-                      + report.GetMaxVersion() + ".xlsx");
+
+                var filename = Path.Combine($"{report!.Department.DepartmentName}/{report.Term.TermName}/" +
+                    $"{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx");
                 // Convert list of expenses to Excel file
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3
@@ -219,11 +235,16 @@ namespace FinancialPlanning.Service.Services
         {
             var reports = await _reportRepository.GetAllDueReports();
             await _reportRepository.CloseAllDueReports(reports);
+            Log.Information("Closed {Count} due reports.", reports.Count());
+
         }
 
         internal async Task GenerateAnnualReport()
         {
             await Task.CompletedTask;
         }
+
+       
+
     }
 }

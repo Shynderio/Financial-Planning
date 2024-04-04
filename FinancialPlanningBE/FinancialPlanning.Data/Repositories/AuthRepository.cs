@@ -54,7 +54,7 @@ namespace FinancialPlanning.Data.Repositories
 
         public async Task<bool> IsUser(string email)
         {
-            var user = await _context.Users!.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users!.FirstOrDefaultAsync(u => u.Email == email && u.Status == UserStatus.Active);
             return user != null;
         }
 

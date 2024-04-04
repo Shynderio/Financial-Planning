@@ -29,7 +29,7 @@ export class AnnualReportDetailsComponent {
   searchValue: string = '';
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 10;
   pageIndex = 0;
 
   constructor(
@@ -52,6 +52,7 @@ ngOnInit(): void {
 
       //List expenses
       this.expenses = data.expenses;
+      
       //data of report
       this.annualReport = data.report;  
       //filter

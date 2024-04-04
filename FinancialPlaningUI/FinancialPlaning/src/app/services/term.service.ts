@@ -66,5 +66,13 @@ export class TermService {
     return this.http.put(this.apiUrl + '/close/' + termId, {});
   }
 
+  getTermsToImportPlan(): Observable<any> {
+    return this.http.get(this.apiUrl + '/noplan');
+  }
+
+  getTermsToImportReport(): Observable<any> {
+    return this.http.get(this.apiUrl + '/noreport');
+  }
+
   
 }

@@ -8,8 +8,23 @@ main {
   padding: 30px;
 }
 
-.container {
+a {
+  text-decoration: none;
+  color: black;
+}
+
+#back-link {
+  font-size: 18px;
+}
+
+#back-link:hover {
+  color: var(--button-background);
+}
+
+.containerr {
   position: relative;
+  width: 100%;
+  
 }
 
 h6 {
@@ -20,32 +35,45 @@ div:has(#page-title) {
   display: flex;
 }
 
+#version:hover {
+  color: #616577;
+
+}
+#version {
+  
+  text-decoration: underline;
+}
+
 button {
-  /* background: #535c91; */
+  background: var(--button-background);
   border: none;
 }
 
-
-.abc {
-  margin: 20px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
+.top-button {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
 }
 
-.abc button {
-  color: black;
-  padding: 10px 20px;
+.top-button button {
+  width: 110px;
+  color: white;
+  padding: 10px 15px;
   border-radius: 10px;
   margin-right: 10px;
 }
 
-.abc i {
-  margin-right: 10px;
+.top-button button:hover {
+  background-color: #553cb9;
+}
+
+#report-info p {
+  margin: 10px 0;
 }
 
 table {
+  width: 100%;
   min-height: auto;
   border: 2px solid var(--white-smoke);
   border-top-left-radius: 20px;
@@ -71,24 +99,21 @@ th {
   text-decoration: underline;
   cursor: pointer;
 }
-
-.plan-details {
-  width: 70%;
-  margin: auto;
+.abc {
+  margin: 20px 20px;
   display: flex;
-  border-radius: 5px;
-  border: 1px solid rgb(111, 124, 219);
-  margin-bottom: 10px;
-  padding-top: 5px;
+  justify-content: center;
+  align-items: center;
+  
 }
 
-.right-item {
-  margin-right: 10%;
-  width: 35%;
-
+.abc button {
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin-right: 10px;
 }
 
-.left-item {
-  width: 35%;
-  margin-left: 5%;
+.abc i {
+  margin-right: 10px;
 }

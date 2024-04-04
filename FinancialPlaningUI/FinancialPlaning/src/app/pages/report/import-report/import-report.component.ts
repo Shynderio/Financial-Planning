@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UploadComponent } from '../../../share/upload/upload.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -35,8 +35,6 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 })
 export class ImportReportComponent implements OnInit {
 
-
-
   termService: TermService;
   reportService: ReportService;
   termOptions: SelectTermModel[] = [];
@@ -45,12 +43,14 @@ export class ImportReportComponent implements OnInit {
   dataSource: any = [];
   isPreview = false;
   //paging
+  dueDate: Date = new Date();
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   filedata: any = [];
   validFileName: string = '';
-  file: any;
+  file: any;  
+  loading: boolean = false;
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -76,7 +76,8 @@ export class ImportReportComponent implements OnInit {
     reportService: ReportService,
     private fb: FormBuilder,
     private elementRef: ElementRef,
-    private messageBar: MatSnackBar, private router: Router) {
+    private messageBar: MatSnackBar, 
+    private router: Router, ) {
     this.termService = termService;
     this.reportService = reportService;
     this.reportForm = this.fb.group({
@@ -87,7 +88,7 @@ export class ImportReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.termService.getStartedTerms().subscribe(
+    this.termService.getTermsToImportReport().subscribe(
       (data: SelectTermModel[]) => {
         this.termOptions = data;
         console.log(this.termOptions);
@@ -101,8 +102,10 @@ export class ImportReportComponent implements OnInit {
 
   changeTerm() {
     // debugger;
+    this.file = null;
     this.isTermSelected = true;
     var term = this.reportForm.value.term;
+    this.dueDate = new Date(term.reportDueDate);
     if (term) {
       var startMonth = new Date(term.startDate).getMonth();
       var startYear = new Date(term.startDate).getFullYear();
@@ -115,6 +118,7 @@ export class ImportReportComponent implements OnInit {
       }
 
       this.monthOptions = monthOptions;
+      this.reportForm.controls['month'].setValue('');
       this.isMonthSelected = false;
       console.log('Selected term:', term);
       console.log('Month options:', this.monthOptions);
@@ -122,20 +126,27 @@ export class ImportReportComponent implements OnInit {
     }
   }
 
+  reset() {
+  
+    this.dataSource = [];
+    this.isPreview = false;
+    this.reportForm.reset();
+    }
+
   onMonthSelected() {
- 
     this.isMonthSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken:any = jwtDecode(token);
-    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + this.reportForm.value.month + '_Report';
+    var month = this.reportForm.value.month.split(' ')[0];
+    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + month + '_Report';
     console.log(this.validFileName);
   }
 
-  onFileSelected(event: any) {
+  // onFileSelected(event: any) {
    
-    this.file = event;
-    console.log('Selected file:', this.file);
-  }
+  //   this.file = event;
+  //   console.log('Selected file:', this.file);
+  // }
   //filter page
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
@@ -143,17 +154,21 @@ export class ImportReportComponent implements OnInit {
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
-  onImport() {
+  onImport($event: any) {
+    this.file = $event;
     if (this.file) {
+      this.loading = true;
       console.log('Importing file:', this.file);
       this.reportService.importReport(this.file).subscribe(
         (data: any) => {
+          this.loading = false;
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
           this.isPreview = true;
           console.log(data);
         },
         error => {
+          this.loading = false;
           console.log(error);
           this.messageBar.openFromComponent(MessageBarComponent, {
             data: {
@@ -186,21 +201,16 @@ export class ImportReportComponent implements OnInit {
       if (this.file) {
         var id = term.id;
         var month = this.reportForm.value.month;
-        this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-        this.reportService.uploadReport(this.dataSource, id, month).subscribe(
-          (data: any) => {
-
-            console.log('report uploaded:', data);
-            this.messageBar.open(
-              "Uploaded successfully.",
-              undefined,
-              {
-                duration: 5000,
-                panelClass: ['messageBar', 'successMessage'],
-                verticalPosition: 'top',
-                horizontalPosition: 'end',
-              }
-            );
+        this.reportService.uploadReport(this.filedata, id, month).subscribe(
+          () => {
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
+             data: {
+              success: true,
+               rmclose: true ,
+               message: 'Uploaded successfully',
+             },
+           });
             this.router.navigate(['/reports']);
           },
           error => {
