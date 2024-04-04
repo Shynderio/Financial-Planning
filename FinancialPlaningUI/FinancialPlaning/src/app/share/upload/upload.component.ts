@@ -100,6 +100,7 @@ export class UploadComponent implements OnInit {
       this.loadForm(file, file.name);
       this.fileSelected.emit(file);
       this.change.emit(file);
+      event.target.value = '';
     }
   }
 
