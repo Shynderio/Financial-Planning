@@ -9,7 +9,7 @@ main {
   padding: 30px;
 }
 
-.containerr {
+.container {
   position: relative;
   width: 100%;
   border-bottom: 2px solid var(--white-smoke);
