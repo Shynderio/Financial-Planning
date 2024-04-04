@@ -117,7 +117,7 @@ export class PlanDetailsComponent {
       this.isPlanApproved = this.plan.status === 'Approved';
       this.isReup = (this.plan.status !== 'Approved') && ((this.plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) )
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
-      this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
+      this.showCheckbox =(this.plan.status === 'WaitingForApproval');
 
       // Caculate totalExpense and biggestExpenditure
       this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
@@ -229,7 +229,7 @@ export class PlanDetailsComponent {
       console.log(downloadURL);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = this.plan.planName + '.xlsx';
+      link.download = this.plan.plan + '.xlsx';
       link.click();
     }
     );
@@ -427,20 +427,14 @@ export class PlanVersionsDialog {
   }  
 
   downloadFile(planId: string, version: number) {
-    this.planService.exportPlan(planId, version).subscribe((data: any) => {
-        const downloadUrl = data.downloadUrl;
-         // create hidden link to download
-         const link = document.createElement('a');
-         link.href = downloadUrl;
-         link.setAttribute('download', '');
-
-         // Add link into web and click it to download
-         document.body.appendChild(link);
-         link.click();
-
-         // remove link after download 
-         document.body.removeChild(link)
-      }, 
+    this.planService.exportPlan(planId, version).subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      console.log(downloadURL);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'Version_'+version + '.xlsx';
+      link.click();
+    }
     );
   }
 
