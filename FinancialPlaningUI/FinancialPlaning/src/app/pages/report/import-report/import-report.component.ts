@@ -45,11 +45,12 @@ export class ImportReportComponent implements OnInit {
   //paging
   dueDate: Date = new Date();
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 10;
   pageIndex = 0;
   filedata: any = [];
   validFileName: string = '';
-  file: any;
+  file: any;  
+  loading: boolean = false;
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -154,15 +155,18 @@ export class ImportReportComponent implements OnInit {
   }
   onImport() {
     if (this.file) {
+      this.loading = true;
       console.log('Importing file:', this.file);
       this.reportService.importReport(this.file).subscribe(
         (data: any) => {
+          this.loading = false;
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
           this.isPreview = true;
           console.log(data);
         },
         error => {
+          this.loading = false;
           console.log(error);
           this.messageBar.openFromComponent(MessageBarComponent, {
             data: {
