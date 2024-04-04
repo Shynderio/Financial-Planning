@@ -1,12 +1,15 @@
+
 main {
     position: absolute;
-    /* height: 100vh; */
+    /* min-width: calc(100vw - 80px); */
+    width: calc(100vw - 80px);
+    /* height: calc(100%); */
     min-width: 1050px;
-    /* width: calc(100vw - 80px);
-    max-width: calc(100vw - 80px); */
+    min-height: 2000px;
     left: 60px;
     padding: 30px;
   }
+  
   
   a {
     text-decoration: none;
@@ -43,7 +46,7 @@ main {
     width: 105px;
     height: 40px;
     background-color: white;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
   }
   
   button:hover:not(:disabled) {
@@ -61,11 +64,6 @@ main {
     border-radius: 10px;
   }
   
-  .table {
-    height: 641px;
-  
-  }
-  
   table {
     width: 100%;
     border: 2px solid var(--white-smoke);
@@ -73,7 +71,7 @@ main {
     border-top-right-radius: 20px;
     overflow: hidden !important;
     box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
+    flex-shrink: 1;
   }
   
   th {

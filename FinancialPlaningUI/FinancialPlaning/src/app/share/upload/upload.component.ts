@@ -7,6 +7,7 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MESSAGE_CONSTANTS } from '../../../constants/message.constants';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MessageBarComponent } from '../message-bar/message-bar.component';
+import e from 'express';
 
 @Component({
   selector: 'app-upload',
@@ -78,6 +79,7 @@ export class UploadComponent implements OnInit {
   onChange(event: any) {
     debugger;
     const file: File = event.target.files[0];
+    event.target.value = '';
     if (file) {
       if (file.name.split('.')[0] != this.validName) {
         this.messagebar.openFromComponent(MessageBarComponent, {
@@ -103,12 +105,12 @@ export class UploadComponent implements OnInit {
       this.loadForm(file, file.name);
       this.fileSelected.emit(file);
       this.change.emit(file);
-      event.target.value = '';
+      // event.target.value = '';
     }
-    const fileInput: HTMLInputElement = document.querySelector(
-      '.file-input'
-    ) as HTMLInputElement;
-    fileInput.value = '';
+    // const fileInput: HTMLInputElement = document.querySelector(
+    //   '.file-input'
+    // ) as HTMLInputElement;
+    // fileInput.value = '';
   }
 
   loadForm(file: File, fileName: string) {

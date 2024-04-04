@@ -1,9 +1,15 @@
+
 main {
   position: absolute;
-  min-width: calc(100vw - 80px);
+  /* min-width: calc(100vw - 80px); */
+  width: calc(100vw - 80px);
+  /* height: calc(100%); */
+  min-width: 1050px;
+  min-height: 2000px;
   left: 60px;
   padding: 30px;
 }
+
 
 a {
   text-decoration: none;

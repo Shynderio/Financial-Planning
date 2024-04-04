@@ -137,15 +137,16 @@ export class ImportReportComponent implements OnInit {
     this.isMonthSelected = true;
     var token = localStorage.getItem('token') ?? '';
     var decodedToken:any = jwtDecode(token);
-    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + this.reportForm.value.month + '_Report';
+    var month = this.reportForm.value.month.split(' ')[0];
+    this.validFileName = decodedToken.departmentName + '_' + this.reportForm.value.term.termName + '_' + month + '_Report';
     console.log(this.validFileName);
   }
 
-  onFileSelected(event: any) {
+  // onFileSelected(event: any) {
    
-    this.file = event;
-    console.log('Selected file:', this.file);
-  }
+  //   this.file = event;
+  //   console.log('Selected file:', this.file);
+  // }
   //filter page
   getPaginatedItems() {
     const startIndex = this.pageIndex * this.pageSize;
@@ -153,7 +154,8 @@ export class ImportReportComponent implements OnInit {
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
-  onImport() {
+  onImport($event: any) {
+    this.file = $event;
     if (this.file) {
       this.loading = true;
       console.log('Importing file:', this.file);
@@ -199,7 +201,7 @@ export class ImportReportComponent implements OnInit {
       if (this.file) {
         var id = term.id;
         var month = this.reportForm.value.month;
-        this.reportService.uploadReport(this.dataSource, id, month).subscribe(
+        this.reportService.uploadReport(this.filedata, id, month).subscribe(
           () => {
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,

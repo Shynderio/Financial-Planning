@@ -4,7 +4,7 @@
         <h1><b>Term details</b></h1>
 
        
-        <a id="edit-button" (click)="editTerm()" [hidden]="termStatus != 0 || role!='Accountant'">
+        <a id="edit-button" (click)="editTerm()" [hidden]="termStatus != 'New' || role!='Accountant'">
             <button>
                <i class="fa-solid fa-pen-to-square"></i> 
                Edit

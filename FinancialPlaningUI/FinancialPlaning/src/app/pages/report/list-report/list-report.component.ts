@@ -63,7 +63,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 8;
+  pageSize = 10;
   pageIndex = 0;
 
   constructor(
@@ -221,12 +221,16 @@ exportMutilreport() {
         })
       )
       .subscribe((response) => {
+        if (response == null) {
+          return;
+        }
         this.messageBar.openFromComponent(MessageBarComponent, {
+          
            duration: 3000,
        
           data: {
             httpStatusCode: response,
-            success:response == 200 ,
+            success:true ,
             rmclose: true ,
             message:
               response == 200

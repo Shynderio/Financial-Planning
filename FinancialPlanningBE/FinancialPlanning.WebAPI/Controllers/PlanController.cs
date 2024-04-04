@@ -304,10 +304,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //from planVersion Id -> get name plan + version
                 var plan = await _planService.GetPlanById(id);
-                var filename = plan?.Department.DepartmentName + "/"
-                                                               + plan?.Term.TermName + "/Plan/version_"
-                                                               + version;
-                
+                string filename = plan!.Department.DepartmentName + "/"
+                      + plan.Term.TermName + "/Plan/version_"
+                      + version;
+
+
                 //get url from name file
                 var file = await _fileService.GetFileAsync(filename + ".xlsx");
 

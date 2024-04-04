@@ -161,14 +161,12 @@ export class ImportPlanComponent implements OnInit {
         var term = this.planForm.value.term.value;
         this.elementRef.nativeElement.querySelector('#submit-button').disabled =
           true;
-        this.planService.createPlan(term, this.dataSource).subscribe(
+        this.planService.createPlan(term, this.filedata).subscribe(
           (data: any) => {
             console.log('Plan uploaded:', data);
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,
               panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'bottom',
-              horizontalPosition: 'end',
               data: {
                 message: MESSAGE_CONSTANTS.ME019,
                 success: true,
@@ -181,8 +179,6 @@ export class ImportPlanComponent implements OnInit {
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,
               panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'bottom',
-              horizontalPosition: 'end',
               data: {
                 message: error.error.message,
                 success: false,

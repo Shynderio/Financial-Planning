@@ -164,6 +164,7 @@ export class TermsComponent implements OnInit {
           duration: 3000,
           data: {
             httpStatusCode: response,
+            success:response == 200 ,
             message:
               response == 200
                 ? 'Term deleted successfully'

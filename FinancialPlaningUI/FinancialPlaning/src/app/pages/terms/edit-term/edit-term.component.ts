@@ -299,8 +299,6 @@ export class EditTermComponent implements OnInit {
             success: false,
             message: message
           },
-          horizontalPosition: 'end',
-          verticalPosition: 'bottom'
         });
         return;
       }
