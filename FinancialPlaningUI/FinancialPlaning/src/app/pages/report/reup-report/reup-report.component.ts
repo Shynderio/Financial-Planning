@@ -44,7 +44,7 @@ export class ReupReportComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   filedata: any = [];
   file: any;
@@ -83,7 +83,7 @@ export class ReupReportComponent implements OnInit {
       this.reportService.getReport(reportId).subscribe((data: any) => {
           this.reportId = reportId;
           this.term = data.report.termName;
-          this.month = data.report.month.split(' ')[0];
+          this.month = data.report.month;
           var department = data.report.departmentName;
           this.dueDate = new Date(data.report.reportDureDate);
           var currentDate = new Date();
@@ -97,7 +97,7 @@ export class ReupReportComponent implements OnInit {
             });
             this.router.navigate(['/report-details/' + data.report.id]);
           }
-          this.validFileName = `${department}_${ this.term}_${this.month}_Report`;
+          this.validFileName = `${department}_${ this.term}_${this.month.split(' ')[0]}_Report`;
           console.log('Report data:', data);
           console.log('validFileName:', this.validFileName);
           

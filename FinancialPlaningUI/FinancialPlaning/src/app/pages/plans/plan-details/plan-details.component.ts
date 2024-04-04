@@ -59,7 +59,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   router: any;
 
