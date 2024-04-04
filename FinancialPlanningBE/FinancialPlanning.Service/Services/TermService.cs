@@ -186,6 +186,9 @@ namespace FinancialPlanning.Service.Services
             foreach (var term in terms)
             {
                 var duration = term.Duration;
+                if (term.Status != TermStatus.InProgress){
+                    continue;
+                }
                 foreach (var no in Enumerable.Range(0, duration))
                 {
                     var month = term.StartDate.AddMonths(no).Month + '_' + term.StartDate.AddMonths(no).Year;
