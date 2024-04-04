@@ -4,12 +4,13 @@
       <h3><b> Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <div class="top-button">
     
+    <div class="top-button">
       <a class="create-button" routerLink="/import-plan">
         <button><i class="fa-solid fa-upload me-1"></i> Import</button>
-      </a>
+      </a> 
     </div>
+  
   </div>
     <div class="mb-4 row">
       <form class="searchBar col-6">
@@ -20,7 +21,7 @@
           class="align-middle">filter_list</mat-icon> More </button>
     </div>
   <div *ngIf="filterStatusEnable">
-      <mat-form-field  >
+      <mat-form-field [hidden]="role !== 'FinancialStaff'" >
         <mat-label  >Department</mat-label>
         <mat-select [(value)]="selectedDepartment" (selectionChange)="onDepartmentSelected($event)">
           <mat-option value="All">All</mat-option>
@@ -29,7 +30,7 @@
           }
         </mat-select>
       </mat-form-field>
-      <mat-form-field [hidden]="role !== 'FinancialStaff'">
+      <mat-form-field >
         <mat-label >Term</mat-label>
         <mat-select [(value)]="selectedTerm" (selectionChange)="onTermSelected($event)">
           <mat-option value="All">All</mat-option>
@@ -97,7 +98,7 @@
       <th mat-header-cell *matHeaderCellDef>Action</th>
       <td mat-cell *matCellDef="let plan">
         <a [routerLink]="[ '/plan-details/', plan.id ]"><mat-icon>visibility</mat-icon></a>
-        <a *ngIf="showEditDeleteButton(plan)" (click)="openDeleteDialog(plan.id)"><mat-icon>delete</mat-icon></a>
+        <a [hidden]="(plan.status != 'New')" *ngIf="showEditDeleteButton(plan)" (click)="openDeleteDialog(plan.id)"><mat-icon>delete</mat-icon></a>
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>

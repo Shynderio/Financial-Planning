@@ -33,6 +33,7 @@ import { of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import { MatSelectModule } from '@angular/material/select';
 import { Plan } from '../../models/planviewlist.model';
+import { MessageBarComponent } from '../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-terms',
@@ -255,13 +256,22 @@ export class PlansComponent implements OnInit {
         })
       )
       .subscribe((response) => {
-        this.messageBar.open(response == 200 ? 'Deleted successfully' : 'Something went wrong', 'Close', {
-          
-          panelClass: ['success'],
-        });
-        this.pageIndex = 0;
-        this.fetchData();
-      });
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 3000,
+      
+         data: {
+           httpStatusCode: response,
+           success:response == 200 ,
+           rmclose: true ,
+           message:
+             response == 200
+               ? 'Plan deleted successfully'
+               : 'Failed to delete Plan',
+         },
+       });
+       this.pageIndex = 0;
+       this.fetchData();
+     });
   }
 }
 @Component({

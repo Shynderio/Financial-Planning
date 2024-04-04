@@ -7,6 +7,7 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MESSAGE_CONSTANTS } from '../../../constants/message.constants';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MessageBarComponent } from '../message-bar/message-bar.component';
+import e from 'express';
 
 @Component({
   selector: 'app-upload',
@@ -44,6 +45,8 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: 'Please select term first',
         },
+        verticalPosition: 'bottom',
+        horizontalPosition: 'end',
       });
       return;
     }
@@ -54,6 +57,8 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: 'Please select month first',
         },
+        verticalPosition: 'bottom',
+        horizontalPosition: 'end',
       });
       return;
     }
@@ -65,6 +70,8 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: this.validName.endsWith('Plan') ? MESSAGE_CONSTANTS.ME018 : MESSAGE_CONSTANTS.ME022,
         },
+        verticalPosition: 'bottom',
+        horizontalPosition: 'end',
       });
       return;
     }
@@ -78,6 +85,7 @@ export class UploadComponent implements OnInit {
   onChange(event: any) {
     debugger;
     const file: File = event.target.files[0];
+    event.target.value = '';
     if (file) {
       if (file.name.split('.')[0] != this.validName) {
         this.messagebar.openFromComponent(MessageBarComponent, {
@@ -85,6 +93,8 @@ export class UploadComponent implements OnInit {
           data: {
             message: MESSAGE_CONSTANTS.ME016,
           },
+          verticalPosition: 'bottom',
+          horizontalPosition: 'end',
         });
         return;
       }
@@ -95,6 +105,8 @@ export class UploadComponent implements OnInit {
           data: {
             message: MESSAGE_CONSTANTS.ME017,
           },
+          verticalPosition: 'bottom',
+        horizontalPosition: 'end',
         });
         return;
       }
@@ -103,12 +115,12 @@ export class UploadComponent implements OnInit {
       this.loadForm(file, file.name);
       this.fileSelected.emit(file);
       this.change.emit(file);
-      event.target.value = '';
+      // event.target.value = '';
     }
-    const fileInput: HTMLInputElement = document.querySelector(
-      '.file-input'
-    ) as HTMLInputElement;
-    fileInput.value = '';
+    // const fileInput: HTMLInputElement = document.querySelector(
+    //   '.file-input'
+    // ) as HTMLInputElement;
+    // fileInput.value = '';
   }
 
   loadForm(file: File, fileName: string) {

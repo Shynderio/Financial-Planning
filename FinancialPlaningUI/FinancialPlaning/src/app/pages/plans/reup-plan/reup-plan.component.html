@@ -91,27 +91,27 @@
   <a [routerLink]="['/plans']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
   <div class="h-100">
     <div id="page-title" class="mb-3">
-      <h1><b> Import Plan</b></h1>
+      <h1><b> Reup Plan</b></h1>
     </div>
     <div class="row border border-2 rounded-5 py-3 px-2 h-100" [ngStyle]="{'border': 'var(--white-smoke)'}">
       <div class="row" [ngStyle]="{'height': '30%'}">
         <div class="col-2 border-end border-2" [ngStyle]="{'border': 'var(--white-smoke)'}">
-          <h4><b>Plan</b></h4>
-          <!-- <form [formGroup]="planForm" class="w-100">
-            <mat-form-field hideRequiredMarker class="w-100">
-              <mat-label>Term</mat-label>
-              <input matInput formControlName="term" id="term" [value]="">
-              <mat-label>Department</mat-label>
-              <input matInput formControlName="department" id="department" [value]="">
-            </mat-form-field>
-          </form> -->
+          <h4><b>Plan detail</b></h4>
+          <div class="container">
+            <h5><b>Term</b></h5>
+              <p>{{term}}</p>
+            <h5><b>Department</b></h5>
+              <p>{{department}}</p>
+          </div>
         </div>
         <div class="col-10">
-          <h4><b>Step 2</b></h4>
+          <h4><b>Import file</b></h4>
           <app-upload 
           (fileSelected)="onFileSelected($event)" 
           [validName]="validFileName"
-          [loading]="loading"></app-upload>
+          [loading]="loading"
+          [dueDate]="dueDate"
+          ></app-upload>
           <div id="template" class="row rounded-3 mx-1 my-2 px-2" [ngStyle]="{'height': '27%'}">
             <div class="col-10 my-auto">
               <a role="button" (click)="exportPlanTemplate()"><b>File template</b></a>
@@ -163,6 +163,10 @@
               <ng-container matColumnDef="notes">
                 <th mat-header-cell *matHeaderCellDef> Notes </th>
                 <td mat-cell *matCellDef="let element"> {{element.note == null ? 'N/A' : element.note}} </td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let element"> {{element.status}} </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>

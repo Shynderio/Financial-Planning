@@ -5,7 +5,7 @@ import { MatOption, MatSelect } from '@angular/material/select';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PlanService } from '../../../services/plan.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { jwtDecode } from 'jwt-decode';
@@ -43,6 +43,7 @@ export class ReupPlanComponent implements OnInit {
   validFileName: string = '';
   status: string = '';
   loading: boolean = false;
+  dueDate: Date = new Date();
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -60,6 +61,7 @@ export class ReupPlanComponent implements OnInit {
     'Waiting for approval',
     'Approved',
   ];
+  planForm: FormGroup<any> = new FormGroup({});
 
   constructor(planService: PlanService, private elementRef: ElementRef,
     private messageBar: MatSnackBar, private route: ActivatedRoute, private router: Router) {
@@ -82,6 +84,7 @@ export class ReupPlanComponent implements OnInit {
             this.validFileName = `${this.department}_${this.term}_Plan`;
             var planDueDate = new Date(data.dueDate);
             var currentDate = new Date();
+            this.dueDate = planDueDate;
             if (currentDate > planDueDate) {
               this.router.navigate(['/plan-details/' + data['id']]);
               this.messageBar.openFromComponent(MessageBarComponent, {
@@ -95,6 +98,9 @@ export class ReupPlanComponent implements OnInit {
               })
             }
             console.log(data);
+            this.planForm = new FormGroup({
+
+            });
           },
           error => {
             this.messageBar.openFromComponent(MessageBarComponent, {

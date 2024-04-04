@@ -48,6 +48,7 @@ export class PlanDetailsComponent {
   isApprove: boolean= false;
   approvedExpenses: number[] = [];
   isSubmitting: boolean = false;
+  isReup: boolean = false;
   showCheckbox: boolean = false;
   overdue: boolean = false;
 
@@ -112,6 +113,7 @@ export class PlanDetailsComponent {
 
       this.isPlanNew = this.plan.status === 'New';
       this.isPlanApproved = this.plan.status === 'Approved';
+      this.isReup = (this.plan.status !== 'Approved') && ((this.plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) )
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
       this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
 
@@ -130,6 +132,19 @@ export class PlanDetailsComponent {
 
 
     });
+  }
+
+  getUsersDepartment(): string {
+    let userDepartment = '';
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('token') ?? '';
+      if (token) {
+        const decodedToken: any = jwtDecode(token);
+        // Giả sử thông tin phòng ban được lưu trong trường 'department' của token
+        userDepartment = decodedToken.departmentName ?? '';
+      }
+    }
+    return userDepartment;
   }
 
   toggleCheckbox(expenseId: number): void {

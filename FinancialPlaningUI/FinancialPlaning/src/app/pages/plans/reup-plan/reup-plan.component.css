@@ -1,72 +1,73 @@
 main {
     position: absolute;
-    /* height: 100vh; */
-    min-width: 1050px;
-    /* width: calc(100vw - 80px);
-    max-width: calc(100vw - 80px); */
+    /* min-width: calc(100vw - 80px); */
+    width: calc(100vw - 80px);
+    /* height: calc(100%); */
+    min-width: 1150px;
+    min-height: 2000px;
     left: 60px;
     padding: 30px;
-  }
-  
-  a {
+}
+
+a {
     text-decoration: none;
     color: black;
-  }
-  
-  #back-link {
+}
+
+#back-link {
     font-size: 18px;
-  }
-  
-  #back-link:hover {
+}
+
+#back-link:hover {
     color: var(--button-background);
-  }
-  
-  app-upload {
+}
+
+app-upload {
     display: block;
-  }
-  
-  #template {
+}
+
+#template {
     background-color: #f5f5f5;
     vertical-align: middle;
-  }
-  
-  #template a:hover {
+}
+
+#template a:hover {
     color: var(--button-background);
-  }
-  
-  #template p {
+}
+
+#template p {
     font-size: 14px;
     color: grey;
-  }
-  
-  button {
+}
+
+button {
     width: 105px;
     height: 40px;
     background-color: white;
     padding: .5rem 1rem;
-  }
-  
-  button:hover:not(:disabled) {
+}
+
+button:hover:not(:disabled) {
     background-color: var(--button-background) !important;
     color: white;
-  }
-  
-  ::ng-deep .mdc-text-field {
+}
+
+::ng-deep .mdc-text-field {
     background-color: transparent !important;
     overflow: hidden;
-  }
-  
-  ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+}
+
+::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     border: 2px solid var(--white-smoke);
     border-radius: 10px;
-  }
-  
-  .table {
+}
+
+.table {
     height: 641px;
-  
-  }
-  
-  table {
+
+}
+
+table {
     width: 100%;
     border: 2px solid var(--white-smoke);
     border-top-left-radius: 20px;
@@ -74,30 +75,29 @@ main {
     overflow: hidden !important;
     box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
     flex-shrink: 0;
-  }
-  
-  th {
+}
+
+th {
     font-weight: 900;
     background-color: #f2f4f3 !important;
-  }
-  
-  ::ng-deep .mat-mdc-paginator {
+}
+
+::ng-deep .mat-mdc-paginator {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
     overflow: hidden;
-  }
-  
-  #submit-button {
+}
+
+#submit-button {
     width: 150px;
     background-color: var(--button-background);
     color: white;
-  }
-  
-  #submit-button:hover:not(:disabled) {
+}
+
+#submit-button:hover:not(:disabled) {
     background-color: var(--button-hover) !important;
-  }
-  
-  #submit-button:disabled {
+}
+
+#submit-button:disabled {
     background-color: var(--white-smoke);
-  }
-  
+}
