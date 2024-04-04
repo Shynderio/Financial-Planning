@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { concatMap, of } from 'rxjs';
 import { Location } from '@angular/common';
 import { Plan } from '../../../models/planviewlist.model';
@@ -61,7 +61,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 7;
   pageIndex = 0;
   router: any;
 
@@ -149,6 +149,20 @@ export class PlanDetailsComponent {
     return userDepartment;
   }
 
+  toggleAllCheckboxes(event: MatCheckboxChange): void {
+    const isChecked = event.checked;
+    this.dataFile.forEach((expense: any) => {
+      expense.checked = isChecked;
+      if (isChecked && !this.approvedExpenses.includes(expense.no)) {
+        this.approvedExpenses.push(expense.no);
+      } else if (!isChecked && this.approvedExpenses.includes(expense.no)) {
+        const index = this.approvedExpenses.indexOf(expense.no);
+        if (index !== -1) {
+          this.approvedExpenses.splice(index, 1);
+        }
+      }
+    });
+  }
   toggleCheckbox(expenseId: number): void {
     if (!this.isPlanNew && !this.isPlanApproved) {
       const index = this.approvedExpenses.indexOf(expenseId);
@@ -209,20 +223,14 @@ export class PlanDetailsComponent {
     });
     PlanVersionsDialog;
   }
-  downloadFile(reportId: string, version: number) {
-    this.planService.exportPlan(reportId, version).subscribe((data: any) => {
-      const downloadUrl = data.downloadUrl;
-      // create hidden link to download
+  downloadFile(planId: string, version: number) {
+    this.planService.exportPlan(planId, version).subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      console.log(downloadURL);
       const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', '');
-
-      // Add link into web and click it to download
-      document.body.appendChild(link);
+      link.href = downloadURL;
+      link.download = this.plan.planName + '.xlsx';
       link.click();
-
-      // remove link after download 
-      document.body.removeChild(link);
     }
     );
   }

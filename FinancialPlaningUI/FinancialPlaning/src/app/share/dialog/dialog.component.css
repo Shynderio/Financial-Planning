@@ -60,15 +60,17 @@ button {
 }
 
 #start-button {
-  background: #553CB9;
+  background: #0079f1;
   color: white;
   border: none;
+  border-radius: 5px;
 }
 
 #cancel-button {
-  background: transparent;
-  
+  background: rgb(156, 156, 156);
   border: 1px solid #9db2bf;
+  color: white;
+  border-radius: 5px;
 }
 .background{
   background-color: white;

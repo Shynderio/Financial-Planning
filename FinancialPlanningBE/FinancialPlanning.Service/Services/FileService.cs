@@ -363,7 +363,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             int row = 8;
             foreach (var expense in expenses)
             {
-
                 worksheet.Cells[row, 1].Value = expense.Department;
                 worksheet.Cells[row, 2].Value = expense.TotalExpense;
                 worksheet.Cells[row, 3].Value = expense.BiggestExpenditure;
@@ -383,34 +382,6 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
             throw; // Re-throw exception to propagate it to the caller
         }
     }
-    public async Task<DateTime?> GetS3FileLastModifiedAsync(string fileKey)
-    {
-
-        try
-        {
-            // Gọi API để lấy thông tin về file
-            GetObjectMetadataRequest metadataRequest = new GetObjectMetadataRequest
-            {
-                BucketName = configuration["AWS:BucketName"],
-                Key = fileKey
-            };
-
-            GetObjectMetadataResponse response = await s3Client.GetObjectMetadataAsync(metadataRequest);
-
-            // Trả về thời gian sửa đổi cuối cùng của file
-            return response.LastModified;
-        }
-        catch (AmazonS3Exception e)
-        {
-            Log.Error("Error encountered on server. Message: '{0}'", e.Message);
-            return null;
-        }
-        catch (Exception e)
-        {
-            Log.Error("Unknown error encountered on server. Message: '{0}'", e.Message);
-            return null;
-        }
-    }
 
     public MemoryStream ConvertCsvToExcel(MemoryStream csvStream)
     {
@@ -424,5 +395,58 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         workbook.Save(excelStream, SaveFormat.Xlsx);
 
         return excelStream;
+    }
+
+    public byte[] AddNoColumn(byte[] file, List<Expense> expenses)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(new MemoryStream(file));
+        package = RemoveEmptyRow(package);
+        
+        var worksheet = package.Workbook.Worksheets[0];
+        worksheet.InsertColumn(1, 1);
+
+        worksheet.Cells[2, 1].Value = "NO.";
+        for (var row = 3; row <= worksheet.Dimension.Rows; row++)
+        {
+            worksheet.Cells[row, 1].Value = expenses[row-3].No;
+        }
+        
+        using var memoryStream = new MemoryStream();
+        package.SaveAs(memoryStream);
+        return memoryStream.ToArray();
+    }
+    
+    public byte[] RemoveFirstRow(byte[] file)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(new MemoryStream(file));
+        
+        var worksheet = package.Workbook.Worksheets[0];
+        worksheet.DeleteRow(1);
+        
+        using var memoryStream = new MemoryStream();
+        package.SaveAs(memoryStream);
+        return memoryStream.ToArray();
+    } 
+    
+    public byte[] AddStatusColumn(byte[] file, bool isSubmitted, List<int> approvedExpenses)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        var package = new ExcelPackage(new MemoryStream(file));
+        package = RemoveEmptyRow(package);
+        
+        var worksheet = package.Workbook.Worksheets[0];
+        worksheet.InsertColumn(17, 1);
+
+        worksheet.Cells[2, 17].Value = "STATUS";
+        for (var row = 3; row <= worksheet.Dimension.Rows; row++)
+        {
+            worksheet.Cells[row, 17].Value = isSubmitted ? approvedExpenses.Contains(row) ? "Approved" : "Waiting for approval" : "New";
+        }
+        
+        using var memoryStream = new MemoryStream();
+        package.SaveAsAsync(memoryStream);
+        return memoryStream.ToArray();
     }
 }

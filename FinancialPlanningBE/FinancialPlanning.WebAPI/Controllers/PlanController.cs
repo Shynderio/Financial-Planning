@@ -6,6 +6,7 @@ using FinancialPlanning.WebAPI.Models.Plan;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Reflection;
+using System.Text.Json;
 using PlanStatus = FinancialPlanning.Common.PlanStatus;
 using FinancialPlanning.WebAPI.Models.Expense;
 using Microsoft.IdentityModel.Tokens;
@@ -86,6 +87,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 return NotFound(new { message = $"Plan with id {id} not found" });
             }
+
             var planViewModel = _mapper.Map<PlanViewModel>(plan);
             return Ok(planViewModel);
         }
@@ -122,13 +124,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = isValid});
+                    return BadRequest(new { message = isValid });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
                 memoryStream.Close();
-                
+
                 return Ok(expenses);
             }
             catch (Exception)
@@ -163,13 +165,13 @@ namespace FinancialPlanning.WebAPI.Controllers
                 if (!String.IsNullOrEmpty(isValid))
                 {
                     memoryStream.Close();
-                    return BadRequest(new { message = isValid});
+                    return BadRequest(new { message = isValid });
                 }
 
                 // Get expenses
                 var expenses = _planService.GetExpenses(memoryStream.ToArray());
                 memoryStream.Close();
-                
+
                 // Check expenses
                 var approvedExpenses = _planService.CheckExpenses(expenses, planId);
 
@@ -215,7 +217,8 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Get plan
                 var plan = await _planService.GetPlanById(id);
                 string filename = plan!.Department.DepartmentName + "/"
-                      + plan.Term.TermName + "/Plan/version_" + plan.GetMaxVersion() +".xlsx";
+                                                                  + plan.Term.TermName + "/Plan/version_" +
+                                                                  plan.GetMaxVersion() + ".xlsx";
                 //Get planVersions
                 var planVersions = await _planService.GetPlanVersionsAsync(id);
                 var expenses = _fileService.ConvertExcelToList(await _fileService.GetFileAsync(filename), 0);
@@ -292,7 +295,8 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, $"Error : {ex.Message}");
             }
         }
-        [HttpGet("export/{id:guid}/{version:int}")]
+
+        [HttpPost("export/{id:guid}/{version:int}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportSinglePlan(Guid id, int version)
         {
@@ -306,10 +310,14 @@ namespace FinancialPlanning.WebAPI.Controllers
 
 
                 //get url from name file
-                var url = await _planService.GetFileByName(filename + ".xlsx");
+                var file = await _fileService.GetFileAsync(filename + ".xlsx");
 
-                // return URL
-                return Ok(new { downloadUrl = url });
+                file = _fileService.AddNoColumn(file, _fileService.ConvertExcelToList(file, 0));
+                file = _fileService.AddStatusColumn(file, plan?.Status != PlanStatus.New, JsonSerializer.Deserialize<List<int>>(plan.ApprovedExpenses));
+                file = _fileService.RemoveFirstRow(file);
+                
+                
+                return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", plan.PlanName + ".xlsx");
             }
             catch (Exception ex)
             {
@@ -332,6 +340,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             var bytes = await System.IO.File.ReadAllBytesAsync(filepath);
             return File(bytes, contenttype, Path.GetFileName(filepath));
         }
+
         [HttpPut("{id:guid}/{status:int}")]
         public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)
         {
@@ -339,13 +348,13 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 await _planService.UpdatePlanStatus(id, status);
                 return Ok(new { message = $"Plan with id {id} updated successfully!" });
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
             }
         }
+
         [HttpPut("{id:guid}/{planApprovedExpenses}")]
         public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
         {
@@ -353,15 +362,11 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
                 return Ok(new { message = $"Plan with id {id} updated successfully!" });
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
             }
         }
-
-
-
     }
 }

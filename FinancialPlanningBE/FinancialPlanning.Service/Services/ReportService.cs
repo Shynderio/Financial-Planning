@@ -131,26 +131,28 @@ namespace FinancialPlanning.Service.Services
             
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using var package =
-                new ExcelPackage(new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),
-                    Constants.TemplatePath[1])));
+                new ExcelPackage(new MemoryStream(await _fileService.ConvertListToExcelAsync(expenses, 1)));
             var worksheet = package.Workbook.Worksheets[0];
             worksheet.InsertColumn(1, 1); // Add a column to the left of the worksheet
-            worksheet.Cells[1, 1].Value = "No.";
+            worksheet.Cells[2, 1].Value = "NO.";
             
             var currentDepartment = expenses[0].Department;
             var currentIndex = 1;
 
-            foreach (var expense in expenses)
+            foreach (var (expense, index) in expenses.Select((value, i) => (value, i)))
             {
                 if (!expense.Department.Equals(currentDepartment))
                 {
                     currentDepartment = expense.Department;
                     currentIndex = 1;
                 }
-                expense.No = currentIndex++;
+                worksheet.Cells[index + 3, 1].Value = currentIndex++;
             }
 
-            return await _fileService.ConvertListToExcelAsync(expenses, 1);
+            using var memoryStream = new MemoryStream();
+            await package.SaveAsAsync(memoryStream);
+
+            return memoryStream.ToArray();
         }
 
         public string ValidateReportFile(byte[] file){

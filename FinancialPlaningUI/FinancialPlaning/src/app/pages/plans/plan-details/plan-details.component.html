@@ -1,49 +1,66 @@
 <main>
-  <div class="container mb-4 margin">
-    <div id="page-title">
-      <h4><b>Financial Plan</b></h4>
-      <h6> <a style="color: black" href="/plans">Plan list</a> > Plan Details</h6>
-    </div>
-
-  </div>
-  <div class="plan-details d-flex justify-content-between">
-
-    <div class="left-item">
-      <h6>Plan: {{plan?.department}}_{{plan?.term}} </h6>
-      <h6>Term: {{plan?.term}}</h6>
-      <h6>Department: {{plan?.department}}</h6>
-      <h6>Status: {{getStatus(plan?.status)}}</h6>
-    </div>
-    <div class="right-item">
-      <h6>Uploaded by: {{uploadedBy}}</h6>
-      <h6>Plan Due Date: {{convertIsoDateToDdMmYyyy(planDueDate)}}</h6>
-      <h6>Date: {{convertIsoDateToDdMmYyyy(date)}}</h6>
-      <h6 class="underline" (click)="openPlanVersionsDialog()">Version: v.{{plan?.version}}</h6>
+  
+  <a [routerLink]="['/plans']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
+  <div class="containerr mb-1" *ngIf="plan">
+   <div id="page-title">
+      <h3><b > {{plan.plan}} </b>
+        <span id="status" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1 me-2"
+          [ngStyle]="{'background-color': plan.status === 0 ? 'var(--new-status-background)' : 'var(--closed-status-background)'}">
+          <i class="fa-solid fa-circle align-middle me-1"
+            [ngStyle]="{'color': plan.status === 0 ? 'var(--new-status-color)' : 'var(--closed-status-color)', 'font-size': '8px'}"></i>
+          {{ plan.status }} </span>
+        <span role="button" id="version" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1"
+          [ngStyle]="{'background-color': 'var(--version-background)'}" (click)="openPlanVersionsDialog()">
+          v.{{plan.version}} </span>
+      </h3>
+      <h6 class="fw-bold"> <span class="text-muted fw-light"> Uploaded by </span> {{uploadedBy}} <span
+          class="text-muted fw-light"> at </span> {{convertIsoDateToDdMmYyyy(date)}}</h6>
     </div>
 
     <!-- //plan infor -->
-
+    <div class="top-button">
+      <a class="create-button" (click)="downloadFile(plan.id,plan.version)">
+        <button><i class="fa-solid fa-download me-1"></i> Export</button>
+      </a>
+      <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="export-button" >
+        <button *ngIf="isReup"><i class="fa-solid fa-upload me-1"></i> Reup</button>
+      </a>
+    </div>
   </div>
-
-  <div class="plan-details d-flex justify-content-between">
-    <h6 class="left-item"><b>Total plan: {{totalExpense | number:'1.0-0'}} VND</b></h6>
+  <div *ngIf="plan" id="plan-info" class="mb-3 ps-5">
+    <div class="row justify-content-between">
+      <div class="col-3 px-4">
+        <div class="row">
+          <div class="col-5">
+            <p>Department: </p>
+            <p>Term: </p>
+            <p>Plan Due Date: </p>
+          </div>
+          <div class="col-6">
+            <p><b>{{plan.department}}</b></p>
+            <p><b>{{plan.term}}</b></p>
+            <p><b>{{convertIsoDateToDdMmYyyy(planDueDate)}}</b></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-5 rounded-5 align-bottom d-flex flex-column justify-content-end">
+        <div class="row">
+          <div class="col-6 text-end">
+            <p>Total plan: </p>
+          </div>
+          <div class="col-6 fw-bold" [ngStyle]="{'color': '#0074D9'}">
+            <p>{{totalExpense | number:'1.0-0'}} VND</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-
-  <div class="abc">
-    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
-      <button *ngIf="isReup"> Reup</button>
-    </a>
-
-    <a class="create-button">
-      <button (click)="downloadFile(plan.id, plan.version)"> Export</button>
-    </a>
-  </div>
-
   <div>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <ng-container matColumnDef="Checkbox">
-        <th mat-header-cell *matHeaderCellDef></th>
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox *ngIf="showCheckbox" (change)="toggleAllCheckboxes($event)"></mat-checkbox>
+        </th>
         <td mat-cell *matCellDef="let element">
           <mat-checkbox *ngIf="showCheckbox" [checked]="isExpenseApproved(element.no)"
             (change)="toggleCheckbox(element.no)">
@@ -52,7 +69,7 @@
       </ng-container>
 
       <ng-container matColumnDef="No">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <th mat-header-cell *matHeaderCellDef> No.  </th>
         <td mat-cell *matCellDef="let element"> {{element.no}} </td>
       </ng-container>
 
