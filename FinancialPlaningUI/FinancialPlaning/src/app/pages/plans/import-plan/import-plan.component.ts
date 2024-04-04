@@ -74,7 +74,7 @@ export class ImportPlanComponent implements OnInit {
     private fb: FormBuilder,
     private elementRef: ElementRef,
     private messageBar: MatSnackBar,
-    private router: Router,
+    private router: Router
   ) {
     this.termService = termService;
     this.planService = planService;
@@ -88,7 +88,11 @@ export class ImportPlanComponent implements OnInit {
     this.termService.getTermsToImportPlan().subscribe(
       (data: any[]) => {
         this.termOptions = data.map((term) => {
-          return { value: term.id, viewValue: term.termName, dueDate: term.planDueDate };
+          return {
+            value: term.id,
+            viewValue: term.termName,
+            dueDate: term.planDueDate,
+          };
         });
         // this.dueDate = new Date(data[0].dueDate);
         console.log(this.termOptions);
@@ -111,6 +115,7 @@ export class ImportPlanComponent implements OnInit {
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
+  
   onImport(event: any) {
     // console.log(, this.file);
     // this.file = event;
@@ -129,11 +134,12 @@ export class ImportPlanComponent implements OnInit {
         (error) => {
           this.loading = false;
           console.log(error);
-          this.messageBar.open(error.error.message, undefined, {
+          this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 3000,
-            panelClass: ['messageBar', 'successMessage'],
-            verticalPosition: 'top',
-            horizontalPosition: 'end',
+            data: {
+              httpStatusCode: error.status,
+              message: MESSAGE_CONSTANTS.ME016,
+            },
           });
         }
       );
@@ -225,15 +231,12 @@ export class ImportPlanComponent implements OnInit {
   }
 
   exportPlanTemplate() {
-    this.planService.exportPlanTemplate().subscribe(
-      (data: Blob) => {
-        const downloadURL = window.URL.createObjectURL(data);
-        const link = document.createElement('a');
-        link.href = downloadURL;
-        link.download = 'Template Plan.xlsx';
-        link.click();
-      }
-
-    );
+    this.planService.exportPlanTemplate().subscribe((data: Blob) => {
+      const downloadURL = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'Template Plan.xlsx';
+      link.click();
+    });
   }
 }
