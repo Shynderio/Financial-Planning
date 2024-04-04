@@ -122,6 +122,8 @@ main {
 }
 
 #cancel-button{
+    background-color: #ff204e;
+    border: none;
     height: 50px;
     width: 100px;
     /* animation: bounce-v 3.6s infinite; */

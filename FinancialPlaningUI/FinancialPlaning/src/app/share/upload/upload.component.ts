@@ -24,17 +24,18 @@ export class UploadComponent implements OnInit {
   @Input() dueDate: Date = new Date();
   @Input() state : number = 1;
   @Input() loading: boolean = false;
-  file: File | null = null; // Variable to store file
+  // file: File | null = null; // Variable to store file
   progress?: number; // Variable to store progress
 
   constructor(private http: HttpClient, private messagebar: MatSnackBar) { }
   ngOnInit() { }
 
-  reset() {
-    this.file = null;
-  }
+  // reset() {
+  //   this.file = null;
+  // }
 
   onClick() {
+    // debugger;
     if (this.isTermSelected == false) {
 
       this.messagebar.openFromComponent(MessageBarComponent, {
@@ -71,9 +72,11 @@ export class UploadComponent implements OnInit {
       '.file-input'
     ) as HTMLInputElement;
     fileInput.click();
+    console.log('clicked');
   }
 
   onChange(event: any) {
+    debugger;
     const file: File = event.target.files[0];
     if (file) {
       if (file.name.split('.')[0] != this.validName) {
@@ -96,11 +99,16 @@ export class UploadComponent implements OnInit {
         return;
       }
 
-      this.file = file;
+      // this.file = file;
       this.loadForm(file, file.name);
       this.fileSelected.emit(file);
       this.change.emit(file);
+      
     }
+    const fileInput: HTMLInputElement = document.querySelector(
+      '.file-input'
+    ) as HTMLInputElement;
+    fileInput.value = '';
   }
 
   loadForm(file: File, fileName: string) {
@@ -108,13 +116,13 @@ export class UploadComponent implements OnInit {
     formData.append('file', file, fileName);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['state']){
-      this.file = null;
-      // console.log('state changed');
-    }
-    // if (changes['state'].currentValue != changes['state'].previousValue) {
-    //   this.file = null;
-    // }
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['state']){
+  //     this.file = null;
+  //     // console.log('state changed');
+  //   }
+  //   // if (changes['state'].currentValue != changes['state'].previousValue) {
+  //   //   this.file = null;
+  //   // }
+  // }
 }

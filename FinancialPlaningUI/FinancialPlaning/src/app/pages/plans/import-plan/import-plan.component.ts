@@ -18,6 +18,8 @@ import { jwtDecode } from 'jwt-decode';
 import { Router, RouterLink } from '@angular/router';
 import { MatCard } from '@angular/material/card';
 import { MatRadioModule } from '@angular/material/radio';
+import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-import-plan',
@@ -46,7 +48,7 @@ export class ImportPlanComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 5;
+  pageSize = 10;
   pageIndex = 0;
   filedata: any = [];
   dueDate: Date = new Date();
@@ -111,8 +113,9 @@ export class ImportPlanComponent implements OnInit {
   }
   onImport(event: any) {
     // console.log(, this.file);
-    this.file = event;
-    if (this.file) {
+    // this.file = event;
+    if (event) {
+      this.file = event;
       debugger;
       this.loading = true;
       console.log('Importing file:', this.file);
@@ -158,21 +161,29 @@ export class ImportPlanComponent implements OnInit {
         this.planService.createPlan(term, this.dataSource).subscribe(
           (data: any) => {
             console.log('Plan uploaded:', data);
-            this.messageBar.open('Uploaded successfully.', undefined, {
-              duration: 3000,
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
               panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
+              verticalPosition: 'bottom',
               horizontalPosition: 'end',
+              data: {
+                message: MESSAGE_CONSTANTS.ME019,
+                success: true,
+              },
             });
             this.router.navigate(['/plans']);
           },
           (error) => {
             console.log('Error uploading plan:', error);
-            this.messageBar.open('Error uploading plan.', undefined, {
-              duration: 3000,
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 5000,
               panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
+              verticalPosition: 'bottom',
               horizontalPosition: 'end',
+              data: {
+                message: error.error.message,
+                success: false,
+              },
             });
             this.elementRef.nativeElement.querySelector(
               '.submit-button'

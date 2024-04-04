@@ -42,6 +42,7 @@ export class ReupPlanComponent implements OnInit {
   department: string = '';
   validFileName: string = '';
   status: string = '';
+  loading: boolean = false;
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -135,16 +136,19 @@ export class ReupPlanComponent implements OnInit {
     console.log('Selected file:', this.file);
   }
 
-  onImport() {
+  onImport(event: any) {
     if (this.file) {
       console.log('Importing file:', this.file);
+      this.loading = true;
       this.planService.reupPlan(this.file, this.planId).subscribe(
         (data: any) => {
           this.dataSource = data;
+          this.loading = false;
           console.log(data);
         },
         error => {
           console.log(error);
+          this.loading = false;
         }
       );
     } else {
@@ -164,6 +168,19 @@ export class ReupPlanComponent implements OnInit {
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     // this.dataSource = this.getPaginatedItems();
+  }
+
+  exportPlanTemplate() {
+    this.planService.exportPlanTemplate().subscribe(
+      (data: Blob) => {
+        const downloadURL = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Template Plan.xlsx';
+        link.click();
+      }
+
+    );
   }
 
   onSubmit() {

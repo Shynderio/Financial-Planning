@@ -1,8 +1,9 @@
 main {
   position: absolute;
-  height: 100vh;
-  width: calc(100vw - 80px);
-  max-width: calc(100vw - 80px);
+  /* height: 100vh; */
+  min-width: 1050px;
+  /* width: calc(100vw - 80px);
+  max-width: calc(100vw - 80px); */
   left: 60px;
   padding: 30px;
 }
@@ -61,7 +62,8 @@ button:hover:not(:disabled) {
 }
 
 .table {
-  height: 81%;
+  height: 641px;
+
 }
 
 table {
