@@ -1,12 +1,15 @@
+
 main {
   position: absolute;
-  /* height: 100vh; */
+  /* min-width: calc(100vw - 80px); */
+  width: calc(100vw - 80px);
+  /* height: calc(100%); */
   min-width: 1050px;
-  /* width: calc(100vw - 80px);
-  max-width: calc(100vw - 80px); */
+  min-height: 2000px;
   left: 60px;
   padding: 30px;
 }
+
 
 a {
   text-decoration: none;

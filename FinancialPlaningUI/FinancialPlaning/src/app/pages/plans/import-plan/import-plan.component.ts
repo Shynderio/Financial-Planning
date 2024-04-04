@@ -164,7 +164,7 @@ export class ImportPlanComponent implements OnInit {
         var term = this.planForm.value.term.value;
         this.elementRef.nativeElement.querySelector('#submit-button').disabled =
           true;
-        this.planService.createPlan(term, this.dataSource).subscribe(
+        this.planService.createPlan(term, this.filedata).subscribe(
           (data: any) => {
             console.log('Plan uploaded:', data);
             this.messageBar.openFromComponent(MessageBarComponent, {
