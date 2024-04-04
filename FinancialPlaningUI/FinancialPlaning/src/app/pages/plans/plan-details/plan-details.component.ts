@@ -12,8 +12,6 @@ import { concatMap, of } from 'rxjs';
 import { Location } from '@angular/common';
 import { Plan } from '../../../models/planviewlist.model';
 import { jwtDecode } from 'jwt-decode';
-import { DialogComponent } from '../../../share/dialog/dialog.component';
-import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-plan-details',
@@ -44,10 +42,10 @@ export class PlanDetailsComponent {
   planDueDate: any;
   date: any;
   status: any;
-  role: string = '';
+  role: string = '';  
   isPlanNew: boolean = false;
   isPlanApproved: boolean = false;
-  isApprove: boolean = false;
+  isApprove: boolean= false;
   approvedExpenses: number[] = [];
   isSubmitting: boolean = false;
   showCheckbox: boolean = false;
@@ -78,16 +76,16 @@ export class PlanDetailsComponent {
     this.route.params.subscribe(params => {
       const planId = params['id']; // Assuming 'id' is the parameter name
       this.getplan(planId);
-      //Get role
-      if (typeof localStorage !== 'undefined') {
-        const token = localStorage.getItem('token') ?? '';
-        if (token) {
-          const decodedToken: any = jwtDecode(token);
-          this.role = decodedToken.role;
+        //Get role
+        if (typeof localStorage !== 'undefined') {
+          const token = localStorage.getItem('token') ?? '';
+          if (token) {
+            const decodedToken: any = jwtDecode(token);
+            this.role = decodedToken.role;
+          }
         }
-      }
-
-
+       
+        
     });
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -108,14 +106,14 @@ export class PlanDetailsComponent {
       this.dataSource = this.getPaginatedItems();
 
       // status Expense
-      this.isApprove = (this.plan.status === 'WaitingForApproval' && this.role !== 'FinancialStaff');
+      this.isApprove= (this.plan.status === 'WaitingForApproval' && this.role !== 'FinancialStaff' );
       console.log(this.isApprove);
 
 
       this.isPlanNew = this.plan.status === 'New';
       this.isPlanApproved = this.plan.status === 'Approved';
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
-      this.showCheckbox = !(this.plan.status === 'New') && !(this.plan.status === 'Approved');
+      this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
 
       // Caculate totalExpense and biggestExpenditure
       this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
@@ -214,23 +212,18 @@ export class PlanDetailsComponent {
 
 
   openSubmitDialog(id: string) {
-    const SubmitDialog = this.dialog.open(DialogComponent, {
+    const SubmitDialog = this.dialog.open(SubmitPlanDialog, {
       width: '400px',
       height: '250px',
-      data: {
-        title: 'Submit',
-        content: 'Are you sure you want to Submit for approval ?',
-        note: 'Please, rethink your decision because you will not be able to undo this action'
-      }
     });
 
     SubmitDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'confirm') {
-            this.status = 1;
-            return this.planService.submitPlan(id, this.status);
+          if (result === 'Submit') {
+            this.status=1;
+            return this.planService.submitPlan(id, this.status );
           } else {
             return of(null);
           }
@@ -239,14 +232,9 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.openFromComponent(MessageBarComponent, {
-
-            duration: 5000,
-            data: {
-              success: true,
-              message:
-                'Submit for approval successfully'
-            },
+          this.messageBar.open('Change status successfully', 'Close', {
+            duration: 1000,
+            panelClass: ['success'],
           });
           window.location.reload();
         }
@@ -254,30 +242,25 @@ export class PlanDetailsComponent {
   }
 
   openApproveDialog(id: string) {
-    const SubmitDialog = this.dialog.open(DialogComponent, {
+    const SubmitDialog = this.dialog.open(SubmitPlanDialog, {
       width: '400px',
       height: '250px',
-      data: {
-        title: 'Approve Plan',
-        content: 'Are you sure you want to Approve this plan?',
-        note: 'Please, rethink your decision because you will not be able to undo this action'
-      }
     });
 
     SubmitDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'confirm') {
-            this.approvedExpenses = this.dataFile.map((expense: any) => expense.no);
-            // Chuyển danh sách các expense đã duyệt thành JSON để gửi đi
-            this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
-            console.log(this.plan.approvedExpenses);
-            // Gửi yêu cầu cập nhật expense đã duyệt và duyệt kế hoạch
-            this.status = 2;
-            return this.planService.submitPlan(id, this.status).pipe(
-              concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
-            );;
+          if (result === 'Submit') {
+          this.approvedExpenses = this.dataFile.map((expense: any) => expense.no);
+          // Chuyển danh sách các expense đã duyệt thành JSON để gửi đi
+          this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
+          console.log(this.plan.approvedExpenses);
+          // Gửi yêu cầu cập nhật expense đã duyệt và duyệt kế hoạch
+          this.status = 2; 
+          return this.planService.submitPlan(id, this.status).pipe(
+            concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
+          );;
 
           } else {
             return of(null);
@@ -287,14 +270,9 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.openFromComponent(MessageBarComponent, {
-
-            duration: 5000,
-            data: {
-              success: true,
-              message:
-                'Approve plan successfully'
-            },
+          this.messageBar.open('Change status successfully', 'Close', {
+            duration: 1000,
+            panelClass: ['success'],
           });
           window.location.reload();
 
@@ -303,21 +281,16 @@ export class PlanDetailsComponent {
   }
 
   openSubmitExpenseDialog(id: string) {
-    const SubmitDialog1 = this.dialog.open(DialogComponent, {
+    const SubmitDialog1 = this.dialog.open(SubmitExpenseDialog, {
       width: '400px',
       height: '250px',
-      data: {
-        title: 'Approve Expense',
-        content: 'Are you sure you want to Approve Expense?',
-        note: 'Please, rethink your decision because you will not be able to undo this action'
-      }
     });
 
     SubmitDialog1
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'confirm') {
+          if (result === 'Submit') {
             console.log(this.plan.approvedExpenses);
             this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
             console.log(this.areAllExpensesApproved());
@@ -327,8 +300,8 @@ export class PlanDetailsComponent {
                 concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
               );
             } else {
-              return this.planService.submitExpense(id, this.plan.approvedExpenses);
-
+            return this.planService.submitExpense(id, this.plan.approvedExpenses);
+             
             }
           } else {
             return of(null);
@@ -338,14 +311,9 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.openFromComponent(MessageBarComponent, {
-
-            duration: 5000,
-            data: {
-              success: true,
-              message:
-                'Approve expense successfully'
-            },
+          this.messageBar.open('Change status successfully', 'Close', {
+            duration: 1000,
+            panelClass: ['success'],
           });
           window.location.reload();
 
@@ -355,7 +323,7 @@ export class PlanDetailsComponent {
   areAllExpensesApproved(): boolean {
     return this.dataFile.every((expense: any) => this.isExpenseApproved(expense.no));
   }
-
+  
 
 
 }
@@ -369,7 +337,7 @@ export class PlanDetailsComponent {
   imports: [MatDialogActions, MatDialogTitle, MatDialogContent, MatTableModule],
 })
 export class PlanVersionsDialog {
-
+  
   displayedColumns: string[] = ['Version', 'Published data', 'Changed by'];
   dataSource: any = [];
   currentVersion: any;
@@ -381,7 +349,7 @@ export class PlanVersionsDialog {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.dataSource = new MatTableDataSource<any>(data);
-    this.currentVersion = data.currentVersion;
+    this.currentVersion = data.currentVersion; 
   }
 
   closeDialog() {
@@ -402,23 +370,23 @@ export class PlanVersionsDialog {
     const dateParts = isoDate.split('T')[0].split('-');
     if (dateParts.length !== 3) return isoDate; // Trả về nguyên bản nếu không phải định dạng ISO 8601
     return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-  }
+  }  
 
   downloadFile(planId: string, version: number) {
     this.planService.exportPlan(planId, version).subscribe((data: any) => {
-      const downloadUrl = data.downloadUrl;
-      // create hidden link to download
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', '');
+        const downloadUrl = data.downloadUrl;
+         // create hidden link to download
+         const link = document.createElement('a');
+         link.href = downloadUrl;
+         link.setAttribute('download', '');
 
-      // Add link into web and click it to download
-      document.body.appendChild(link);
-      link.click();
+         // Add link into web and click it to download
+         document.body.appendChild(link);
+         link.click();
 
-      // remove link after download 
-      document.body.removeChild(link)
-    },
+         // remove link after download 
+         document.body.removeChild(link)
+      }, 
     );
   }
 
@@ -432,7 +400,7 @@ export class PlanVersionsDialog {
 })
 
 export class SubmitPlanDialog {
-  constructor(public dialogRef: MatDialogRef<SubmitPlanDialog>) { }
+  constructor(public dialogRef: MatDialogRef<SubmitPlanDialog>) {}
 }
 
 @Component({
@@ -444,7 +412,7 @@ export class SubmitPlanDialog {
 })
 
 export class SubmitExpenseDialog {
-  constructor(public dialogRef: MatDialogRef<SubmitExpenseDialog>) { }
+  constructor(public dialogRef: MatDialogRef<SubmitExpenseDialog>) {}
 }
 @Component({
   selector: 'approve-expense',
@@ -455,5 +423,5 @@ export class SubmitExpenseDialog {
 })
 
 export class ApproveExpenseDialog {
-  constructor(public dialogRef: MatDialogRef<ApproveExpenseDialog>) { }
+  constructor(public dialogRef: MatDialogRef<ApproveExpenseDialog>) {}
 }
