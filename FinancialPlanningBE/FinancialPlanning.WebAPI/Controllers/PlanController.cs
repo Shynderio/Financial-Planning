@@ -327,6 +327,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         [HttpGet]
         [Route("exportTemplate")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> ExportTemplate()
         {
             var filepath = Path.Combine(Directory.GetCurrentDirectory(), Common.Constants.TemplatePath[0]);
@@ -342,6 +343,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id:guid}/{status:int}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)
         {
             try

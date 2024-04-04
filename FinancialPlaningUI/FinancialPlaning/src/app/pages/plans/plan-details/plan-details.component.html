@@ -1,13 +1,30 @@
 <main>
-  
+
   <a [routerLink]="['/plans']" id="back-link"><i class="fa-solid fa-arrow-left-long me-2 mb-3"></i> Back </a>
   <div class="containerr mb-1" *ngIf="plan">
-   <div id="page-title">
-      <h3><b > {{plan.plan}} </b>
-        <span id="status" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1 me-2"
-          [ngStyle]="{'background-color': plan.status === 0 ? 'var(--new-status-background)' : 'var(--closed-status-background)'}">
-          <i class="fa-solid fa-circle align-middle me-1"
-            [ngStyle]="{'color': plan.status === 0 ? 'var(--new-status-color)' : 'var(--closed-status-color)', 'font-size': '8px'}"></i>
+    <div id="page-title">
+      <h3><b> {{plan.plan}} </b>
+        <!-- <span class="px-2 py-2 rounded-pill"
+        [ngStyle]="{'background-color': plan.status == 'New' ? 'var(--new-status-background)'
+         : plan.status == 'Waiting for Approval' ? 'var(--inprogress-status-background)'
+         : plan.status == 'Approved' ? 'var(--approved-status-background)'
+        : 'var(--closed-status-background)'}">
+       
+        <i class="fa-solid fa-circle align-middle me-1"
+          [ngStyle]="{'color': plan.status == 'New' ? 'var(--new-status-color)'
+           : plan.status == 'Waiting for Approval' ? 'var(--inprogress-status-color)'
+           : plan.status == 'Approved' ? 'var(--approved-status-color)'
+           : 'var(--closed-status-color)', 'font-size': '10px'}"></i>
+          {{ plan.status}} </span>   -->
+        <span id="status" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1 me-2" [ngStyle]="{'background-color': plan.status == 'New' ? 'var(--new-status-background)'
+         : plan.status == 'WaitingForApproval' ? 'var(--inprogress-status-background)'
+         : plan.status == 'Approved' ? 'var(--approved-status-background)'
+         : 'var(--closed-status-background)'}">
+
+          <i class="fa-solid fa-circle align-middle me-1" [ngStyle]="{'color': plan.status == 'New' ? 'var(--new-status-color)' 
+          : plan.status == 'WaitingForApproval' ? 'var(--inprogress-status-color)'
+          : plan.status == 'Approved' ? 'var(--approved-status-color)'
+          : 'var(--closed-status-color)', 'font-size': '10px'}"></i>
           {{ plan.status }} </span>
         <span role="button" id="version" class="fs-6 rounded-pill px-2 py-2 d-inline-block align-bottom lh-1"
           [ngStyle]="{'background-color': 'var(--version-background)'}" (click)="openPlanVersionsDialog()">
@@ -22,14 +39,14 @@
       <a class="create-button" (click)="downloadFile(plan.id,plan.version)">
         <button><i class="fa-solid fa-download me-1"></i> Export</button>
       </a>
-      <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="export-button" >
+      <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="export-button">
         <button *ngIf="isReup"><i class="fa-solid fa-upload me-1"></i> Reup</button>
       </a>
     </div>
   </div>
   <div *ngIf="plan" id="plan-info" class="mb-3 ps-5">
     <div class="row justify-content-between">
-      <div class="col-3 px-4">
+      <div class="col-6 px-4">
         <div class="row">
           <div class="col-5">
             <p>Department: </p>
@@ -69,7 +86,7 @@
       </ng-container>
 
       <ng-container matColumnDef="No">
-        <th mat-header-cell *matHeaderCellDef> No.  </th>
+        <th mat-header-cell *matHeaderCellDef> No. </th>
         <td mat-cell *matCellDef="let element"> {{element.no}} </td>
       </ng-container>
 
