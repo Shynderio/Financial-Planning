@@ -43,14 +43,13 @@ export class PlanDetailsComponent {
   date: any;
   status: any;
   role: string = '';  
-
   isPlanNew: boolean = false;
   isPlanApproved: boolean = false;
   isApprove: boolean= false;
   approvedExpenses: number[] = [];
   isSubmitting: boolean = false;
   showCheckbox: boolean = false;
-
+  overdue: boolean = false;
 
 
   totalExpense: number = 0;
@@ -102,7 +101,7 @@ export class PlanDetailsComponent {
       //Name of account uploaded
       this.uploadedBy = data.uploadedBy;
       this.planDueDate = data.planDueDate;
-
+      this.overdue = new Date() > new Date(this.planDueDate);
       //filter
       this.dataSource = this.getPaginatedItems();
 
@@ -112,7 +111,7 @@ export class PlanDetailsComponent {
 
 
       this.isPlanNew = this.plan.status === 'New';
-      this.isPlanApproved = this.plan.plan.status === 'Approved';
+      this.isPlanApproved = this.plan.status === 'Approved';
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
       this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
 

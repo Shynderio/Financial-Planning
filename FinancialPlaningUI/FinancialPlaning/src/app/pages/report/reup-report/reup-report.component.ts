@@ -160,45 +160,66 @@ export class ReupReportComponent implements OnInit {
       this.reportService.reupReport(this.filedata, this.reportId).subscribe(
         (data: any) => {
           console.log('report uploaded:', data);
-          this.messageBar.open(
-            "Uploaded successfully.",
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          // this.messageBar.open(
+          //   "Uploaded successfully.",
+          //   undefined,
+          //   {
+          //     duration: 5000,
+          //     panelClass: ['messageBar', 'successMessage'],
+          //     verticalPosition: 'top',
+          //     horizontalPosition: 'end',
+          //   }
+          // );
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+           data: {
+            success: true,
+             rmclose: true ,
+             message: 'Uploaded successfully',
+           },});
           this.router.navigate(['/reports']);
         },
         error => {
           this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
           console.log('Error uploading report:', error);
-          this.messageBar.open(
-            error.error.message,
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          // this.messageBar.open(
+          //   error.error.message,
+          //   undefined,
+          //   {
+          //     duration: 5000,
+          //     panelClass: ['messageBar', 'successMessage'],
+          //     verticalPosition: 'top',
+          //     horizontalPosition: 'end',
+          //   }
+          // );
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+           data: {
+            success: false,
+             rmclose: true ,
+             message: error.error.message,
+           },});
         }
       );
     } else {
       // console.log('Please select a file to upload.');
-      this.messageBar.open(
-        "Please select a file to upload.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      // this.messageBar.open(
+      //   "Please select a file to upload.",
+      //   undefined,
+      //   {
+      //     duration: 5000,
+      //     panelClass: ['messageBar', 'successMessage'],
+      //     verticalPosition: 'top',
+      //     horizontalPosition: 'end',
+      //   }
+      // );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        duration: 5000,
+       data: {
+        success: false,
+         rmclose: true ,
+         message: "Please select a file to upload.",
+       },});
       this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
     }
   }
@@ -207,6 +228,18 @@ export class ReupReportComponent implements OnInit {
     // debugger;
     this.file = event;
     console.log('Selected file:', this.file);
+  }
+  exportReportTemplate(){
+    this.reportService.exportTemplateReport().subscribe(
+      (data: Blob) => {
+        const downloadURL = window.URL.createObjectURL(data);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Template Report.xlsx';
+        link.click();
+      }
+
+    );
   }
 }
 

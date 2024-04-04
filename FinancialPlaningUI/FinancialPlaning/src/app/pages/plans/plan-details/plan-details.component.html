@@ -2,23 +2,23 @@
   <div class="container mb-4 margin">
     <div id="page-title">
       <h4><b>Financial Plan</b></h4>
-      <h6>  <a style="color: black"   href="/plans">Plan list</a> > Plan Details</h6>
+      <h6> <a style="color: black" href="/plans">Plan list</a> > Plan Details</h6>
     </div>
 
   </div>
-  <div  class="plan-details d-flex justify-content-between">
+  <div class="plan-details d-flex justify-content-between">
 
     <div class="left-item">
-      <h6>Plan: {{plan.department}}_{{plan.term}} </h6>
-      <h6>Term: {{plan.term}}</h6>
-      <h6>Department: {{plan.department}}</h6>
-      <h6>Status: {{getStatus(plan.status)}}</h6>
+      <h6>Plan: {{plan?.department}}_{{plan?.term}} </h6>
+      <h6>Term: {{plan?.term}}</h6>
+      <h6>Department: {{plan?.department}}</h6>
+      <h6>Status: {{getStatus(plan?.status)}}</h6>
     </div>
     <div class="right-item">
       <h6>Uploaded by: {{uploadedBy}}</h6>
       <h6>Plan Due Date: {{convertIsoDateToDdMmYyyy(planDueDate)}}</h6>
       <h6>Date: {{convertIsoDateToDdMmYyyy(date)}}</h6>
-      <h6 class="underline" (click)="openPlanVersionsDialog()">Version: v.{{plan.version}}</h6>
+      <h6 class="underline" (click)="openPlanVersionsDialog()">Version: v.{{plan?.version}}</h6>
     </div>
 
     <!-- //plan infor -->
@@ -29,107 +29,107 @@
     <h6 class="left-item"><b>Total plan: {{totalExpense | number:'1.0-0'}} VND</b></h6>
   </div>
 
-  
+
   <div class="abc">
-    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="create-button" >
+    <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" [hidden]="overdue" class="create-button">
       <button *ngIf="!isPlanApproved"> Reup</button>
     </a>
-    
-    <a   class="create-button" >
+
+    <a class="create-button">
       <button (click)="downloadFile(plan.id, plan.version)"> Export</button>
     </a>
   </div>
 
- <div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <ng-container matColumnDef="Checkbox">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element">
-        <mat-checkbox *ngIf="showCheckbox"
-                      [checked]="isExpenseApproved(element.no)"
-                      (change)="toggleCheckbox(element.no)">
-        </mat-checkbox>
-      </td>
-    </ng-container>
+  <div>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="Checkbox">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <mat-checkbox *ngIf="showCheckbox" [checked]="isExpenseApproved(element.no)"
+            (change)="toggleCheckbox(element.no)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="No">
-      <th mat-header-cell *matHeaderCellDef> No. </th>
-      <td mat-cell *matCellDef="let element"> {{element.no}} </td>
-    </ng-container>
+      <ng-container matColumnDef="No">
+        <th mat-header-cell *matHeaderCellDef> No. </th>
+        <td mat-cell *matCellDef="let element"> {{element.no}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="Expense">
-      <th mat-header-cell *matHeaderCellDef> Expense </th>
-      <td mat-cell *matCellDef="let element"> {{element.expenseName}} </td>
-    </ng-container>
+      <ng-container matColumnDef="Expense">
+        <th mat-header-cell *matHeaderCellDef> Expense </th>
+        <td mat-cell *matCellDef="let element"> {{element.expenseName}} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="CostType">
-      <th mat-header-cell *matHeaderCellDef> Cost type </th>
-      <td mat-cell *matCellDef="let element"> {{element.costType}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Unit Price (VND)">
-      <th mat-header-cell *matHeaderCellDef> Unit Price </th>
-      <td mat-cell *matCellDef="let element"> {{element.unitPrice| number:'1.0-0'}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Amount">
-      <th mat-header-cell *matHeaderCellDef> Amount </th>
-      <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Currency">
-      <th mat-header-cell *matHeaderCellDef> Currency </th>
-      <td mat-cell *matCellDef="let element"> VND </td>
-    </ng-container>
-    <ng-container matColumnDef="Exchange rate">
-      <th mat-header-cell *matHeaderCellDef> Exchange rate</th>
-      <td mat-cell *matCellDef="let element"> {{element.exchangeRate}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Total">
-      <th mat-header-cell *matHeaderCellDef> Total (VND) </th>
-      <td mat-cell *matCellDef="let element"> {{element.totalAmount| number:'1.0-0' }} </td>
-    </ng-container>
+      <ng-container matColumnDef="CostType">
+        <th mat-header-cell *matHeaderCellDef> Cost type </th>
+        <td mat-cell *matCellDef="let element"> {{element.costType}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Unit Price (VND)">
+        <th mat-header-cell *matHeaderCellDef> Unit Price </th>
+        <td mat-cell *matCellDef="let element"> {{element.unitPrice| number:'1.0-0'}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Amount">
+        <th mat-header-cell *matHeaderCellDef> Amount </th>
+        <td mat-cell *matCellDef="let element"> {{element.amount}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Currency">
+        <th mat-header-cell *matHeaderCellDef> Currency </th>
+        <td mat-cell *matCellDef="let element"> VND </td>
+      </ng-container>
+      <ng-container matColumnDef="Exchange rate">
+        <th mat-header-cell *matHeaderCellDef> Exchange rate</th>
+        <td mat-cell *matCellDef="let element"> {{element.exchangeRate}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Total">
+        <th mat-header-cell *matHeaderCellDef> Total (VND) </th>
+        <td mat-cell *matCellDef="let element"> {{element.totalAmount| number:'1.0-0' }} </td>
+      </ng-container>
 
-    <ng-container matColumnDef="Project name">
-      <th mat-header-cell *matHeaderCellDef> Project name </th>
-      <td mat-cell *matCellDef="let element"> {{element.projectName}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Supplier name">
-      <th mat-header-cell *matHeaderCellDef> Supplier name </th>
-      <td mat-cell *matCellDef="let element"> {{element.supplierName}} </td>
-    </ng-container>
-    <ng-container matColumnDef="PIC">
-      <th mat-header-cell *matHeaderCellDef>PIC </th>
-      <td mat-cell *matCellDef="let element"> {{element.pic}} </td>
-    </ng-container>
-    <ng-container matColumnDef="Notes">
-      <th mat-header-cell *matHeaderCellDef>Notes </th>
-      <td mat-cell *matCellDef="let element"> {{ element.note ? element.note : 'N/A' }}</td>
-    </ng-container>
-    <ng-container matColumnDef="Expense Status">
-      <th mat-header-cell *matHeaderCellDef>Expense Status</th>
-      <td mat-cell *matCellDef="let element">{{ getExpenseStatus(element.no) }}</td>
-    </ng-container>
+      <ng-container matColumnDef="Project name">
+        <th mat-header-cell *matHeaderCellDef> Project name </th>
+        <td mat-cell *matCellDef="let element"> {{element.projectName}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Supplier name">
+        <th mat-header-cell *matHeaderCellDef> Supplier name </th>
+        <td mat-cell *matCellDef="let element"> {{element.supplierName}} </td>
+      </ng-container>
+      <ng-container matColumnDef="PIC">
+        <th mat-header-cell *matHeaderCellDef>PIC </th>
+        <td mat-cell *matCellDef="let element"> {{element.pic}} </td>
+      </ng-container>
+      <ng-container matColumnDef="Notes">
+        <th mat-header-cell *matHeaderCellDef>Notes </th>
+        <td mat-cell *matCellDef="let element"> {{ element.note ? element.note : 'N/A' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="Expense Status">
+        <th mat-header-cell *matHeaderCellDef>Expense Status</th>
+        <td mat-cell *matCellDef="let element">{{ getExpenseStatus(element.no) }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-  </table>
-  <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
-    [hidden]="dataSource.length==0">
-  </mat-paginator>
-</div>
+    </table>
+    <mat-paginator [length]="listSize" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)"
+      [hidden]="dataSource.length==0">
+    </mat-paginator>
+  </div>
 
-<div class="abc" >
-  <a  routerLink="/plans" class="create-button" >
-    <button> Back</button>
-  </a>
-  <a *ngIf="showCheckbox" class="create-button">
-    <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="isApprove" >Approve Expense</button>
-  </a>
-  <a>
-    <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="isPlanNew"> Submit for approval</button>   
-  </a>
-  <a>
-    <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="isApprove" > Approve Plan</button>   
-  </a>
-</div>
+  <div class="abc">
+    <a routerLink="/plans" class="create-button">
+      <button> Back</button>
+    </a>
+    <a *ngIf="showCheckbox" class="create-button">
+      <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="isApprove">Approve
+        Expense</button>
+    </a>
+    <a>
+      <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="isPlanNew"> Submit for approval</button>
+    </a>
+    <a>
+      <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="isApprove"> Approve Plan</button>
+    </a>
+  </div>
 
 </main>
