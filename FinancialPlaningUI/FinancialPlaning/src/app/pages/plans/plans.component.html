@@ -4,12 +4,13 @@
       <h3><b> Financial Plans</b></h3>
       <h6>Plan List</h6>
     </div>
-    <div class="top-button">
     
-      <a class="create-button" routerLink="/import-plan">
+    <div class="top-button">
+      <a class="create-button" routerLink="/import-report">
         <button><i class="fa-solid fa-upload me-1"></i> Import</button>
-      </a>
+      </a> 
     </div>
+  
   </div>
     <div class="mb-4 row">
       <form class="searchBar col-6">
@@ -52,6 +53,10 @@
   
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="No">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let element, let i = index"> {{ (i + 1)+(pageSize*pageIndex) }} </td>
+    </ng-container>
    
     <ng-container matColumnDef="plan">
       <th mat-header-cell *matHeaderCellDef>Plan</th>
