@@ -33,6 +33,7 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 export class ReupPlanComponent implements OnInit {
   planService: PlanService;
   dataSource: any = [];
+  fileData: any = [];
   listSize: number = 0;
   pageSize = 10;
   pageIndex = 0;
@@ -119,16 +120,13 @@ export class ReupPlanComponent implements OnInit {
     });
 
     if (this.status == 'Closed') {
-      this.messageBar.open(
-        "This plan is closed and cannot be edited.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        data: {
+          message: 'This plan is closed.',
+          success: false
+        },
+        duration: 5000,
+      });
 
       this.router.navigate(['/plans']);
     }
@@ -147,7 +145,7 @@ export class ReupPlanComponent implements OnInit {
       this.loading = true;
       this.planService.reupPlan(this.file, this.planId).subscribe(
         (data: any) => {
-          this.dataSource = data;
+          this.fileData = data;
           this.loading = false;
           console.log(data);
         },
@@ -157,22 +155,27 @@ export class ReupPlanComponent implements OnInit {
         }
       );
     } else {
-      this.messageBar.open(
-        "Please select a file to preview.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        duration: 3000,
+        data: {
+          message: 'Please select a file to preview.',
+          success: false
+        },
+      });
     }
   }
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
-    // this.dataSource = this.getPaginatedItems();
+    this.dataSource = this.getPaginatedItems();
+  }
+
+  //filter page
+  getPaginatedItems() {
+    const startIndex = this.pageIndex * this.pageSize;
+    let filteredList = this.fileData;
+    this.listSize = filteredList.length;
+    return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
 
   exportPlanTemplate() {
@@ -189,54 +192,49 @@ export class ReupPlanComponent implements OnInit {
   }
 
   onSubmit() {
-    // debugger;
+    debugger;
     if (this.file) {
       const token = localStorage.getItem('token') ?? '';
       const decodedToken: any = jwtDecode(token);
       var uid = decodedToken.userId;
-      this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
-      this.planService.editPlan(this.planId, this.dataSource).subscribe(
+      this.elementRef.nativeElement.querySelector('#submit-button').disabled = true;
+      this.planService.editPlan(this.planId, this.fileData).subscribe(
         (data: any) => {
           console.log('Plan uploaded:', data);
-          this.messageBar.open(
-            "Uploaded successfully.",
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+            data: {
+              success: true,
+              // rmclose: true,
+              message: 'Uploaded successfully',
+            },
+          });
           this.router.navigate(['/plan-details/' + this.planId]);
         },
         error => {
+          // debugger;
           console.log('Error uploading plan:', error);
-          this.messageBar.open(
-            'Error uploading plan.',
-            undefined,
-            {
-              duration: 5000,
-              panelClass: ['messageBar', 'successMessage'],
-              verticalPosition: 'top',
-              horizontalPosition: 'end',
-            }
-          );
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 5000,
+            data: {
+              success: false,
+              // rmclose: true,
+              message: 'Error uploading plan',
+            },
+          });
           this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
         }
       );
     } else {
       // console.log('Please select a file to upload.');
-      this.messageBar.open(
-        "Please select a file to upload.",
-        undefined,
-        {
-          duration: 5000,
-          panelClass: ['messageBar', 'successMessage'],
-          verticalPosition: 'top',
-          horizontalPosition: 'end',
-        }
-      );
+      this.messageBar.openFromComponent(MessageBarComponent, {
+        duration: 5000,
+        data: {
+          success: false,
+          // rmclose: true,
+          message: 'Please select a file to upload.',
+        },
+      });
       this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
     }
 
