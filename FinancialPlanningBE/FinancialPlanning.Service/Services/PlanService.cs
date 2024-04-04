@@ -139,7 +139,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     DepartmentId = department.Id,
                     TermId = term.Id,
-                    PlanName = department.DepartmentName + " - " + term.TermName,
+                    PlanName = department.DepartmentName + "_" + term.TermName+"_Plan",
                     Status = PlanStatus.New
                 };
                 plan = await _planRepository.ImportPlan(plan, uid);
