@@ -198,10 +198,11 @@ namespace FinancialPlanning.Service.Services
                 // add data for report
                 report.Status = (int)ReportStatus.New;
                 report.UpdateDate = DateTime.Now;
-                report.ReportName = $"{department.DepartmentName}_{term.TermName}_{report.Month}_Report";
+                var month = report.Month.Split(' ')[0];
+                report.ReportName = $"{department.DepartmentName}_{term.TermName}_{month}_Report";
                 var result = await _reportRepository.CreateReport(report, userId);
 
-                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, result.Month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
+                var filename = Path.Combine(result.Department.DepartmentName, result.Term.TermName, month, "Report", "version_" + result.GetMaxVersion() + ".xlsx");
                 // Convert list of expenses to Excel file                        
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3
@@ -217,10 +218,10 @@ namespace FinancialPlanning.Service.Services
                 throw new ArgumentException("Report not found with the specified ID");
             } else {
                 await _reportRepository.ReupReport(reportId, userId);
-
                 var report = await _reportRepository.GetReportById(reportId);
-                var filename = Path.Combine($"{report.Department.DepartmentName}/{report.Term.TermName}/" +
-                    $"{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx");
+
+                var filename = Path.Combine($"{report!.Department.DepartmentName}/{report.Term.TermName}/" +
+                    $"{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx");
                 // Convert list of expenses to Excel file
                 var excelFileStream = await _fileService.ConvertListToExcelAsync(expenses, 1);
                 // Upload the file to AWS S3

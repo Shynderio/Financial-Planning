@@ -46,6 +46,7 @@ export class ReupReportComponent implements OnInit {
   pageIndex = 0;
   filedata: any = [];
   file: any;
+  dueDate: Date = new Date();
   columnHeaders: string[] = [
     'expense',
     'costType',
@@ -57,6 +58,7 @@ export class ReupReportComponent implements OnInit {
     'pic',
     'notes'
   ];
+  loading: boolean = false;
   validFileName: string = '';
   constructor(
     reportService: ReportService,
@@ -79,11 +81,11 @@ export class ReupReportComponent implements OnInit {
       this.reportService.getReport(reportId).subscribe((data: any) => {
           this.reportId = reportId;
           var term = data.report.termName;
-          var month = data.report.month;
+          var month = data.report.month.split(' ')[0];
           var department = data.report.departmentName;
-          var dueDate = new Date(data.report.reportDureDate);
+          this.dueDate = new Date(data.report.reportDureDate);
           var currentDate = new Date();
-          if (currentDate > dueDate) {
+          if (currentDate > this.dueDate) {
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,
               data: {
@@ -110,14 +112,17 @@ export class ReupReportComponent implements OnInit {
     return filteredList.slice(startIndex, startIndex + this.pageSize);
   }
   
-  onImport() {
+  onImport(event: any) {
+    this.file = event;
     if (this.file) {
+      this.loading = true;
       console.log('Importing file:', this.file);
       this.reportService.importReport(this.file).subscribe(
         (data: any) => {
           this.filedata = data;
           this.dataSource = this.getPaginatedItems();
           console.log(data);
+          this.loading = false;
         },
         error => {
           console.log(error);
@@ -131,6 +136,7 @@ export class ReupReportComponent implements OnInit {
               horizontalPosition: 'end',
             }
           );
+          this.loading = false;
         }
       );
     } else {
@@ -156,20 +162,10 @@ export class ReupReportComponent implements OnInit {
     // debugger;
     // var term = this.reportForm.value.term;
     if (this.file) {
-      this.elementRef.nativeElement.querySelector('.submit-button').disabled = true;
+      this.elementRef.nativeElement.querySelector('#submit-button').disabled = true;
       this.reportService.reupReport(this.filedata, this.reportId).subscribe(
         (data: any) => {
           console.log('report uploaded:', data);
-          // this.messageBar.open(
-          //   "Uploaded successfully.",
-          //   undefined,
-          //   {
-          //     duration: 5000,
-          //     panelClass: ['messageBar', 'successMessage'],
-          //     verticalPosition: 'top',
-          //     horizontalPosition: 'end',
-          //   }
-          // );
           this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 5000,
            data: {
@@ -182,16 +178,6 @@ export class ReupReportComponent implements OnInit {
         error => {
           this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
           console.log('Error uploading report:', error);
-          // this.messageBar.open(
-          //   error.error.message,
-          //   undefined,
-          //   {
-          //     duration: 5000,
-          //     panelClass: ['messageBar', 'successMessage'],
-          //     verticalPosition: 'top',
-          //     horizontalPosition: 'end',
-          //   }
-          // );
           this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 5000,
            data: {

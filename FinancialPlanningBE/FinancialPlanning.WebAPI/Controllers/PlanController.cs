@@ -300,7 +300,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //from planVersion Id -> get name plan + version
                 var plan = await _planService.GetPlanById(id);
-                string filename = plan.Department.DepartmentName + "/"
+                string filename = plan!.Department.DepartmentName + "/"
                       + plan.Term.TermName + "/Plan/version_"
                       + version;
 
