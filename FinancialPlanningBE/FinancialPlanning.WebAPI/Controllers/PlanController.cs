@@ -251,7 +251,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("edit")]
-        [Authorize(Roles = "FinancialStaff")]
+        [Authorize(Roles = "FinancialStaff, Accountant")]
         public async Task<IActionResult> EditPlan(List<ExpenseStatusModel> expenseModels, Guid planId, Guid userId)
         {
             try

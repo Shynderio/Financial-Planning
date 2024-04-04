@@ -14,6 +14,8 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { MESSAGE_CONSTANTS } from '../../../../constants/message.constants';
+import { DialogComponent } from '../../../share/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   providers: [provideNativeDateAdapter()],
@@ -43,7 +45,7 @@ export class AddNewUserComponent implements OnInit {
 
   constructor(
     private httpService: UserService,
-    private toastr: ToastrService,
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private messageBar: MatSnackBar,
@@ -214,6 +216,7 @@ export class AddNewUserComponent implements OnInit {
       notes: this.addUserF.value.notes,
     };
     if (this.isEdit) {
+      this.confirmUpdate(() => {
       user.status = -1;
       this.httpService.editUser(this.userId, user).subscribe(() => {
         console.log('success');
@@ -228,6 +231,7 @@ export class AddNewUserComponent implements OnInit {
         this.router.navigateByUrl("/user-list");
         this.isSubmitting = false;
       });
+    });
     } else {
       user.status = 1;
       this.httpService.addNewUser(user).subscribe(() => {
@@ -269,6 +273,25 @@ export class AddNewUserComponent implements OnInit {
       );
     }
 
+  }
+  confirmUpdate(callback: () => void) {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '400px',
+      height: '250px',
+      data: {
+        title: 'Update user',
+        content: 'Are you sure you want to update this user?',
+        note: 'Please, rethink your decision because this will affect to user'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        callback();
+      } else {
+        this.isSubmitting = false;
+      }
+    });
   }
   //Convert date to dd/mm/yyyy
   convertIsoDateToDdMmYyyy(isoDate: string): string {
