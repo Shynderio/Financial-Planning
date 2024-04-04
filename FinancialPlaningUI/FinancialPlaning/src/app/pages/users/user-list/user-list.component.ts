@@ -69,7 +69,8 @@ export class UserListComponent implements OnInit {
   filterUsers(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
-
+    this.pageIndex = 0;
+    
     // Apply role filter
     if (this.selectedRole) {
       filteredList = filteredList.filter(user => user.roleName === this.selectedRole);
@@ -88,6 +89,7 @@ export class UserListComponent implements OnInit {
   search(): void {
     // Filter based on selected role and search input
     let filteredList = this.originalUserList;
+    
 
     // Apply role filter
     if (this.selectedRole) {
@@ -100,7 +102,6 @@ export class UserListComponent implements OnInit {
         user.username.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     }
-
     this.userList = filteredList;
     this.getPaginatedItems();
   }
