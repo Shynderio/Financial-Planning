@@ -58,7 +58,7 @@ namespace FinancialPlanning.Service.Services
                 {
                     foreach (var version in reportToDelete.ReportVersions!)
                     {
-                        var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month}/Report/version_{version.Version}.xlsx";
+                        var filename = $"{reportToDelete.Department.DepartmentName}/{reportToDelete.Term.TermName}/{reportToDelete.Month.Split(' ')[0]}/Report/version_{version.Version}.xlsx";
 
                         //delete file on cloud
                         await _fileService.DeleteFileAsync(filename);
@@ -125,7 +125,7 @@ namespace FinancialPlanning.Service.Services
             {
                 expenses.AddRange(_fileService.ConvertExcelToList(
                     await _fileService.GetFileAsync($"{report.Department.DepartmentName}/" +
-                    $"{report.Term.TermName}/{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx"),
+                    $"{report.Term.TermName}/{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx"),
                     1));
             }
             

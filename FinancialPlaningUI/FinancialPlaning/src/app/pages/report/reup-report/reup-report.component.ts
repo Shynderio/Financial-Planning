@@ -37,6 +37,8 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
 export class ReupReportComponent implements OnInit {
 
   reportService: ReportService;
+  term:any
+  month:any
   // reportForm: FormGroup;
   reportId: string = '';
   dataSource: any = [];
@@ -80,8 +82,8 @@ export class ReupReportComponent implements OnInit {
       const reportId = params['id'];
       this.reportService.getReport(reportId).subscribe((data: any) => {
           this.reportId = reportId;
-          var term = data.report.termName;
-          var month = data.report.month.split(' ')[0];
+          this.term = data.report.termName;
+          this.month = data.report.month.split(' ')[0];
           var department = data.report.departmentName;
           this.dueDate = new Date(data.report.reportDureDate);
           var currentDate = new Date();
@@ -95,7 +97,7 @@ export class ReupReportComponent implements OnInit {
             });
             this.router.navigate(['/report-details/' + data.report.id]);
           }
-          this.validFileName = `${department}_${term}_${month}_Report`;
+          this.validFileName = `${department}_${ this.term}_${this.month}_Report`;
           console.log('Report data:', data);
           console.log('validFileName:', this.validFileName);
           

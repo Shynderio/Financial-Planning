@@ -201,7 +201,7 @@ export class ImportReportComponent implements OnInit {
       if (this.file) {
         var id = term.id;
         var month = this.reportForm.value.month;
-        this.reportService.uploadReport(this.dataSource, id, month).subscribe(
+        this.reportService.uploadReport(this.filedata, id, month).subscribe(
           () => {
             this.messageBar.openFromComponent(MessageBarComponent, {
               duration: 5000,
