@@ -43,8 +43,8 @@ namespace FinancialPlanning.Service.Services
                 List<Report> reports = await _reportRepository.GetAllReportsByYear(year);
                 foreach (Report report in reports)
                 {
-                    string fileName = report.Department.DepartmentName + '/' + report.Term.TermName + "/"
-                                                  + report.Month + "/Report/version_" + report.GetMaxVersion();
+                    string fileName = $"{report.Department.DepartmentName}/{report.Term.TermName}/{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}";
+
                     byte[] file = await _fileService.GetFileAsync(fileName + ".xlsx");
 
                     //Get expense of report
