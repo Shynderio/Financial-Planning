@@ -168,10 +168,10 @@ export class ReupReportComponent implements OnInit {
           console.log('report uploaded:', data);
           this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 5000,
-           data: {
+            data: {
             success: true,
-             rmclose: true ,
-             message: 'Uploaded successfully',
+            rmclose: true ,
+            message: 'Uploaded successfully',
            },});
           this.router.navigate(['/reports']);
         },

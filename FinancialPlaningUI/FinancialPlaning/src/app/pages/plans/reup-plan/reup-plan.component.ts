@@ -92,8 +92,6 @@ export class ReupPlanComponent implements OnInit {
                   message: 'This plan is overdue.',
                   success: false
                 },
-                horizontalPosition: 'end',
-                verticalPosition: 'bottom',
                 duration: 5000,
               })
             }

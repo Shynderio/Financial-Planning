@@ -45,8 +45,6 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: 'Please select term first',
         },
-        verticalPosition: 'bottom',
-        horizontalPosition: 'end',
       });
       return;
     }
@@ -57,8 +55,6 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: 'Please select month first',
         },
-        verticalPosition: 'bottom',
-        horizontalPosition: 'end',
       });
       return;
     }
@@ -70,8 +66,6 @@ export class UploadComponent implements OnInit {
           rmclose: true,
           message: this.validName.endsWith('Plan') ? MESSAGE_CONSTANTS.ME018 : MESSAGE_CONSTANTS.ME022,
         },
-        verticalPosition: 'bottom',
-        horizontalPosition: 'end',
       });
       return;
     }
@@ -93,8 +87,6 @@ export class UploadComponent implements OnInit {
           data: {
             message: MESSAGE_CONSTANTS.ME016,
           },
-          verticalPosition: 'bottom',
-          horizontalPosition: 'end',
         });
         return;
       }
@@ -105,8 +97,6 @@ export class UploadComponent implements OnInit {
           data: {
             message: MESSAGE_CONSTANTS.ME017,
           },
-          verticalPosition: 'bottom',
-        horizontalPosition: 'end',
         });
         return;
       }
