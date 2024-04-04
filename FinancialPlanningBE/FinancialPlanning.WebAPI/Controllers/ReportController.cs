@@ -143,6 +143,8 @@ namespace FinancialPlanning.WebAPI.Controllers
 
                 //get file
                 var reports = await _reportService.GetFileByName(filename);
+                reports = _fileService.AddNoColumn(reports, _fileService.ConvertExcelToList(reports, 1));
+                reports = _fileService.RemoveFirstRow(reports);
 
                 return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
               report.ReportName+".xlsx");
@@ -158,6 +160,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> ExportMultipleReport(List<Guid> reportIds)
         {
             var reports = await _reportService.MergeExcelFiles(reportIds);
+            reports = _fileService.RemoveFirstRow(reports);
 
             return File(reports, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 DateTime.Now.ToString("ddMMyyyyHHmmss") + "_reports.xlsx");
