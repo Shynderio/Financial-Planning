@@ -97,7 +97,7 @@ namespace FinancialPlanning.WebAPI.Controllers
                 //Get report
                 var report = await _reportService.GetReportById(id);
                 string filename = $"{report!.Department.DepartmentName}/{report.Term.TermName}/" +
-                    $"{report.Month}/Report/version_{report.GetMaxVersion()}.xlsx";
+                    $"{report.Month.Split(' ')[0]}/Report/version_{report.GetMaxVersion()}.xlsx";
 
                 //Get reportVersions
                 var reportVersions = await _reportService.GetReportVersionsAsync(id);
@@ -138,7 +138,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 //from reportVersion Id -> get name report + version
                 var report = await _reportService.GetReportById(id);
-                string filename = $"{report!.Department.DepartmentName}/{report.Term.TermName}/{report.Month}/Report/version_{version}.xlsx";
+                string filename = $"{report!.Department.DepartmentName}/{report.Term.TermName}/{report.Month.Split(' ')[0]}/Report/version_{version}.xlsx";
 
 
                 //get file

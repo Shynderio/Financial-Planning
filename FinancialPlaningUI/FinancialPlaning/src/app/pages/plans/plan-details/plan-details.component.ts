@@ -12,6 +12,8 @@ import { concatMap, of } from 'rxjs';
 import { Location } from '@angular/common';
 import { Plan } from '../../../models/planviewlist.model';
 import { jwtDecode } from 'jwt-decode';
+import { DialogComponent } from '../../../share/dialog/dialog.component';
+import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 
 @Component({
   selector: 'app-plan-details',
@@ -59,7 +61,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   router: any;
 
@@ -227,16 +229,20 @@ export class PlanDetailsComponent {
 
 
   openSubmitDialog(id: string) {
-    const SubmitDialog = this.dialog.open(SubmitPlanDialog, {
+    const SubmitDialog = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
+      data: {
+        title: 'Submit',
+        content: 'Are you sure you want to Submit for approval ?',
+        note: 'Please, rethink your decision because you will not be able to undo this action'
+      }
     });
-
     SubmitDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'Submit') {
+          if (result === 'confirm') {
             this.status=1;
             return this.planService.submitPlan(id, this.status );
           } else {
@@ -247,9 +253,14 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.open('Change status successfully', 'Close', {
-            duration: 1000,
-            panelClass: ['success'],
+          this.messageBar.openFromComponent(MessageBarComponent, {
+
+            duration: 5000,
+            data: {
+              success: true,
+              message:
+                'Submit for approval successfully'
+            },
           });
           window.location.reload();
         }
@@ -257,16 +268,21 @@ export class PlanDetailsComponent {
   }
 
   openApproveDialog(id: string) {
-    const SubmitDialog = this.dialog.open(SubmitPlanDialog, {
+    const SubmitDialog = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
+      data: {
+        title: 'Approve Plan',
+        content: 'Are you sure you want to Approve this plan?',
+        note: 'Please, rethink your decision because you will not be able to undo this action'
+      }
     });
 
     SubmitDialog
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'Submit') {
+          if (result === 'confirm') {
           this.approvedExpenses = this.dataFile.map((expense: any) => expense.no);
           // Chuyển danh sách các expense đã duyệt thành JSON để gửi đi
           this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
@@ -285,9 +301,14 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.open('Change status successfully', 'Close', {
-            duration: 1000,
-            panelClass: ['success'],
+          this.messageBar.openFromComponent(MessageBarComponent, {
+
+            duration: 5000,
+            data: {
+              success: true,
+              message:
+                'Approve plan successfully'
+            },
           });
           window.location.reload();
 
@@ -296,16 +317,21 @@ export class PlanDetailsComponent {
   }
 
   openSubmitExpenseDialog(id: string) {
-    const SubmitDialog1 = this.dialog.open(SubmitExpenseDialog, {
+    const SubmitDialog1 = this.dialog.open(DialogComponent, {
       width: '400px',
       height: '250px',
+      data: {
+        title: 'Approve Expense',
+        content: 'Are you sure you want to Approve Expense?',
+        note: 'Please, rethink your decision because you will not be able to undo this action'
+      }
     });
 
     SubmitDialog1
       .afterClosed()
       .pipe(
         concatMap((result) => {
-          if (result === 'Submit') {
+          if (result === 'confirm') {
             console.log(this.plan.approvedExpenses);
             this.plan.approvedExpenses = JSON.stringify(this.approvedExpenses);
             console.log(this.areAllExpensesApproved());
@@ -326,9 +352,14 @@ export class PlanDetailsComponent {
       .subscribe((response) => {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
-          this.messageBar.open('Change status successfully', 'Close', {
-            duration: 1000,
-            panelClass: ['success'],
+          this.messageBar.openFromComponent(MessageBarComponent, {
+
+            duration: 5000,
+            data: {
+              success: true,
+              message:
+                'Approve expense successfully'
+            },
           });
           window.location.reload();
 

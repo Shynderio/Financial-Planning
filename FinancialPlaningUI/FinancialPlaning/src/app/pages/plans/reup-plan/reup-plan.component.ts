@@ -34,7 +34,7 @@ export class ReupPlanComponent implements OnInit {
   planService: PlanService;
   dataSource: any = [];
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   file: any;
   planId: string = '';

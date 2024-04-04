@@ -78,7 +78,7 @@ export class PlansComponent implements OnInit {
 
 
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   dataSource: any = [];
 
@@ -129,7 +129,7 @@ export class PlansComponent implements OnInit {
       // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
       this.planList = this.planList.filter((plan: Plan) =>
       (plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) ||
-      (plan.status.toLowerCase() === 'new')
+      (plan.department.toLowerCase() !== this.getUsersDepartment().toLowerCase() && plan.status !== 'New')
       );
     }
 
@@ -256,6 +256,9 @@ export class PlansComponent implements OnInit {
         })
       )
       .subscribe((response) => {
+        if (response == null) {
+          return;
+        }
         this.messageBar.openFromComponent(MessageBarComponent, {
           duration: 3000,
       
