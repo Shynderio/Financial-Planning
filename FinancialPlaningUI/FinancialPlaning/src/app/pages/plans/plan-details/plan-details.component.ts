@@ -61,7 +61,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 7;
+  pageSize = 10;
   pageIndex = 0;
   router: any;
 
@@ -432,7 +432,7 @@ export class PlanVersionsDialog {
       console.log(downloadURL);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = 'Version_'+version + '.xlsx';
+      link.download = 'version_'+version + '.xlsx';
       link.click();
     }
     );
