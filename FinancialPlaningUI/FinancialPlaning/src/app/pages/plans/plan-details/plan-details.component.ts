@@ -112,7 +112,7 @@ export class PlanDetailsComponent {
 
 
       this.isPlanNew = this.plan.status === 'New';
-      this.isPlanApproved = this.plan.plan.status === 'Approved';
+      this.isPlanApproved = this.plan.status === 'Approved';
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
       this.showCheckbox = !(this.plan.status === 'New')  && !(this.plan.status === 'Approved');
 
