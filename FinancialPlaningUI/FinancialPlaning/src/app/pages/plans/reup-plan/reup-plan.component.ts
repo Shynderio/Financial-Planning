@@ -83,6 +83,7 @@ export class ReupPlanComponent implements OnInit {
             this.department = data.department;
             this.status = data.status;
             this.validFileName = `${this.department}_${this.term}_Plan`;
+            
             var planDueDate = new Date(data.dueDate);
             var currentDate = new Date();
             this.dueDate = planDueDate;
@@ -91,6 +92,20 @@ export class ReupPlanComponent implements OnInit {
               this.messageBar.openFromComponent(MessageBarComponent, {
                 data: {
                   message: 'This plan is overdue.',
+                  success: false
+                },
+                duration: 5000,
+              })
+            }
+
+            var token = localStorage.getItem('token') ?? '';
+            var decodedToken: any = jwtDecode(token);
+            var depart = decodedToken.departmentName;
+            if (depart != this.department) {
+              this.router.navigate(['/plan-details/' + data['id']]);
+              this.messageBar.openFromComponent(MessageBarComponent, {
+                data: {
+                  message: 'You do not have access to this plan.',
                   success: false
                 },
                 duration: 5000,
@@ -146,6 +161,7 @@ export class ReupPlanComponent implements OnInit {
       this.planService.reupPlan(this.file, this.planId).subscribe(
         (data: any) => {
           this.fileData = data;
+          this.dataSource = this.getPaginatedItems();
           this.loading = false;
           console.log(data);
         },

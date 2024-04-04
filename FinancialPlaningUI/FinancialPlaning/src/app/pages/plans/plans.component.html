@@ -80,13 +80,13 @@
       <td mat-cell *matCellDef="let plan">
         <span class="px-2 py-2 rounded-pill"
         [ngStyle]="{'background-color': plan.status == 'New' ? 'var(--new-status-background)'
-         : plan.status == 'WaitingForApproval' ? 'var(--inprogress-status-background)'
+         : plan.status == 'Waiting for Approval' ? 'var(--inprogress-status-background)'
          : plan.status == 'Approved' ? 'var(--approved-status-background)'
         : 'var(--closed-status-background)'}">
        
         <i class="fa-solid fa-circle align-middle me-1"
           [ngStyle]="{'color': plan.status == 'New' ? 'var(--new-status-color)'
-           : plan.status == 'WaitingForApproval' ? 'var(--inprogress-status-color)'
+           : plan.status == 'Waiting for Approval' ? 'var(--inprogress-status-color)'
            : plan.status == 'Approved' ? 'var(--approved-status-color)'
            : 'var(--closed-status-color)', 'font-size': '10px'}"></i>
           {{ plan.status}} </span>  
