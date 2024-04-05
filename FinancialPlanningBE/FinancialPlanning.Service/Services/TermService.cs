@@ -1,6 +1,7 @@
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
 using FinancialPlanning.Data.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Serilog;
 
 namespace FinancialPlanning.Service.Services
@@ -36,6 +37,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task<Term?> GetTermByIdAsync(Guid id)
         {
+            // var term = await _termRepository.GetTermByIdAsync(id);
             return await _termRepository.GetTermByIdAsync(id);
         }
 
@@ -53,7 +55,7 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
-                throw new ArgumentException("Term not found with the specified ID");
+                throw new ArgumentNullException();
             }
         }
 
@@ -63,12 +65,12 @@ namespace FinancialPlanning.Service.Services
             var endDate = term.StartDate.AddMonths(term.Duration);
             if (endDate < term.ReportDueDate)
             {
-                throw new ArgumentException("Report due date cannot be after the end date");
+                throw new ArgumentOutOfRangeException("Report due date cannot be after the end date");
             }
 
             if (endDate < term.PlanDueDate)
             {
-                throw new ArgumentException("Plan due date cannot be after the end date");
+                throw new ArgumentOutOfRangeException("Plan due date cannot be after the end date");
             }
 
             await _termRepository.CreateTerm(term);
@@ -76,7 +78,7 @@ namespace FinancialPlanning.Service.Services
 
         public async Task UpdateTerm(Term term)
         {
-            var existingTerm = await _termRepository.GetTermByIdAsync(term.Id) ?? throw new ArgumentException("Term not found with the specified ID");
+            var existingTerm = await _termRepository.GetTermByIdAsync(term.Id) ?? throw new ArgumentNullException();
 
             var status = existingTerm.Status;
             if (status == TermStatus.New)
@@ -111,7 +113,7 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
-                throw new ArgumentException("Term not found with the specified ID");
+                throw new ArgumentNullException();
             }
         }
 
@@ -144,7 +146,7 @@ namespace FinancialPlanning.Service.Services
             }
             else
             {
-                throw new ArgumentException("Term not found with the specified ID");
+                throw new ArgumentNullException();
             }
         }
 
