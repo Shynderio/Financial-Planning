@@ -1,0 +1,26 @@
+main {
+  width: 100vw;
+  height: 100vh;
+  background-color: #3838dd;
+}
+
+button {
+  background-color: #dddd38;
+  z-index: 2;
+  left: 50%;
+  top: 75%;
+  transform: translate(-50%, -50%);
+}
+
+button:hover {
+  background-color: #f0ec9a;
+}
+
+a {
+  background-color: transparent;
+  color: black;
+}
+
+video {
+  height: 90%;
+}

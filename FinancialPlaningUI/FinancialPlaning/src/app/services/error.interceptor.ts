@@ -6,6 +6,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       console.log(error.status);
 
+      if ([404].includes(error.status)) {
+        window.location.href = '/404';
+      }
+
       if ([403].includes(error.status)) {
         console.log('Unauthrized request ');
         window.location.href = '/login';

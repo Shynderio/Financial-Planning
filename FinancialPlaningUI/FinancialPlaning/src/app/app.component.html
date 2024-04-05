@@ -1,6 +1,6 @@
 <ng-container>
-    <app-sidenav *ngIf="logged && !isAdmin"></app-sidenav>
-    <app-admin-sidenav *ngIf="logged && isAdmin"></app-admin-sidenav>
+    <app-sidenav *ngIf="logged && !isAdmin && !is404()"></app-sidenav>
+    <app-admin-sidenav *ngIf="logged && isAdmin && !is404()"></app-admin-sidenav>
 
 </ng-container>
 
