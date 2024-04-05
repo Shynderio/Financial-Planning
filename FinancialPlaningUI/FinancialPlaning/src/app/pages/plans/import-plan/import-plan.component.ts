@@ -48,7 +48,7 @@ export class ImportPlanComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   filedata: any = [];
   dueDate: Date = new Date();
@@ -165,7 +165,7 @@ export class ImportPlanComponent implements OnInit {
           (data: any) => {
             console.log('Plan uploaded:', data);
             this.messageBar.openFromComponent(MessageBarComponent, {
-              duration: 5000,
+              duration: 3000,
               panelClass: ['messageBar', 'successMessage'],
               data: {
                 message: MESSAGE_CONSTANTS.ME019,
@@ -177,7 +177,7 @@ export class ImportPlanComponent implements OnInit {
           (error) => {
             console.log('Error uploading plan:', error);
             this.messageBar.openFromComponent(MessageBarComponent, {
-              duration: 5000,
+              duration: 3000,
               panelClass: ['messageBar', 'successMessage'],
               data: {
                 message: error.error.message,

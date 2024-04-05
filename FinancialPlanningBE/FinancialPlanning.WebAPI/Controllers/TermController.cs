@@ -42,8 +42,9 @@ namespace FinancialPlanning.WebAPI.Controllers
         public async Task<IActionResult> GetTermById(Guid id)
         {
             var term = await _termService.GetTermByIdAsync(id);
+            if (term == null) return NotFound(new { error = "Term not found!" });
             var termViewModel = _mapper.Map<TermViewModel>(term);
-            return Ok(termViewModel );
+            return Ok(termViewModel);
         }
 
         [HttpGet("all")]

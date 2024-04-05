@@ -1,12 +1,19 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
-import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -18,9 +25,16 @@ import { MessageBarComponent } from '../../../share/message-bar/message-bar.comp
   providers: [provideNativeDateAdapter()],
   selector: 'app-user-detail',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterLink, MatDatepickerModule, MatInputModule],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+    RouterLink,
+    MatDatepickerModule,
+    MatInputModule,
+  ],
   templateUrl: './user-detail.component.html',
-  styleUrl: './user-detail.component.css'
+  styleUrl: './user-detail.component.css',
 })
 export class UserDetailComponent implements OnInit {
   userForm: FormGroup;
@@ -38,7 +52,6 @@ export class UserDetailComponent implements OnInit {
     private authService: AuthService,
     private toastr: ToastrService
   ) {
-
     this.userForm = this.fb.group({
       username: [{ value: '', disabled: true }],
       fullname: [{ value: '', disabled: true }],
@@ -51,24 +64,19 @@ export class UserDetailComponent implements OnInit {
       role: [{ value: '', disabled: true }],
       status: [{ value: '', disabled: true }],
       note: [{ value: '', disabled: true }],
-
     });
     // Kích hoạt control
     this.userForm.get('status')?.enable();
 
     // Vô hiệu hóa control
     this.userForm.get('status')?.disable();
-
   }
 
-
   ngOnInit(): void {
-
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const userId = params['id']; // Assuming 'id' is the parameter name
       this.loadUserDetail(userId);
-    }
-    );
+    });
   }
 
   loadUserDetail(userId: string): void {
@@ -101,17 +109,15 @@ export class UserDetailComponent implements OnInit {
       error: (error: any) => {
         // Handle error
         console.error('Error fetching term details:', error);
-      }
+      },
     });
-
   }
-  // Check userId login is userId of user detail 
+  // Check userId login is userId of user detail
   checkIfCurrentUser(userId: string): boolean {
-    const loggedInUserId = this.authService.getUserId();//get userId login from AuthService
+    const loggedInUserId = this.authService.getUserId(); //get userId login from AuthService
     return userId === loggedInUserId;
   }
-  onSubmit() {
-  }
+  onSubmit() {}
   cancel(): void {
     this.router.navigate(['/user-list']);
   }
@@ -125,7 +131,7 @@ export class UserDetailComponent implements OnInit {
     const currentStatus = this.userForm.get('status')?.value;
     console.log(currentStatus);
     const newStatus = currentStatus == 1 ? 0 : 1;
-    console.log("new" + newStatus);
+    console.log('new' + newStatus);
 
     const updateDialog = this.dialog.open(UpdateUserStatusDialog, {
       width: '400px',
@@ -147,12 +153,10 @@ export class UserDetailComponent implements OnInit {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
-
             duration: 3000,
             data: {
               success: true,
-              message:
-                'User status updated successfully'
+              message: 'User status updated successfully',
             },
           });
           this.loadUserDetail(userId);
@@ -177,30 +181,14 @@ export class UserDetailComponent implements OnInit {
 
     return `${yyyy}-${mm}-${dd}`;
   }
-
-
-
 }
 @Component({
   selector: 'app-update-user-status',
   standalone: true,
   imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
   templateUrl: '../update-user-status/update-user-status.component.html',
-  styleUrl: '../update-user-status/update-user-status.component.css'
+  styleUrl: '../update-user-status/update-user-status.component.css',
 })
 export class UpdateUserStatusDialog {
-  constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) { }
+  constructor(public dialogRef: MatDialogRef<UpdateUserStatusDialog>) {}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

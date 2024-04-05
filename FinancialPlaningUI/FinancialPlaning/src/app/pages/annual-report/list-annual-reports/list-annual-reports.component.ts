@@ -27,7 +27,7 @@ export class ListAnnualReportsComponent {
   searchValue: string = '';
    //paging
    listSize: number = 0;
-   pageSize = 10;
+   pageSize = 8;
    pageIndex = 0;
 
    constructor(

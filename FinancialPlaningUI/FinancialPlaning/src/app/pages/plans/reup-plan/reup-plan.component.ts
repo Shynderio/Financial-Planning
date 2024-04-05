@@ -35,7 +35,7 @@ export class ReupPlanComponent implements OnInit {
   dataSource: any = [];
   fileData: any = [];
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   file: any;
   planId: string = '';
@@ -94,7 +94,7 @@ export class ReupPlanComponent implements OnInit {
                   message: 'This plan is overdue.',
                   success: false
                 },
-                duration: 5000,
+                duration: 3000,
               })
             }
 
@@ -108,7 +108,7 @@ export class ReupPlanComponent implements OnInit {
                   message: 'You do not have access to this plan.',
                   success: false
                 },
-                duration: 5000,
+                duration: 3000,
               })
             }
             console.log(data);
@@ -122,7 +122,7 @@ export class ReupPlanComponent implements OnInit {
                 message: 'Error getting plan details.',
                 success: false
               },
-              duration: 5000,
+              duration: 3000,
             })
 
             this.router.navigate(['/plans']);
@@ -140,7 +140,7 @@ export class ReupPlanComponent implements OnInit {
           message: 'This plan is closed.',
           success: false
         },
-        duration: 5000,
+        duration: 3000,
       });
 
       this.router.navigate(['/plans']);
@@ -218,7 +218,7 @@ export class ReupPlanComponent implements OnInit {
         (data: any) => {
           console.log('Plan uploaded:', data);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
+            duration: 3000,
             data: {
               success: true,
               // rmclose: true,
@@ -231,7 +231,7 @@ export class ReupPlanComponent implements OnInit {
           // debugger;
           console.log('Error uploading plan:', error);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
+            duration: 3000,
             data: {
               success: false,
               // rmclose: true,
@@ -244,7 +244,7 @@ export class ReupPlanComponent implements OnInit {
     } else {
       // console.log('Please select a file to upload.');
       this.messageBar.openFromComponent(MessageBarComponent, {
-        duration: 5000,
+        duration: 3000,
         data: {
           success: false,
           // rmclose: true,

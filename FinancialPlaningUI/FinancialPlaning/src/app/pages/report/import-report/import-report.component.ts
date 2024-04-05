@@ -45,7 +45,7 @@ export class ImportReportComponent implements OnInit {
   //paging
   dueDate: Date = new Date();
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   filedata: any = [];
   validFileName: string = '';
@@ -204,7 +204,7 @@ export class ImportReportComponent implements OnInit {
         this.reportService.uploadReport(this.filedata, id, month).subscribe(
           () => {
             this.messageBar.openFromComponent(MessageBarComponent, {
-              duration: 5000,
+              duration: 3000,
              data: {
               success: true,
                rmclose: true ,

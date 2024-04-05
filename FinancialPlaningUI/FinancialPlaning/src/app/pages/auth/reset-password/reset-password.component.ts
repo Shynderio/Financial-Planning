@@ -115,7 +115,7 @@ export class ResetPasswordComponent {
         next: (response) => {
           if (response == 200) {
             this.messageBar.open('Password reset successfully', '', {
-              duration: 5000,
+              duration: 3000,
               panelClass: ['messageBar', 'successMessage'],
               verticalPosition: 'top',
             });
@@ -123,7 +123,7 @@ export class ResetPasswordComponent {
         },
         error: (error) => {
           this.messageBar.open(MESSAGE_CONSTANTS.ME005, '', {
-            duration: 5000,
+            duration: 3000,
             panelClass: ['messageBar', 'failMessage'],
             verticalPosition: 'top',
           });
@@ -131,6 +131,6 @@ export class ResetPasswordComponent {
       });
     setTimeout(() => {
       this.router.navigate(['/login']);
-    }, 5000);
+    }, 3000);
   }
 }

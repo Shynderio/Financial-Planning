@@ -61,7 +61,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   router: any;
 
@@ -262,8 +262,7 @@ export class PlanDetailsComponent {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
-
-            duration: 5000,
+            duration: 3000,
             data: {
               success: true,
               message:
@@ -311,7 +310,7 @@ export class PlanDetailsComponent {
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
 
-            duration: 5000,
+            duration: 3000,
             data: {
               success: true,
               message:
@@ -362,7 +361,7 @@ export class PlanDetailsComponent {
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
 
-            duration: 5000,
+            duration: 3000,
             data: {
               success: true,
               message:

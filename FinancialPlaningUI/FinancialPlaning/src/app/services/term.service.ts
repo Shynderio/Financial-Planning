@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpResponse,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
@@ -11,8 +15,7 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class TermService {
   private apiUrl = environment.apiUrl + '/Term';
-  constructor(private http: HttpClient) {
-  } // Correct injection through
+  constructor(private http: HttpClient) {} // Correct injection through
 
   createTerm(term: CreateTermModel): Observable<any> {
     const token = localStorage.getItem('token') ?? '';
@@ -73,6 +76,4 @@ export class TermService {
   getTermsToImportReport(): Observable<any> {
     return this.http.get(this.apiUrl + '/noreport');
   }
-
-  
 }

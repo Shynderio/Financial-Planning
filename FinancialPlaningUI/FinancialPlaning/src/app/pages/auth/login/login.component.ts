@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -29,7 +29,7 @@ import { jwtDecode } from 'jwt-decode';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -48,8 +48,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private formBuilder: FormBuilder,
-    private elementRef: ElementRef
+    private formBuilder: FormBuilder
   ) {
     // localStorage.clear();
   }
@@ -58,7 +57,19 @@ export class LoginComponent {
     // check Islogged
     if (this.authService.IsLoggedIn()) {
       console.log(this.authService.IsLoggedIn());
-      this.router.navigate(['/home']);
+      const token = localStorage.getItem('token');
+      const decodedToken: any = jwtDecode(token!);
+      const role = decodedToken.role;
+      console.log(role);
+      if (role != 'Admin') {
+        this.router.navigateByUrl('/terms').then(() => {
+          window.location.reload();
+        });
+      } else {
+        this.router.navigateByUrl('/user-list').then(() => {
+          window.location.reload();
+        });
+      }
     }
 
     this.loginForm = this.formBuilder.group({
@@ -80,25 +91,21 @@ export class LoginComponent {
           //Save token
           const token = response?.value?.token;
           localStorage.setItem('token', token);
-
-          //Go to home page
           const decodedToken: any = jwtDecode(token);
           const role = decodedToken.role;
-          console.log(role)
-          if(role!='Admin'){
+          console.log(role);
+          if (role != 'Admin') {
             this.router.navigateByUrl('/terms').then(() => {
               window.location.reload();
             });
-          }else{
+          } else {
             this.router.navigateByUrl('/user-list').then(() => {
               window.location.reload();
             });
           }
-        
         } else {
           this.errorMessage = response.value.message;
-          this.isLoading =
-            false;
+          this.isLoading = false;
         }
       },
       error: (error) => {

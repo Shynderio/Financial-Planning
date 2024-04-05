@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class AdminGuard {
       }
     }
     // ROle isn't Admin
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl('/login');
     return false;
   }
 }
