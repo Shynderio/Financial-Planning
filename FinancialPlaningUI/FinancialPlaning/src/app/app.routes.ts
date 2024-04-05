@@ -24,13 +24,14 @@ import { PlanDetailsComponent } from './pages/plans/plan-details/plan-details.co
 import { AdminGuard } from './services/auth/admin.guard';
 import { ReupPlanComponent } from './pages/plans/reup-plan/reup-plan.component';
 import { UploadComponent } from './share/upload/upload.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: '', component: SidenavComponent },
+  { path: '404', component: NotFoundComponent },
   // term
   { path: 'terms', component: TermsComponent, canActivate: [AuthGuard] },
   {
@@ -116,4 +117,6 @@ export const routes: Routes = [
   },
   // component
   { path: 'upload', component: UploadComponent },
+  // other
+  { path: '**', redirectTo: '404'},
 ];

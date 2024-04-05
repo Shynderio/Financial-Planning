@@ -42,7 +42,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return NotFound(ex.Message);
             }
         }
 
