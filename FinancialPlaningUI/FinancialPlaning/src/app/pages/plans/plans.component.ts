@@ -1,11 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { SidenavComponent } from '../../share/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
 import {
@@ -22,10 +17,7 @@ import {
   MatPaginatorModule,
   PageEvent,
 } from '@angular/material/paginator';
-import {
-  MatSnackBar,
-  MatSnackBarModule,
-} from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { PlanService } from '../../services/plan.service';
 import { jwtDecode } from 'jwt-decode';
@@ -52,33 +44,30 @@ import { MessageBarComponent } from '../../share/message-bar/message-bar.compone
     MatIconModule,
     MatTableModule,
     MatFormFieldModule,
-    MatSelectModule
-
+    MatSelectModule,
   ],
 })
 export class PlansComponent implements OnInit {
   planList: any = [];
 
   role: string = '';
-// filter
+  // filter
   searchValue: string = '';
 
   terms: any = [];
-  selectedTerm = "All";
+  selectedTerm = 'All';
 
   departments: any = [];
-  selectedDepartment = "All";
+  selectedDepartment = 'All';
 
-  status: any =[];
-  selectedStatus= "All";
+  status: any = [];
+  selectedStatus = 'All';
 
-  
   quarters: any[] = [];
-  selectedQuarter = "All";
-
+  selectedQuarter = 'All';
 
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   dataSource: any = [];
 
@@ -94,7 +83,12 @@ export class PlansComponent implements OnInit {
   filterStatusEnable = false;
 
   showEditDeleteButton(plan: Plan): boolean {
-    return (this.role === 'Accountant' &&  plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()  || this.role === 'FinancialStaff');
+    return (
+      (this.role === 'Accountant' &&
+        plan.department.toLowerCase() ===
+          this.getUsersDepartment().toLowerCase()) ||
+      this.role === 'FinancialStaff'
+    );
   }
 
   constructor(
@@ -114,7 +108,6 @@ export class PlansComponent implements OnInit {
         this.fetchData();
       }
     }
-   
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -125,30 +118,40 @@ export class PlansComponent implements OnInit {
       this.planList = data;
 
       // Lọc dữ liệu dựa trên vai trò
-    if (this.role === 'Accountant') {
-      // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
-      this.planList = this.planList.filter((plan: Plan) =>
-      (plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) ||
-      (plan.department.toLowerCase() !== this.getUsersDepartment().toLowerCase() && plan.status !== 'New')
-      );
-    }
+      if (this.role === 'Accountant') {
+        // Chỉ hiển thị các kế hoạch không phải ở trạng thái "New"
+        this.planList = this.planList.filter(
+          (plan: Plan) =>
+            plan.department.toLowerCase() ===
+              this.getUsersDepartment().toLowerCase() ||
+            (plan.department.toLowerCase() !==
+              this.getUsersDepartment().toLowerCase() &&
+              plan.status !== 'New')
+        );
+      }
 
       // Lọc dữ liệu dựa trên vai trò
       if (this.role === 'FinancialStaff') {
         // Hiển thị chỉ các kế hoạch trong phòng ban của người dùng
-        this.planList = this.planList.filter((plan: Plan) =>
-          plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()
+        this.planList = this.planList.filter(
+          (plan: Plan) =>
+            plan.department.toLowerCase() ===
+            this.getUsersDepartment().toLowerCase()
         );
       }
-      this.terms = Array.from(new Set(this.planList.map((plan: Plan) => plan.term)));
-      this.departments = Array.from(new Set(this.planList.map((plan: Plan) => plan.department)));
-      this.status = Array.from(new Set(this.planList.map((plan: Plan) => plan.status)));
-
+      this.terms = Array.from(
+        new Set(this.planList.map((plan: Plan) => plan.term))
+      );
+      this.departments = Array.from(
+        new Set(this.planList.map((plan: Plan) => plan.department))
+      );
+      this.status = Array.from(
+        new Set(this.planList.map((plan: Plan) => plan.status))
+      );
 
       this.dataSource = this.getPaginatedItems();
       console.log('Fetch data');
     });
-    
   }
   getUsersDepartment(): string {
     let userDepartment = '';
@@ -162,7 +165,6 @@ export class PlansComponent implements OnInit {
     }
     return userDepartment;
   }
-
 
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -180,28 +182,31 @@ export class PlansComponent implements OnInit {
         plan.plan.toLowerCase().includes(this.searchValue.toLowerCase())
       );
     }
-  
+
     // Apply filtering based on selected department
     if (this.selectedDepartment !== 'All') {
-      filteredList = filteredList.filter((plan: Plan) =>
-        plan.department.toLowerCase() === this.selectedDepartment.toLowerCase()
+      filteredList = filteredList.filter(
+        (plan: Plan) =>
+          plan.department.toLowerCase() ===
+          this.selectedDepartment.toLowerCase()
       );
     }
 
     if (this.selectedTerm !== 'All') {
-      filteredList = filteredList.filter((plan: Plan) =>
-        plan.term.toLowerCase() === this.selectedTerm.toLowerCase()
+      filteredList = filteredList.filter(
+        (plan: Plan) =>
+          plan.term.toLowerCase() === this.selectedTerm.toLowerCase()
       );
     }
-  
+
     // Apply filtering based on selected status
     if (this.selectedStatus !== 'All') {
-      filteredList = filteredList.filter((plan: Plan) =>
-     plan.status.toLowerCase() === this.selectedStatus.toLowerCase()
-      );  
+      filteredList = filteredList.filter(
+        (plan: Plan) =>
+          plan.status.toLowerCase() === this.selectedStatus.toLowerCase()
+      );
     }
-  
-  
+
     this.listSize = filteredList.length;
     return filteredList.slice(startIndex, endIndex);
   }
@@ -234,7 +239,7 @@ export class PlansComponent implements OnInit {
     this.selectedDepartment = 'All';
     this.selectedStatus = 'All';
     this.selectedTerm = 'All';
-  
+
     // Gọi lại fetchData() để cập nhật dữ liệu mới sau khi đặt lại bộ lọc
     this.fetchData();
   }
@@ -261,33 +266,28 @@ export class PlansComponent implements OnInit {
         }
         this.messageBar.openFromComponent(MessageBarComponent, {
           duration: 3000,
-      
-         data: {
-           httpStatusCode: response,
-           success:response == 200 ,
-           rmclose: true ,
-           message:
-             response == 200
-               ? 'Plan deleted successfully'
-               : 'Failed to delete Plan',
-         },
-       });
-       this.pageIndex = 0;
-       this.fetchData();
-     });
+          data: {
+            httpStatusCode: response,
+            success: response == 200,
+            rmclose: true,
+            message:
+              response == 200
+                ? 'Plan deleted successfully'
+                : 'Failed to delete Plan',
+          },
+        });
+        this.pageIndex = 0;
+        this.fetchData();
+      });
   }
 }
 @Component({
-    selector: 'delete-plan',
-    standalone: true,
-    templateUrl: './delete-plan/delete-plan.component.html',
-    styleUrls: ['./delete-plan/delete-plan.component.css'],
-    imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
+  selector: 'delete-plan',
+  standalone: true,
+  templateUrl: './delete-plan/delete-plan.component.html',
+  styleUrls: ['./delete-plan/delete-plan.component.css'],
+  imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
 })
-
-  export class DeletePlanDialog {
-    constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
-  }
-  
-  
-
+export class DeletePlanDialog {
+  constructor(public dialogRef: MatDialogRef<DeletePlanDialog>) {}
+}

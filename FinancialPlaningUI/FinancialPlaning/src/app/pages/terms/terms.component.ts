@@ -4,7 +4,6 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
-  Inject,
 } from '@angular/core';
 import { SidenavComponent } from '../../share/sidenav/sidenav.component';
 import { RouterLink } from '@angular/router';
@@ -23,7 +22,6 @@ import {
   PageEvent,
 } from '@angular/material/paginator';
 import {
-  MAT_SNACK_BAR_DATA,
   MatSnackBar,
   MatSnackBarModule,
 } from '@angular/material/snack-bar';
@@ -63,7 +61,7 @@ export class TermsComponent implements OnInit {
   filterStatusEnable = false;
 
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   dataSource: any = [];
 
@@ -164,7 +162,7 @@ export class TermsComponent implements OnInit {
           duration: 3000,
           data: {
             httpStatusCode: response,
-            success:response == 200 ,
+            success: response == 200,
             message:
               response == 200
                 ? 'Term deleted successfully'
@@ -175,7 +173,6 @@ export class TermsComponent implements OnInit {
         this.fetchData();
       });
   }
-  
 }
 
 @Component({
@@ -188,4 +185,3 @@ export class TermsComponent implements OnInit {
 export class DeleteTermDialog {
   constructor(public dialogRef: MatDialogRef<DeleteTermDialog>) {}
 }
-

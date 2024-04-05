@@ -66,7 +66,7 @@ export class ForgotPasswordComponent {
           "We've sent an email with the link to reset your password.",
           undefined,
           {
-            duration: 500000,
+            duration: 3000,
             panelClass: ['messageBar', 'successMessage'],
             verticalPosition: 'top',
           }
@@ -76,7 +76,7 @@ export class ForgotPasswordComponent {
             'The email address doesn’t exist. Please try again.',
             undefined,
             {
-              duration: 5000,
+              duration: 3000,
               panelClass: ['messageBar', 'failMessage'],
               verticalPosition: 'top',
             }

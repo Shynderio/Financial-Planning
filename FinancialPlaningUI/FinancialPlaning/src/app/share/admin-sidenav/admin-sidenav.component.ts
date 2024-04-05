@@ -1,16 +1,15 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth/auth.service';
 import { jwtDecode } from 'jwt-decode';
-import { HomeComponent } from '../../pages/home/home.component';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-sidenav',
   standalone: true,
-  imports: [HomeComponent, RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule],
   templateUrl: './admin-sidenav.component.html',
-  styleUrl: './admin-sidenav.component.css'
+  styleUrl: './admin-sidenav.component.css',
 })
 export class AdminSidenavComponent {
   hovering = false;
@@ -19,7 +18,7 @@ export class AdminSidenavComponent {
     private authService: AuthService,
     // private http: HttpClient,
     private router: Router
-  ) { }
+  ) {}
   logout() {
     if (confirm('Are you sure you want to logout?')) {
       this.authService.logout();
