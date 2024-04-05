@@ -125,7 +125,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             //error when download
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error : {ex.Message}");
+                return StatusCode(404, $"Error : {ex.Message}");
             }
         }
 

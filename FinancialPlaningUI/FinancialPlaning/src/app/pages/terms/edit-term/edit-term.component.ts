@@ -12,7 +12,14 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
 import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { concatMap, of } from 'rxjs';
 import { MessageBarComponent } from '../../../share/message-bar/message-bar.component';
 import { DialogComponent } from '../../../share/dialog/dialog.component';
@@ -23,11 +30,12 @@ import { provideNativeDateAdapter } from '@angular/material/core';
   selector: 'app-edit-term',
   standalone: true,
   imports: [
-    FormsModule, 
-    ReactiveFormsModule, 
-    CommonModule, 
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
     RouterLink,
-    MatDatepickerModule,],
+    MatDatepickerModule,
+  ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './edit-term.component.html',
   styleUrl: './edit-term.component.css',
@@ -52,7 +60,7 @@ export class EditTermComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private messageBar: MatSnackBar,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     this.termService = termService;
     this.termForm = this.fb.group({
@@ -74,11 +82,10 @@ export class EditTermComponent implements OnInit {
         if (termData.status != 'New') {
           this.router.navigate(['/terms']);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
+            duration: 3000,
             data: {
               success: false,
-              message:
-                'You can only edit a term with status New'
+              message: 'You can only edit a term with status New',
             },
           });
         }
@@ -87,9 +94,9 @@ export class EditTermComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching term details:', error);
-      },
+      }
     );
-      // debugger;
+    // debugger;
     // this.updateEndDate();
     this.termForm.get('startDate')?.valueChanges.subscribe(() => {
       this.updateEndDate();
@@ -104,10 +111,7 @@ export class EditTermComponent implements OnInit {
     });
   }
 
-
-
   populateForm(termData: TermViewModel): void {
-    
     this.termForm.patchValue({
       termName: termData.termName,
       startDate: termData.startDate.slice(0, 10),
@@ -145,8 +149,8 @@ export class EditTermComponent implements OnInit {
       data: {
         title: 'Close term',
         content: 'Are you sure you want to close this term?',
-        note: 'Please, rethink your decision because you will not be able to undo this action'
-      }
+        note: 'Please, rethink your decision because you will not be able to undo this action',
+      },
     });
     closeDialog
       .afterClosed()
@@ -158,18 +162,17 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-      ).subscribe((response) => {
-        console.log(response)
+      )
+      .subscribe((response) => {
+        console.log(response);
         if (response == null) {
           return;
         }
         this.messageBar.openFromComponent(MessageBarComponent, {
-
-          duration: 5000,
+          duration: 3000,
           data: {
             success: true,
-            message:
-              'Term closed successfully'
+            message: 'Term closed successfully',
           },
         });
       });
@@ -178,8 +181,15 @@ export class EditTermComponent implements OnInit {
 
   planDueDateValidator(control: any): { [key: string]: boolean } | null {
     const planDueDate = new Date(control.value).setHours(0, 0, 0, 0);
-    const startDate = new Date(control?.parent?.controls.startDate.value).setHours(0, 0, 0, 0);
-    const endDate = new Date(control?.parent?.controls.endDate.value).setHours(0, 0, 0, 0);
+    const startDate = new Date(
+      control?.parent?.controls.startDate.value
+    ).setHours(0, 0, 0, 0);
+    const endDate = new Date(control?.parent?.controls.endDate.value).setHours(
+      0,
+      0,
+      0,
+      0
+    );
 
     if (isNaN(planDueDate)) {
       return { invalidDate: true };
@@ -263,13 +273,11 @@ export class EditTermComponent implements OnInit {
     });
     const termId = this.termId; // You need to set the termId
     this.termService.updateTerm(termId, termData).subscribe((response) => {
-      
       this.messageBar.openFromComponent(MessageBarComponent, {
-        duration: 5000,
+        duration: 3000,
         data: {
           success: true,
-          message:
-            MESSAGE_CONSTANTS.ME014
+          message: MESSAGE_CONSTANTS.ME014,
         },
       });
       this.router.navigate(['/terms']);
@@ -286,18 +294,16 @@ export class EditTermComponent implements OnInit {
       var message = '';
       if (planDueDate < startDate || planDueDate > endDate) {
         message = 'Plan due date is not within the range.';
-      }
-      else 
-      if (reportDueDate < startDate || reportDueDate > endDate) {
+      } else if (reportDueDate < startDate || reportDueDate > endDate) {
         message = 'Report due date is not within the range.';
       }
 
       if (message != '') {
         this.messageBar.openFromComponent(MessageBarComponent, {
-          duration: 5000,
+          duration: 3000,
           data: {
             success: false,
-            message: message
+            message: message,
           },
         });
         return;
@@ -325,8 +331,8 @@ export class EditTermComponent implements OnInit {
       data: {
         title: 'Start term',
         content: 'Are you sure you want to start this term?',
-        note: 'Please, rethink your decision because you will not be able to undo this action'
-      }
+        note: 'Please, rethink your decision because you will not be able to undo this action',
+      },
     });
     startDialog
       .afterClosed()
@@ -338,26 +344,23 @@ export class EditTermComponent implements OnInit {
             return of(null);
           }
         })
-        ).subscribe((response) => {
-          console.log(response)
-          if (response == null) {
-            return;
-          }
-          this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
-            data: {
-              success: true,
-              message:
-              'Start term successfully'
-            },
-          });
-          this.router.navigate(['/terms']);
+      )
+      .subscribe((response) => {
+        console.log(response);
+        if (response == null) {
+          return;
+        }
+        this.messageBar.openFromComponent(MessageBarComponent, {
+          duration: 3000,
+          data: {
+            success: true,
+            message: 'Start term successfully',
+          },
+        });
+        this.router.navigate(['/terms']);
       });
   }
-
 }
-
-
 
 @Component({
   selector: 'start-term',
@@ -367,6 +370,5 @@ export class EditTermComponent implements OnInit {
   imports: [MatDialogActions, MatDialogClose, MatDialogTitle, MatDialogContent],
 })
 export class StartTermDialog {
-  constructor(public dialogRef: MatDialogRef<StartTermDialog>) { }
+  constructor(public dialogRef: MatDialogRef<StartTermDialog>) {}
 }
-

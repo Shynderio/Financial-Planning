@@ -63,7 +63,7 @@ export class ListReportComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
 
   constructor(

@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TermService } from '../../../services/term.service';
 import { CommonModule } from '@angular/common';
-
-import { Router, ActivatedRoute, RouterLink} from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { TermViewModel } from '../../../models/termview.model';
-import e from 'express';
 import { jwtDecode } from 'jwt-decode';
 
 @Component({
@@ -14,16 +16,14 @@ import { jwtDecode } from 'jwt-decode';
   standalone: true,
   imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './term-details.component.html',
-  styleUrl: './term-details.component.css'
+  styleUrl: './term-details.component.css',
 })
-
 export class TermDetailsComponent implements OnInit {
-
   termForm: FormGroup;
   durationReverseMap: { [key: number]: string } = {
     1: '1_month',
     3: 'quarter',
-    6: 'half_year'
+    6: 'half_year',
   };
   termStatus?: any;
   role: string = '';
@@ -31,10 +31,8 @@ export class TermDetailsComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private termService: TermService,
-
+    private termService: TermService
   ) {
-
     this.termService = termService;
     this.termForm = this.fb.group({
       term: [''],
@@ -49,7 +47,6 @@ export class TermDetailsComponent implements OnInit {
     // });
   }
 
-
   ngOnInit(): void {
     var termId = this.route.snapshot.params['id'];
     this.termForm = this.fb.group({
@@ -63,9 +60,8 @@ export class TermDetailsComponent implements OnInit {
     this.termService.getTerm(termId).subscribe(
       (termData: TermViewModel) => {
         this.termStatus = termData.status;
-        if(this.termStatus=='InProgress')  this.termStatus = 'In Progress';
+        if (this.termStatus == 'InProgress') this.termStatus = 'In Progress';
         this.populateForm(termData);
-       
       },
       (error) => {
         console.error('Error fetching term details:', error);
@@ -112,16 +108,16 @@ export class TermDetailsComponent implements OnInit {
     // if (startDate && duration) {
     var startDateObj = new Date(startDate);
     var endDateObj = new Date(startDateObj);
-    endDateObj.setMonth(startDateObj.getMonth() + Number(this.durationMap[duration])); // Convert to number
-    console.log("value", endDateObj);
+    endDateObj.setMonth(
+      startDateObj.getMonth() + Number(this.durationMap[duration])
+    ); // Convert to number
+    console.log('value', endDateObj);
     this.termForm.patchValue({
-      endDate: endDateObj.toISOString().slice(0, 10)
+      endDate: endDateObj.toISOString().slice(0, 10),
     });
     // }
   }
 
-
-  
   onSubmit() {
     // Handle form submission if needed
   }

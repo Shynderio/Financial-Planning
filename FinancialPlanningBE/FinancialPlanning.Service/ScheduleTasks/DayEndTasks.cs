@@ -14,8 +14,8 @@ namespace FinancialPlanning.Service.ScheduleTasks
             _logger = logger;
         }
 
-        protected override string Schedule => "*/3 * * * *"; // every 3 minute for testing
-        // protected override string Schedule => "59 23 * * *"; // every day at 23:59 
+        // protected override string Schedule => "*/3 * * * *"; // every 3 minute for testing
+        protected override string Schedule => "59 23 * * *"; // every day at 23:59 
 
         public override async Task ProcessInScope(IServiceProvider serviceProvider)
         {

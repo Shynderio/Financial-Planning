@@ -358,6 +358,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id:guid}/{planApprovedExpenses}")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
         public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
         {
             try

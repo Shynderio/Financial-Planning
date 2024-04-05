@@ -1,21 +1,24 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpResponse,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, map } from 'rxjs';
-import { Report } from '../models/report.model';
 import { environment } from '../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReportService {
   private apiUrl = environment.apiUrl + '/Report';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getListReport(): Observable<any> {
-    return this.http.get<any>(this.apiUrl+'/reports');
+    return this.http.get<any>(this.apiUrl + '/reports');
   }
- 
+
   deleteReport(reportId: string): Observable<number> {
     return this.http
       .delete(this.apiUrl + '/' + reportId, {
@@ -34,18 +37,26 @@ export class ReportService {
   getReport(reportId: string): Observable<any> {
     return this.http.get(this.apiUrl + '/details/' + reportId);
   }
-  
-  
+
   exportSinglereport(reportId: string, version: number): Observable<Blob> {
-    return this.http.post<Blob>(`${this.apiUrl}/export/${reportId}/${version}`, null, { responseType: 'blob' as 'json' });
-  }
-  exportMutilreport(reportIds: string[]): Observable<Blob> {
-    return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, { responseType: 'blob' as 'json' });
-  }
-  exportTemplateReport(): Observable<Blob> {
-    return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, { responseType: 'blob' as 'json' });
+    return this.http.post<Blob>(
+      `${this.apiUrl}/export/${reportId}/${version}`,
+      null,
+      { responseType: 'blob' as 'json' }
+    );
   }
 
+  exportMutilreport(reportIds: string[]): Observable<Blob> {
+    return this.http.post<Blob>(`${this.apiUrl}/export`, reportIds, {
+      responseType: 'blob' as 'json',
+    });
+  }
+  
+  exportTemplateReport(): Observable<Blob> {
+    return this.http.get<Blob>(`${this.apiUrl}/exportTemplate`, {
+      responseType: 'blob' as 'json',
+    });
+  }
 
   importReport(file: any): Observable<any> {
     const formData = new FormData();
@@ -61,7 +72,7 @@ export class ReportService {
     urlParams.append('uid', uid);
     urlParams.append('termId', termId);
     urlParams.append('month', month);
-    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses)
+    return this.http.post(this.apiUrl + '/upload?' + urlParams, expenses);
   }
 
   reupReport(expenses: [], reportId: string): Observable<any> {
@@ -73,5 +84,4 @@ export class ReportService {
     urlParams.append('uid', uid);
     return this.http.post(this.apiUrl + '/reupload?' + urlParams, expenses);
   }
-
 }

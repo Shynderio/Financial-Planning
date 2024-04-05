@@ -1,8 +1,18 @@
-import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { IDepartment } from '../../../models/department-list';
 import { IRole } from '../../../models/role-list';
 import { IPosition } from '../../../models/position-list';
@@ -21,13 +31,18 @@ import { MatDialog } from '@angular/material/dialog';
   providers: [provideNativeDateAdapter()],
   selector: 'app-add-new-user',
   standalone: true,
-  imports: [RouterLink, FormsModule, ReactiveFormsModule, CommonModule, MatDatepickerModule, MatInputModule],
+  imports: [
+    RouterLink,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    MatDatepickerModule,
+    MatInputModule,
+  ],
   templateUrl: './add-new-user.component.html',
-  styleUrl: './add-new-user.component.css'
+  styleUrl: './add-new-user.component.css',
 })
-
 export class AddNewUserComponent implements OnInit {
-
   departments: IDepartment[] = [];
   roles: IRole[] = [];
   positions: IPosition[] = [];
@@ -35,39 +50,34 @@ export class AddNewUserComponent implements OnInit {
   isEdit = false;
   isSubmitting: boolean = false;
 
-
   @ViewChild('fullNameInput') fullNameInput!: ElementRef;
 
   ngAfterViewInit() {
     this.fullNameInput.nativeElement.focus();
   }
 
-
   constructor(
     private httpService: UserService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
-    private messageBar: MatSnackBar,
-  ) { }
-
+    private messageBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.getDepartments();
     this.getRoles();
     this.getPositions();
 
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const userId = params['id'];
       this.getUserById(userId);
-    })
+    });
   }
   // Set default status is 1
   getStatusLabel(status: number): string {
     return status === 1 ? 'Active' : 'Inactive';
   }
-
-
 
   getUserById(userId: string) {
     if (userId) {
@@ -76,9 +86,16 @@ export class AddNewUserComponent implements OnInit {
 
       this.httpService.getUserById(userId).subscribe({
         next: (userDetail: any) => {
-          const departmentId = this.departments.find(department => department.departmentName === userDetail.departmentName)?.id;
-          const roleId = this.roles.find(role => role.roleName == userDetail.roleName)?.id;
-          const positionId = this.positions.find(position => position.positionName == userDetail.positionName)?.id;
+          const departmentId = this.departments.find(
+            (department) =>
+              department.departmentName === userDetail.departmentName
+          )?.id;
+          const roleId = this.roles.find(
+            (role) => role.roleName == userDetail.roleName
+          )?.id;
+          const positionId = this.positions.find(
+            (position) => position.positionName == userDetail.positionName
+          )?.id;
           const statusLabel = this.getStatusLabel(userDetail.status);
           this.addUserF.patchValue({
             username: userDetail.username,
@@ -91,13 +108,12 @@ export class AddNewUserComponent implements OnInit {
             phoneNumber: userDetail.phoneNumber,
             address: userDetail.address,
             dob: userDetail.dob,
-            status: statusLabel
-
+            status: statusLabel,
           });
         },
         error: (error: any) => {
           console.log('Lỗi khi lấy thông tin người dùng:', error);
-        }
+        },
       });
     } else {
       console.error('Invalid userId:', userId);
@@ -143,14 +159,27 @@ export class AddNewUserComponent implements OnInit {
 
   addUserF: FormGroup = new FormGroup({
     username: new FormControl(''),
-    fullName: new FormControl('', [Validators.required, this.validateName, this.validateSpaces]),
-    email: new FormControl('', [Validators.required, Validators.email, this.validateSpaces]),
+    fullName: new FormControl('', [
+      Validators.required,
+      this.validateName,
+      this.validateSpaces,
+    ]),
+    email: new FormControl('', [
+      Validators.required,
+      Validators.email,
+      this.validateSpaces,
+    ]),
     dob: new FormControl('', [Validators.required, this.validateDate]),
     department: new FormControl('', [Validators.required]),
     role: new FormControl('', [Validators.required]),
     notes: new FormControl(''),
     address: new FormControl(''),
-    phoneNumber: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(11), Validators.pattern('[0-9]*')]),
+    phoneNumber: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(11),
+      Validators.pattern('[0-9]*'),
+    ]),
     position: new FormControl('', [Validators.required]),
     status: new FormControl('1'),
   });
@@ -217,62 +246,60 @@ export class AddNewUserComponent implements OnInit {
     };
     if (this.isEdit) {
       this.confirmUpdate(() => {
-      user.status = -1;
-      this.httpService.editUser(this.userId, user).subscribe(() => {
-        console.log('success');
-        this.messageBar.openFromComponent(MessageBarComponent, {
-          duration: 4000,
-          data: {
-            success: true,
-            message:
-              MESSAGE_CONSTANTS.ME029
-          },
+        user.status = -1;
+        this.httpService.editUser(this.userId, user).subscribe(() => {
+          console.log('success');
+          this.messageBar.openFromComponent(MessageBarComponent, {
+            duration: 4000,
+            data: {
+              success: true,
+              message: MESSAGE_CONSTANTS.ME029,
+            },
+          });
+          this.router.navigateByUrl('/user-list');
+          this.isSubmitting = false;
         });
-        this.router.navigateByUrl("/user-list");
-        this.isSubmitting = false;
       });
-    });
     } else {
       user.status = 1;
-      this.httpService.addNewUser(user).subscribe(() => {
-        this.messageBar.openFromComponent(MessageBarComponent, {
-          duration: 4000,
-          data: {
-            success: true,
-            message: MESSAGE_CONSTANTS.ME027
-          },
-        });
-        this.router.navigateByUrl("/user-list");
-        this.isSubmitting = false;
-      }, (error: any) => {
-        if (error.status === 400) {
-          // Handle bad request error
-          console.log('Bad Request Error:', error);
+      this.httpService.addNewUser(user).subscribe(
+        () => {
           this.messageBar.openFromComponent(MessageBarComponent, {
             duration: 4000,
             data: {
-              success: false,
-              message:
-                'Email is exist: Please check your email'
+              success: true,
+              message: MESSAGE_CONSTANTS.ME027,
             },
           });
-        } else {
-          // Handle other errors
-          console.error('Error:', error);
-          this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 4000,
-            data: {
-              success: false,
-              message:
-                'An error occurred while creating user'
-            },
-          });
+          this.router.navigateByUrl('/user-list');
+          this.isSubmitting = false;
+        },
+        (error: any) => {
+          if (error.status === 400) {
+            // Handle bad request error
+            console.log('Bad Request Error:', error);
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 4000,
+              data: {
+                success: false,
+                message: 'Email is exist: Please check your email',
+              },
+            });
+          } else {
+            // Handle other errors
+            console.error('Error:', error);
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 4000,
+              data: {
+                success: false,
+                message: 'An error occurred while creating user',
+              },
+            });
+          }
+          this.isSubmitting = false;
         }
-        this.isSubmitting = false;
-      }
       );
     }
-
   }
   confirmUpdate(callback: () => void) {
     const dialogRef = this.dialog.open(DialogComponent, {
@@ -281,11 +308,11 @@ export class AddNewUserComponent implements OnInit {
       data: {
         title: 'Update user',
         content: 'Are you sure you want to update this user?',
-        note: 'Please, rethink your decision because this will affect to user'
-      }
+        note: 'Please, rethink your decision because this will affect to user',
+      },
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         callback();
       } else {
@@ -312,4 +339,3 @@ export class AddNewUserComponent implements OnInit {
     return `${yyyy}-${mm}-${dd}`;
   }
 }
-

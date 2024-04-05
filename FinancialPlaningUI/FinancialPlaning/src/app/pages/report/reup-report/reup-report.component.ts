@@ -44,7 +44,7 @@ export class ReupReportComponent implements OnInit {
   dataSource: any = [];
   //paging
   listSize: number = 0;
-  pageSize = 10;
+  pageSize = 8;
   pageIndex = 0;
   filedata: any = [];
   file: any;
@@ -89,7 +89,7 @@ export class ReupReportComponent implements OnInit {
           var currentDate = new Date();
           if (currentDate > this.dueDate) {
             this.messageBar.openFromComponent(MessageBarComponent, {
-              duration: 5000,
+              duration: 3000,
               data: {
                 rmclose: true,
                 message: 'Report is overdue.',
@@ -132,7 +132,7 @@ export class ReupReportComponent implements OnInit {
             error.error.message,
             undefined,
             {
-              duration: 5000,
+              duration: 3000,
               panelClass: ['messageBar', 'successMessage'],
               verticalPosition: 'top',
               horizontalPosition: 'end',
@@ -146,7 +146,7 @@ export class ReupReportComponent implements OnInit {
         "Please select a file to preview.",
         undefined,
         {
-          duration: 5000,
+          duration: 3000,
           panelClass: ['messageBar', 'successMessage'],
           verticalPosition: 'top',
           horizontalPosition: 'end',
@@ -169,7 +169,7 @@ export class ReupReportComponent implements OnInit {
         (data: any) => {
           console.log('report uploaded:', data);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
+            duration: 3000,
             data: {
             success: true,
             rmclose: true ,
@@ -181,7 +181,7 @@ export class ReupReportComponent implements OnInit {
           this.elementRef.nativeElement.querySelector('.submit-button').disabled = false;
           console.log('Error uploading report:', error);
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 5000,
+            duration: 3000,
            data: {
             success: false,
              rmclose: true ,
@@ -195,14 +195,14 @@ export class ReupReportComponent implements OnInit {
       //   "Please select a file to upload.",
       //   undefined,
       //   {
-      //     duration: 5000,
+      //     duration: 3000,
       //     panelClass: ['messageBar', 'successMessage'],
       //     verticalPosition: 'top',
       //     horizontalPosition: 'end',
       //   }
       // );
       this.messageBar.openFromComponent(MessageBarComponent, {
-        duration: 5000,
+        duration: 3000,
        data: {
         success: false,
          rmclose: true ,

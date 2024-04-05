@@ -8,19 +8,17 @@ import { Observable, catchError, map } from 'rxjs';
 import { LoginModel } from '../../models/loginModel.model';
 import { environment } from '../../../environments/environment';
 import { jwtDecode } from 'jwt-decode';
-import { response } from 'express';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = environment.apiUrl + '/Auth';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   login(model: LoginModel): Observable<any> {
     return this.http.post(this.apiUrl + '/Login', model);
   }
-
 
   IsLoggedIn() {
     if (typeof localStorage !== 'undefined') {
@@ -39,7 +37,6 @@ export class AuthService {
     return false;
   }
 
-
   logout(): void {
     localStorage.removeItem('token');
     return;
@@ -48,18 +45,19 @@ export class AuthService {
   forgotPassword(email: string): Observable<any> {
     let urlParams = new URLSearchParams();
     urlParams.append('email', email);
-    return this.http
-      .post(this.apiUrl + '/ForgotPassword?' + urlParams, email)
-   
-      ;
+    return this.http.post(this.apiUrl + '/ForgotPassword?' + urlParams, email);
   }
 
   resetPassword(password: string, token: string): Observable<number> {
     return this.http
-      .post(this.apiUrl + '/ResetPassword', { password: password, token: token }, {
-        observe: 'response',
-        responseType: 'text',
-      })
+      .post(
+        this.apiUrl + '/ResetPassword',
+        { password: password, token: token },
+        {
+          observe: 'response',
+          responseType: 'text',
+        }
+      )
       .pipe(
         map((response: HttpResponse<any>) => response.status),
         catchError((error: HttpErrorResponse) => {
@@ -68,14 +66,14 @@ export class AuthService {
         })
       );
   }
-  // Check user isAdmin 
+  // Check user isAdmin
   isAdmin(): boolean {
     if (typeof localStorage !== 'undefined') {
       const token = localStorage.getItem('token');
       if (token) {
         const decodedToken: any = jwtDecode(token);
         const userRole = decodedToken.role;
-        return userRole === 'Admin'; 
+        return userRole === 'Admin';
       }
     }
     return false;

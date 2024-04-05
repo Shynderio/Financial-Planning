@@ -33,11 +33,4 @@ export class MessageBarComponent implements OnInit {
       return 'fa-regular fa-circle-xmark';
     }
   }
-
-  // Helper method to determine message color based on message type
-  // getMessageColor() {
-  //   return this.data.success ? '#16ff00' : '#ff204e';
-  // }
-
-  // Helper method to determine message color based on message type
 }
