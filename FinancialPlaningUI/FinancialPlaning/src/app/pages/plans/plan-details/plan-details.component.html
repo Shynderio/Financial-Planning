@@ -76,10 +76,10 @@
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <ng-container matColumnDef="Checkbox">
         <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox *ngIf="showCheckbox" (change)="toggleAllCheckboxes($event)"></mat-checkbox>
+          <mat-checkbox color="primary" *ngIf="plan.status === 'WaitingForApproval'" (change)="toggleAllCheckboxes($event)"></mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let element">
-          <mat-checkbox *ngIf="showCheckbox" [checked]="isExpenseApproved(element.no)"
+          <mat-checkbox color="primary" *ngIf="plan.status === 'WaitingForApproval'" [checked]="isExpenseApproved(element.no)"
             (change)="toggleCheckbox(element.no)">
           </mat-checkbox>
         </td>
@@ -154,15 +154,15 @@
     <a routerLink="/plans" class="create-button">
       <button> Back</button>
     </a>
-    <a *ngIf="showCheckbox" class="create-button">
-      <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="isApprove">Approve
+    <a *ngIf="plan.status=='WaitingForApproval'" class="create-button">
+      <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval'">Approve
         Expense</button>
     </a>
     <a>
-      <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="isPlanNew"> Submit for approval</button>
+      <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="plan.status=='New'"> Submit for approval</button>
     </a>
     <a>
-      <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="isApprove"> Approve Plan</button>
+      <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval'"> Approve Plan</button>
     </a>
   </div>
 

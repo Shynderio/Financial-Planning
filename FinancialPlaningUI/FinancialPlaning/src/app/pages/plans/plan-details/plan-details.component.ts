@@ -61,7 +61,7 @@ export class PlanDetailsComponent {
 
   //paging
   listSize: number = 0;
-  pageSize = 8;
+  pageSize = 7;
   pageIndex = 0;
   router: any;
 
@@ -111,13 +111,13 @@ export class PlanDetailsComponent {
       // status Expense
       this.isApprove= (this.plan.status === 'WaitingForApproval' && this.role !== 'FinancialStaff' );
       console.log(this.isApprove);
-
+      // this.status = this.plan.status;
 
       this.isPlanNew = this.plan.status === 'New';
       this.isPlanApproved = this.plan.status === 'Approved';
       this.isReup = (this.plan.status !== 'Approved') && ((this.plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()) )
       this.approvedExpenses = this.plan.approvedExpenses ? JSON.parse(this.plan.approvedExpenses) : [];
-      this.showCheckbox =(this.plan.status === 'WaitingForApproval');
+      // this.showCheckbox =(this.plan.status === 'WaitingForApproval');
 
       // Caculate totalExpense and biggestExpenditure
       this.biggestExpenditure = Math.max(...this.dataFile.map((element: any) => element.unitPrice * element.amount));
@@ -181,6 +181,7 @@ export class PlanDetailsComponent {
   isExpenseApproved(expenseId: number): boolean {
     return this.approvedExpenses.includes(expenseId);
   }
+
   getExpenseStatus(expenseId: number): string {
     if (this.isPlanNew || this.isPlanApproved) {
       return this.isPlanNew ? 'New' : 'Approved';
@@ -252,6 +253,8 @@ export class PlanDetailsComponent {
         concatMap((result) => {
           if (result === 'confirm') {
             this.status=1;
+            this.plan.status = 'WaitingForApproval';
+            this.isPlanNew = false;
             return this.planService.submitPlan(id, this.status );
           } else {
             return of(null);
@@ -262,14 +265,16 @@ export class PlanDetailsComponent {
         // Check if response is null, if yes, it means user cancelled, so don't open any message bar
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
-            duration: 3000,
+
+            duration: 5000,
             data: {
               success: true,
               message:
                 'Submit for approval successfully'
             },
           });
-          window.location.reload();
+          // this.plan.status = 'WaitingForApproval';
+          // window.location.reload();
         }
       });
   }
@@ -296,6 +301,8 @@ export class PlanDetailsComponent {
           console.log(this.plan.approvedExpenses);
           // Gửi yêu cầu cập nhật expense đã duyệt và duyệt kế hoạch
           this.status = 2; 
+          this.plan.status = 'Approved';
+          this.isPlanApproved = true;
           return this.planService.submitPlan(id, this.status).pipe(
             concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
           );;
@@ -310,15 +317,15 @@ export class PlanDetailsComponent {
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
 
-            duration: 3000,
+            duration: 5000,
             data: {
               success: true,
               message:
                 'Approve plan successfully'
             },
           });
-          window.location.reload();
-
+          // window.location.reload();
+          // this.plan.status = 'Approved';
         }
       });
   }
@@ -344,6 +351,8 @@ export class PlanDetailsComponent {
             console.log(this.areAllExpensesApproved());
             if (this.areAllExpensesApproved()) {
               this.status = 2;
+              this.plan.status = 'Approved';
+              this.isPlanApproved = true;
               return this.planService.submitPlan(id, this.status).pipe(
                 concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
               );
@@ -361,14 +370,14 @@ export class PlanDetailsComponent {
         if (response !== null && response === 200) {
           this.messageBar.openFromComponent(MessageBarComponent, {
 
-            duration: 3000,
+            duration: 5000,
             data: {
               success: true,
               message:
                 'Approve expense successfully'
             },
           });
-          window.location.reload();
+          // window.location.reload();
 
         }
       });
@@ -431,7 +440,7 @@ export class PlanVersionsDialog {
       console.log(downloadURL);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = 'version_'+version + '.xlsx';
+      link.download = 'Version_'+version + '.xlsx';
       link.click();
     }
     );
