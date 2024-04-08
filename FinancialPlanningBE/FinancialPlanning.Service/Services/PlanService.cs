@@ -68,7 +68,7 @@ namespace FinancialPlanning.Service.Services
         {
             var planToDelete = await _planRepository.GetPlanById(id);
 
-            // X�a in S3
+            // Delete in S3
             foreach (var version in planToDelete.PlanVersions!)
             {
                 var filename = planToDelete.Department.DepartmentName + '/' + planToDelete.Term.TermName + "/Plan/version_" + version.Version + ".xlsx";
@@ -85,10 +85,6 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public async Task<IEnumerable<Plan>> GetAllPlans()
-        {
-            return await _planRepository.GetAllPlans();
-        }
 
         public async Task CloseDuePlans()
         {
@@ -215,19 +211,40 @@ namespace FinancialPlanning.Service.Services
             }
         }
 
-        public async Task SubmitPlan(Guid termId, string planName, string departmentOrUid)
+        public async Task SubmitPlan(Guid planId)
         {
-            await _planRepository.SubmitPlan(termId, planName, departmentOrUid);
-        }
-        public async Task<string> GetFileByName(string key)
-        {
-            return await _fileService.GetFileUrlAsync(key);
+            var plan = await _planRepository.GetPlanById(planId);
+            if (plan == null)
+            {
+                throw new ArgumentNullException("Plan not found with the specified ID");
+            }
+            if (plan.Status == PlanStatus.New)
+            {
+                plan.Status = PlanStatus.WaitingForApproval;
+                await _planRepository.UpdatePlan(plan);
+            }
+            else
+            {
+                throw new ArgumentException("Plan is not in the correct status to be submitted");
+            }
         }
 
-        public async Task UpdatePlanStatus(Guid id, PlanStatus status)
+        public async Task ApprovePlan(Guid planId)
         {
-            await _planRepository.UpdatePlanStatus(id, status);
-
+            var plan = await _planRepository.GetPlanById(planId);
+            if (plan == null)
+            {
+                throw new ArgumentNullException("Plan not found with the specified ID");
+            }
+            if (plan.Status == PlanStatus.WaitingForApproval)
+            {
+                plan.Status = PlanStatus.Approved;
+                await _planRepository.UpdatePlan(plan);
+            }
+            else
+            {
+                throw new ArgumentException("Plan is not in the correct status to be approved");
+            }
         }
 
         public async Task UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)

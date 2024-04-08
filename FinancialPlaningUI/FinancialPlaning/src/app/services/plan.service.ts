@@ -117,10 +117,29 @@ export class PlanService {
     );
   }
 
-  submitPlan(PlanId: string, status: number): Observable<number> {
+  submitPlan(PlanId: string): Observable<number> {
     return this.http
       .put(
-        this.apiUrl + '/' + PlanId + '/' + status,
+        this.apiUrl + '/' + PlanId + '/submit' ,
+        {},
+        {
+          observe: 'response',
+          responseType: 'text',
+        }
+      )
+      .pipe(
+        map((response: HttpResponse<any>) => response.status),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error occurred:', error);
+          throw error;
+        })
+      );
+  }
+
+  approvePlan(PlanId: string): Observable<number> {
+    return this.http
+      .put(
+        this.apiUrl + '/' + PlanId + '/approve',
         {},
         {
           observe: 'response',

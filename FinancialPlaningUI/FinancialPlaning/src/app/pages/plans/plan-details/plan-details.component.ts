@@ -255,7 +255,7 @@ export class PlanDetailsComponent {
             this.status=1;
             this.plan.status = 'WaitingForApproval';
             this.isPlanNew = false;
-            return this.planService.submitPlan(id, this.status );
+            return this.planService.submitPlan(id);
           } else {
             return of(null);
           }
@@ -303,7 +303,7 @@ export class PlanDetailsComponent {
           this.status = 2; 
           this.plan.status = 'Approved';
           this.isPlanApproved = true;
-          return this.planService.submitPlan(id, this.status).pipe(
+          return this.planService.approvePlan(id).pipe(
             concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
           );;
 
@@ -353,7 +353,7 @@ export class PlanDetailsComponent {
               this.status = 2;
               this.plan.status = 'Approved';
               this.isPlanApproved = true;
-              return this.planService.submitPlan(id, this.status).pipe(
+              return this.planService.approvePlan(id).pipe(
                 concatMap(() => this.planService.submitExpense(id, this.plan.approvedExpenses))
               );
             } else {

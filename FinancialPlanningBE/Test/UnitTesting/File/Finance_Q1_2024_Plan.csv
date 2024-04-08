@@ -29,4 +29,4 @@ DATE;TERM;DEPARTMENT;EXPENSE;COST TYPE;UNIT PRICE;AMOUNT;Currency;Exchange rate;
 18/02/2025;Q1_2025;Delivery;EXPENSEs;Operation;$1300000;3;VND;1.0;$3900000;;Fake Project 27;Supplier AA;Michaela Cooper;27
 02/03/2025;Q1_2025;Marketing;EXPENSEs;Operation;$1400000;7;VND;1.0;$9800000;;Fake Project 28;Supplier BB;Joseph Bell;28
 15/04/2025;Q2_2025;HR;EXPENSEs;Operation;$1500000;1;VND;1.0;$1500000;;Fake Project 29;Supplier CC;Rebecca Evans;29
-20/05/2025;Q2_2025;Finance;EXPENSEs;Operation;$1600000;5;VND;1.0;$8000000;;Fake Project 30;Supplier DD;
+;;;;;;;;;;;;;;
