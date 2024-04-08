@@ -18,11 +18,20 @@ div:has(#page-title) {
 }
 
 button {
+    
     border: none;
 }
+
 .backgroundbutton{
     background-color: var(--button-background) !important;
     color: white;
+}
+
+#cancel-button{
+    background-color: #ff204e;
+    border: none;
+    width: 100px;
+    /* animation: bounce-v 3.6s infinite; */
 }
 
 #start-button {
