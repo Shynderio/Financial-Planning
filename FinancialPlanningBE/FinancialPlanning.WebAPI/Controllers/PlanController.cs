@@ -17,12 +17,12 @@ namespace FinancialPlanning.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlanController(IMapper mapper, PlanService planService, FileService fileService) : ControllerBase
+    public class PlanController(IMapper mapper, PlanService planService, FileService fileService, UserService userService) : ControllerBase
     {
         private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         private readonly PlanService _planService = planService ?? throw new ArgumentNullException(nameof(planService));
         private readonly FileService _fileService = fileService ?? throw new ArgumentNullException(nameof(fileService));
-
+        private readonly UserService _userService = userService ?? throw new ArgumentNullException(nameof(userService));
 
         [HttpGet]
         [Authorize(Roles = "Accountant, FinancialStaff")]
@@ -342,13 +342,23 @@ namespace FinancialPlanning.WebAPI.Controllers
             return File(bytes, contenttype, Path.GetFileName(filepath));
         }
 
-        [HttpPut("{id:guid}/{status:int}")]
+        [HttpPut("{id:guid}/{planApprovedExpenses}")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> UpdatePlanStatus(Guid id, PlanStatus status)
+        public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
         {
             try
             {
-                await _planService.UpdatePlanStatus(id, status);
+                Plan? plan = await _planService.GetPlanById(id);
+                if (plan == null)
+                {
+                    return NotFound(new { message = $"Plan with id {id} not found" });
+                }
+                User user = await _userService.GetUserById(Guid.Parse(User.FindFirst("userId")!.Value));
+                if (user.DepartmentId != plan.DepartmentId)
+                {
+                    return Forbid();
+                }
+                await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
                 return Ok(new { message = $"Plan with id {id} updated successfully!" });
             }
             catch (Exception ex)
@@ -356,19 +366,54 @@ namespace FinancialPlanning.WebAPI.Controllers
                 return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
             }
         }
-
-        [HttpPut("{id:guid}/{planApprovedExpenses}")]
+        
+        [HttpPut("{id:guid}/submit")]
         [Authorize(Roles = "Accountant, FinancialStaff")]
-        public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
+        public async Task<IActionResult> SubmitPlan(Guid id)
         {
-            try
-            {
-                await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
-                return Ok(new { message = $"Plan with id {id} updated successfully!" });
+            try {
+                Plan? plan = await _planService.GetPlanById(id);
+                if (plan == null)
+                {
+                    return NotFound(new { message = $"Plan with id {id} not found" });
+                }
+                var userId = Guid.Parse(User.FindFirst("userId")!.Value);
+                User user = await _userService.GetUserById(userId);
+                if (user.DepartmentId != plan.DepartmentId)
+                {
+                    return Forbid();
+                }
+                await _planService.SubmitPlan(id);
+                return Ok(new { message = $"Plan with id {id} submitted successfully!" });
+            } catch (ArgumentException ex) {
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = $"Error submitting plan with id {id}: {ex.Message}" });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = $"Error updating plan with id {id}: {ex.Message}" });
+        }
+
+        [HttpPut("{id:guid}/approve")]
+        [Authorize(Roles = "Accountant, FinancialStaff")]
+        public async Task<IActionResult> ApprovePlan(Guid id)
+        {
+            try {
+                Plan? plan = await _planService.GetPlanById(id);
+                if (plan == null)
+                {
+                    return NotFound(new { message = $"Plan with id {id} not found" });
+                }
+                var userId = Guid.Parse(User.FindFirst("userId")!.Value);
+                User user = await _userService.GetUserById(userId);
+                if (user.DepartmentId != plan.DepartmentId)
+                {
+                    return Forbid();
+                }
+                await _planService.ApprovePlan(id);
+                return Ok(new { message = $"Plan with id {id} approved successfully!" });
+            } catch (ArgumentException ex) {
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = $"Error approving plan with id {id}: {ex.Message}" });
             }
         }
     }

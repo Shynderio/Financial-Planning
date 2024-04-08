@@ -152,7 +152,7 @@
 
   <div class="abc">
     <a routerLink="/plans" class="create-button">
-      <button> Back</button>
+      <button style="background-color: rgb(82, 77, 77); "> Back</button>
     </a>
     <a *ngIf="plan.status=='WaitingForApproval'" class="create-button">
       <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval'">Approve
