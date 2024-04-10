@@ -14,6 +14,7 @@ using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.Role;
 using FinancialPlanning.WebAPI.Models.Position;
 using FinancialPlanning.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Get all users
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -43,6 +45,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Get user by id
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userService.GetUserById(id);
@@ -52,6 +55,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Add new user
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddNewUser(AddUserModel userModel)
         {
 
@@ -77,6 +81,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // Update User
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(Guid id, AddUserModel userModel)
         {
             var user = _mapper.Map<User>(userModel);
@@ -86,6 +91,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
         // Update status User
         [HttpPut("{id:guid}/{status:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUserStatus(Guid id, UserStatus status)
         {
             try
