@@ -1,0 +1,39 @@
+version: '3.8'
+
+networks:
+  fpnet:
+
+services:
+  sql_server2022:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=A&VeryComplex123Password
+    ports: 
+      - '11433:1433'
+    networks:
+      - fpnet
+
+  fpapi:
+    image: fpapi
+    build:
+      context: ./FinancialPlanningBE
+      dockerfile: ./Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=172.25.239.42,11433;Database=FinancialPlanning;User=sa;Password=A&VeryComplex123Password;MultipleActiveResultSets=True;TrustServerCertificate=True"
+    ports:
+      - '5085:5085'
+    depends_on:
+      - sql_server2022
+    networks:
+      - fpnet
+
+  fpui:
+    image: fpui
+    build:
+      context: ./FinancialPlaningUI/FinancialPlaning
+      dockerfile: ./Dockerfile
+    ports:
+      - "4000:4000"
+
+

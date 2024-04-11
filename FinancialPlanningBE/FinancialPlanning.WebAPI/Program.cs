@@ -57,9 +57,9 @@ builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Confi
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4200")
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4000")
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader().AllowCredentials());
 });
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -155,12 +155,10 @@ if (app.Environment.IsDevelopment())
 }
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
-app.UseCors(options =>
-{
-    options.AllowAnyHeader();
-    options.AllowAnyOrigin();
-    options.AllowAnyMethod();
-});
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
