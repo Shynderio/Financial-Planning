@@ -40,7 +40,7 @@
         <button><i class="fa-solid fa-download me-1"></i> Export</button>
       </a>
       <a *ngIf="plan" [routerLink]="['/reup-plan/', plan.id ]" class="export-button">
-        <button *ngIf="isReup"><i class="fa-solid fa-upload me-1"></i> Reup</button>
+        <button *ngIf=" (this.plan.status !== 'Approved') && ((this.plan.department.toLowerCase() === this.getUsersDepartment().toLowerCase()))"> <i class="fa-solid fa-upload me-1"></i> Reup</button>
       </a>
     </div>
   </div>
@@ -76,10 +76,10 @@
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
       <ng-container matColumnDef="Checkbox">
         <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox color="primary" *ngIf="plan.status === 'WaitingForApproval'" (change)="toggleAllCheckboxes($event)"></mat-checkbox>
+          <mat-checkbox color="primary" *ngIf="plan.status=='WaitingForApproval' && this.role !== 'FinancialStaff' " (change)="toggleAllCheckboxes($event)"></mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let element">
-          <mat-checkbox color="primary" *ngIf="plan.status === 'WaitingForApproval'" [checked]="isExpenseApproved(element.no)"
+          <mat-checkbox color="primary" *ngIf="plan.status=='WaitingForApproval' && this.role !== 'FinancialStaff'" [checked]="isExpenseApproved(element.no)"
             (change)="toggleCheckbox(element.no)">
           </mat-checkbox>
         </td>
@@ -155,14 +155,14 @@
       <button style="background-color: rgb(82, 77, 77); "> Back</button>
     </a>
     <a *ngIf="plan.status=='WaitingForApproval'" class="create-button">
-      <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval'">Approve
+      <button (click)="openSubmitExpenseDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval' && this.role !== 'FinancialStaff'">Approve
         Expense</button>
     </a>
     <a>
       <button (click)="openSubmitDialog(plan.id)" class="create-button" *ngIf="plan.status=='New'"> Submit for approval</button>
     </a>
     <a>
-      <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval'"> Approve Plan</button>
+      <button (click)="openApproveDialog(plan.id)" class="create-button" *ngIf="plan.status=='WaitingForApproval' && this.role !== 'FinancialStaff'"> Approve Plan</button>
     </a>
   </div>
 
