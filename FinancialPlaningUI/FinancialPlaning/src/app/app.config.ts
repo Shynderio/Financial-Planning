@@ -9,9 +9,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { errorInterceptor } from './services/error.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { HttpCoreInterceptor } from './http-core.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideHttpClient(withInterceptors([HttpCoreInterceptor])),
     provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
     provideHttpClient(withFetch()),
     provideClientHydration(),
