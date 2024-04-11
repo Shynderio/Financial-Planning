@@ -343,7 +343,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id:guid}/{planApprovedExpenses}")]
-        [Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> UpdatePlanApprovedExpenses(Guid id, string planApprovedExpenses)
         {
             try
@@ -352,11 +352,6 @@ namespace FinancialPlanning.WebAPI.Controllers
                 if (plan == null)
                 {
                     return NotFound(new { message = $"Plan with id {id} not found" });
-                }
-                User user = await _userService.GetUserById(Guid.Parse(User.FindFirst("userId")!.Value));
-                if (user.DepartmentId != plan.DepartmentId)
-                {
-                    return Forbid();
                 }
                 await _planService.UpdatePlanApprovedExpenses(id, planApprovedExpenses);
                 return Ok(new { message = $"Plan with id {id} updated successfully!" });
@@ -393,7 +388,7 @@ namespace FinancialPlanning.WebAPI.Controllers
         }
 
         [HttpPut("{id:guid}/approve")]
-        [Authorize(Roles = "Accountant, FinancialStaff")]
+        [Authorize(Roles = "Accountant")]
         public async Task<IActionResult> ApprovePlan(Guid id)
         {
             try {
@@ -401,12 +396,6 @@ namespace FinancialPlanning.WebAPI.Controllers
                 if (plan == null)
                 {
                     return NotFound(new { message = $"Plan with id {id} not found" });
-                }
-                var userId = Guid.Parse(User.FindFirst("userId")!.Value);
-                User user = await _userService.GetUserById(userId);
-                if (user.DepartmentId != plan.DepartmentId)
-                {
-                    return Forbid();
                 }
                 await _planService.ApprovePlan(id);
                 return Ok(new { message = $"Plan with id {id} approved successfully!" });
