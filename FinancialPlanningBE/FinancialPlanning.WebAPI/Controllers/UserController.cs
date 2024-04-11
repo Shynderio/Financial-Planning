@@ -84,10 +84,26 @@ namespace FinancialPlanning.WebAPI.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(Guid id, AddUserModel userModel)
         {
-            var user = _mapper.Map<User>(userModel);
-            user.Id = id;
-            await _userService.UpdateUser(id, user);
-            return Ok(new { message = $"User with id {id} updated successfully!" });
+            try
+            {
+                var user = _mapper.Map<User>(userModel);
+                user.Id = id;
+                await _userService.UpdateUser(id, user);
+                return Ok(new { message = $"User with id {id} updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Email already exists"))
+                {
+                    return BadRequest("Email already exists");
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nếu cần thiết
+                    return StatusCode(500, "An error occurred while processing your request");
+                }
+
+            }
         }
         // Update status User
         [HttpPut("{id:guid}/{status:int}")]
@@ -98,7 +114,7 @@ namespace FinancialPlanning.WebAPI.Controllers
             {
                 await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
-                
+
             }
             catch (Exception ex)
             {
