@@ -86,8 +86,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
         //check file is not empty and not bigger than 500MB 
         if (file.Length is 0 or > Constants.MaxFileSize)
         {
-           
-
+            mess+= "File is not empty and not bigger than 500MB;";
         }
 
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
