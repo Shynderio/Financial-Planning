@@ -258,6 +258,29 @@ export class AddNewUserComponent implements OnInit {
           });
           this.router.navigateByUrl('/user-list');
           this.isSubmitting = false;
+        }, (error: any) => {
+          if (error.status === 400) {
+            // Handle bad request error
+            console.log('Bad Request Error:', error);
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 4000,
+              data: {
+                success: false,
+                message: 'Email is exist: Please check your email',
+              },
+            });
+          } else {
+            // Handle other errors
+            console.error('Error:', error);
+            this.messageBar.openFromComponent(MessageBarComponent, {
+              duration: 4000,
+              data: {
+                success: false,
+                message: 'An error occurred while creating user',
+              },
+            });
+          }
+          this.isSubmitting = false;
         });
       });
     } else {

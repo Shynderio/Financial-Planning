@@ -30,6 +30,12 @@ namespace FinancialPlanning.Data.Repositories
         // Update user
         public async Task UpdateUser(Guid id, User user)
         {
+            // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu hay chưa
+            var existingUserWithEmail = await _context.Users!.FirstOrDefaultAsync(u => u.Email == user.Email && u.Id != user.Id);
+            if (existingUserWithEmail != null)
+            {
+                throw new Exception("Email already exists.");
+            }
             var updateUser = await _context.Users!.FindAsync(user.Id) ?? throw new Exception("User not found");
 
             updateUser.FullName = user.FullName;

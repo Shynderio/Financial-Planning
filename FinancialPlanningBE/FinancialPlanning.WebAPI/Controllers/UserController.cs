@@ -14,6 +14,7 @@ using FinancialPlanning.WebAPI.Models.Term;
 using FinancialPlanning.WebAPI.Models.Role;
 using FinancialPlanning.WebAPI.Models.Position;
 using FinancialPlanning.Common;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinancialPlanning.WebAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Get all users
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -43,6 +45,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Get user by id
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             var user = await _userService.GetUserById(id);
@@ -52,6 +55,7 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         //Add new user
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddNewUser(AddUserModel userModel)
         {
 
@@ -77,22 +81,40 @@ namespace FinancialPlanning.WebAPI.Controllers
 
         // Update User
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(Guid id, AddUserModel userModel)
         {
-            var user = _mapper.Map<User>(userModel);
-            user.Id = id;
-            await _userService.UpdateUser(id, user);
-            return Ok(new { message = $"User with id {id} updated successfully!" });
+            try
+            {
+                var user = _mapper.Map<User>(userModel);
+                user.Id = id;
+                await _userService.UpdateUser(id, user);
+                return Ok(new { message = $"User with id {id} updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("Email already exists"))
+                {
+                    return BadRequest("Email already exists");
+                }
+                else
+                {
+                    // Xử lý các loại lỗi khác nếu cần thiết
+                    return StatusCode(500, "An error occurred while processing your request");
+                }
+
+            }
         }
         // Update status User
         [HttpPut("{id:guid}/{status:int}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUserStatus(Guid id, UserStatus status)
         {
             try
             {
                 await _userService.UpdateUserStatus(id, status);
                 return Ok(new { message = $"User with id {id} updated successfully!" });
-                
+
             }
             catch (Exception ex)
             {
