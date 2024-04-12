@@ -13,8 +13,6 @@ using Amazon.Runtime;
 using Amazon.S3;
 using System.Text;
 using FinancialPlanning.Service.Token;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
 using FinancialPlanning.Common;
 using Serilog;
 
@@ -40,7 +38,6 @@ builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 
 
-
 ////AddScoped Service
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<AuthService>();
@@ -57,14 +54,13 @@ builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Confi
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
-        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4000")
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader().AllowCredentials());
 });
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection"),
+    $"Server={Environment.GetEnvironmentVariable("DB_SERVER")},{Environment.GetEnvironmentVariable("DB_PORT")};Database={Environment.GetEnvironmentVariable("DB_NAME")};User ID={Environment.GetEnvironmentVariable("DB_USER")};Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};Integrated Security=false;TrustServerCertificate=True;Encrypt=False;",
     b => b.MigrationsAssembly("FinancialPlanning.WebAPI")));
-
 
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
@@ -73,8 +69,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
 {
-    Credentials = new BasicAWSCredentials(builder.Configuration["AWS:AccessKey"], builder.Configuration["AWS:SecretKey"]),
-    Region = RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"])
+    Credentials =
+        new BasicAWSCredentials(Environment.GetEnvironmentVariable("AWS_ACCESSKEY"), Environment.GetEnvironmentVariable("AWS_SECRETKEY")),
+    Region = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("AWS_REGION"))
 });
 
 //
@@ -97,8 +94,8 @@ builder.Services.AddSwaggerGen(option =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -116,7 +113,6 @@ builder.Services.AddAuthentication(options =>
 {
     options.SaveToken = true;
     options.RequireHttpsMetadata = false;
-#pragma warning disable CS8604 // Possible null reference argument.
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -135,12 +131,11 @@ builder.Services.AddAuthentication(options =>
             {
                 var user = await userService.GetUserById(userId);
 
-                if (user.Status== UserStatus.Inactive)
+                if (user.Status == UserStatus.Inactive)
                 {
                     context.Fail("Unauthorized");
                 }
             }
-          
         }
     };
 });
@@ -153,6 +148,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var db = serviceScope.ServiceProvider.GetRequiredService<DataContext>().Database;
+
+    logger.LogInformation("Migrating database...");
+
+    while (!db.CanConnect())
+    {
+        logger.LogInformation("Database not ready yet; waiting...");
+        Thread.Sleep(1000);
+    }
+
+    try
+    {
+        serviceScope.ServiceProvider.GetRequiredService<DataContext>().Database.Migrate();
+        logger.LogInformation("Database migrated successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
+
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 app.UseStaticFiles();

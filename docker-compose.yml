@@ -1,39 +1,30 @@
 version: '3.8'
 
-networks:
-  fpnet:
-
 services:
-  sql_server2022:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=A&VeryComplex123Password
-    ports: 
-      - '11433:1433'
-    networks:
-      - fpnet
+    financialplanning-api:
+        image: financialplanning-api
+        build:
+            context: ./FinancialPlanningBE
+            dockerfile: ./Dockerfile
+        environment:
+            - DB_SERVER=financialplanning-db.cf84cc04wegh.ap-southeast-1.rds.amazonaws.com
+            - DB_PORT=1433
+            - DB_NAME=FinancialPlanning
+            - DB_USER=admin
+            - DB_PASSWORD=pjb-group4
+            - SYSADMIN_EMAIL=financialplanapp@gmail.com
+            - SYSADMIN_PASSWORD=FinancialPlanningApp123
+            - AWS_ACCESSKEY=AKIAW3MEBMWBODMFHXMF
+            - AWS_SECRETKEY=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
+            - AWS_REGION=ap-southeast-1
+            - AWS_BUCKETNAME=financial-planning-pjb
+        ports:
+            - '5085:5085'
 
-  fpapi:
-    image: fpapi
-    build:
-      context: ./FinancialPlanningBE
-      dockerfile: ./Dockerfile
-    environment:
-      ConnectionStrings__DefaultConnection: "Server=172.25.239.42,11433;Database=FinancialPlanning;User=sa;Password=A&VeryComplex123Password;MultipleActiveResultSets=True;TrustServerCertificate=True"
-    ports:
-      - '5085:5085'
-    depends_on:
-      - sql_server2022
-    networks:
-      - fpnet
-
-  fpui:
-    image: fpui
-    build:
-      context: ./FinancialPlaningUI/FinancialPlaning
-      dockerfile: ./Dockerfile
-    ports:
-      - "4000:4000"
-
-
+    financialplanning-ui:
+        image: financialplanning-ui
+        build:
+            context: ./FinancialPlaningUI/FinancialPlaning
+            dockerfile: ./Dockerfile
+        ports:
+            - "4200:4000"

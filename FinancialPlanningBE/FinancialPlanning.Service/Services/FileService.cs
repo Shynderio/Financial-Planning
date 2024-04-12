@@ -1,21 +1,16 @@
-﻿using System.Data;
-using System.Globalization;
-using Amazon.Runtime.Documents;
+﻿using System.Globalization;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Aspose.Cells;
 using FinancialPlanning.Common;
 using FinancialPlanning.Data.Entities;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic.FileIO;
 using OfficeOpenXml;
 using Serilog;
-using LoadOptions = System.Xml.Linq.LoadOptions;
 
 namespace FinancialPlanning.Service.Services;
 
-public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
+public class FileService(IAmazonS3 s3Client)
 {
 
 
@@ -23,7 +18,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     {
         var request = new GetPreSignedUrlRequest
         {
-            BucketName = configuration["AWS:BucketName"],
+            BucketName = Environment.GetEnvironmentVariable("AWS_BUCKETNAME"),
             Key = key,
             Expires = DateTime.UtcNow.AddMinutes(15)
         };
@@ -33,7 +28,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
 
     public async Task<byte[]> GetFileAsync(string key)
     {
-        using var response = await s3Client.GetObjectAsync(configuration["AWS:BucketName"], key);
+        using var response = await s3Client.GetObjectAsync(Environment.GetEnvironmentVariable("AWS_BUCKETNAME"), key);
 
         await using var stream = response.ResponseStream;
         using var memoryStream = new MemoryStream();
@@ -46,7 +41,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     {
         var request = new DeleteObjectRequest
         {
-            BucketName = configuration["AWS:BucketName"],
+            BucketName = Environment.GetEnvironmentVariable("AWS_BUCKETNAME"),
             Key = key,
 
         };
@@ -65,7 +60,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
     {
         var request = new PutObjectRequest
         {
-            BucketName = configuration["AWS:BucketName"],
+            BucketName = Environment.GetEnvironmentVariable("AWS_BUCKETNAME"),
             Key = key,
             InputStream = fileStream,
             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -132,7 +127,7 @@ public class FileService(IAmazonS3 s3Client, IConfiguration configuration)
                     case 8 when documentType != 0:
                     case 10 when documentType == 0:
                         if (!decimal.TryParse(cellContext!, NumberStyles.Currency, null, out _))
-                            mess += $"cell {j}, {i} content is null and has invalid numberformat;";;
+                            mess += $"cell {j}, {i} content is null and has invalid numberformat;";
                         break;
                 }
             }
