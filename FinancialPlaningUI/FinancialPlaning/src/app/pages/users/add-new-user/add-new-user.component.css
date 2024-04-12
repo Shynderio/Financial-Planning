@@ -1,12 +1,12 @@
 form {
-  width: 100%;
+  width: 90%;
   /* Set form width to 100% */
 }
 
 
 form input,
 form select {
-  border: 2px solid #575757;
+  border: 1px solid #575757;
   border-radius: 4px;
   /* width: 60%; */
   height: 50px;
@@ -15,6 +15,11 @@ form select {
   background-color: #EBEEF3;
   width: 100%;
 
+}
+form input[readonly] {
+  border:none;
+  background-color: #eeecec;
+  /* Thêm các CSS khác nếu cần thiết cho input có readonly */
 }
 
 .mb-0 {
@@ -177,8 +182,7 @@ main>h6>a {
 #username::placeholder {
   font-size: 16px;
   /* Kích thước chữ mong muốn */
-  color: red;
-  font-weight: bold;
+  color: rgb(180, 176, 176);
 }
 
 main>div {
