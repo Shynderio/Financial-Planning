@@ -17,16 +17,16 @@
         <form [formGroup]="addUserF" (ngSubmit)="onSubmit()">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
-                            <h6 class="mb-0">User Name<span class="required-star">*</span></h6>
+                    <div class="row align-items-center pt-4 pb-3">
+                        <div class="col-md-3 ps-4">
+                            <h6 class="mb-0">User Name</h6>
                         </div>
-                        @if (isEdit) {<div class="col-md-5 pe-3 position-relative">
+                        @if (isEdit) {<div class="col-md-8 pe-3 position-relative">
                             <input class="form-control form-control-lg" type="text" id="username"
                                 formControlName="username" readonly /> <i class="fa-solid fa-ban position-absolute top-50 start-100 translate-middle" id="banIcon"></i>
                         </div>}
-                        @else {<div class="col-md-5 pe-3">
-                            <input class="form-control form-control-lg" type="text" id="username"
+                        @else {<div class="col-md-8 pe-3">
+                            <input class="form-control form-control-lg" type="text" id="username"placeholder="This field cannot be enter"
                                 formControlName="username" readonly />
                         </div>}
 
@@ -34,10 +34,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Full Name<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <input class="form-control form-control-lg" type="text" id="fullname"
                                 formControlName="fullName" #fullNameInput />
                         </div>
@@ -56,10 +56,10 @@
 
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Email<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <input class="form-control form-control-lg" type="text" id="email"
                                 formControlName="email" />
                         </div>
@@ -77,10 +77,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">DOB<span class="required-star">*</span></h6>
                         </div>
-                        <div class="datepicker-wrapper col-md-5 pe-3">
+                        <div class="datepicker-wrapper col-md-8 pe-3">
                             <div class="form-group mat-input-group">
                                 <input matInput [matDatepicker]="dobPicker" placeholder="Choose a date"
                                     formControlName="dob" class="form-control form-control-lg">
@@ -108,10 +108,10 @@
 
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Phone Number<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <input class="form-control form-control-lg" type="text" id="phonenumber"
                                 formControlName="phoneNumber" />
                         </div>
@@ -129,10 +129,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Address</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <input class="form-control form-control-lg" type="text" id="address"
                                 formControlName="address" />
                         </div>
@@ -141,10 +141,10 @@
 
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Department<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <select class="form-control form-control-lg" id="department" formControlName="department">
                                 <option value="">Select</option>
                                 <option *ngFor="let department of departments" [value]="department.id">
@@ -166,10 +166,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Position<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <select class="form-control form-control-lg" id="position-select"
                                 formControlName="position">
                                 <option value="">Select</option>
@@ -198,10 +198,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Role<span class="required-star">*</span></h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <select class="form-control form-control-lg" id="role-select" formControlName="role">
                                 <option value="">Select</option>
                                 <option *ngFor="let role of roles" [value]="role.id">{{ role.roleName }}</option>
@@ -222,26 +222,26 @@
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Status</h6>
                         </div>
                         @if (isEdit) {
-                        <div class="col-md-5 pe-3 position-relative">
+                        <div class="col-md-8 pe-3 position-relative">
                             <input class="form-control form-control-lg" type="text" id="status" formControlName="status" 
                                 readonly /> <i class="fa-solid fa-ban position-absolute top-50 start-100 translate-middle" id="banIcon"></i>
                         </div>} @else {
-                        <div class="col-md-5 pe-3">
-                            <div class="form-control form-control-lg custom-background" readonly>Active </div>
+                        <div class="col-md-8 pe-3">
+                            <div class="form-control form-control-lg custom-background" style="background-color: #eeecec;" readonly>Active </div>
                         </div>
                         }
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="row align-items-center custom-row">
-                        <div class="col-md-3 ps-5">
+                        <div class="col-md-3 ps-4">
                             <h6 class="mb-0">Note</h6>
                         </div>
-                        <div class="col-md-5 pe-3">
+                        <div class="col-md-8 pe-3">
                             <textarea class="form-control form-control-lg" id="note" formControlName="notes"></textarea>
                         </div>
                     </div>

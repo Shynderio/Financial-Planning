@@ -206,7 +206,13 @@ export class ReupPlanComponent implements OnInit {
 
     );
   }
-
+  transform(value: number): string {
+    switch(value) {
+      case 1: return 'Waiting For Approve';
+      case 2: return 'Approved';
+      default: return "New";
+    }
+  }
   onSubmit() {
     debugger;
     if (this.file) {
