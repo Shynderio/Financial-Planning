@@ -38,3 +38,4 @@ Desktop.ini
 .fake
 .vscode/
 logs/
+docker-compose.yml
