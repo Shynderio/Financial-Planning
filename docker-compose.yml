@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+    financialplanning-api:
+        image: financialplanning-api
+        build:
+            context: ./FinancialPlanningBE
+            dockerfile: ./Dockerfile
+        environment:
+            - DB_SERVER=db
+            - DB_PORT=1433
+            - DB_NAME=FinancialPlanning
+            - DB_USER=admin
+            - DB_PASSWORD=pwd
+            - SYSADMIN_EMAIL=example@email.com
+            - SYSADMIN_PASSWORD=FinancialPlanningApp123
+            - AWS_ACCESSKEY=AKIAZ6JQZQZQZQZQZQZQ
+            - AWS_SECRETKEY=123123123123123123123123123123123123123
+            - AWS_REGION=ap-southeast-1
+            - AWS_BUCKETNAME=financial-planning-pjb
+        ports:
+            - '5085:5085'
+
+    financialplanning-ui:
+        image: financialplanning-ui
+        build:
+            context: ./FinancialPlaningUI/FinancialPlaning
+            dockerfile: ./Dockerfile
+        ports:
+            - "4200:4000"
